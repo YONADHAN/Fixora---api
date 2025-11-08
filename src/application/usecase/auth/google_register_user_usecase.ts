@@ -19,6 +19,7 @@ export class GoogleRegisterUserUseCase implements IGoogleRegisterUserUseCase {
     const createdUser = await strategy.register(user)
 
     const mapper = this._userMapperFactory.getMapper(user.role)
+
     return mapper.toDTO(createdUser)
   }
 }
