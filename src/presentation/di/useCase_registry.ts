@@ -49,6 +49,8 @@ import { IGoogleUseCase } from '../../domain/useCaseInterfaces/auth/google_useca
 import { GoogleLoginUseCase } from '../../application/usecase/auth/google_login_user_usecase'
 import { IGoogleRegisterUserUseCase } from '../../domain/useCaseInterfaces/auth/google_register_user_usecase_interface'
 import { GoogleRegisterUserUseCase } from '../../application/usecase/auth/google_register_user_usecase'
+import { IUploadVendorDocsUseCase } from '../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
+import { UploadVendorDocsUseCase } from '../../application/usecase/vendor/upload_vendor_docs.usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -125,6 +127,8 @@ import { ICustomerGoogleRegistrationStrategy } from '../../application/strategie
 import { CustomerGoogleRegistrationStrategy } from '../../application/strategies/auth/registration/google/customer_google_registration_strategy'
 import { IVendorGoogleRegistrationStrategy } from '../../application/strategies/auth/registration/google/vendor_google_registration_strategy.interface'
 import { VendorGoogleRegistrationStrategy } from '../../application/strategies/auth/registration/google/vendor_google_registration_strategy'
+import { VendorStatusCheckUsecase } from '../../application/usecase/vendor/vendor_status_check_usecase'
+import { IVendorStatusCheckUseCase } from '../../domain/useCaseInterfaces/vendor/vendor_status_check_usecase.interface'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -194,6 +198,10 @@ export class UseCaseRegistry {
     container.register<IGoogleUseCase>('IGoogleUseCase', {
       useClass: GoogleLoginUseCase,
     })
+
+    container.register<IVendorStatusCheckUseCase>('IVendorStatusCheckUseCase', {
+      useClass: VendorStatusCheckUsecase,
+    })
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -209,6 +217,10 @@ export class UseCaseRegistry {
         useClass: GoogleRegisterUserUseCase,
       }
     )
+
+    container.register<IUploadVendorDocsUseCase>('IUploadVendorDocsUseCase', {
+      useClass: UploadVendorDocsUseCase,
+    })
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

@@ -15,6 +15,8 @@ import { IVendorController } from '../../../domain/controllerInterfaces/users/ve
 import { IGetProfileInfoUseCase } from '../../../domain/useCaseInterfaces/common/get_profile_info_usecase_interface'
 import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/common/profile_info_update_usecase_interface'
 import { IStorageService } from '../../../domain/serviceInterfaces/minio_storage_service_interface'
+import { IVendorStatusCheckUseCase } from '../../../domain/useCaseInterfaces/vendor/vendor_status_check_usecase.interface'
+import { IUploadVendorDocsUseCase } from '../../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
 
 @injectable()
 export class VendorController implements IVendorController {
@@ -30,7 +32,11 @@ export class VendorController implements IVendorController {
     @inject('IProfileInfoUpdateUseCase')
     private _profileInfoUpdateUseCase: IProfileInfoUpdateUseCase,
     @inject('IStorageService')
-    private storageService: IStorageService
+    private storageService: IStorageService,
+    @inject('IVendorStatusCheckUseCase')
+    private _vendorVerificationDocStatusCheck: IVendorStatusCheckUseCase,
+    @inject('IUploadVendorDocsUseCase')
+    private _uploadVendorDocsUsecase: IUploadVendorDocsUseCase
   ) {}
 
   // async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
@@ -60,29 +66,41 @@ export class VendorController implements IVendorController {
   //     handleErrorResponse(req, res, error)
   //   }
   // }
-
+  // interfaceAdapters/controllers/vendor_controller.ts
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
     try {
+      const userId = (req as CustomRequest).user.userId
       const files = req.files as Express.Multer.File[]
+
       if (!files || files.length === 0) {
         res.status(400).json({ message: 'No files uploaded' })
         return
       }
+
+      // Step 1: Upload to storage (e.g., AWS S3)
       const uploadPromises = files.map((file) =>
         this.storageService.uploadFile('vendor-verification-docs', file)
       )
       const urls = await Promise.all(uploadPromises)
-      console.log('urls are : =>', urls)
+      console.log('Uploaded URLs:', urls)
+
+      // Step 2: Save URLs to MongoDB
+      await this._uploadVendorDocsUsecase.execute(userId, files, urls)
+
+      // Step 3: Return success response
       res.status(200).json({
         success: true,
-        message: 'Documents uploaded successfully',
+        message: 'Documents uploaded and saved successfully',
         urls,
       })
-    } catch (error) {
-      console.error('Upload failed', error)
-      res.status(500).json({ message: 'Failed to upload files' })
+    } catch (error: any) {
+      console.error('Upload failed:', error)
+      res
+        .status(500)
+        .json({ message: error.message || 'Failed to upload files' })
     }
   }
+
   async logout(req: Request, res: Response): Promise<void> {
     try {
       await this._blacklistTokenUseCase.execute(
@@ -128,6 +146,25 @@ export class VendorController implements IVendorController {
       await this._profileInfoUpdateUseCase.execute(role, data, userId)
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.PROFILE_UPDATED_SUCCESSFULLY,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async vendorVerificationDocStatusCheck(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const userId = (req as CustomRequest).user.userId
+      const response = await this._vendorVerificationDocStatusCheck.execute(
+        userId
+      )
+      console.log('vendor veriication status route data = > ', response)
+      res.status(HTTP_STATUS.OK).json({
+        message: SUCCESS_MESSAGES.OPERATION_SUCCESS,
+        data: response,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

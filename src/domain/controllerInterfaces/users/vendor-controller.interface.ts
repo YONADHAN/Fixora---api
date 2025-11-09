@@ -4,4 +4,5 @@ export interface IVendorController {
   logout(req: Request, res: Response): Promise<void>
   profileInfo(req: Request, res: Response): any
   profileUpdate(req: Request, res: Response): Promise<void>
+  vendorVerificationDocStatusCheck(req: Request, res: Response): Promise<void>
 }
