@@ -46,6 +46,21 @@ export class AdminRoutes extends BaseRoute {
         adminController.getAllVendors(req, res)
       }
     )
+    this.router.get(
+      '/get_vendor_requests',
+      verifyAuth,
+      authorizeRole(['admin']),
+      (req, res) => adminController.getAllVendorRequests(req, res)
+    )
+
+    this.router.post(
+      '/vendor-verification-status',
+      verifyAuth,
+      authorizeRole(['admin']),
+      (req: Request, res: Response) =>
+        adminController.changeMyVendorVerificationStatus(req, res)
+    )
+
     this.router.post(
       '/change-my-user-block-status',
       verifyAuth,

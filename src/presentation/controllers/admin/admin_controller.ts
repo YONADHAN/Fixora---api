@@ -14,6 +14,8 @@ import { clearAuthCookies } from '../../../shared/utils/cookie_helper'
 import { IAdminController } from '../../../domain/controllerInterfaces/users/admin-controller.interface'
 import { IGetAllUsersUseCase } from '../../../domain/useCaseInterfaces/common/get_all_users_usecase_interface'
 import { IChangeMyUserBlockStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_my_users_block_status_usecase_interface'
+import { IGetAllVendorRequestsUseCase } from '../../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
+import { IChangeVendorVerificationStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
 
 @injectable()
 export class AdminController implements IAdminController {
@@ -25,7 +27,11 @@ export class AdminController implements IAdminController {
     @inject('IGetAllUsersUseCase')
     private _getAllUsersUsecase: IGetAllUsersUseCase,
     @inject('IChangeMyUserBlockStatusUseCase')
-    private _changeMyUserBlockStatusUseCase: IChangeMyUserBlockStatusUseCase
+    private _changeMyUserBlockStatusUseCase: IChangeMyUserBlockStatusUseCase,
+    @inject('IGetAllVendorRequestsUseCase')
+    private _getAllVendorRequests: IGetAllVendorRequestsUseCase,
+    @inject('IChangeVendorVerificationStatusUseCase')
+    private _changeVendorVerificationStatusUseCase: IChangeVendorVerificationStatusUseCase
   ) {}
 
   async logout(req: Request, res: Response): Promise<void> {
@@ -93,10 +99,31 @@ export class AdminController implements IAdminController {
     }
   }
 
+  async getAllVendorRequests(req: Request, res: Response): Promise<void> {
+    try {
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 10
+      const search = (req.query.search as string) || ''
+
+      const response = await this._getAllVendorRequests.execute({
+        page,
+        limit,
+        search,
+      })
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Vendor requests retrieved successfully',
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
   async changeMyUserBlockStatus(req: Request, res: Response): Promise<any> {
     try {
       const { role, userId, status } = req.body
-      // console.log('arguments passed ', req.body)
       if (!role || !userId || !status) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
@@ -105,7 +132,6 @@ export class AdminController implements IAdminController {
       }
 
       const validStatuses: statusTypes[] = ['active', 'blocked']
-      // console.log('validation checkup started')
       if (!validStatuses.includes(status)) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
@@ -122,6 +148,39 @@ export class AdminController implements IAdminController {
       return res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.BLOCK_STATUS_OF_USER_CHANGED_SUCCESSFULLY,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async changeMyVendorVerificationStatus(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const adminId = (req as CustomRequest).user.userId
+      const { userId, verificationStatus, description } = req.body
+
+      if (!['rejected', 'accepted'].includes(verificationStatus)) {
+        res
+          .status(HTTP_STATUS.BAD_REQUEST)
+          .json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS })
+        return
+      }
+
+      const response =
+        await this._changeVendorVerificationStatusUseCase.execute({
+          userId,
+          verificationStatus,
+          adminId,
+          description,
+        })
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.VERIFICATION_STATUS_CHANGED,
         data: response,
       })
     } catch (error) {

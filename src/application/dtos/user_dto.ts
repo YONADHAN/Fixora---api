@@ -79,7 +79,7 @@ export interface GetAllUsersDTO {
   email: string
   role?: string
   status: statusTypes | undefined
-  // isBlocked: boolean
+
   createdAt: Date
   updatedAt?: Date
 }

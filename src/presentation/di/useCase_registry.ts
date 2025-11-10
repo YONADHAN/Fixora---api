@@ -51,6 +51,10 @@ import { IGoogleRegisterUserUseCase } from '../../domain/useCaseInterfaces/auth/
 import { GoogleRegisterUserUseCase } from '../../application/usecase/auth/google_register_user_usecase'
 import { IUploadVendorDocsUseCase } from '../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
 import { UploadVendorDocsUseCase } from '../../application/usecase/vendor/upload_vendor_docs.usecase'
+import { IGetAllVendorRequestsUseCase } from '../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
+import { GetAllVendorRequestsUseCase } from '../../application/usecase/admin/verification-requests/get_all_vendor_requests_usecase'
+import { IChangeVendorVerificationStatusUseCase } from '../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
+import { ChangeVendorVerificationStatusUseCase } from '../../application/usecase/admin/verification-requests/change_vendor_verification_status_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -202,6 +206,12 @@ export class UseCaseRegistry {
     container.register<IVendorStatusCheckUseCase>('IVendorStatusCheckUseCase', {
       useClass: VendorStatusCheckUsecase,
     })
+    container.register<IChangeVendorVerificationStatusUseCase>(
+      'IChangeVendorVerificationStatusUseCase',
+      {
+        useClass: ChangeVendorVerificationStatusUseCase,
+      }
+    )
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -221,6 +231,13 @@ export class UseCaseRegistry {
     container.register<IUploadVendorDocsUseCase>('IUploadVendorDocsUseCase', {
       useClass: UploadVendorDocsUseCase,
     })
+
+    container.register<IGetAllVendorRequestsUseCase>(
+      'IGetAllVendorRequestsUseCase',
+      {
+        useClass: GetAllVendorRequestsUseCase,
+      }
+    )
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

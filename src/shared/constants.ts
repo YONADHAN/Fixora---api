@@ -53,6 +53,9 @@ export const SUCCESS_MESSAGES = {
   USERS_FOUND: 'Users Found Successfully',
   BLOCK_STATUS_OF_USER_CHANGED_SUCCESSFULLY:
     'Block Status Changed Successfully.',
+  VENDOR_REQUESTS_FOUND: 'Requests found successfully.',
+  VERIFICATION_STATUS_CHANGED:
+    'Verification status of the user changed successfully.',
 }
 
 export const ERROR_MESSAGES = {
