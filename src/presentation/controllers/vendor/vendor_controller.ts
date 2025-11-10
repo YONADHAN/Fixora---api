@@ -67,6 +67,7 @@ export class VendorController implements IVendorController {
   //   }
   // }
   // interfaceAdapters/controllers/vendor_controller.ts
+
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
@@ -77,17 +78,14 @@ export class VendorController implements IVendorController {
         return
       }
 
-      // Step 1: Upload to storage (e.g., AWS S3)
       const uploadPromises = files.map((file) =>
         this.storageService.uploadFile('vendor-verification-docs', file)
       )
       const urls = await Promise.all(uploadPromises)
-      console.log('Uploaded URLs:', urls)
 
-      // Step 2: Save URLs to MongoDB
+      //uploading the data to mongodb
       await this._uploadVendorDocsUsecase.execute(userId, files, urls)
 
-      // Step 3: Return success response
       res.status(200).json({
         success: true,
         message: 'Documents uploaded and saved successfully',
@@ -161,7 +159,7 @@ export class VendorController implements IVendorController {
       const response = await this._vendorVerificationDocStatusCheck.execute(
         userId
       )
-      console.log('vendor veriication status route data = > ', response)
+
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.OPERATION_SUCCESS,
         data: response,

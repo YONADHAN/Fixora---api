@@ -7,11 +7,7 @@ import { IBlacklistTokenUseCase } from '../../domain/useCaseInterfaces/auth/blac
 import { inject, injectable } from 'tsyringe'
 import { clearAuthCookies } from '../../shared/utils/cookie_helper'
 import { NextFunction, Response } from 'express'
-import {
-  ERROR_MESSAGES,
-  HTTP_STATUS,
-  statusTypes,
-} from '../../shared/constants'
+import { ERROR_MESSAGES, HTTP_STATUS } from '../../shared/constants'
 
 export interface IBlockMyUserMiddleware {
   checkMyUserBlockStatus(
@@ -51,6 +47,7 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
 
       const { userId, role } = req.user
       const cacheKey = `user_block_status:${role}:${userId}`
+
       let status = await redisClient.get(cacheKey)
 
       if (!status) {

@@ -217,9 +217,9 @@ export class AuthController implements IAuthController {
       await this._revokeRefreshTokenUseCase.execute(
         (req as CustomRequest).user.refresh_token
       )
-      // console.log('revoking working')
+
       const user = (req as CustomRequest).user
-      // console.log('user fetched from request', user)
+
       const accessTokenName = `${user.role}_access_token`
       const refreshTokenName = `${user.role}_refresh_token`
       clearAuthCookies(res, accessTokenName, refreshTokenName)
@@ -233,15 +233,14 @@ export class AuthController implements IAuthController {
 
   async handleTokenRefresh(req: Request, res: Response): Promise<void> {
     try {
-      // console.log('entered route')
       const token = (req as CustomRequest).user.refresh_token
-      // console.log('token in handleTokenRefresh', token)
+
       const newToken = this._refreshTokenUseCase.execute(token)
-      //console.log('new token was created from refresh token usecase', newToken)
+
       const access_token_name = `${newToken.role}_access_token`
-      //console.log('created access_token_name')
+
       updateCookieWithAccessToken(res, newToken.accessToken, access_token_name)
-      //console.log('Updated cookies with new access token')
+
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.REFRESH_TOKEN_REFRESHED_SUCCESS,

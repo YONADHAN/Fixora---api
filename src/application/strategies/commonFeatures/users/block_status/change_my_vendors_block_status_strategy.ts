@@ -38,11 +38,11 @@ export class ChangeMyVendorsBlockStatusStrategy
     vendor.status = status as statusTypes
     await this._vendorRepository.update(vendor._id, vendor)
     if (status == 'blocked') {
-      await redisClient.set(`user_blocking_status:customer:${userId}`, status, {
+      await redisClient.set(`user_block_status:vendor:${userId}`, status, {
         EX: 3600,
       })
     } else if (status == 'active') {
-      await redisClient.del(`user_blocking_status:customer:${userId}`)
+      await redisClient.del(`user_block_status:vendor:${userId}`)
     }
     return { message: `Vendor ${status} successfully`, vendor }
   }
