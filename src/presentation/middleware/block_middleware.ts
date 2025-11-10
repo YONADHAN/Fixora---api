@@ -40,6 +40,7 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
   ): Promise<any> => {
     try {
       const user = req.user
+
       if (!user) {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({
           success: false,
@@ -72,7 +73,7 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
             })
             return
           }
-          status = (vendor.status as string) || ''
+          status = vendor.status as string
         } else {
           res.status(HTTP_STATUS.NOT_FOUND).json({
             success: false,
@@ -105,10 +106,6 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
 
       next()
     } catch (error) {
-      if (res.headersSent) {
-        console.warn('Headers already sent, skipping response step catch')
-      }
-
       return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: ERROR_MESSAGES.SERVER_ERROR,
