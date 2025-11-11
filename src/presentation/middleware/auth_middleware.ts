@@ -57,7 +57,6 @@ export const verifyAuth = async (
     const token = extractToken(req)
 
     if (!token) {
-      console.log('Not token : VerifyAuth from AuthMiddleware')
       res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS })
@@ -65,7 +64,6 @@ export const verifyAuth = async (
     }
 
     if (await isBlacklisted(token.access_token)) {
-      console.log('Token Blacklisted: VerifyAuth from AuthMiddleware')
       res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: ERROR_MESSAGES.TOKEN_BLACKLISTED })
@@ -77,7 +75,6 @@ export const verifyAuth = async (
     ) as CustomJWTPayload
 
     if (!user || !user.userId) {
-      console.log('Unauthorized access : VerifyAuth from AuthMiddleware')
       res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS })
@@ -91,7 +88,6 @@ export const verifyAuth = async (
     }
     next()
   } catch (error) {
-    console.log('token is invalid is worked', error)
     res.status(HTTP_STATUS.UNAUTHORIZED).json({
       message: ERROR_MESSAGES.INVALID_TOKEN,
       statuscode: HTTP_STATUS.UNAUTHORIZED,

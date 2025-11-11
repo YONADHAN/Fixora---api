@@ -36,14 +36,13 @@ export const config = {
   },
 
   storageConfig: {
-    driver: process.env.STORAGE_DRIVER || 'minio',
-    endpoint: process.env.MINIO_ENDPOINT || 'http://localhost:9000',
-    accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
-    secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
-    region: process.env.MINIO_REGION || 'us-east-1',
-    useSSL: process.env.MINIO_USE_SSL === 'true',
-    publicEndpoint:
-      process.env.MINIO_PUBLIC_ENDPOINT || 'http://localhost:9000',
+    driver: process.env.STORAGE_DRIVER,
+    bucket: process.env.S3_BUCKET,
+    region: process.env.S3_REGION,
+    accessKey: process.env.S3_ACCESS_KEY_ID,
+    secretKey: process.env.S3_SECRET_ACCESS_KEY,
+    publicEndpoint: process.env.S3_PUBLIC_ENDPOINT,
+    useSSL: process.env.S3_USE_SSL === 'true',
   },
 
   // cloudinary: {

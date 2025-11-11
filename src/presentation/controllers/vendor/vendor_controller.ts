@@ -14,9 +14,10 @@ import { IRevokeRefreshTokenUseCase } from '../../../domain/useCaseInterfaces/au
 import { IVendorController } from '../../../domain/controllerInterfaces/users/vendor-controller.interface'
 import { IGetProfileInfoUseCase } from '../../../domain/useCaseInterfaces/common/get_profile_info_usecase_interface'
 import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/common/profile_info_update_usecase_interface'
-import { IStorageService } from '../../../domain/serviceInterfaces/minio_storage_service_interface'
+import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { IVendorStatusCheckUseCase } from '../../../domain/useCaseInterfaces/vendor/vendor_status_check_usecase.interface'
 import { IUploadVendorDocsUseCase } from '../../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
+import { config } from '../../../shared/config'
 
 @injectable()
 export class VendorController implements IVendorController {
@@ -67,7 +68,6 @@ export class VendorController implements IVendorController {
   //   }
   // }
   // interfaceAdapters/controllers/vendor_controller.ts
-
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
@@ -78,12 +78,17 @@ export class VendorController implements IVendorController {
         return
       }
 
+      // ✅ Use your main AWS S3 bucket and vendor folder
+      const bucketName = config.storageConfig.bucket! // e.g., fixora-storage-yonadhan
+      const folder = 'vendor-verification-docs' // this becomes an S3 folder
+
       const uploadPromises = files.map((file) =>
-        this.storageService.uploadFile('vendor-verification-docs', file)
+        this.storageService.uploadFile(bucketName, file, folder)
       )
+
       const urls = await Promise.all(uploadPromises)
 
-      //uploading the data to mongodb
+      // ✅ Save uploaded document details in MongoDB
       await this._uploadVendorDocsUsecase.execute(userId, files, urls)
 
       res.status(200).json({
@@ -92,7 +97,7 @@ export class VendorController implements IVendorController {
         urls,
       })
     } catch (error: any) {
-      console.error('Upload failed:', error)
+      console.error('❌ Upload failed:', error)
       res
         .status(500)
         .json({ message: error.message || 'Failed to upload files' })

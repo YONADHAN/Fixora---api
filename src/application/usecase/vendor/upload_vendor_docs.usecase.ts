@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IUploadVendorDocsUseCase } from '../../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
-import { Express } from 'express'
 
 @injectable()
 export class UploadVendorDocsUseCase implements IUploadVendorDocsUseCase {
@@ -29,7 +28,16 @@ export class UploadVendorDocsUseCase implements IUploadVendorDocsUseCase {
     }))
 
     vendor.documents = [...(vendor.documents || []), ...newDocuments]
-    console.log('Vendor Documents', vendor)
+    if (!vendor.isVerified) {
+      vendor.isVerified = {
+        status: 'pending',
+        description: '',
+        reviewedBy: { adminId: null, reviewedAt: new Date() },
+      }
+    } else {
+      vendor.isVerified.status = 'pending'
+    }
+
     await this._vendorRepository.update({ userId }, vendor)
   }
 }

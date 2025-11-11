@@ -10,8 +10,9 @@ import { IOtpService } from '../../domain/serviceInterfaces/otp_service_interfac
 // import { ICloudinaryService } from '../../domain/serviceInterfaces/cloudinary_service_interface'
 import { ITokenService } from '../../domain/serviceInterfaces/token_service_interface'
 import { JWTService } from '../../interfaceAdapters/services/jwt_service'
-import { IStorageService } from '../../domain/serviceInterfaces/minio_storage_service_interface'
-import { MinioStorageService } from '../../interfaceAdapters/services/minio_storage_service'
+import { IStorageService } from '../../domain/serviceInterfaces/s3_storage_service_interface'
+
+import { S3StorageService } from '../../interfaceAdapters/services/s3_storage_service'
 //security
 import { IBcrypt } from '../security/bcrypt_interface'
 import { OtpBcrypt } from '../security/otp_bcrypt'
@@ -251,7 +252,7 @@ export class UseCaseRegistry {
       useClass: JWTService,
     })
     container.register<IStorageService>('IStorageService', {
-      useClass: MinioStorageService,
+      useClass: S3StorageService,
     })
 
     container.register<ICustomerGoogleRegistrationStrategy>(
