@@ -11,7 +11,6 @@ import { IOtpService } from '../../domain/serviceInterfaces/otp_service_interfac
 import { ITokenService } from '../../domain/serviceInterfaces/token_service_interface'
 import { JWTService } from '../../interfaceAdapters/services/jwt_service'
 import { IStorageService } from '../../domain/serviceInterfaces/s3_storage_service_interface'
-
 import { S3StorageService } from '../../interfaceAdapters/services/s3_storage_service'
 //security
 import { IBcrypt } from '../security/bcrypt_interface'
@@ -56,6 +55,8 @@ import { IGetAllVendorRequestsUseCase } from '../../domain/useCaseInterfaces/adm
 import { GetAllVendorRequestsUseCase } from '../../application/usecase/admin/verification-requests/get_all_vendor_requests_usecase'
 import { IChangeVendorVerificationStatusUseCase } from '../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
 import { ChangeVendorVerificationStatusUseCase } from '../../application/usecase/admin/verification-requests/change_vendor_verification_status_usecase'
+import { IChangeMyPasswordUseCase } from '../../domain/useCaseInterfaces/auth/change_my_password_usecase_interface'
+import { ChangeMyPasswordUseCase } from '../../application/usecase/auth/change_my_password_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -75,7 +76,10 @@ import { IChangeMyUserBlockStatusFactory } from '../../application/factories/adm
 import { ChangeMyUserBlockStatusFactory } from '../../application/factories/admin/block_status/change_my_user_block_status_factory'
 import { IGoogleRegistrationStrategyFactory } from '../../application/factories/auth/registration/google/google_registration_strategy_factory'
 import { GoogleRegistrationStrategyFactory } from '../../application/factories/auth/registration/google/google_registration_strategy_factory'
+import { IChangePasswordFactory } from '../../application/factories/auth/change_password/change_password_strategy_factory.interface'
+import { ChangePasswordFactory } from '../../application/factories/auth/change_password/change_password_strategy_factory'
 
+//Mapper Factory
 import { IUserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory'
 import { UserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory.impl'
 
@@ -134,6 +138,12 @@ import { IVendorGoogleRegistrationStrategy } from '../../application/strategies/
 import { VendorGoogleRegistrationStrategy } from '../../application/strategies/auth/registration/google/vendor_google_registration_strategy'
 import { VendorStatusCheckUsecase } from '../../application/usecase/vendor/vendor_status_check_usecase'
 import { IVendorStatusCheckUseCase } from '../../domain/useCaseInterfaces/vendor/vendor_status_check_usecase.interface'
+import { IChangeAdminPasswordStrategy } from '../../application/strategies/auth/change_password/change_admin_password_strategy.interface'
+import { ChangeAdminPasswordStrategy } from '../../application/strategies/auth/change_password/change_admin_password_strategy'
+import { IChangeVendorPasswordStrategy } from '../../application/strategies/auth/change_password/change_vendor_password_strategy.interface'
+import { ChangeVendorPasswordStrategy } from '../../application/strategies/auth/change_password/change_vendor_password_strategy'
+import { IChangeCustomerPasswordStrategy } from '../../application/strategies/auth/change_password/change_customer_password_strategy.interface'
+import { ChangeCustomerPasswordStrategy } from '../../application/strategies/auth/change_password/change_customer_password_strategy'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -213,6 +223,10 @@ export class UseCaseRegistry {
         useClass: ChangeVendorVerificationStatusUseCase,
       }
     )
+    container.register<IChangeMyPasswordUseCase>('IChangeMyPasswordUseCase', {
+      useClass: ChangeMyPasswordUseCase,
+    })
+
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -321,6 +335,10 @@ export class UseCaseRegistry {
 
     container.register<IUserMapperFactory>('IUserMapperFactory', {
       useClass: UserMapperFactory,
+    })
+
+    container.register<IChangePasswordFactory>('IChangePasswordFactory', {
+      useClass: ChangePasswordFactory,
     })
 
     //strategy
@@ -439,6 +457,27 @@ export class UseCaseRegistry {
       'IChangeMyVendorsBlockStatusStrategy',
       {
         useClass: ChangeMyVendorsBlockStatusStrategy,
+      }
+    )
+
+    container.register<IChangeAdminPasswordStrategy>(
+      'IChangeAdminPasswordStrategy',
+      {
+        useClass: ChangeAdminPasswordStrategy,
+      }
+    )
+
+    container.register<IChangeCustomerPasswordStrategy>(
+      'IChangeCustomerPasswordStrategy',
+      {
+        useClass: ChangeCustomerPasswordStrategy,
+      }
+    )
+
+    container.register<IChangeVendorPasswordStrategy>(
+      'IChangeVendorPasswordStrategy',
+      {
+        useClass: ChangeVendorPasswordStrategy,
       }
     )
 

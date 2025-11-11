@@ -10,4 +10,5 @@ export interface IAuthController {
   logout(req: Request, res: Response): Promise<void>
   handleTokenRefresh(req: Request, res: Response): Promise<void>
   authenticateWithGoogle(req: Request, res: Response): Promise<void>
+  changeMyPassword(req: Request, res: Response): Promise<void>
 }

@@ -34,6 +34,7 @@ import { IBlacklistTokenUseCase } from '../../../domain/useCaseInterfaces/auth/b
 import { IGoogleUseCase } from '../../../domain/useCaseInterfaces/auth/google_usecase.interface'
 import { IRefreshTokenUseCase } from '../../../domain/useCaseInterfaces/auth/refresh_token_usecase_interface'
 import { CustomRequest } from '../../middleware/auth_middleware'
+import { IChangeMyPasswordUseCase } from '../../../domain/useCaseInterfaces/auth/change_my_password_usecase_interface'
 @injectable()
 export class AuthController implements IAuthController {
   constructor(
@@ -58,7 +59,9 @@ export class AuthController implements IAuthController {
     @inject('IRefreshTokenUseCase')
     private _refreshTokenUseCase: IRefreshTokenUseCase,
     @inject('IGoogleUseCase')
-    private _googleLoginUseCase: IGoogleUseCase
+    private _googleLoginUseCase: IGoogleUseCase,
+    @inject('IChangeMyPasswordUseCase')
+    private _changeMyPasswordUsecase: IChangeMyPasswordUseCase
   ) {}
   // controller for sending otp to emails
   // giving email as parameter
@@ -286,6 +289,34 @@ export class AuthController implements IAuthController {
       })
     } catch (error) {
       console.error('❌ Google Auth Error:', error)
+      handleErrorResponse(req, res, error)
+    }
+  }
+  async changeMyPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const { currentPassword, newPassword, role } = req.body
+      const userId = (req as CustomRequest).user.userId
+
+      if (currentPassword.trim() === newPassword.trim()) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          message: ERROR_MESSAGES.SAME_CURR_NEW_PASSWORD,
+        })
+        return
+      }
+
+      const response = await this._changeMyPasswordUsecase.execute(
+        currentPassword,
+        newPassword,
+        userId,
+        role
+      )
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.PASSWORD_CHANGED_SUCCESSFULLY,
+      })
+    } catch (error) {
       handleErrorResponse(req, res, error)
     }
   }

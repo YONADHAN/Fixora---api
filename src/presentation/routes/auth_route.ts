@@ -1,4 +1,5 @@
 import { authController } from '../di/resolver'
+import { verifyAuth } from '../middleware/auth_middleware'
 import { BaseRoute } from './base_route'
 import { Request, Response } from 'express'
 
@@ -37,5 +38,13 @@ export class AuthRoutes extends BaseRoute {
     this.router.post('/google-auth', (req: Request, res: Response) => {
       authController.authenticateWithGoogle(req, res)
     })
+
+    this.router.post(
+      '/change-password',
+      verifyAuth,
+      (req: Request, res: Response) => {
+        authController.changeMyPassword(req, res)
+      }
+    )
   }
 }

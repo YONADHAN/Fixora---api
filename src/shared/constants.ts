@@ -56,6 +56,7 @@ export const SUCCESS_MESSAGES = {
   VENDOR_REQUESTS_FOUND: 'Requests found successfully.',
   VERIFICATION_STATUS_CHANGED:
     'Verification status of the user changed successfully.',
+  PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
 }
 
 export const ERROR_MESSAGES = {
