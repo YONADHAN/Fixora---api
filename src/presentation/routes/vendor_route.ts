@@ -65,5 +65,12 @@ export class VendorRoutes extends BaseRoute {
     this.router.get('/status', (req: Request, res: Response) => {
       vendorController.vendorVerificationDocStatusCheck(req, res)
     })
+    this.router.post(
+      '/change-password',
+
+      (req: Request, res: Response) => {
+        authController.changeMyPassword(req, res)
+      }
+    )
   }
 }

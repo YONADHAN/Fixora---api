@@ -48,5 +48,12 @@ export class CustomerRoutes extends BaseRoute {
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
       customerController.profileUpdate(req, res)
     })
+    this.router.post(
+      '/change-password',
+
+      (req: Request, res: Response) => {
+        authController.changeMyPassword(req, res)
+      }
+    )
   }
 }

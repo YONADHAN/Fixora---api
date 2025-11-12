@@ -69,5 +69,12 @@ export class AdminRoutes extends BaseRoute {
         adminController.changeMyUserBlockStatus(req, res)
       }
     )
+    this.router.post(
+      '/change-password',
+
+      (req: Request, res: Response) => {
+        authController.changeMyPassword(req, res)
+      }
+    )
   }
 }

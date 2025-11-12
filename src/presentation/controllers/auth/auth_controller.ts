@@ -294,9 +294,13 @@ export class AuthController implements IAuthController {
   }
   async changeMyPassword(req: Request, res: Response): Promise<void> {
     try {
-      const { currentPassword, newPassword, role } = req.body
+      const { currentPassword, newPassword } = req.body
       const userId = (req as CustomRequest).user.userId
-
+      const role = (req as CustomRequest).user.role
+      console.log('current', currentPassword)
+      console.log('new', newPassword)
+      console.log('userId', userId)
+      console.log('role', role)
       if (currentPassword.trim() === newPassword.trim()) {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
@@ -311,7 +315,7 @@ export class AuthController implements IAuthController {
         userId,
         role
       )
-
+      console.log('successfully changed')
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.PASSWORD_CHANGED_SUCCESSFULLY,
