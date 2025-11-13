@@ -9,6 +9,8 @@ import { ICustomerController } from '../../domain/controllerInterfaces/users/cus
 import { IAdminController } from '../../domain/controllerInterfaces/users/admin-controller.interface'
 import { AdminController } from '../controllers/admin/admin_controller'
 import { BlockMyUserMiddleware } from '../middleware/block_middleware'
+import { IServiceCategoryController } from '../../domain/controllerInterfaces/features/service/service-category-controller.interface'
+import { ServiceCategoryController } from '../controllers/service/service_category_controller'
 
 DependencyInjection.registerAll()
 
@@ -19,4 +21,6 @@ export const customerController =
   container.resolve<ICustomerController>(CustomerController)
 export const adminController =
   container.resolve<IAdminController>(AdminController)
+export const serviceCategoryController =
+  container.resolve<IServiceCategoryController>(ServiceCategoryController)
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

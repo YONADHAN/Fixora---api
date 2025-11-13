@@ -7,9 +7,7 @@ export const serviceCategorySchema = new Schema<IServiceCategoryModel>(
     name: { type: String, required: true, unique: true, trim: true },
     description: { type: String, trim: true },
     bannerImage: { type: String, trim: true },
-    icon: { type: String, trim: true },
     isActive: { type: Boolean, default: true },
-    displayOrder: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

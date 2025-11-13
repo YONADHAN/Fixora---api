@@ -15,22 +15,22 @@ export class MongoConnect {
       console.log(
         chalk.yellowBright.bold(
           '|        ' +
-            chalk.greenBright.bold('✅ Connected to MongoDB') +
+            chalk.greenBright.bold('Connected to MongoDB') +
             '         |'
         )
       )
       mongoose.connection.on('error', (error) => {
         console.error(
-          chalk.redBright.bold('❌ MongoDB connection error:\n'),
+          chalk.redBright.bold(' MongoDB connection error:\n'),
           error
         )
       })
       mongoose.connection.on('disconnected', () => {
-        console.log(chalk.magentaBright('⚠️ MongoDB disconnected'))
+        console.log(chalk.magentaBright(' MongoDB disconnected'))
       })
     } catch (error) {
       console.error(
-        chalk.bgRed.white.bold('❌ Failed to connect to MongoDB:'),
+        chalk.bgRed.white.bold(' Failed to connect to MongoDB:'),
         error
       )
       throw new Error('Database connection failed')
@@ -39,9 +39,9 @@ export class MongoConnect {
   public async disconnectDB(): Promise<void> {
     try {
       await mongoose.connection.close()
-      console.log(chalk.cyanBright.bold('🔌 MongoDB Disconnected cleanly'))
+      console.log(chalk.cyanBright.bold(' MongoDB Disconnected cleanly'))
     } catch (err) {
-      console.error(chalk.redBright('❌ Error Disconnecting MongoDB:'), err)
+      console.error(chalk.redBright(' Error Disconnecting MongoDB:'), err)
     }
   }
 }

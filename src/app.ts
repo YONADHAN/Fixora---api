@@ -29,7 +29,7 @@ async function startApp() {
       )
     })
   } catch (error) {
-    console.error(chalk.redBright.bold('❌ Failed to start server'), error)
+    console.error(chalk.redBright.bold(' Failed to start server'), error)
   }
 }
 

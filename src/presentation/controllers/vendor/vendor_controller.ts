@@ -40,34 +40,6 @@ export class VendorController implements IVendorController {
     private _uploadVendorDocsUsecase: IUploadVendorDocsUseCase
   ) {}
 
-  // async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const file = req.file
-  //     const folder = req.query.folder || 'vendor_docs'
-
-  //     if (!file) {
-  //       res.status(HTTP_STATUS.BAD_REQUEST).json({
-  //         success: false,
-  //         message: ERROR_MESSAGES.FILE_NOT_FOUND,
-  //       })
-  //       return
-  //     }
-
-  //     const result = await this._cloudinaryService.uploadDocument(
-  //       file.path,
-  //       folder as string
-  //     )
-
-  //     res.status(HTTP_STATUS.OK).json({
-  //       success: true,
-  //       message: SUCCESS_MESSAGES.FILE_UPLOAD_SUCCESS,
-  //       data: result,
-  //     })
-  //   } catch (error) {
-  //     handleErrorResponse(req, res, error)
-  //   }
-  // }
-  // interfaceAdapters/controllers/vendor_controller.ts
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
@@ -78,7 +50,7 @@ export class VendorController implements IVendorController {
         return
       }
 
-      // ✅ Use your main AWS S3 bucket and vendor folder
+      //  Use your main AWS S3 bucket and vendor folder
       const bucketName = config.storageConfig.bucket! // e.g., fixora-storage-yonadhan
       const folder = 'vendor-verification-docs' // this becomes an S3 folder
 
@@ -88,7 +60,7 @@ export class VendorController implements IVendorController {
 
       const urls = await Promise.all(uploadPromises)
 
-      // ✅ Save uploaded document details in MongoDB
+      //  Save uploaded document details in MongoDB
       await this._uploadVendorDocsUsecase.execute(userId, files, urls)
 
       res.status(200).json({
@@ -97,7 +69,7 @@ export class VendorController implements IVendorController {
         urls,
       })
     } catch (error: any) {
-      console.error('❌ Upload failed:', error)
+      console.error(' Upload failed:', error)
       res
         .status(500)
         .json({ message: error.message || 'Failed to upload files' })

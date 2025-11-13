@@ -14,8 +14,8 @@ const s3 = new S3Client({
 ;(async () => {
   try {
     const res = await s3.send(new ListBucketsCommand({}))
-    console.log('✅ Buckets:', res.Buckets)
+    console.log(' Buckets:', res.Buckets)
   } catch (err) {
-    console.error('❌ Connection failed:', err)
+    console.error(' Connection failed:', err)
   }
 })()

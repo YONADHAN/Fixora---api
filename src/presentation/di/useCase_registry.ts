@@ -57,6 +57,8 @@ import { IChangeVendorVerificationStatusUseCase } from '../../domain/useCaseInte
 import { ChangeVendorVerificationStatusUseCase } from '../../application/usecase/admin/verification-requests/change_vendor_verification_status_usecase'
 import { IChangeMyPasswordUseCase } from '../../domain/useCaseInterfaces/auth/change_my_password_usecase_interface'
 import { ChangeMyPasswordUseCase } from '../../application/usecase/auth/change_my_password_usecase'
+import { IGetAllServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/service_category_usecase.interface'
+import { GetAllServiceCategoryUseCase } from '../../application/usecase/service_category/service_category_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'

@@ -42,7 +42,7 @@ export class ChangeVendorVerificationStatusUseCase
 
       return { bucket, key }
     } catch (err) {
-      console.error('❌ Failed to extract bucket/key from S3 URL:', url, err)
+      console.error(' Failed to extract bucket/key from S3 URL:', url, err)
       return null
     }
   }
@@ -107,7 +107,7 @@ export class ChangeVendorVerificationStatusUseCase
           await this._storageService.deleteFile(parsed.bucket, parsed.key)
           console.log(`🗑️ Deleted: ${parsed.bucket}/${parsed.key}`)
         } catch (err) {
-          console.error(`❌ Failed to delete ${parsed.key}:`, err)
+          console.error(` Failed to delete ${parsed.key}:`, err)
         }
       }
 
@@ -123,7 +123,7 @@ export class ChangeVendorVerificationStatusUseCase
 
     await this._vendorRepository.update({ userId }, vendor)
 
-    console.log('✅ Vendor verification status updated successfully')
+    console.log(' Vendor verification status updated successfully')
 
     return {
       userId: vendor.userId ?? '',

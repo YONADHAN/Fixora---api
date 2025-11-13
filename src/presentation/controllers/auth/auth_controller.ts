@@ -288,7 +288,7 @@ export class AuthController implements IAuthController {
         user: user,
       })
     } catch (error) {
-      console.error('❌ Google Auth Error:', error)
+      console.error(' Google Auth Error:', error)
       handleErrorResponse(req, res, error)
     }
   }

@@ -59,7 +59,7 @@ export class S3StorageService implements IStorageService {
 
       return this.getFileUrl(bucketName, key)
     } catch (err) {
-      console.error('❌ AWS S3 Upload Error:', err)
+      console.error(' AWS S3 Upload Error:', err)
       throw new Error('Failed to upload file to S3.')
     }
   }
@@ -82,7 +82,7 @@ export class S3StorageService implements IStorageService {
       })
       await this.s3.send(command)
     } catch (err) {
-      console.error('❌ AWS S3 Delete Error:', err)
+      console.error(' AWS S3 Delete Error:', err)
       throw new Error('Failed to delete file from S3.')
     }
   }

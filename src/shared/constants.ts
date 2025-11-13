@@ -57,6 +57,15 @@ export const SUCCESS_MESSAGES = {
   VERIFICATION_STATUS_CHANGED:
     'Verification status of the user changed successfully.',
   PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
+
+  //services
+  SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
+    'Service categories found successfully.',
+  SERVICE_CATGORIES_CREATED_SUCCESSFULLY:
+    'Service categories created successfully.',
+  SERVICE_CATEGORIES_EDITED_SUCCESSFULLY:
+    'Service categories edited successfully.',
+  SERVICE_BLOCKED_SUCCESSFULLY: 'Service blocked successfully.',
 }
 
 export const ERROR_MESSAGES = {
