@@ -21,7 +21,11 @@ export class EditServiceCategoryUseCase implements IEditServiceCategoryUseCase {
     description: string,
     bannerImage?: Express.Multer.File
   ) {
-    const category = await this._serviceCategoryRepository.findOne(categoryId)
+    console.log('category id got:', categoryId)
+    const category = await this._serviceCategoryRepository.findOne({
+      serviceCategoryId: categoryId,
+    })
+
     if (!category) {
       throw new Error('Category not found')
     }
@@ -47,6 +51,9 @@ export class EditServiceCategoryUseCase implements IEditServiceCategoryUseCase {
     category.description = description
     category.bannerImage = bannerImageUrl
 
-    await this._serviceCategoryRepository.update(categoryId, category)
+    await this._serviceCategoryRepository.update(
+      { serviceCategoryId: categoryId },
+      category
+    )
   }
 }

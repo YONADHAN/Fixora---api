@@ -59,6 +59,14 @@ import { IChangeMyPasswordUseCase } from '../../domain/useCaseInterfaces/auth/ch
 import { ChangeMyPasswordUseCase } from '../../application/usecase/auth/change_my_password_usecase'
 import { IGetAllServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/service_category_usecase.interface'
 import { GetAllServiceCategoryUseCase } from '../../application/usecase/service_category/service_category_usecase'
+import { ICreateServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
+import { CreateServiceCategoryUseCase } from '../../application/usecase/service_category/create_service_category_usecase'
+import { IEditServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/edit_service_category_usecase.interface'
+import { EditServiceCategoryUseCase } from '../../application/usecase/service_category/edit_service_category_usecase'
+import { IBlockServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/block_service_category_usecase.interface'
+import { BlockServiceCategoryUseCase } from '../../application/usecase/service_category/block_service_category_usecase'
+import { IGetSingleServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/single_service_category_usecase.interface'
+import { GetSingleServiceCategoryUseCase } from '../../application/usecase/service_category/single_service_category_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -228,6 +236,41 @@ export class UseCaseRegistry {
     container.register<IChangeMyPasswordUseCase>('IChangeMyPasswordUseCase', {
       useClass: ChangeMyPasswordUseCase,
     })
+
+    container.register<ICreateServiceCategoryUseCase>(
+      'ICreateServiceCategoryUseCase',
+      {
+        useClass: CreateServiceCategoryUseCase,
+      }
+    )
+
+    container.register<IGetAllServiceCategoryUseCase>(
+      'IGetAllServiceCategoryUseCase',
+      {
+        useClass: GetAllServiceCategoryUseCase,
+      }
+    )
+
+    container.register<IEditServiceCategoryUseCase>(
+      'IEditServiceCategoryUseCase',
+      {
+        useClass: EditServiceCategoryUseCase,
+      }
+    )
+
+    container.register<IBlockServiceCategoryUseCase>(
+      'IBlockServiceCategoryUseCase',
+      {
+        useClass: BlockServiceCategoryUseCase,
+      }
+    )
+
+    container.register<IGetSingleServiceCategoryUseCase>(
+      'IGetSingleServiceCategoryUseCase',
+      {
+        useClass: GetSingleServiceCategoryUseCase,
+      }
+    )
 
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {

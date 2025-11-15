@@ -6,6 +6,7 @@ import {
   decodeToken,
   verifyAuth,
 } from '../middleware/auth_middleware'
+import { ServiceCategoryRoutes } from './service_category_route'
 export class AdminRoutes extends BaseRoute {
   constructor() {
     super()
@@ -76,5 +77,7 @@ export class AdminRoutes extends BaseRoute {
         authController.changeMyPassword(req, res)
       }
     )
+    //service-category route
+    this.router.use('/category', new ServiceCategoryRoutes().router)
   }
 }

@@ -42,3 +42,22 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     return results as unknown as T[]
   }
 }
+
+// async findAll(page: number, limit: number, search: string) {
+//   const filter = search
+//     ? { name: { $regex: search, $options: 'i' } }
+//     : {}
+
+//   const totalItems = await this.model.countDocuments(filter)
+
+//   const results = await this.model
+//     .find(filter)
+//     .skip((page - 1) * limit)
+//     .limit(limit)
+//     .lean()
+
+//   return {
+//     categories: results,
+//     totalPages: Math.ceil(totalItems / limit)
+//   }
+// }

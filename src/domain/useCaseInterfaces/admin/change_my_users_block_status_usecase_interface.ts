@@ -9,5 +9,5 @@ export interface IChangeMyUserBlockStatusUseCase {
     role: TRole
     userId: string
     status: statusTypes
-  }): Promise<any>
+  }): Promise<void>
 }

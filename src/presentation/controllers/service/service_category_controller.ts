@@ -7,6 +7,10 @@ import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces
 
 import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
 import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_category_usecase.interface'
+import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/block_service_category_usecase.interface'
+import { IGetSingleServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/single_service_category_usecase.interface'
+import { IServiceCategoryEntity } from '../../../domain/models/service_category_entity'
+import { ServiceCategoryResponseDTO } from '../../../application/dtos/admin/service_category_dto'
 
 @injectable()
 export class ServiceCategoryController implements IServiceCategoryController {
@@ -18,7 +22,9 @@ export class ServiceCategoryController implements IServiceCategoryController {
     @inject('IEditServiceCategoryUseCase')
     private _editServiceCategoryUseCase: IEditServiceCategoryUseCase,
     @inject('IBlockServiceCategoryUseCase')
-    private _blockServiceCategoryUseCase: IBlockServiceCategoryUseCase
+    private _blockServiceCategoryUseCase: IBlockServiceCategoryUseCase,
+    @inject('IGetSingleServiceCategoryUseCase')
+    private _getSingleServiceCategoryUseCase: IGetSingleServiceCategoryUseCase
   ) {}
   async getAllServiceCategories(req: Request, res: Response): Promise<void> {
     try {
@@ -39,10 +45,15 @@ export class ServiceCategoryController implements IServiceCategoryController {
       handleErrorResponse(req, res, error)
     }
   }
+
   async createServiceCategory(req: Request, res: Response): Promise<void> {
     try {
-      const { name, description, bannerImage } = req.body
-
+      const { name, description } = req.body
+      const bannerImage = req.file
+      console.log('The create service category', name, description)
+      if (bannerImage) {
+        console.log('banner image also got')
+      }
       await this._createServiceCategoryUseCase.execute({
         name,
         description,
@@ -81,10 +92,34 @@ export class ServiceCategoryController implements IServiceCategoryController {
   async blockServiceCategory(req: Request, res: Response): Promise<void> {
     try {
       const { categoryId, status } = req.body
-      await this._blockServiceCategory.execute(categoryId, status)
+      await this._blockServiceCategoryUseCase.execute(categoryId, status)
       res
         .status(HTTP_STATUS.OK)
         .json({ message: SUCCESS_MESSAGES.SERVICE_BLOCKED_SUCCESSFULLY })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getSingleServiceCategory(req: Request, res: Response): Promise<void> {
+    try {
+      const { categoryId } = req.params
+
+      const category = await this._getSingleServiceCategoryUseCase.execute({
+        categoryId,
+      })
+
+      if (!category) {
+        res
+          .status(HTTP_STATUS.NOT_FOUND)
+          .json({ success: false, message: 'Category not found' })
+        return
+      }
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        data: category,
+      })
     } catch (error) {
       handleErrorResponse(req, res, error)
     }

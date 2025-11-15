@@ -5,4 +5,5 @@ export interface IServiceCategoryController {
   createServiceCategory(req: Request, res: Response): Promise<void>
   editServiceCategory(req: Request, res: Response): Promise<void>
   blockServiceCategory(req: Request, res: Response): Promise<void>
+  getSingleServiceCategory(req: Request, res: Response): Promise<void>
 }

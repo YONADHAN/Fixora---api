@@ -16,7 +16,6 @@ export class CreateServiceCategoryUseCase
     @inject('IStorageService')
     private _storageService: IStorageService
   ) {}
-
   async execute({
     name,
     description,
@@ -24,8 +23,12 @@ export class CreateServiceCategoryUseCase
   }: {
     name: string
     description: string
-    bannerImage: Express.Multer.File
-  }): Promise<void> {
+    bannerImage?: Express.Multer.File
+  }) {
+    if (!bannerImage) {
+      throw new Error('Banner image is required')
+    }
+
     const serviceCategoryId = uuidv4()
 
     const bannerImageUrl = await this._storageService.uploadFile(
@@ -34,14 +37,12 @@ export class CreateServiceCategoryUseCase
       'service-categories'
     )
 
-    const newServiceCategory = {
+    await this._serviceCategoryRepository.save({
       serviceCategoryId,
       name,
       description,
       bannerImage: bannerImageUrl,
       isActive: true,
-    }
-
-    await this._serviceCategoryRepository.save(newServiceCategory)
+    })
   }
 }

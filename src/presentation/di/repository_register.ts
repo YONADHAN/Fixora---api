@@ -7,6 +7,8 @@ import { RefreshTokenRepository } from '../../interfaceAdapters/repositories/aut
 import { IRefreshTokenRepository } from '../../domain/repositoryInterfaces/auth/refresh_token_repository.interface'
 import { RedisTokenRepository } from '../../interfaceAdapters/repositories/redis/redis_token_repository'
 import { IRedisTokenRepository } from '../../domain/repositoryInterfaces/redis/redis_token_repository_interface'
+import { IServiceCategoryRepository } from '../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
+import { ServiceCategoryRepository } from '../../interfaceAdapters/repositories/feature/service/service_category_repository'
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -32,5 +34,12 @@ export class RepositoryRegistry {
     container.register<IRedisTokenRepository>('IRedisTokenRepository', {
       useClass: RedisTokenRepository,
     })
+
+    container.register<IServiceCategoryRepository>(
+      'IServiceCategoryRepository',
+      {
+        useClass: ServiceCategoryRepository,
+      }
+    )
   }
 }
