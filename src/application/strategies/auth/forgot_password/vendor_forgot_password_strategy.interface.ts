@@ -1,4 +1,3 @@
-import { IForgotPasswordStrategy } from './forgot_password_strategy.interface'
-
-export interface IVendorForgotPasswordStrategy
-  extends IForgotPasswordStrategy {}
+export interface IVendorForgotPasswordStrategy {
+  execute(email: string): Promise<void>
+}
