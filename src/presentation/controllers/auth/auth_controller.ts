@@ -9,7 +9,6 @@ import {
   ERROR_MESSAGES,
   HTTP_STATUS,
   SUCCESS_MESSAGES,
-  TRole,
 } from '../../../shared/constants'
 
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
@@ -156,11 +155,12 @@ export class AuthController implements IAuthController {
         accessTokenName,
         refreshTokenName
       )
-      const { password, ...userWithoutPassword } = user
+      // const { password, ...userWithoutPassword } = user
+      delete user.password
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
-        user: userWithoutPassword,
+        user,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)
@@ -309,7 +309,7 @@ export class AuthController implements IAuthController {
         return
       }
 
-      const response = await this._changeMyPasswordUsecase.execute(
+      await this._changeMyPasswordUsecase.execute(
         currentPassword,
         newPassword,
         userId,

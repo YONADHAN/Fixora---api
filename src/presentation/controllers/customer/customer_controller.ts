@@ -1,12 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
 import 'reflect-metadata'
-import {
-  ERROR_MESSAGES,
-  HTTP_STATUS,
-  SUCCESS_MESSAGES,
-  TRole,
-} from '../../../shared/constants'
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
 import { ICustomerController } from '../../../domain/controllerInterfaces/users/customer-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { clearAuthCookies } from '../../../shared/utils/cookie_helper'

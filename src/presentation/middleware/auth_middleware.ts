@@ -88,10 +88,11 @@ export const verifyAuth = async (
     }
     next()
   } catch (error) {
-    res.status(HTTP_STATUS.UNAUTHORIZED).json({
-      message: ERROR_MESSAGES.INVALID_TOKEN,
-      statuscode: HTTP_STATUS.UNAUTHORIZED,
-    })
+    if (error instanceof Error)
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: ERROR_MESSAGES.INVALID_TOKEN,
+        statuscode: HTTP_STATUS.UNAUTHORIZED,
+      })
     return
   }
 }
@@ -142,17 +143,19 @@ export const decodeToken = async (
     next()
   } catch (error) {
     // console.log('failed to decode', error)
-    const basePath = req.baseUrl.split('/')
-    const role = basePath[3]
+    if (error instanceof Error) {
+      const basePath = req.baseUrl.split('/')
+      const role = basePath[3]
 
-    if (role) {
-      const accessTokenName = `${role}_access_token`
-      const refreshTokenName = `${role}_refresh_token`
-      clearAuthCookies(res, accessTokenName, refreshTokenName)
+      if (role) {
+        const accessTokenName = `${role}_access_token`
+        const refreshTokenName = `${role}_refresh_token`
+        clearAuthCookies(res, accessTokenName, refreshTokenName)
+      }
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: ERROR_MESSAGES.INVALID_TOKEN,
+      })
     }
-    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-      message: ERROR_MESSAGES.INVALID_TOKEN,
-    })
   }
 }
 

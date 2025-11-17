@@ -1,26 +1,70 @@
+// import { container } from 'tsyringe'
+// import { DependencyInjection } from './index'
+// import { IAuthController } from '../../domain/controllerInterfaces/users/auth-controller.interface'
+// import { AuthController } from '../controllers/auth/auth_controller'
+// import { IVendorController } from '../../domain/controllerInterfaces/users/vendor-controller.interface'
+// import { VendorController } from '../controllers/vendor/vendor_controller'
+// import { CustomerController } from '../controllers/customer/customer_controller'
+// import { ICustomerController } from '../../domain/controllerInterfaces/users/customer-controller.interface'
+// import { IAdminController } from '../../domain/controllerInterfaces/users/admin-controller.interface'
+// import { AdminController } from '../controllers/admin/admin_controller'
+// import { BlockMyUserMiddleware } from '../middleware/block_middleware'
+// import { IServiceCategoryController } from '../../domain/controllerInterfaces/features/service/service-category-controller.interface'
+// import { ServiceCategoryController } from '../controllers/service/service_category_controller'
+
+// DependencyInjection.registerAll()
+
+// export const authController = container.resolve<IAuthController>(AuthController)
+// export const vendorController =
+//   container.resolve<IVendorController>(VendorController)
+// export const customerController =
+//   container.resolve<ICustomerController>(CustomerController)
+// export const adminController =
+//   container.resolve<IAdminController>(AdminController)
+// export const serviceCategoryController =
+//   container.resolve<IServiceCategoryController>(ServiceCategoryController)
+// export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)
+
 import { container } from 'tsyringe'
 import { DependencyInjection } from './index'
+
+// Interfaces
 import { IAuthController } from '../../domain/controllerInterfaces/users/auth-controller.interface'
-import { AuthController } from '../controllers/auth/auth_controller'
 import { IVendorController } from '../../domain/controllerInterfaces/users/vendor-controller.interface'
-import { VendorController } from '../controllers/vendor/vendor_controller'
-import { CustomerController } from '../controllers/customer/customer_controller'
 import { ICustomerController } from '../../domain/controllerInterfaces/users/customer-controller.interface'
 import { IAdminController } from '../../domain/controllerInterfaces/users/admin-controller.interface'
-import { AdminController } from '../controllers/admin/admin_controller'
-import { BlockMyUserMiddleware } from '../middleware/block_middleware'
 import { IServiceCategoryController } from '../../domain/controllerInterfaces/features/service/service-category-controller.interface'
+import { IBlockMyUserMiddleware } from '../middleware/block_middleware'
+
+// Implementations
+import { AuthController } from '../controllers/auth/auth_controller'
+import { VendorController } from '../controllers/vendor/vendor_controller'
+import { CustomerController } from '../controllers/customer/customer_controller'
+import { AdminController } from '../controllers/admin/admin_controller'
 import { ServiceCategoryController } from '../controllers/service/service_category_controller'
 
+// Middleware
+import { BlockMyUserMiddleware } from '../middleware/block_middleware'
+
+// Register all dependencies first
 DependencyInjection.registerAll()
 
-export const authController = container.resolve<IAuthController>(AuthController)
-export const vendorController =
-  container.resolve<IVendorController>(VendorController)
-export const customerController =
-  container.resolve<ICustomerController>(CustomerController)
-export const adminController =
-  container.resolve<IAdminController>(AdminController)
-export const serviceCategoryController =
-  container.resolve<IServiceCategoryController>(ServiceCategoryController)
-export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)
+// Only register interfaces to implementations
+container.register<IAuthController>('IAuthController', {
+  useClass: AuthController,
+})
+container.register<IVendorController>('IVendorController', {
+  useClass: VendorController,
+})
+container.register<ICustomerController>('ICustomerController', {
+  useClass: CustomerController,
+})
+container.register<IAdminController>('IAdminController', {
+  useClass: AdminController,
+})
+container.register<IServiceCategoryController>('IServiceCategoryController', {
+  useClass: ServiceCategoryController,
+})
+container.register<IBlockMyUserMiddleware>('IBlockMyUserMiddleware', {
+  useClass: BlockMyUserMiddleware,
+})

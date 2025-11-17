@@ -1,8 +1,6 @@
-import {
-  authController,
-  customerController,
-  blockMyUserMiddleware,
-} from '../di/resolver'
+import { IAuthController } from 'domain/controllerInterfaces/users/auth-controller.interface'
+import { ICustomerController } from 'domain/controllerInterfaces/users/customer-controller.interface'
+import { IBlockMyUserMiddleware } from 'presentation/middleware/block_middleware'
 import {
   authorizeRole,
   decodeToken,
@@ -13,7 +11,11 @@ import { Request, Response } from 'express'
 import { CustomRequestHandler } from '../../shared/types/custom_request'
 
 export class CustomerRoutes extends BaseRoute {
-  constructor() {
+  constructor(
+    private authController: IAuthController,
+    private customerController: ICustomerController,
+    private blockMyUserMiddleware: IBlockMyUserMiddleware
+  ) {
     super()
   }
 
@@ -23,36 +25,36 @@ export class CustomerRoutes extends BaseRoute {
       '/refresh-token',
       decodeToken,
       (req: Request, res: Response) => {
-        authController.handleTokenRefresh(req, res)
+        this.authController.handleTokenRefresh(req, res)
       }
     )
 
     //  Global middlewares for all authenticated customer routes
     this.router.use(
       verifyAuth as CustomRequestHandler,
-      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      this.blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       authorizeRole(['customer'])
     )
 
     //  Logout
     this.router.post('/logout', (req: Request, res: Response) => {
-      customerController.logout(req, res)
+      this.customerController.logout(req, res)
     })
 
     //  Get profile
     this.router.get('/profile-info', (req: Request, res: Response) => {
-      customerController.profileInfo(req, res)
+      this.customerController.profileInfo(req, res)
     })
 
     //  Update profile
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
-      customerController.profileUpdate(req, res)
+      this.customerController.profileUpdate(req, res)
     })
     this.router.post(
       '/change-password',
 
       (req: Request, res: Response) => {
-        authController.changeMyPassword(req, res)
+        this.authController.changeMyPassword(req, res)
       }
     )
   }

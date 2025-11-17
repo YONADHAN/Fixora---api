@@ -1,11 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
-// import { ICloudinaryService } from '../../../domain/serviceInterfaces/cloudinary_service_interface'
-import {
-  HTTP_STATUS,
-  SUCCESS_MESSAGES,
-  ERROR_MESSAGES,
-} from '../../../shared/constants'
+
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { clearAuthCookies } from '../../../shared/utils/cookie_helper'
@@ -133,9 +129,8 @@ export class VendorController implements IVendorController {
   ): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
-      const response = await this._vendorVerificationDocStatusCheck.execute(
-        userId
-      )
+      const response =
+        await this._vendorVerificationDocStatusCheck.execute(userId)
 
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.OPERATION_SUCCESS,

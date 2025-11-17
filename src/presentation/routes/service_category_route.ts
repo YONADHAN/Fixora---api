@@ -1,15 +1,11 @@
-import { Request, Response } from 'express'
 import { CustomRequestHandler } from '../../shared/types/custom_request'
-import {
-  blockMyUserMiddleware,
-  serviceCategoryController,
-} from '../di/resolver'
+import { IServiceCategoryController } from 'domain/controllerInterfaces/features/service/service-category-controller.interface'
 import { authorizeRole, verifyAuth } from '../middleware/auth_middleware'
 import { BaseRoute } from './base_route'
 import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
 export class ServiceCategoryRoutes extends BaseRoute {
-  constructor() {
+  constructor(private serviceCategoryController: IServiceCategoryController) {
     super()
   }
 
@@ -25,15 +21,17 @@ export class ServiceCategoryRoutes extends BaseRoute {
     this.router
       .route('/')
       .get((req, res) =>
-        serviceCategoryController.getAllServiceCategories(req, res)
+        this.serviceCategoryController.getAllServiceCategories(req, res)
       )
       .post(
         handleMulterError(upload.single('ServiceCategoryBannerImage')),
-        (req, res) => serviceCategoryController.createServiceCategory(req, res)
+        (req, res) =>
+          this.serviceCategoryController.createServiceCategory(req, res)
       )
       .patch(
         handleMulterError(upload.single('ServiceCategoryBannerImage')),
-        (req, res) => serviceCategoryController.editServiceCategory(req, res)
+        (req, res) =>
+          this.serviceCategoryController.editServiceCategory(req, res)
       )
 
     /* -----------------------------
@@ -42,14 +40,14 @@ export class ServiceCategoryRoutes extends BaseRoute {
     this.router
       .route('/:categoryId')
       .get((req, res) =>
-        serviceCategoryController.getSingleServiceCategory(req, res)
+        this.serviceCategoryController.getSingleServiceCategory(req, res)
       )
 
     /* -----------------------------
        BLOCK / UNBLOCK
     ------------------------------ */
     this.router.patch('/block', (req, res) =>
-      serviceCategoryController.blockServiceCategory(req, res)
+      this.serviceCategoryController.blockServiceCategory(req, res)
     )
   }
 }

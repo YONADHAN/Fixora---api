@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/app.ts",
+    "dev": "nodemon --watch src --exec \"npm run build && node dist/app.js\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc",
@@ -26,6 +26,7 @@
     "google-auth-library": "^10.4.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mongoose": "^8.19.1",
     "morgan": "^1.10.1",
     "ms": "^2.1.3",
@@ -38,8 +39,17 @@
     "winston": "^3.18.3",
     "zod": "^4.1.12"
   },
+  "_moduleAliases": {
+    "domain": "dist/domain",
+    "presentation": "dist/presentation",
+    "application": "dist/application",
+    "interfaceAdapters": "dist/interfaceAdapters",
+    "shared": "dist/shared"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@swc/core": "^1.15.2",
+    "@swc/helpers": "^0.5.17",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",

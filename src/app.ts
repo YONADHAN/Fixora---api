@@ -1,4 +1,6 @@
 import 'reflect-metadata'
+import './presentation/di/resolver'
+import 'module-alias/register'
 import { ExpressServer } from './presentation/http/server'
 import { createServer } from 'http'
 import { config } from './shared/config'
@@ -19,7 +21,7 @@ async function startApp() {
     httpServer.listen(config.server.PORT, () => {
       console.log(
         chalk.yellowBright.bold(
-          `🚀 Server running at ${chalk.blueBright(
+          ` Server running at ${chalk.blueBright(
             `http://localhost:${config.server.PORT}`
           )}`
         )

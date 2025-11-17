@@ -1,5 +1,3 @@
-import { UpdateResult } from 'mongoose'
-
 export interface IBaseRepository<T> {
   findOne(filter: any): Promise<T | null>
   save(data: Partial<T>): Promise<T>

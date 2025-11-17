@@ -1,49 +1,46 @@
-import { authController } from '../di/resolver'
 import { verifyAuth } from '../middleware/auth_middleware'
 import { BaseRoute } from './base_route'
 import { Request, Response } from 'express'
-
+import { IAuthController } from 'domain/controllerInterfaces/users/auth-controller.interface'
 export class AuthRoutes extends BaseRoute {
-  constructor() {
+  constructor(private authController: IAuthController) {
     super()
   }
 
   protected initializeRoutes(): void {
     this.router.post('/send-otp', (req: Request, res: Response) => {
-      authController.sendOtpEmail(req, res)
+      this.authController.sendOtpEmail(req, res)
     })
     this.router.post('/verify-otp', (req: Request, res: Response) => {
-      authController.verifyOtp(req, res)
+      this.authController.verifyOtp(req, res)
     })
     this.router.post('/signup', (req: Request, res: Response) => {
-      authController.register(req, res)
+      this.authController.register(req, res)
     })
 
     this.router.post('/signin', (req: Request, res: Response) => {
-      authController.login(req, res)
+      this.authController.login(req, res)
     })
 
     this.router.post('/forgot-password', (req: Request, res: Response) => {
-      authController.forgotPassword(req, res)
+      this.authController.forgotPassword(req, res)
     })
     this.router.post('/reset-password', (req: Request, res: Response) => {
-      authController.resetPassword(req, res)
+      this.authController.resetPassword(req, res)
     })
     this.router.post('/logout', (req: Request, res: Response) => {
-      authController.logout(req, res)
+      this.authController.logout(req, res)
     })
-    this.router.post('/refresh-token', (req: Request, res: Response) => {
-      authController.handleTokenRefresh
-    })
+
     this.router.post('/google-auth', (req: Request, res: Response) => {
-      authController.authenticateWithGoogle(req, res)
+      this.authController.authenticateWithGoogle(req, res)
     })
 
     this.router.post(
       '/change-password',
       verifyAuth,
       (req: Request, res: Response) => {
-        authController.changeMyPassword(req, res)
+        this.authController.changeMyPassword(req, res)
       }
     )
   }

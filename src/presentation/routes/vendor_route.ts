@@ -1,8 +1,6 @@
-import {
-  authController,
-  blockMyUserMiddleware,
-  vendorController,
-} from '../di/resolver'
+import { IAuthController } from 'domain/controllerInterfaces/users/auth-controller.interface'
+import { IVendorController } from 'domain/controllerInterfaces/users/vendor-controller.interface'
+import { IBlockMyUserMiddleware } from 'presentation/middleware/block_middleware'
 import {
   authorizeRole,
   decodeToken,
@@ -10,13 +8,17 @@ import {
 } from '../middleware/auth_middleware'
 import { BaseRoute } from './base_route'
 import { Request, Response } from 'express'
-import multer from 'multer'
+
 import { CustomRequestHandler } from '../../shared/types/custom_request'
 import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
 
 export class VendorRoutes extends BaseRoute {
-  constructor() {
+  constructor(
+    private authController: IAuthController,
+    private vendorController: IVendorController,
+    private blockMyUserMiddleware: IBlockMyUserMiddleware
+  ) {
     super()
   }
 
@@ -26,20 +28,20 @@ export class VendorRoutes extends BaseRoute {
       '/refresh-token',
       decodeToken,
       (req: Request, res: Response) => {
-        authController.handleTokenRefresh(req, res)
+        this.authController.handleTokenRefresh(req, res)
       }
     )
 
     //  Global middlewares for all authenticated vendor routes
     this.router.use(
       verifyAuth as CustomRequestHandler,
-      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      this.blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       authorizeRole(['vendor'])
     )
 
     //logout
     this.router.post('/logout', (req: Request, res: Response) => {
-      vendorController.logout(req, res)
+      this.vendorController.logout(req, res)
     })
 
     // Post Verification Document
@@ -47,29 +49,29 @@ export class VendorRoutes extends BaseRoute {
       '/upload_verification_document',
       handleMulterError(upload.array('files', 3)),
       (req: Request, res: Response) => {
-        vendorController.uploadVerificationDocument(req, res)
+        this.vendorController.uploadVerificationDocument(req, res)
       }
     )
 
     // Get Profile
     this.router.get('/profile-info', (req: Request, res: Response) => {
-      vendorController.profileInfo(req, res)
+      this.vendorController.profileInfo(req, res)
     })
 
     // Update Profile
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
-      vendorController.profileUpdate(req, res)
+      this.vendorController.profileUpdate(req, res)
     })
 
     //Get Status
     this.router.get('/status', (req: Request, res: Response) => {
-      vendorController.vendorVerificationDocStatusCheck(req, res)
+      this.vendorController.vendorVerificationDocStatusCheck(req, res)
     })
     this.router.post(
       '/change-password',
 
       (req: Request, res: Response) => {
-        authController.changeMyPassword(req, res)
+        this.authController.changeMyPassword(req, res)
       }
     )
   }

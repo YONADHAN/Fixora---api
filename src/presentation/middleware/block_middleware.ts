@@ -103,10 +103,11 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
 
       next()
     } catch (error) {
-      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: ERROR_MESSAGES.SERVER_ERROR,
-      })
+      if (error instanceof Error)
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: ERROR_MESSAGES.SERVER_ERROR,
+        })
     }
   }
 }
