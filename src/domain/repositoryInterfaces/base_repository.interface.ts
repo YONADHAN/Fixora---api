@@ -6,4 +6,9 @@ export interface IBaseRepository<T> {
   delete(filter: any): Promise<T | null>
   update(filter: any, updateData: Partial<T>): Promise<T>
   findAll(page: number, limit: number, search?: string): Promise<T[]>
+  findAllDocuments(
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<{ data: T[]; totalPages: number }>
 }

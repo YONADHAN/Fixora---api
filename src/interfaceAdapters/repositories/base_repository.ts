@@ -41,6 +41,32 @@ export class BaseRepository<T> implements IBaseRepository<T> {
 
     return results as unknown as T[]
   }
+
+  async findAllDocuments(
+    page: number,
+    limit: number,
+    search: string = ''
+  ): Promise<{ data: T[]; totalPages: number }> {
+    const filter: FilterQuery<T> = search
+      ? ({
+          name: { $regex: search, $options: 'i' },
+        } as FilterQuery<T>)
+      : {}
+
+    const totalItems = await this.model.countDocuments(filter)
+
+    const results = await this.model
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean()
+
+    return {
+      data: results as T[],
+      totalPages: Math.ceil(totalItems / limit),
+    }
+  }
 }
 
 // async findAll(page: number, limit: number, search: string) {
