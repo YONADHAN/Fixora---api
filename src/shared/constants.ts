@@ -15,7 +15,7 @@ export const HTTP_STATUS = {
   CREATED: 201,
   ACCEPTED: 202,
   NO_CONTENT: 204,
-
+  GONE: 410,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
@@ -88,6 +88,7 @@ export const ERROR_MESSAGES = {
   UNAUTHORIZED_ACCESS: 'Unathorized access', //-----------------
   BLOCKED: 'Your account has been blocked.', //----------------
   INVALID_CREDENTIALS: 'Wrong email or password',
+  WRONG_PASSWORD: 'Password is wrong.',
   INVALID_OTP: 'Invalid or expired otp',
   USER_NOT_FOUND: 'User not found',
   INVALID_TOKEN: 'Invalid session please login again',

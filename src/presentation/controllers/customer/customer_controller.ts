@@ -15,6 +15,9 @@ import { IBlacklistTokenUseCase } from '../../../domain/useCaseInterfaces/auth/b
 import { IRevokeRefreshTokenUseCase } from '../../../domain/useCaseInterfaces/auth/revoke_refresh_token_usecase'
 import { IGetProfileInfoUseCase } from '../../../domain/useCaseInterfaces/common/get_profile_info_usecase_interface'
 import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/common/profile_info_update_usecase_interface'
+import { config } from '../../../shared/config'
+import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
+import { IProfileImageUploadFactory } from '../../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
 @injectable()
 export class CustomerController implements ICustomerController {
   constructor(
@@ -25,7 +28,11 @@ export class CustomerController implements ICustomerController {
     @inject('IGetProfileInfoUseCase')
     private _getProfileInfoUseCase: IGetProfileInfoUseCase,
     @inject('IProfileInfoUpdateUseCase')
-    private _profileInfoUpdateUseCase: IProfileInfoUpdateUseCase
+    private _profileInfoUpdateUseCase: IProfileInfoUpdateUseCase,
+    @inject('IStorageService')
+    private storageService: IStorageService,
+    @inject('IProfileImageUploadFactory')
+    private _profileImageUploadFactory: IProfileImageUploadFactory
   ) {}
 
   async logout(req: Request, res: Response): Promise<void> {
@@ -73,6 +80,41 @@ export class CustomerController implements ICustomerController {
       await this._profileInfoUpdateUseCase.execute(role, data, userId)
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.PROFILE_UPDATED_SUCCESSFULLY,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async uploadProfileImage(req: Request, res: Response): Promise<void> {
+    try {
+      const customerId = (req as CustomRequest).user.id
+      const file = req.file as Express.Multer.File
+
+      if (!file) {
+        res.status(400).json({ message: 'No file uploaded' })
+        return
+      }
+
+      const bucketName = config.storageConfig.bucket!
+      const folder = 'profile-images'
+
+      const uploadedProfileImageUrl = await this.storageService.uploadFile(
+        bucketName,
+        file,
+        folder
+      )
+
+      await this._profileImageUploadFactory.execute(
+        'customer',
+        customerId,
+        uploadedProfileImageUrl
+      )
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile image updated successfully',
+        imageUrl: uploadedProfileImageUrl,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

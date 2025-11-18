@@ -60,6 +60,14 @@ export class VendorRoutes extends BaseRoute {
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
       vendorController.profileUpdate(req, res)
     })
+    // Upload Profile Image
+    this.router.post(
+      '/avatar',
+      handleMulterError(upload.single('profileImage')),
+      (req: Request, res: Response) => {
+        vendorController.uploadProfileImage(req, res)
+      }
+    )
 
     //Get Status
     this.router.get('/status', (req: Request, res: Response) => {

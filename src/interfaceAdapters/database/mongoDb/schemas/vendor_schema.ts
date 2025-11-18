@@ -12,7 +12,7 @@ export const vendorSchema = new Schema<IVendorModel>(
     role: { type: String, default: 'vendor' },
     googleId: { type: String },
     status: { type: String, default: 'pending' },
-
+    profileImage: { type: String },
     geoLocation: {
       type: {
         type: String,

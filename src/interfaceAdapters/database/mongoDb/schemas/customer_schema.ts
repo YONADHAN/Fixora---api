@@ -15,6 +15,7 @@ export const customerSchema = new Schema<ICustomerModel>(
       default: 'active',
     },
     googleId: { type: String },
+    profileImage: { type: String },
     geoLocation: {
       type: {
         type: String,

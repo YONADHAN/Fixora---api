@@ -4,5 +4,7 @@ export class CustomError extends Error {
     super(message)
     this.name = 'CustomError'
     this.statusCode = statusCode || 500
+
+    Object.setPrototypeOf(this, CustomError.prototype)
   }
 }

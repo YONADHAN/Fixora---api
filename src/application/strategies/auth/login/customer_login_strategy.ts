@@ -18,6 +18,14 @@ export class CustomerLoginStrategy implements ICustomerLoginStrategy {
 
   async login(user: LoginUserDTO) {
     const { email, password } = user
+
+    if (!password?.trim() || !email?.trim()) {
+      throw new CustomError(
+        ERROR_MESSAGES.INVALID_CREDENTIALS,
+        HTTP_STATUS.BAD_REQUEST
+      )
+    }
+
     const customer = await this._customerRepository.findOne({ email })
 
     if (!customer)
@@ -26,13 +34,6 @@ export class CustomerLoginStrategy implements ICustomerLoginStrategy {
         HTTP_STATUS.NOT_FOUND
       )
 
-    if (!password) {
-      throw new CustomError(
-        ERROR_MESSAGES.INVALID_CREDENTIALS,
-        HTTP_STATUS.BAD_REQUEST
-      )
-    }
-
     const isPasswordValid = await this._passwordBcrypt.compare(
       password,
       customer.password
@@ -40,7 +41,7 @@ export class CustomerLoginStrategy implements ICustomerLoginStrategy {
 
     if (!isPasswordValid)
       throw new CustomError(
-        ERROR_MESSAGES.INVALID_CREDENTIALS,
+        ERROR_MESSAGES.WRONG_PASSWORD,
         HTTP_STATUS.FORBIDDEN
       )
 

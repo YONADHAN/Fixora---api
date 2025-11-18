@@ -2,6 +2,7 @@ import { IUserEntity } from './user_entity'
 import { verificationTypes } from '../../shared/constants'
 export interface IVendorEntity extends IUserEntity {
   googleId?: string
+  profileImage?: string
   geoLocation?: {
     type?: 'Point'
     coordinates?: number[]

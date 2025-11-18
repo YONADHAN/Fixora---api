@@ -88,7 +88,8 @@ import { IGoogleRegistrationStrategyFactory } from '../../application/factories/
 import { GoogleRegistrationStrategyFactory } from '../../application/factories/auth/registration/google/google_registration_strategy_factory'
 import { IChangePasswordFactory } from '../../application/factories/auth/change_password/change_password_strategy_factory.interface'
 import { ChangePasswordFactory } from '../../application/factories/auth/change_password/change_password_strategy_factory'
-
+import { IProfileImageUploadFactory } from '../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
+import { ProfileImageUploadFactory } from '../../application/factories/commonFeatures/profile/profile_image_upload_factory'
 //Mapper Factory
 import { IUserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory'
 import { UserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory.impl'
@@ -155,6 +156,10 @@ import { ChangeVendorPasswordStrategy } from '../../application/strategies/auth/
 import { IChangeCustomerPasswordStrategy } from '../../application/strategies/auth/change_password/change_customer_password_strategy.interface'
 import { ChangeCustomerPasswordStrategy } from '../../application/strategies/auth/change_password/change_customer_password_strategy'
 
+import { ICustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy.interface'
+import { CustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy'
+import { IVendorProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy.interface'
+import { VendorProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -386,6 +391,12 @@ export class UseCaseRegistry {
       useClass: ChangePasswordFactory,
     })
 
+    container.register<IProfileImageUploadFactory>(
+      'IProfileImageUploadFactory',
+      {
+        useClass: ProfileImageUploadFactory,
+      }
+    )
     //strategy
     container.register<ICustomerRegistrationStrategy>(
       'ICustomerRegistrationStrategy',
@@ -523,6 +534,19 @@ export class UseCaseRegistry {
       'IChangeVendorPasswordStrategy',
       {
         useClass: ChangeVendorPasswordStrategy,
+      }
+    )
+
+    container.register<ICustomerProfileImageUploadStrategy>(
+      'ICustomerProfileImageUploadStrategy',
+      {
+        useClass: CustomerProfileImageUploadStrategy,
+      }
+    )
+    container.register<IVendorProfileImageUploadStrategy>(
+      'IVendorProfileImageUploadStrategy',
+      {
+        useClass: VendorProfileImageUploadStrategy,
       }
     )
 

@@ -1,11 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
-// import { ICloudinaryService } from '../../../domain/serviceInterfaces/cloudinary_service_interface'
-import {
-  HTTP_STATUS,
-  SUCCESS_MESSAGES,
-  ERROR_MESSAGES,
-} from '../../../shared/constants'
+
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { clearAuthCookies } from '../../../shared/utils/cookie_helper'
@@ -17,13 +13,12 @@ import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/com
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { IVendorStatusCheckUseCase } from '../../../domain/useCaseInterfaces/vendor/vendor_status_check_usecase.interface'
 import { IUploadVendorDocsUseCase } from '../../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
+import { IProfileImageUploadFactory } from '../../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
 import { config } from '../../../shared/config'
 
 @injectable()
 export class VendorController implements IVendorController {
   constructor(
-    // @inject('ICloudinaryService')
-    // private _cloudinaryService: ICloudinaryService,
     @inject('IBlacklistTokenUseCase')
     private _blacklistTokenUseCase: IBlacklistTokenUseCase,
     @inject('IRevokeRefreshTokenUseCase')
@@ -37,7 +32,9 @@ export class VendorController implements IVendorController {
     @inject('IVendorStatusCheckUseCase')
     private _vendorVerificationDocStatusCheck: IVendorStatusCheckUseCase,
     @inject('IUploadVendorDocsUseCase')
-    private _uploadVendorDocsUsecase: IUploadVendorDocsUseCase
+    private _uploadVendorDocsUsecase: IUploadVendorDocsUseCase,
+    @inject('IProfileImageUploadFactory')
+    private _profileImageUploadFactory: IProfileImageUploadFactory
   ) {}
 
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
@@ -50,9 +47,8 @@ export class VendorController implements IVendorController {
         return
       }
 
-      //  Use your main AWS S3 bucket and vendor folder
-      const bucketName = config.storageConfig.bucket! // e.g., fixora-storage-yonadhan
-      const folder = 'vendor-verification-docs' // this becomes an S3 folder
+      const bucketName = config.storageConfig.bucket!
+      const folder = 'vendor-verification-docs'
 
       const uploadPromises = files.map((file) =>
         this.storageService.uploadFile(bucketName, file, folder)
@@ -60,7 +56,6 @@ export class VendorController implements IVendorController {
 
       const urls = await Promise.all(uploadPromises)
 
-      //  Save uploaded document details in MongoDB
       await this._uploadVendorDocsUsecase.execute(userId, files, urls)
 
       res.status(200).json({
@@ -127,15 +122,51 @@ export class VendorController implements IVendorController {
     }
   }
 
+  async uploadProfileImage(req: Request, res: Response): Promise<void> {
+    try {
+      const vendorId = (req as CustomRequest).user.id
+      const file = req.file as Express.Multer.File
+
+      if (!file) {
+        res.status(400).json({ message: 'No file uploaded' })
+        return
+      }
+
+      const fileName = file.filename
+      const bucketName = config.storageConfig.bucket!
+      const folder = 'profile-images'
+
+      // FIX: add await here
+      const uploadedProfileImageUrl = await this.storageService.uploadFile(
+        bucketName,
+        file,
+        folder
+      )
+
+      await this._profileImageUploadFactory.execute(
+        'vendor',
+        vendorId,
+        uploadedProfileImageUrl
+      )
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile image updated successfully',
+        imageUrl: uploadedProfileImageUrl,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
   async vendorVerificationDocStatusCheck(
     req: Request,
     res: Response
   ): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
-      const response = await this._vendorVerificationDocStatusCheck.execute(
-        userId
-      )
+      const response =
+        await this._vendorVerificationDocStatusCheck.execute(userId)
 
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.OPERATION_SUCCESS,

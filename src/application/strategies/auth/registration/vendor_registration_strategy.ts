@@ -8,6 +8,9 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { generateUniqueId } from '../../../../shared/utils/unique_uuid.helper'
 import { IVendorRegistrationStrategy } from './vendor_registration_strategy.interface'
+import { RegistrationSchema } from '../../../../shared/validations/features/registration_validation'
+import { passwordSchema } from '../../../../shared/validations/password_validation'
+import { strongEmailRegex } from '../../../../shared/validations/email_validation'
 
 @injectable()
 export class VendorRegistrationStrategy implements IVendorRegistrationStrategy {
@@ -23,11 +26,12 @@ export class VendorRegistrationStrategy implements IVendorRegistrationStrategy {
   ) {}
 
   async register(user: UserDTO): Promise<IVendorEntity> {
-    const { email, password } = user
+    //const { email, password } = RegistrationSchema.parse(user)
+    const password = passwordSchema.parse(user.password)
+    const email = strongEmailRegex.parse(user.email)
     const normalizedEmail = email.toLowerCase()
-    const isEmailExisting = await this._userExistenceService.emailExists(
-      normalizedEmail
-    )
+    const isEmailExisting =
+      await this._userExistenceService.emailExists(normalizedEmail)
     if (isEmailExisting) {
       throw new CustomError(ERROR_MESSAGES.EMAIL_EXISTS, HTTP_STATUS.CONFLICT)
     }

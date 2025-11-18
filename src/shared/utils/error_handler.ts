@@ -18,7 +18,7 @@ export const handleErrorResponse = (
   if (error instanceof ZodError) {
     return res.status(HTTP_STATUS.BAD_REQUEST).json({
       success: false,
-      message: ERROR_MESSAGES.VALIDATION_ERROR,
+      message: error.issues[0].message,
     })
   }
 

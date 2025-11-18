@@ -15,7 +15,18 @@ export class AdminLoginStrategy implements IAdminLoginStrategy {
 
   async login(user: LoginUserDTO) {
     const { email, password } = user
-
+    if (!password) {
+      throw new CustomError(
+        ERROR_MESSAGES.INVALID_CREDENTIALS,
+        HTTP_STATUS.BAD_REQUEST
+      )
+    }
+    if (!email) {
+      throw new CustomError(
+        ERROR_MESSAGES.INVALID_CREDENTIALS,
+        HTTP_STATUS.BAD_REQUEST
+      )
+    }
     const admin = await this._adminRepository.findOne({ email })
 
     if (!admin)
@@ -23,12 +34,6 @@ export class AdminLoginStrategy implements IAdminLoginStrategy {
         ERROR_MESSAGES.USER_NOT_FOUND,
         HTTP_STATUS.NOT_FOUND
       )
-    if (!password) {
-      throw new CustomError(
-        ERROR_MESSAGES.INVALID_CREDENTIALS,
-        HTTP_STATUS.BAD_REQUEST
-      )
-    }
 
     const isPasswordValid = await this._passwordBcrypt.compare(
       password,

@@ -3,6 +3,8 @@ import { inject, injectable } from 'tsyringe'
 import { IOtpRepository } from '../../domain/repositoryInterfaces/auth/otp_repository.interface'
 import { IBcrypt } from '../../presentation/security/bcrypt_interface'
 import { IOtpService } from '../../domain/serviceInterfaces/otp_service_interface'
+import { CustomError } from '../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../shared/constants'
 
 @injectable()
 export class OtpService implements IOtpService {
@@ -24,14 +26,24 @@ export class OtpService implements IOtpService {
 
   async verifyOtp(email: string, otp: string): Promise<boolean> {
     const otpEntry = await this._otpRepository.findLatestOtp(email)
-    if (!otpEntry) return false
-    if (
-      new Date() > otpEntry.expiresAt ||
-      !(await this._otpBcrypt.compare(otp, otpEntry.otp))
-    ) {
-      return false
+
+    if (!otpEntry) {
+      throw new CustomError('Invalid OTP', 400)
     }
+
+    if (new Date() > otpEntry.expiresAt) {
+      throw new CustomError('OTP Expired, Please retry.', 410)
+    }
+
+    if (!(await this._otpBcrypt.compare(otp, otpEntry.otp))) {
+      throw new CustomError(
+        'OTP is not matching, Enter correct OTP',
+        HTTP_STATUS.BAD_REQUEST
+      )
+    }
+
     await this._otpRepository.delete({ email })
+
     return true
   }
 }

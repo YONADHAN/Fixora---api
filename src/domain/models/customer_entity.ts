@@ -2,6 +2,7 @@ import { IUserEntity } from './user_entity'
 
 export interface ICustomerEntity extends IUserEntity {
   googleId?: string
+  profileImage?: string
   geoLocation?: {
     type?: 'Point'
     coordinates?: number[]

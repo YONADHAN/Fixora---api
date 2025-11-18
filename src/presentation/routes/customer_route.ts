@@ -2,6 +2,7 @@ import {
   authController,
   customerController,
   blockMyUserMiddleware,
+  vendorController,
 } from '../di/resolver'
 import {
   authorizeRole,
@@ -11,6 +12,8 @@ import {
 import { BaseRoute } from './base_route'
 import { Request, Response } from 'express'
 import { CustomRequestHandler } from '../../shared/types/custom_request'
+import { handleMulterError } from '../middleware/multer_error_middleware'
+import { upload } from '../../interfaceAdapters/config/multer.config'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -53,6 +56,14 @@ export class CustomerRoutes extends BaseRoute {
 
       (req: Request, res: Response) => {
         authController.changeMyPassword(req, res)
+      }
+    )
+
+    this.router.post(
+      '/avatar',
+      handleMulterError(upload.single('profileImage')),
+      (req: Request, res: Response) => {
+        customerController.uploadProfileImage(req, res)
       }
     )
   }
