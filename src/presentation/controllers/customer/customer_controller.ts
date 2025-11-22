@@ -18,6 +18,7 @@ import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/com
 import { config } from '../../../shared/config'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { IProfileImageUploadFactory } from '../../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
+import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/service_category_usecase.interface'
 @injectable()
 export class CustomerController implements ICustomerController {
   constructor(
@@ -32,7 +33,9 @@ export class CustomerController implements ICustomerController {
     @inject('IStorageService')
     private storageService: IStorageService,
     @inject('IProfileImageUploadFactory')
-    private _profileImageUploadFactory: IProfileImageUploadFactory
+    private _profileImageUploadFactory: IProfileImageUploadFactory,
+    @inject('IGetAllServiceCategoryUseCase')
+    private _getAllServiceCategoryUseCase: IGetAllServiceCategoryUseCase
   ) {}
 
   async logout(req: Request, res: Response): Promise<void> {
@@ -116,6 +119,26 @@ export class CustomerController implements ICustomerController {
         message: 'Profile image updated successfully',
         imageUrl: uploadedProfileImageUrl,
       })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getServiceCategories(req: Request, res: Response) {
+    try {
+      const { page, limit, search } = req.query as {
+        page: string
+        limit: string
+        search: string
+      }
+
+      const response = await this._getAllServiceCategoryUseCase.execute({
+        page: Number(page),
+        limit: Number(limit),
+        search,
+      })
+
+      res.status(HTTP_STATUS.OK).json({ success: true, response })
     } catch (error) {
       handleErrorResponse(req, res, error)
     }

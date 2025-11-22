@@ -46,6 +46,9 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
       }
 
       const { userId, role } = req.user
+      if (role === 'admin') {
+        return next()
+      }
       const cacheKey = `user_block_status:${role}:${userId}`
 
       let status = await redisClient.get(cacheKey)

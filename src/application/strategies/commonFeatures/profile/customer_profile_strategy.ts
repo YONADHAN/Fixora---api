@@ -3,6 +3,10 @@ import { ICustomerRepository } from '../../../../domain/repositoryInterfaces/use
 import { CustomerProfileMapper } from '../../../mappers/customer/customer_profile_mapper'
 import { ERROR_MESSAGES } from '../../../../shared/constants'
 import { ICustomerProfileStrategy } from './customer_profile_strategy.interface'
+import {
+  CustomerProfileInfoDTO,
+  VendorProfileInfoDTO,
+} from '../../../dtos/user_dto'
 
 @injectable()
 export class CustomerProfileStrategy implements ICustomerProfileStrategy {
@@ -11,7 +15,16 @@ export class CustomerProfileStrategy implements ICustomerProfileStrategy {
     private _CustomerRepository: ICustomerRepository
   ) {}
 
-  async execute({ userId }: { userId: string }) {
+  // async execute({ userId }: { userId: string }) {
+  //   const data = await this._CustomerRepository.findOne({ userId })
+  //   if (!data) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND)
+  //   return CustomerProfileMapper.toDTO(data)
+  // }
+
+  async execute(params: {
+    userId: string
+  }): Promise<CustomerProfileInfoDTO | VendorProfileInfoDTO> {
+    const { userId } = params
     const data = await this._CustomerRepository.findOne({ userId })
     if (!data) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND)
     return CustomerProfileMapper.toDTO(data)

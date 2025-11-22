@@ -9,7 +9,7 @@ import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces
 import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_category_usecase.interface'
 import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/block_service_category_usecase.interface'
 import { IGetSingleServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/single_service_category_usecase.interface'
-import { IServiceCategoryEntity } from '../../../domain/models/service_category_entity'
+
 import { ServiceCategoryResponseDTO } from '../../../application/dtos/admin/service_category_dto'
 
 @injectable()

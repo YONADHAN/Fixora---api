@@ -3,6 +3,7 @@ import { inject, injectable } from 'tsyringe'
 import { IGetProfileInfoUseCase } from '../../../domain/useCaseInterfaces/common/get_profile_info_usecase_interface'
 
 import { IProfileFactory } from '../../factories/commonFeatures/profile/profile_factory.interface'
+import { CustomerProfileInfoDTO } from '../../dtos/user_dto'
 @injectable()
 export class GetProfileInfoUseCase implements IGetProfileInfoUseCase {
   constructor(
@@ -10,7 +11,7 @@ export class GetProfileInfoUseCase implements IGetProfileInfoUseCase {
     private _profileFactory: IProfileFactory
   ) {}
 
-  async execute(role: string, userId: string) {
+  async execute(role: string, userId: string): Promise<CustomerProfileInfoDTO> {
     return await this._profileFactory.getProfile(role, userId)
   }
 }

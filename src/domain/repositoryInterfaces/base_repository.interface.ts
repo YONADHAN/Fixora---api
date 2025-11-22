@@ -10,5 +10,5 @@ export interface IBaseRepository<T> {
     page: number,
     limit: number,
     search?: string
-  ): Promise<{ data: T[]; totalPages: number }>
+  ): Promise<{ data: T[]; currentPage: number; totalPages: number }>
 }

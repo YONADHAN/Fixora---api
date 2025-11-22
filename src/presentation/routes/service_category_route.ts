@@ -1,9 +1,6 @@
 import { Request, Response } from 'express'
 import { CustomRequestHandler } from '../../shared/types/custom_request'
-import {
-  blockMyUserMiddleware,
-  serviceCategoryController,
-} from '../di/resolver'
+import { serviceCategoryController } from '../di/resolver'
 import { authorizeRole, verifyAuth } from '../middleware/auth_middleware'
 import { BaseRoute } from './base_route'
 import { handleMulterError } from '../middleware/multer_error_middleware'

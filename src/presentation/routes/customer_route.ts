@@ -30,6 +30,10 @@ export class CustomerRoutes extends BaseRoute {
       }
     )
 
+    this.router.get('/service_category', (req: Request, res: Response) => {
+      customerController.getServiceCategories(req, res)
+    })
+
     //  Global middlewares for all authenticated customer routes
     this.router.use(
       verifyAuth as CustomRequestHandler,

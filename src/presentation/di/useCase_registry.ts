@@ -67,6 +67,8 @@ import { IBlockServiceCategoryUseCase } from '../../domain/useCaseInterfaces/ser
 import { BlockServiceCategoryUseCase } from '../../application/usecase/service_category/block_service_category_usecase'
 import { IGetSingleServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/single_service_category_usecase.interface'
 import { GetSingleServiceCategoryUseCase } from '../../application/usecase/service_category/single_service_category_usecase'
+import { IGetActiveServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/active_service_category_usecase.interface'
+import { GetActiveServiceCategoryUseCase } from '../../application/usecase/service_category/active_service_categories_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -301,6 +303,13 @@ export class UseCaseRegistry {
       'IGetAllVendorRequestsUseCase',
       {
         useClass: GetAllVendorRequestsUseCase,
+      }
+    )
+
+    container.register<IGetActiveServiceCategoryUseCase>(
+      'IGetActiveServiceCategoryUseCase',
+      {
+        useClass: GetActiveServiceCategoryUseCase,
       }
     )
     //service

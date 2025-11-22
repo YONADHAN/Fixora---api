@@ -5,4 +5,5 @@ export interface ICustomerController {
   profileInfo(req: Request, res: Response): any
   profileUpdate(req: Request, res: Response): Promise<void>
   uploadProfileImage(req: Request, res: Response): Promise<void>
+  getServiceCategories(req: Request, res: Response): Promise<void>
 }

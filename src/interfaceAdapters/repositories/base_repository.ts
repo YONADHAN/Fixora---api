@@ -46,7 +46,7 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     page: number,
     limit: number,
     search: string = ''
-  ): Promise<{ data: T[]; totalPages: number }> {
+  ): Promise<{ data: T[]; currentPage: number; totalPages: number }> {
     const filter: FilterQuery<T> = search
       ? ({
           name: { $regex: search, $options: 'i' },
@@ -64,6 +64,7 @@ export class BaseRepository<T> implements IBaseRepository<T> {
 
     return {
       data: results as T[],
+      currentPage: page,
       totalPages: Math.ceil(totalItems / limit),
     }
   }

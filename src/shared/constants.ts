@@ -66,6 +66,17 @@ export const SUCCESS_MESSAGES = {
   SERVICE_CATEGORIES_EDITED_SUCCESSFULLY:
     'Service categories edited successfully.',
   SERVICE_BLOCKED_SUCCESSFULLY: 'Service blocked successfully.',
+  CREATED_SUB_SERVICE_CATEGORY:
+    'Successfully created the sub service category.',
+
+  //Sub Services
+  SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
+    'Sub Service Categories Found Succesfully.',
+  EDITED_SUB_SERVICE_CATEGORY: 'Edited Sub Service Category Successfully.',
+  SUB_SERVICE_CATEGORY_FETCHED_SUCCESSFULLY:
+    'Sub Service Category Fetched Successfully',
+  SUB_SERVICE_CATEGORY_STATUS_CHANGED_SUCCESSFULLY:
+    'Sub service category status changed successfully.',
 }
 
 export const ERROR_MESSAGES = {
@@ -101,6 +112,9 @@ export const ERROR_MESSAGES = {
   STATUS_ALREADY_EXISTS: 'Status already exists.',
 }
 
+export const S3_BUCKET_IMAGE_FOLDERS = {
+  SUB_SERVICE_CATEGORY_IMAGES: 'SubServiceCategoryImages',
+}
 export const VERIFICATION_MAIL_CONTENT = (otp: string) => `
 <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
   <!-- Logo and Brand -->
