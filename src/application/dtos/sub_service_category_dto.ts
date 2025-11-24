@@ -1,3 +1,5 @@
+import { statusTypes, verificationTypes } from '../../shared/constants'
+
 //create sub service category controller
 export interface RequestCreateSubServiceCategoryDTO {
   name: string
@@ -7,7 +9,7 @@ export interface RequestCreateSubServiceCategoryDTO {
   serviceCategoryName: string
   createdById: string
   createdByRole: string
-  isActive: boolean
+  isActive: statusTypes
 }
 
 export interface ResponseCreateSubServiceCategoryDTO {
@@ -32,7 +34,7 @@ export interface SubServiceCategoryItem {
   bannerImage: string
   serviceCategoryId: string
   subServiceCategoryId: string
-  isActive: boolean
+  isActive: statusTypes
 }
 export interface ResponseGetAllSubServiceCategoriesDTO {
   data: SubServiceCategoryItem[]
@@ -71,9 +73,17 @@ export interface ResponseGetSingleSubServiceCategoryDTO {
   name: string
   description: string
   bannerImage: string
-  isActive: boolean
+  isActive: statusTypes
+  verification: verificationTypes
   createdById: string
   createdByRole: string
   createdAt: Date
   updatedAt: Date
+}
+
+//toggle block status of sub service category
+
+export interface RequestToggleBlockStatusOfSubServiceCategoryDTO {
+  subServiceCategoryId: string
+  blockStatus: statusTypes
 }

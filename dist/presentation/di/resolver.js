@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blockMyUserMiddleware = exports.serviceCategoryController = exports.adminController = exports.customerController = exports.vendorController = exports.authController = void 0;
+const tsyringe_1 = require("tsyringe");
+const index_1 = require("./index");
+const auth_controller_1 = require("../controllers/auth/auth_controller");
+const vendor_controller_1 = require("../controllers/vendor/vendor_controller");
+const customer_controller_1 = require("../controllers/customer/customer_controller");
+const admin_controller_1 = require("../controllers/admin/admin_controller");
+const block_middleware_1 = require("../middleware/block_middleware");
+const service_category_controller_1 = require("../controllers/service/service_category_controller");
+index_1.DependencyInjection.registerAll();
+exports.authController = tsyringe_1.container.resolve(auth_controller_1.AuthController);
+exports.vendorController = tsyringe_1.container.resolve(vendor_controller_1.VendorController);
+exports.customerController = tsyringe_1.container.resolve(customer_controller_1.CustomerController);
+exports.adminController = tsyringe_1.container.resolve(admin_controller_1.AdminController);
+exports.serviceCategoryController = tsyringe_1.container.resolve(service_category_controller_1.ServiceCategoryController);
+exports.blockMyUserMiddleware = tsyringe_1.container.resolve(block_middleware_1.BlockMyUserMiddleware);

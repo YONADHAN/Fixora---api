@@ -1,4 +1,5 @@
 import { ISubServiceCategoryEntity } from '../../../domain/models/sub_service_category_entity'
+import { statusTypes } from '../../../shared/constants'
 
 export class CreateSubServiceCategoryRequestMapper {
   static toDTO({
@@ -17,7 +18,7 @@ export class CreateSubServiceCategoryRequestMapper {
     file: Express.Multer.File
     createdById: string
     createdByRole: string
-    isActive: boolean
+    isActive: statusTypes
   }) {
     return {
       name: body.name,

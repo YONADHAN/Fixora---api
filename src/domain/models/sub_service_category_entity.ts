@@ -1,3 +1,5 @@
+import { statusTypes, verificationTypes } from '../../shared/constants'
+
 export interface ISubServiceCategoryEntity {
   subServiceCategoryId: string
   serviceCategoryId: string
@@ -5,7 +7,8 @@ export interface ISubServiceCategoryEntity {
   name: string
   description: string
   bannerImage: string
-  isActive: boolean
+  isActive: statusTypes
+  verification: verificationTypes
   createdById: string
   createdByRole: string
   createdAt?: Date

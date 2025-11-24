@@ -19,6 +19,7 @@ export class GetSingleSubServiceCategoryResponseMapper {
       serviceCategoryName: payload.serviceCategoryName,
       bannerImage: payload.bannerImage,
       isActive: payload.isActive,
+      verification: payload.verification,
       createdById: payload.createdById,
       createdByRole: payload.createdByRole,
       createdAt: payload.createdAt ?? new Date(),

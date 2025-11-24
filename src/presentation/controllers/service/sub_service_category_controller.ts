@@ -8,10 +8,7 @@ import { CreateSubServiceCategoryRequestMapper } from '../../../application/mapp
 import { ICreateSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/create_sub_service_usecase.interface'
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { getAllSubServiceCategoriesZodValidationSchema } from '../../validations/sub_service_category/get_all_sub_service_category.schema'
-import {
-  GetAllSubServiceCategoriesRequestMapper,
-  GetAllSubServiceCategoriesResponseMapper,
-} from '../../../application/mappers/sub_service_category/get_all_sub_service_category_mapper'
+import { GetAllSubServiceCategoriesRequestMapper } from '../../../application/mappers/sub_service_category/get_all_sub_service_category_mapper'
 import { IGetAllSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_category_usecase.interface'
 import { editSubServiceCategoryZodValidationSchema } from '../../validations/sub_service_category/edit_sub_service_category.schema'
 import { EditSubServiceCategoryRequestMapper } from '../../../application/mappers/sub_service_category/edit_sub_service_category_mapper'
@@ -19,6 +16,9 @@ import { IEditSubServiceCategoryUseCase } from '../../../domain/useCaseInterface
 import { GetSingleSubServiceCategoryZodValidationSchema } from '../../validations/sub_service_category/get_single_sub_service_category.schema'
 import { GetSingleSubServiceCategoryRequestMapper } from '../../../application/mappers/sub_service_category/get_single_sub_service_category_mapper'
 import { IGetSingleSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_single_sub_service_category_usecase.interface'
+import { ToggleBlockStatusOfSubServiceCategoryZodValidationSchema } from '../../validations/sub_service_category/toggle_block_status_of_sub_service_category.schema'
+import { toggleBlockStatusOfSubServiceCategoryRequestMapper } from '../../../application/mappers/sub_service_category/toggle_block_status_of_sub_service_category_mapper'
+import { IToggleBlockStatusOfSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/toggle_block_status_of_sub_service_usecase.interface'
 
 @injectable()
 export class SubServiceCategoryController
@@ -32,7 +32,9 @@ export class SubServiceCategoryController
     @inject('IEditSubServiceCategoryUseCase')
     private _editSubServiceCategoryUseCase: IEditSubServiceCategoryUseCase,
     @inject('IGetSingleSubServiceCategoryUseCase')
-    private _getSingleSubServiceCategoryUseCase: IGetSingleSubServiceCategoryUseCase
+    private _getSingleSubServiceCategoryUseCase: IGetSingleSubServiceCategoryUseCase,
+    @inject('IToggleBlockStatusOfSubServiceCategoryUseCase')
+    private _toggleBlockStatusOfSubServiceCategoryUseCase: IToggleBlockStatusOfSubServiceCategoryUseCase
   ) {}
 
   async createSubServiceCategories(req: Request, res: Response): Promise<void> {
@@ -43,7 +45,7 @@ export class SubServiceCategoryController
       })
       const createdById = (req as CustomRequest).user?.userId ?? ''
       const createdByRole = (req as CustomRequest).user?.role ?? ''
-      const isActive = true
+      const isActive = 'active'
 
       const dto = CreateSubServiceCategoryRequestMapper.toDTO({
         body: validated.body,
@@ -137,9 +139,9 @@ export class SubServiceCategoryController
   ): Promise<void> {
     try {
       const validated =
-        toggleBlockStatusOfSubServiceCategoryZodValidationSchema.parse(
-          req.params
-        )
+        ToggleBlockStatusOfSubServiceCategoryZodValidationSchema.parse({
+          params: req.params,
+        })
       const payload =
         toggleBlockStatusOfSubServiceCategoryRequestMapper.toDTO(validated)
       const response =
