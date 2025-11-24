@@ -8,7 +8,7 @@ import { ISubServiceCategoryRepository } from '../../../domain/repositoryInterfa
 import { GetAllSubServiceCategoriesResponseMapper } from '../../mappers/sub_service_category/get_all_sub_service_category_mapper'
 
 @injectable()
-class GetAllSubServiceCategoryUseCase
+export class GetAllSubServiceCategoryUseCase
   implements IGetAllSubServiceCategoryUseCase
 {
   constructor(

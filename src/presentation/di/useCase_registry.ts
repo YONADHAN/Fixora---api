@@ -6,8 +6,6 @@ import { UserExistenceService } from '../../interfaceAdapters/services/user_exis
 import { IUserExistenceService } from '../../domain/serviceInterfaces/user_existence_service.interface'
 import { OtpService } from '../../interfaceAdapters/services/otp_service'
 import { IOtpService } from '../../domain/serviceInterfaces/otp_service_interface'
-// import { CloudinaryService } from '../../interfaceAdapters/services/cloudinary_service'
-// import { ICloudinaryService } from '../../domain/serviceInterfaces/cloudinary_service_interface'
 import { ITokenService } from '../../domain/serviceInterfaces/token_service_interface'
 import { JWTService } from '../../interfaceAdapters/services/jwt_service'
 import { IStorageService } from '../../domain/serviceInterfaces/s3_storage_service_interface'
@@ -69,6 +67,17 @@ import { IGetSingleServiceCategoryUseCase } from '../../domain/useCaseInterfaces
 import { GetSingleServiceCategoryUseCase } from '../../application/usecase/service_category/single_service_category_usecase'
 import { IGetActiveServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/active_service_category_usecase.interface'
 import { GetActiveServiceCategoryUseCase } from '../../application/usecase/service_category/active_service_categories_usecase'
+import { ICreateSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/create_sub_service_usecase.interface'
+import { CreateSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/create_sub_service_category_usecase'
+import { IEditSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/edit_sub_service_category_usecase.interface'
+import { EditSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/edit_sub_service_category_usecase'
+import { IGetAllSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_category_usecase.interface'
+import { GetAllSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/get_all_sub_service_category_usecase'
+import { IGetSingleSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_single_sub_service_category_usecase.interface'
+import { GetSingleSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/get_single_sub_service_category_usecase'
+import { IToggleBlockStatusOfSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/toggle_block_status_of_sub_service_usecase.interface'
+import { ToggleBlockStatusOfSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/toggle_block_status_of_sub_service_category_usecase'
+
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -310,6 +319,36 @@ export class UseCaseRegistry {
       'IGetActiveServiceCategoryUseCase',
       {
         useClass: GetActiveServiceCategoryUseCase,
+      }
+    )
+    container.register<ICreateSubServiceCategoryUseCase>(
+      'ICreateSubServiceCategoryUseCase',
+      {
+        useClass: CreateSubServiceCategoryUseCase,
+      }
+    )
+    container.register<IEditSubServiceCategoryUseCase>(
+      'IEditSubServiceCategoryUseCase',
+      {
+        useClass: EditSubServiceCategoryUseCase,
+      }
+    )
+    container.register<IGetAllSubServiceCategoryUseCase>(
+      'IGetAllSubServiceCategoryUseCase',
+      {
+        useClass: GetAllSubServiceCategoryUseCase,
+      }
+    )
+    container.register<IGetSingleSubServiceCategoryUseCase>(
+      'IGetSingleSubServiceCategoryUseCase',
+      {
+        useClass: GetSingleSubServiceCategoryUseCase,
+      }
+    )
+    container.register<IToggleBlockStatusOfSubServiceCategoryUseCase>(
+      'IToggleBlockStatusOfSubServiceCategoryUseCase',
+      {
+        useClass: ToggleBlockStatusOfSubServiceCategoryUseCase,
       }
     )
     //service
