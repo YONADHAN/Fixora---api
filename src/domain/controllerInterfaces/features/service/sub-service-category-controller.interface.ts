@@ -8,4 +8,8 @@ export interface ISubServiceCategoryController {
     req: Request,
     res: Response
   ): Promise<void>
+  toggleVerificationStatusOfSubServiceCategory(
+    req: Request,
+    res: Response
+  ): Promise<void>
 }

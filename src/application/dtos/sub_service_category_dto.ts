@@ -87,3 +87,10 @@ export interface RequestToggleBlockStatusOfSubServiceCategoryDTO {
   subServiceCategoryId: string
   blockStatus: statusTypes
 }
+
+//toggle verification status of sub service category
+
+export interface RequestToggleVerificationStatusOfSubServiceCategoryDTO {
+  subServiceCategoryId: string
+  verificationStatus: verificationTypes
+}

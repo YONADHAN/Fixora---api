@@ -77,6 +77,8 @@ export const SUCCESS_MESSAGES = {
     'Sub Service Category Fetched Successfully',
   SUB_SERVICE_CATEGORY_STATUS_CHANGED_SUCCESSFULLY:
     'Sub service category status changed successfully.',
+  SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY:
+    'Sub service category verification status changed successfully.',
 }
 
 export const ERROR_MESSAGES = {

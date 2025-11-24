@@ -77,7 +77,8 @@ import { IGetSingleSubServiceCategoryUseCase } from '../../domain/useCaseInterfa
 import { GetSingleSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/get_single_sub_service_category_usecase'
 import { IToggleBlockStatusOfSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/toggle_block_status_of_sub_service_usecase.interface'
 import { ToggleBlockStatusOfSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/toggle_block_status_of_sub_service_category_usecase'
-
+import { IToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/toggle_verification_status_of_sub_service_category_usecase.interface'
+import { ToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/toggle_verification_status_of_sub_service_category_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -285,6 +286,12 @@ export class UseCaseRegistry {
       'IGetSingleServiceCategoryUseCase',
       {
         useClass: GetSingleServiceCategoryUseCase,
+      }
+    )
+    container.register<IToggleVerificationStatusOfSubServiceCategoryUseCase>(
+      'IToggleVerificationStatusOfSubServiceCategoryUseCase',
+      {
+        useClass: ToggleVerificationStatusOfSubServiceCategoryUseCase,
       }
     )
 

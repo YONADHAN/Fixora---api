@@ -11,6 +11,7 @@ import { IServiceCategoryRepository } from '../../domain/repositoryInterfaces/fe
 import { ServiceCategoryRepository } from '../../interfaceAdapters/repositories/feature/service/service_category_repository'
 import { ISubServiceCategoryRepository } from '../../domain/repositoryInterfaces/feature/service/sub_service_catgory_repository.interface'
 import { SubServiceCategoryRepository } from '../../interfaceAdapters/repositories/feature/service/sub_service_category_repository'
+
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {

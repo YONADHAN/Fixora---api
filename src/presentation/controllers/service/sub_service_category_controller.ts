@@ -19,6 +19,9 @@ import { IGetSingleSubServiceCategoryUseCase } from '../../../domain/useCaseInte
 import { ToggleBlockStatusOfSubServiceCategoryZodValidationSchema } from '../../validations/sub_service_category/toggle_block_status_of_sub_service_category.schema'
 import { toggleBlockStatusOfSubServiceCategoryRequestMapper } from '../../../application/mappers/sub_service_category/toggle_block_status_of_sub_service_category_mapper'
 import { IToggleBlockStatusOfSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/toggle_block_status_of_sub_service_usecase.interface'
+import { ToggleVerificationStatusOfSubServiceCategoryZodValidationSchema } from '../../validations/sub_service_category/toggle_verification_status_of_sub_service_category.schema'
+import { ToggleVerificationStatusOfSubServiceCategoryRequestMapper } from '../../../application/mappers/sub_service_category/toggle_verification_status_of_sub_service_category_mapper'
+import { IToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/toggle_verification_status_of_sub_service_category_usecase.interface'
 
 @injectable()
 export class SubServiceCategoryController
@@ -34,7 +37,9 @@ export class SubServiceCategoryController
     @inject('IGetSingleSubServiceCategoryUseCase')
     private _getSingleSubServiceCategoryUseCase: IGetSingleSubServiceCategoryUseCase,
     @inject('IToggleBlockStatusOfSubServiceCategoryUseCase')
-    private _toggleBlockStatusOfSubServiceCategoryUseCase: IToggleBlockStatusOfSubServiceCategoryUseCase
+    private _toggleBlockStatusOfSubServiceCategoryUseCase: IToggleBlockStatusOfSubServiceCategoryUseCase,
+    @inject('IToggleVerificationStatusOfSubServiceCategoryUseCase')
+    private _toggleVerificationStatusOfSubServiceCategoryUseCase: IToggleVerificationStatusOfSubServiceCategoryUseCase
   ) {}
 
   async createSubServiceCategories(req: Request, res: Response): Promise<void> {
@@ -152,6 +157,34 @@ export class SubServiceCategoryController
         success: true,
         message:
           SUCCESS_MESSAGES.SUB_SERVICE_CATEGORY_STATUS_CHANGED_SUCCESSFULLY,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async toggleVerificationStatusOfSubServiceCategory(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const validated =
+        ToggleVerificationStatusOfSubServiceCategoryZodValidationSchema.parse({
+          params: req.params,
+        })
+      const payload =
+        ToggleVerificationStatusOfSubServiceCategoryRequestMapper.toDTO(
+          validated
+        )
+      const response =
+        await this._toggleVerificationStatusOfSubServiceCategoryUseCase.execute(
+          payload
+        )
+      res.json({
+        success: true,
+        message:
+          SUCCESS_MESSAGES.SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {

@@ -45,5 +45,16 @@ export class SubServiceCategoryRoutes extends BaseRoute {
           res
         )
       )
+    this.router.patch(
+      '/verification/:subServiceCategoryId',
+      verifyAuth,
+      authorizeRole(['admin']),
+      (req, res) => {
+        subServiceCategoryController.toggleVerificationStatusOfSubServiceCategory(
+          req,
+          res
+        )
+      }
+    )
   }
 }
