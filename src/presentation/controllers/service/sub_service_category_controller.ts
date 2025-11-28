@@ -22,6 +22,12 @@ import { IToggleBlockStatusOfSubServiceCategoryUseCase } from '../../../domain/u
 import { ToggleVerificationStatusOfSubServiceCategoryZodValidationSchema } from '../../validations/sub_service_category/toggle_verification_status_of_sub_service_category.schema'
 import { ToggleVerificationStatusOfSubServiceCategoryRequestMapper } from '../../../application/mappers/sub_service_category/toggle_verification_status_of_sub_service_category_mapper'
 import { IToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/toggle_verification_status_of_sub_service_category_usecase.interface'
+import { getVendorSubServiceCategoriesZodValidationSchema } from '../../validations/sub_service_category/get_vendor_sub_service_category.schema'
+import { GetVendorSubServiceCategoriesRequestMapper } from '../../../application/mappers/sub_service_category/get_vendor_sub_service_category_mapper'
+import { IGetVendorSubServiceCategoriesUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_vendor_sub_service_categories_usecase.interface'
+import { GetAllSubServiceCategoriesBasedOnServiceCategoryIdZodValidationSchema } from '../../validations/sub_service_category/get_sub_service_categories_based_on_service_category_id.schema'
+import { GetAllSubServiceCategoriesBasedOnServiceCategoryIdRequestMapper } from '../../../application/mappers/sub_service_category/get_sub_service_catergories_based_on_service_category_mapper'
+import { IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase.interface'
 
 @injectable()
 export class SubServiceCategoryController
@@ -39,7 +45,11 @@ export class SubServiceCategoryController
     @inject('IToggleBlockStatusOfSubServiceCategoryUseCase')
     private _toggleBlockStatusOfSubServiceCategoryUseCase: IToggleBlockStatusOfSubServiceCategoryUseCase,
     @inject('IToggleVerificationStatusOfSubServiceCategoryUseCase')
-    private _toggleVerificationStatusOfSubServiceCategoryUseCase: IToggleVerificationStatusOfSubServiceCategoryUseCase
+    private _toggleVerificationStatusOfSubServiceCategoryUseCase: IToggleVerificationStatusOfSubServiceCategoryUseCase,
+    @inject('IGetVendorSubServiceCategoriesUseCase')
+    private _getVendorSubServiceCategoriesUseCase: IGetVendorSubServiceCategoriesUseCase,
+    @inject('IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase')
+    private _getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase: IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase
   ) {}
 
   async createSubServiceCategories(req: Request, res: Response): Promise<void> {
@@ -48,6 +58,7 @@ export class SubServiceCategoryController
         body: req.body,
         file: req.file,
       })
+
       const createdById = (req as CustomRequest).user?.userId ?? ''
       const createdByRole = (req as CustomRequest).user?.role ?? ''
       const isActive = 'active'
@@ -59,6 +70,7 @@ export class SubServiceCategoryController
         createdByRole,
         isActive,
       })
+
       const response = await this._createSubServiceCategoryUseCase.execute(dto)
 
       res.status(HTTP_STATUS.CREATED).json({
@@ -96,14 +108,21 @@ export class SubServiceCategoryController
 
   async editSubServiceCategory(req: Request, res: Response): Promise<void> {
     try {
+      console.log('Entered')
+      console.log('body', req.body)
+      if (req.file) {
+        console.log('file got ')
+      }
       const validated = editSubServiceCategoryZodValidationSchema.parse({
         body: req.body,
         file: req.file,
       })
+      console.log('validated', validated)
       const dto = EditSubServiceCategoryRequestMapper.toDTO({
         body: validated.body,
         file: validated.file,
       })
+      console.log('dto', dto)
       const response = await this._editSubServiceCategoryUseCase.execute(dto)
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -120,15 +139,19 @@ export class SubServiceCategoryController
     res: Response
   ): Promise<void> {
     try {
+      console.log('entered')
       const validated = GetSingleSubServiceCategoryZodValidationSchema.parse({
         params: req.params,
       })
+      console.log('params', req.params)
       const subServiceCategoryId =
         GetSingleSubServiceCategoryRequestMapper.toDTO(validated)
+      console.log('validation done', validated)
       const response = await this._getSingleSubServiceCategoryUseCase.execute({
         subServiceCategoryId,
       })
-      res.json(HTTP_STATUS.OK).json({
+
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.SUB_SERVICE_CATEGORY_FETCHED_SUCCESSFULLY,
         data: response,
@@ -145,7 +168,7 @@ export class SubServiceCategoryController
     try {
       const validated =
         ToggleBlockStatusOfSubServiceCategoryZodValidationSchema.parse({
-          params: req.params,
+          params: { ...req.params, ...req.query },
         })
       const payload =
         toggleBlockStatusOfSubServiceCategoryRequestMapper.toDTO(validated)
@@ -169,9 +192,13 @@ export class SubServiceCategoryController
     res: Response
   ): Promise<void> {
     try {
+      console.log(
+        'toggle verification status of sub service category,',
+        req.params
+      )
       const validated =
         ToggleVerificationStatusOfSubServiceCategoryZodValidationSchema.parse({
-          params: req.params,
+          payload: { ...req.params, ...req.query },
         })
       const payload =
         ToggleVerificationStatusOfSubServiceCategoryRequestMapper.toDTO(
@@ -185,6 +212,59 @@ export class SubServiceCategoryController
         success: true,
         message:
           SUCCESS_MESSAGES.SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getVendorSubServiceCategories(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      console.log('get vendor sub service category controller')
+      const validated = getVendorSubServiceCategoriesZodValidationSchema.parse(
+        req.query
+      )
+      const vendorId = (req as CustomRequest).user.userId
+      const dto = GetVendorSubServiceCategoriesRequestMapper.toDTO({
+        query: { ...validated, vendorId },
+      })
+
+      const response =
+        await this._getVendorSubServiceCategoriesUseCase.execute(dto)
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+  async getAllSubServiceCategoriesBasedOnServiceCategoryId(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const validated =
+        GetAllSubServiceCategoriesBasedOnServiceCategoryIdZodValidationSchema.parse(
+          { query: req.query }
+        )
+      const dto =
+        GetAllSubServiceCategoriesBasedOnServiceCategoryIdRequestMapper.toDTO(
+          validated
+        )
+      const response =
+        await this._getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase.execute(
+          dto
+        )
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {

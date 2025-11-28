@@ -3,7 +3,7 @@ import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces
 
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { config } from '../../../shared/config'
-import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_category_usecase.interface'
+import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/edit_service_category_usecase.interface'
 
 @injectable()
 export class EditServiceCategoryUseCase implements IEditServiceCategoryUseCase {

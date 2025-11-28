@@ -32,6 +32,7 @@ export class EditSubServiceCategoryUseCase
       serviceCategoryName,
       bannerImage,
     } = payload
+    console.log('Payload is ', payload)
     const SubServiceCategoryExists =
       await this._subServiceCategoryRepository.findOne({ subServiceCategoryId })
     if (!SubServiceCategoryExists) {
@@ -40,6 +41,7 @@ export class EditSubServiceCategoryUseCase
         HTTP_STATUS.NOT_FOUND
       )
     }
+    console.log('SubServiceCategoryExists', SubServiceCategoryExists)
     const bannerImageUrl = await this._storageService.uploadFile(
       config.storageConfig.bucket!,
       bannerImage,
@@ -52,10 +54,12 @@ export class EditSubServiceCategoryUseCase
       serviceCategoryName,
       bannerImage: bannerImageUrl,
     }
+    console.log('data', data)
     const response = await this._subServiceCategoryRepository.update(
       { subServiceCategoryId },
       data
     )
+    console.log('response', response)
     return EditSubServiceCategoryResponseMapper.toDTO(response)
   }
 }

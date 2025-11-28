@@ -39,6 +39,7 @@ export class GetAllSubServiceCategoriesResponseMapper {
         description: rawItem.description,
         bannerImage: rawItem.bannerImage,
         isActive: rawItem.isActive,
+        verification: rawItem.verification,
       }
       subServiceCategories.push(item)
     }

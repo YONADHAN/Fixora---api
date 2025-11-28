@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { v4 as uuidv4 } from 'uuid'
 import { config } from '../../../shared/config'
-import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
+import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/create_service_category_usecase.interface'
 import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 

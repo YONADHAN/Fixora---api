@@ -16,6 +16,6 @@ export class ServiceCategoryRepository
   }
 
   async findActiveCategories() {
-    return this.model.find({ isActive: true }).sort({ displayOrder: 1 }).lean()
+    return await this.model.find({ isActive: true }).lean()
   }
 }

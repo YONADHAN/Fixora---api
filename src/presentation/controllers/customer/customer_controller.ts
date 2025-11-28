@@ -18,7 +18,7 @@ import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/com
 import { config } from '../../../shared/config'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { IProfileImageUploadFactory } from '../../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
-import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/service_category_usecase.interface'
+import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/service_category_usecase.interface'
 @injectable()
 export class CustomerController implements ICustomerController {
   constructor(

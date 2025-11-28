@@ -5,7 +5,7 @@ import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces
 import { ResponseActiveServiceCategoryDTO } from '../../dtos/service_category_dto'
 
 import { ActiveServiceCategoryMapper } from '../../mappers/service_category/active_service_category_mapper'
-import { IGetActiveServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/active_service_category_usecase.interface'
+import { IGetActiveServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
 
 @injectable()
 export class GetActiveServiceCategoryUseCase

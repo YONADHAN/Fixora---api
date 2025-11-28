@@ -7,6 +7,7 @@ import {
   verifyAuth,
 } from '../middleware/auth_middleware'
 import { ServiceCategoryRoutes } from './service_category_route'
+import { SubServiceCategoryRoutes } from './sub_service_category_route'
 export class AdminRoutes extends BaseRoute {
   constructor() {
     super()
@@ -79,5 +80,9 @@ export class AdminRoutes extends BaseRoute {
     )
     //service-category route
     this.router.use('/category', new ServiceCategoryRoutes().router)
+    this.router.use(
+      '/sub-service-category',
+      new SubServiceCategoryRoutes().router
+    )
   }
 }

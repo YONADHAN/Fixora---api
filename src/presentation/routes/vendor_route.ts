@@ -14,6 +14,7 @@ import multer from 'multer'
 import { CustomRequestHandler } from '../../shared/types/custom_request'
 import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
+import { SubServiceCategoryRoutes } from './sub_service_category_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -35,6 +36,11 @@ export class VendorRoutes extends BaseRoute {
       verifyAuth as CustomRequestHandler,
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       authorizeRole(['vendor'])
+    )
+
+    this.router.use(
+      '/sub-service-category',
+      new SubServiceCategoryRoutes().router
     )
 
     //logout

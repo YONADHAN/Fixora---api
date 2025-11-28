@@ -33,8 +33,10 @@ export interface SubServiceCategoryItem {
   description: string
   bannerImage: string
   serviceCategoryId: string
+  serviceCategoryName: string
   subServiceCategoryId: string
   isActive: statusTypes
+  verification: verificationTypes
 }
 export interface ResponseGetAllSubServiceCategoriesDTO {
   data: SubServiceCategoryItem[]
@@ -93,4 +95,48 @@ export interface RequestToggleBlockStatusOfSubServiceCategoryDTO {
 export interface RequestToggleVerificationStatusOfSubServiceCategoryDTO {
   subServiceCategoryId: string
   verificationStatus: verificationTypes
+}
+
+export interface RequestGetVendorSubServiceCategoriesDTO {
+  vendorId: string
+  page: number
+  limit: number
+  search: string
+}
+
+export interface SubServiceCategoryItem {
+  subServiceCategoryId: string
+  serviceCategoryId: string
+  serviceCategoryName: string
+  name: string
+  description: string
+  bannerImage: string
+  isActive: statusTypes
+  verification: verificationTypes
+}
+
+export interface ResponseGetVendorSubServiceCategoriesDTO {
+  data: SubServiceCategoryItem[]
+  currentPage: number
+  totalPages: number
+}
+
+export interface RequestGetAllSubServiceCategoriesBasedOnServiceCategoryDTO {
+  serviceCategoryId: string
+  page: number
+  limit: number
+  search: string
+}
+
+export interface SubServiceCategoryItemWithMinimumFields {
+  subServiceCategoryId: string
+  name: string
+  description: string
+  bannerImage: string
+}
+
+export interface ResponseGetAllSubServiceCategoriesBasedOnServiceCategoryDTO {
+  data: SubServiceCategoryItemWithMinimumFields[]
+  currentPage: number
+  totalPages: number
 }

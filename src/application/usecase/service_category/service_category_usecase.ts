@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 
 import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
-import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/service_category_usecase.interface'
+import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/service_category_usecase.interface'
 import {
   RequestServiceCategoryDTO,
   ResponseServiceCategoryDTO,

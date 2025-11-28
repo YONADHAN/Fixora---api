@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe'
 import { HTTP_STATUS } from '../../../shared/constants'
 import { CustomError } from '../../../domain/utils/custom.error'
 import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
-import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/block_service_category_usecase.interface'
+import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/block_service_category_usecase.interface'
 
 @injectable()
 export class BlockServiceCategoryUseCase

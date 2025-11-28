@@ -1,4 +1,4 @@
-import { UpdateResult } from 'mongoose'
+import { FilterQuery, UpdateResult } from 'mongoose'
 
 export interface IBaseRepository<T> {
   findOne(filter: any): Promise<T | null>
@@ -10,5 +10,11 @@ export interface IBaseRepository<T> {
     page: number,
     limit: number,
     search?: string
+  ): Promise<{ data: T[]; currentPage: number; totalPages: number }>
+  findAllDocumentsWithFilteration(
+    page: number,
+    limit: number,
+    search?: string,
+    extraFilters?: FilterQuery<T>
   ): Promise<{ data: T[]; currentPage: number; totalPages: number }>
 }

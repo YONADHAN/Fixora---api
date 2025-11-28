@@ -68,23 +68,30 @@ export class BaseRepository<T> implements IBaseRepository<T> {
       totalPages: Math.ceil(totalItems / limit),
     }
   }
+  async findAllDocumentsWithFilteration(
+    page: number,
+    limit: number,
+    search: string = '',
+    extraFilters: FilterQuery<T> = {}
+  ): Promise<{ data: T[]; currentPage: number; totalPages: number }> {
+    const filter: FilterQuery<T> = {
+      ...extraFilters,
+      ...(search ? { name: { $regex: search, $options: 'i' } } : {}),
+    }
+
+    const totalItems = await this.model.countDocuments(filter)
+
+    const results = await this.model
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean()
+
+    return {
+      data: results as T[],
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / limit),
+    }
+  }
 }
-
-// async findAll(page: number, limit: number, search: string) {
-//   const filter = search
-//     ? { name: { $regex: search, $options: 'i' } }
-//     : {}
-
-//   const totalItems = await this.model.countDocuments(filter)
-
-//   const results = await this.model
-//     .find(filter)
-//     .skip((page - 1) * limit)
-//     .limit(limit)
-//     .lean()
-
-//   return {
-//     categories: results,
-//     totalPages: Math.ceil(totalItems / limit)
-//   }
-// }

@@ -55,17 +55,17 @@ import { IChangeVendorVerificationStatusUseCase } from '../../domain/useCaseInte
 import { ChangeVendorVerificationStatusUseCase } from '../../application/usecase/admin/verification-requests/change_vendor_verification_status_usecase'
 import { IChangeMyPasswordUseCase } from '../../domain/useCaseInterfaces/auth/change_my_password_usecase_interface'
 import { ChangeMyPasswordUseCase } from '../../application/usecase/auth/change_my_password_usecase'
-import { IGetAllServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/service_category_usecase.interface'
+import { IGetAllServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/service_category_usecase.interface'
 import { GetAllServiceCategoryUseCase } from '../../application/usecase/service_category/service_category_usecase'
-import { ICreateServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
+import { ICreateServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/create_service_category_usecase.interface'
 import { CreateServiceCategoryUseCase } from '../../application/usecase/service_category/create_service_category_usecase'
-import { IEditServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/edit_service_category_usecase.interface'
+import { IEditServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/edit_service_category_usecase.interface'
 import { EditServiceCategoryUseCase } from '../../application/usecase/service_category/edit_service_category_usecase'
-import { IBlockServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/block_service_category_usecase.interface'
+import { IBlockServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/block_service_category_usecase.interface'
 import { BlockServiceCategoryUseCase } from '../../application/usecase/service_category/block_service_category_usecase'
-import { IGetSingleServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/single_service_category_usecase.interface'
+import { IGetSingleServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/single_service_category_usecase.interface'
 import { GetSingleServiceCategoryUseCase } from '../../application/usecase/service_category/single_service_category_usecase'
-import { IGetActiveServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service/active_service_category_usecase.interface'
+import { IGetActiveServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
 import { GetActiveServiceCategoryUseCase } from '../../application/usecase/service_category/active_service_categories_usecase'
 import { ICreateSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/create_sub_service_usecase.interface'
 import { CreateSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/create_sub_service_category_usecase'
@@ -172,6 +172,10 @@ import { ICustomerProfileImageUploadStrategy } from '../../application/strategie
 import { CustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy'
 import { IVendorProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy.interface'
 import { VendorProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy'
+import { IGetVendorSubServiceCategoriesUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_vendor_sub_service_categories_usecase.interface'
+import { GetVendorSubServiceCategoriesUseCase } from '../../application/usecase/sub_service_category/get_vendor_sub_service_categories_usecase'
+import { IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase.interface'
+import { GetAllSubServiceCategoriesBasedOnServiceCategoryId } from '../../application/usecase/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -356,6 +360,19 @@ export class UseCaseRegistry {
       'IToggleBlockStatusOfSubServiceCategoryUseCase',
       {
         useClass: ToggleBlockStatusOfSubServiceCategoryUseCase,
+      }
+    )
+    container.register<IGetVendorSubServiceCategoriesUseCase>(
+      'IGetVendorSubServiceCategoriesUseCase',
+      {
+        useClass: GetVendorSubServiceCategoriesUseCase,
+      }
+    )
+
+    container.register<IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase>(
+      'IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase',
+      {
+        useClass: GetAllSubServiceCategoriesBasedOnServiceCategoryId,
       }
     )
     //service

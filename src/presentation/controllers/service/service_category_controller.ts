@@ -3,14 +3,15 @@ import { Request, Response } from 'express'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { IServiceCategoryController } from '../../../domain/controllerInterfaces/features/service/service-category-controller.interface'
 import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
-import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/service_category_usecase.interface'
+import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/service_category_usecase.interface'
 
-import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
-import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_category_usecase.interface'
-import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/block_service_category_usecase.interface'
-import { IGetSingleServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service/single_service_category_usecase.interface'
+import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/create_service_category_usecase.interface'
+import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/edit_service_category_usecase.interface'
+import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/block_service_category_usecase.interface'
+import { IGetSingleServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/single_service_category_usecase.interface'
 
 import { ServiceCategoryResponseDTO } from '../../../application/dtos/admin/service_category_dto'
+import { IGetActiveServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
 
 @injectable()
 export class ServiceCategoryController implements IServiceCategoryController {
@@ -24,7 +25,9 @@ export class ServiceCategoryController implements IServiceCategoryController {
     @inject('IBlockServiceCategoryUseCase')
     private _blockServiceCategoryUseCase: IBlockServiceCategoryUseCase,
     @inject('IGetSingleServiceCategoryUseCase')
-    private _getSingleServiceCategoryUseCase: IGetSingleServiceCategoryUseCase
+    private _getSingleServiceCategoryUseCase: IGetSingleServiceCategoryUseCase,
+    @inject('IGetActiveServiceCategoryUseCase')
+    private _getActiveSubServiceCategories: IGetActiveServiceCategoryUseCase
   ) {}
   async getAllServiceCategories(req: Request, res: Response): Promise<void> {
     try {
@@ -119,6 +122,19 @@ export class ServiceCategoryController implements IServiceCategoryController {
       res.status(HTTP_STATUS.OK).json({
         success: true,
         data: category,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getActiveServiceCategories(req: Request, res: Response): Promise<void> {
+    try {
+      const response = await this._getActiveSubServiceCategories.execute()
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.SERVICE_CATEGORIES_FOUND_SUCCESSFULLY,
+        data: response,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

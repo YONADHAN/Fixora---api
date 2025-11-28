@@ -2,16 +2,16 @@ import { verificationTypes } from '../../../shared/constants'
 
 export class ToggleVerificationStatusOfSubServiceCategoryRequestMapper {
   static toDTO({
-    params,
+    payload,
   }: {
-    params: {
+    payload: {
       subServiceCategoryId: string
       verificationStatus: verificationTypes
     }
   }) {
     return {
-      subServiceCategoryId: params.subServiceCategoryId,
-      verificationStatus: params.verificationStatus,
+      subServiceCategoryId: payload.subServiceCategoryId,
+      verificationStatus: payload.verificationStatus,
     }
   }
 }

@@ -9,7 +9,7 @@ export const subServiceCategorySchema = new Schema<ISubServiceCategoryModel>(
     name: { type: String, required: true, unique: true, trim: true },
     description: { type: String, trim: true },
     bannerImage: { type: String, trim: true },
-    isActive: { type: String, default: 'active', enum: ['acitive', 'blocked'] },
+    isActive: { type: String, default: 'active', enum: ['active', 'blocked'] },
     verification: {
       type: String,
       default: 'pending',

@@ -35,16 +35,10 @@ export class SubServiceCategoryRoutes extends BaseRoute {
       )
 
     this.router
-      .route('/:subServiceCategoryId')
-      .get((req, res) =>
-        subServiceCategoryController.getSingleSubServiceCategory(req, res)
-      )
-      .patch(verifyAuth, authorizeRole(['admin']), (req, res) =>
-        subServiceCategoryController.toggleBlockStatusOfSubServiceCategory(
-          req,
-          res
-        )
-      )
+      .route('/vendor-created')
+      .get(verifyAuth, authorizeRole(['vendor']), (req, res) => {
+        subServiceCategoryController.getVendorSubServiceCategories(req, res)
+      })
     this.router.patch(
       '/verification/:subServiceCategoryId',
       verifyAuth,
@@ -56,5 +50,23 @@ export class SubServiceCategoryRoutes extends BaseRoute {
         )
       }
     )
+
+    this.router.get('/search/sub-service-categories', (req, res) => {
+      subServiceCategoryController.getAllSubServiceCategoriesBasedOnServiceCategoryId(
+        req,
+        res
+      )
+    })
+    this.router
+      .route('/:subServiceCategoryId')
+      .get((req, res) =>
+        subServiceCategoryController.getSingleSubServiceCategory(req, res)
+      )
+      .patch(verifyAuth, authorizeRole(['admin']), (req, res) =>
+        subServiceCategoryController.toggleBlockStatusOfSubServiceCategory(
+          req,
+          res
+        )
+      )
   }
 }
