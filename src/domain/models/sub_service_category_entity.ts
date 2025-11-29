@@ -1,6 +1,8 @@
+import { ObjectId } from 'mongoose'
 import { statusTypes, verificationTypes } from '../../shared/constants'
 
 export interface ISubServiceCategoryEntity {
+  _id?: ObjectId
   subServiceCategoryId: string
   serviceCategoryId: string
   serviceCategoryName: string

@@ -5,7 +5,8 @@ export const ROLES = {
   CUSTOMER: 'customer',
   VENDOR: 'vendor',
 } as const
-
+export type recurrenceType = 'daily' | 'weekly' | 'monthly'
+export type bookingStatus = 'available' | 'booked' | 'cancelled'
 export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
 export type TRole = 'customer' | 'admin' | 'vendor'

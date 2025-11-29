@@ -41,7 +41,11 @@ export class EditSubServiceCategoryUseCase
         HTTP_STATUS.NOT_FOUND
       )
     }
-    console.log('SubServiceCategoryExists', SubServiceCategoryExists)
+
+    console.log(
+      'SubServiceCategoryExists with _id',
+      SubServiceCategoryExists._id
+    )
     const bannerImageUrl = await this._storageService.uploadFile(
       config.storageConfig.bucket!,
       bannerImage,

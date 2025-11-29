@@ -1,6 +1,7 @@
 import { Schema } from 'mongoose'
+import { ISlotModel } from '../models/slot_model'
 
-export const SlotSchema = new Schema<ISlot>(
+export const slotSchema = new Schema<ISlotModel>(
   {
     slotId: { type: String, required: true },
     serviceId: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
@@ -10,10 +11,10 @@ export const SlotSchema = new Schema<ISlot>(
     startTime: { type: String, required: true }, // "HH:mm"
     endTime: { type: String, required: true }, // "HH:mm"
 
-    status: {
+    bookingStatus: {
       type: String,
-      enum: ['AVAILABLE', 'BOOKED', 'CANCELLED'],
-      default: 'AVAILABLE',
+      enum: ['available', 'booked', 'cancelled'],
+      default: 'available',
     },
 
     bookedBy: { type: Schema.Types.ObjectId, ref: 'Customer' },
@@ -22,5 +23,4 @@ export const SlotSchema = new Schema<ISlot>(
   { timestamps: true }
 )
 
-// To prevent double-booking race conditions
-SlotSchema.index({ serviceId: 1, slotDate: 1, startTime: 1 }, { unique: true })
+slotSchema.index({ serviceId: 1, slotDate: 1, startTime: 1 }, { unique: true })

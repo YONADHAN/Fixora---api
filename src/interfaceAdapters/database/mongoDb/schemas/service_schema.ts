@@ -1,9 +1,15 @@
 import { Schema } from 'mongoose'
+import { IServiceModel } from '../models/service_model'
 
-export const ServiceSchema = new Schema<IService>(
+export const ServiceSchema = new Schema<IServiceModel>(
   {
-    vendorId: { type: Schema.Types.ObjectId, ref: 'Vendor', required: true },
-    subServiceCategoryId: {
+    vendorRef: {
+      type: Schema.Types.ObjectId,
+      ref: 'Vendor',
+      required: true,
+    },
+
+    subServiceCategoryRef: {
       type: Schema.Types.ObjectId,
       ref: 'SubServiceCategory',
       required: true,
@@ -11,21 +17,20 @@ export const ServiceSchema = new Schema<IService>(
 
     title: { type: String, required: true },
     description: { type: String },
+
     pricing: {
       pricePerSlot: { type: Number, required: true },
       isAdvanceRequired: { type: Boolean, default: false },
-      advanceAmount: { type: Number, default: 0 },
+      advanceAmountPerSlot: { type: Number, default: 0 },
       currency: { type: String, default: 'INR' },
     },
 
     images: [String],
 
-    // Activation flags
-    isActiveByAdmin: { type: Boolean, default: true },
-    isActiveByVendor: { type: Boolean, default: true },
+    isActiveStatusByAdmin: { type: Boolean, default: true },
+    isActiveStatusByVendor: { type: Boolean, default: true },
     adminStatusNote: { type: String },
 
-    // Schedule
     schedule: {
       visibilityStartDate: Date,
       visibilityEndDate: Date,
@@ -37,17 +42,13 @@ export const ServiceSchema = new Schema<IService>(
       recurrenceType: String,
       weeklyWorkingDays: [Number],
       monthlyWorkingDates: [Number],
-
       holidayDates: [Date],
     },
 
-    history: [
+    serviceHistoryRefs: [
       {
-        historyId: { type: String },
-        title: String,
-        description: String,
-        images: [String],
-        completedOn: Date,
+        type: Schema.Types.ObjectId,
+        ref: 'ServiceHistory',
       },
     ],
   },

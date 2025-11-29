@@ -31,6 +31,7 @@ export class GetAllSubServiceCategoriesBasedOnServiceCategoryId
         HTTP_STATUS.BAD_REQUEST
       )
     }
+
     const page = payload.page
     const limit = payload.limit
     const search = payload.search
