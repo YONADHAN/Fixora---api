@@ -11,7 +11,7 @@ export interface IServiceModel
   _id: ObjectId
   vendorRef: ObjectId
   subServiceCategoryRef: ObjectId
-  serviceHistoryRefs: ObjectId[]
+  serviceHistoryRefs?: ObjectId[]
 }
 
 export const ServiceModel = model<IServiceModel>('Service', ServiceSchema)
