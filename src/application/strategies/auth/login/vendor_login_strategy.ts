@@ -19,7 +19,9 @@ export class VendorLoginStrategy implements IVendorLoginStrategy {
   async login(user: LoginUserDTO) {
     const { email, password } = user
     const normalizedEmail = email.toLowerCase()
-    const vendor = await this._vendorRepository.findOne({ normalizedEmail })
+    const vendor = await this._vendorRepository.findOne({
+      email: normalizedEmail,
+    })
 
     if (!vendor)
       throw new CustomError(

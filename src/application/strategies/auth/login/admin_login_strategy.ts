@@ -27,7 +27,10 @@ export class AdminLoginStrategy implements IAdminLoginStrategy {
         HTTP_STATUS.BAD_REQUEST
       )
     }
-    const admin = await this._adminRepository.findOne({ email })
+    const normalizedEmail = email.toLowerCase()
+    const admin = await this._adminRepository.findOne({
+      email: normalizedEmail,
+    })
 
     if (!admin)
       throw new CustomError(

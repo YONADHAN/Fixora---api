@@ -25,8 +25,12 @@ export class CustomerLoginStrategy implements ICustomerLoginStrategy {
         HTTP_STATUS.BAD_REQUEST
       )
     }
-
-    const customer = await this._customerRepository.findOne({ email })
+    console.log('Email coming on login time on the login usecase : ', email)
+    const generalizedEmail = email.toLowerCase()
+    const customer = await this._customerRepository.findOne({
+      email: generalizedEmail,
+    })
+    console.log('The customer', customer)
 
     if (!customer)
       throw new CustomError(
