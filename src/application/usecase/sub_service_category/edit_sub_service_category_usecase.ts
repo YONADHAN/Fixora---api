@@ -63,6 +63,13 @@ export class EditSubServiceCategoryUseCase
       { subServiceCategoryId },
       data
     )
+    if (!response) {
+      throw new CustomError(
+        'Sub-service category not found',
+        HTTP_STATUS.NOT_FOUND
+      )
+    }
+
     console.log('response', response)
     return EditSubServiceCategoryResponseMapper.toDTO(response)
   }

@@ -36,7 +36,11 @@ export class ChangeMyCustomersBlockStatusStrategy
     }
 
     customer.status = status as statusTypes
-    await this._customerRepository.update(customer._id, customer)
+    //await this._customerRepository.update(customer._id, customer)
+    await this._customerRepository.update(
+      { _id: customer._id },
+      { status: customer.status }
+    )
     if (status == 'blocked') {
       await redisClient.set(`user_block_status:customer:${userId}`, status, {
         EX: 3600,
