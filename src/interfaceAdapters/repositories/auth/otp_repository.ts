@@ -15,9 +15,15 @@ export class OtpRepository extends BaseRepository<IOtpModel, IOtpEntity> {
       expiresAt: model.expiresAt,
     }
   }
-  // async findLatestOtp(email: string): Promise<IOtpEntity | null> {
-  //   return this.model.findOne({ email }).sort({ createdAt: -1 }).exec()
-  // }
+
+  protected toModel(entity: Partial<IOtpEntity>): Partial<IOtpModel> {
+    return {
+      otp: entity.otp,
+      email: entity.email,
+      expiresAt: entity.expiresAt,
+    }
+  }
+
   async findLatestOtp(email: string): Promise<IOtpEntity | null> {
     const result = await this.model
       .findOne({ email })

@@ -50,4 +50,34 @@ export class CustomerRepository
       updatedAt: model.updatedAt,
     }
   }
+
+  protected toModel(entity: Partial<ICustomerEntity>): Partial<ICustomerModel> {
+    return {
+      userId: entity.userId,
+      name: entity.name,
+      email: entity.email,
+      phone: entity.phone,
+      password: entity.password,
+      role: entity.role,
+      status: entity.status,
+
+      googleId: entity.googleId,
+      profileImage: entity.profileImage,
+
+      geoLocation: entity.geoLocation
+        ? {
+            type: entity.geoLocation.type,
+            coordinates: entity.geoLocation.coordinates,
+          }
+        : undefined,
+
+      location: entity.location
+        ? {
+            name: entity.location.name,
+            displayName: entity.location.displayName,
+            zipCode: entity.location.zipCode,
+          }
+        : undefined,
+    }
+  }
 }

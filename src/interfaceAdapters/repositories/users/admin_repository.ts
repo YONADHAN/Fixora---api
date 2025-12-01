@@ -30,4 +30,16 @@ export class AdminRepository
       updatedAt: model.updatedAt,
     }
   }
+
+  protected toModel(entity: Partial<IAdminEntity>): Partial<IAdminModel> {
+    return {
+      userId: entity.userId,
+      name: entity.name,
+      email: entity.email,
+      phone: entity.phone,
+      password: entity.password,
+      role: entity.role,
+      status: entity.status,
+    }
+  }
 }

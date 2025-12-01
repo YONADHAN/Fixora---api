@@ -1,24 +1,3 @@
-// import { injectable } from 'tsyringe'
-// import {
-//   ServiceCategoryModel,
-//   IServiceCategoryModel,
-// } from '../../../database/mongoDb/models/service_category_model'
-// import { BaseRepository } from '../../base_repository'
-// import { IServiceCategoryRepository } from '../../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
-
-// @injectable()
-// export class ServiceCategoryRepository
-//   extends BaseRepository<IServiceCategoryModel>
-//   implements IServiceCategoryRepository
-// {
-//   constructor() {
-//     super(ServiceCategoryModel)
-//   }
-
-//   async findActiveCategories() {
-//     return await this.model.find({ isActive: true }).lean()
-//   }
-// }
 import { injectable } from 'tsyringe'
 import {
   ServiceCategoryModel,
@@ -49,6 +28,17 @@ export class ServiceCategoryRepository
     }
   }
 
+  protected toModel(
+    entity: Partial<IServiceCategoryEntity>
+  ): Partial<IServiceCategoryModel> {
+    return {
+      serviceCategoryId: entity.serviceCategoryId,
+      name: entity.name,
+      description: entity.description,
+      bannerImage: entity.bannerImage,
+      isActive: entity.isActive,
+    }
+  }
   async findActiveCategories(): Promise<IServiceCategoryEntity[]> {
     const result = await this.model.find({ isActive: true }).lean()
     return result.map((m) =>

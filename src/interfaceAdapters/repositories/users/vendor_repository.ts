@@ -70,4 +70,56 @@ export class VendorRepository
         : undefined,
     }
   }
+
+  protected toModel(entity: Partial<IVendorEntity>): Partial<IVendorModel> {
+    return {
+      userId: entity.userId,
+      name: entity.name,
+      email: entity.email,
+      phone: entity.phone,
+      password: entity.password,
+      role: entity.role,
+      status: entity.status,
+
+      googleId: entity.googleId,
+      profileImage: entity.profileImage,
+
+      geoLocation: entity.geoLocation
+        ? {
+            type: entity.geoLocation.type,
+            coordinates: entity.geoLocation.coordinates,
+          }
+        : undefined,
+
+      location: entity.location
+        ? {
+            name: entity.location.name,
+            displayName: entity.location.displayName,
+            zipCode: entity.location.zipCode,
+          }
+        : undefined,
+
+      documents: entity.documents
+        ? entity.documents.map((doc) => ({
+            name: doc.name,
+            url: doc.url,
+            verified: doc.verified,
+            uploadedAt: doc.uploadedAt,
+          }))
+        : undefined,
+
+      isVerified: entity.isVerified
+        ? {
+            status: entity.isVerified.status,
+            description: entity.isVerified.description,
+            reviewedBy: entity.isVerified.reviewedBy
+              ? {
+                  adminId: entity.isVerified.reviewedBy.adminId,
+                  reviewedAt: entity.isVerified.reviewedBy.reviewedAt,
+                }
+              : undefined,
+          }
+        : undefined,
+    }
+  }
 }

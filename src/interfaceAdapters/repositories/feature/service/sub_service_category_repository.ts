@@ -35,4 +35,21 @@ export class SubServiceCategoryRepository
       updatedAt: model.updatedAt,
     }
   }
+
+  protected toModel(
+    entity: Partial<ISubServiceCategoryEntity>
+  ): Partial<ISubServiceCategoryModel> {
+    return {
+      subServiceCategoryId: entity.subServiceCategoryId,
+      serviceCategoryId: entity.serviceCategoryId,
+      serviceCategoryName: entity.serviceCategoryName,
+      name: entity.name,
+      description: entity.description,
+      bannerImage: entity.bannerImage,
+      isActive: entity.isActive,
+      verification: entity.verification,
+      createdById: entity.createdById,
+      createdByRole: entity.createdByRole,
+    }
+  }
 }

@@ -20,8 +20,19 @@ export class RefreshTokenRepository extends BaseRepository<
       user: model.user,
       userType: model.userType,
       expiresAt: model.expiresAt,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
+    }
+  }
+
+  protected toModel(
+    entity: Partial<IRefreshTokenEntity>
+  ): Partial<IRefreshTokenModel> {
+    return {
+      token: entity.token,
+      user: entity.user,
+      userType: entity.userType,
+      expiresAt: entity.expiresAt,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     }
   }
   async revokeRefreshToken(token: string): Promise<void> {
