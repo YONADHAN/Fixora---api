@@ -1,12 +1,13 @@
 import mongoose from 'mongoose'
 import { bookingStatus } from '../../shared/constants'
 export interface ISlotEntity {
+  _id?: string
   slotId: string
-  serviceId: mongoose.Types.ObjectId
+  serviceRef: string
   slotDate: Date
   startTime: string
   endTime: string
   bookingStatus: bookingStatus
-  bookedBy: mongoose.ObjectId
-  bookingId: mongoose.ObjectId
+  bookedBy?: string
+  bookingId?: string
 }

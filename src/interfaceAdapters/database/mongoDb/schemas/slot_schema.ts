@@ -1,10 +1,10 @@
 import { Schema } from 'mongoose'
 import { ISlotModel } from '../models/slot_model'
 
-export const slotSchema = new Schema<ISlotModel>(
+export const SlotSchema = new Schema<ISlotModel>(
   {
     slotId: { type: String, required: true },
-    serviceId: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
+    serviceRef: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
 
     slotDate: { type: Date, required: true },
 
@@ -23,4 +23,4 @@ export const slotSchema = new Schema<ISlotModel>(
   { timestamps: true }
 )
 
-slotSchema.index({ serviceId: 1, slotDate: 1, startTime: 1 }, { unique: true })
+SlotSchema.index({ serviceRef: 1, slotDate: 1, startTime: 1 }, { unique: true })
