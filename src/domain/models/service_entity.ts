@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongoose'
 import { recurrenceType } from '../../shared/constants'
 export interface IServiceEntity {
-  _id?: string | ObjectId
+  _id?: string
 
-  vendorRef: string | ObjectId
-  subServiceCategoryRef: string | ObjectId
+  vendorRef: string
+  subServiceCategoryRef: string
 
   title: string
   description?: string

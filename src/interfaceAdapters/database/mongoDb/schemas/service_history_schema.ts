@@ -1,9 +1,9 @@
-import { Schema, model } from 'mongoose'
-import { IServiceHistory } from '../models/service_history_model'
+import { Schema } from 'mongoose'
+import { IServiceHistoryModel } from '../models/service_history_model'
 
-export const ServiceHistorySchema = new Schema<IServiceHistory>(
+export const ServiceHistorySchema = new Schema<IServiceHistoryModel>(
   {
-    serviceId: {
+    serviceRef: {
       type: Schema.Types.ObjectId,
       ref: 'Service',
       required: true,
@@ -16,9 +16,4 @@ export const ServiceHistorySchema = new Schema<IServiceHistory>(
     completedOn: { type: Date },
   },
   { timestamps: true }
-)
-
-export const ServiceHistoryModel = model<IServiceHistory>(
-  'ServiceHistory',
-  ServiceHistorySchema
 )
