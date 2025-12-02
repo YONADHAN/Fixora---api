@@ -9,6 +9,7 @@ import { CustomError } from '../../../domain/utils/custom.error'
 import { HTTP_STATUS, S3_BUCKET_IMAGE_FOLDERS } from '../../../shared/constants'
 import { RequestCreateServiceDTO } from '../../dtos/service_dto'
 import { IServiceEntity } from '../../../domain/models/service_entity'
+import { config } from '../../../shared/config'
 
 @injectable()
 export class CreateServiceUseCase implements ICreateServiceUseCase {
@@ -34,7 +35,8 @@ export class CreateServiceUseCase implements ICreateServiceUseCase {
       images,
     } = payload
 
-    const vendor = await this.vendorRepo.findOne({ vendorId })
+    const vendor = await this.vendorRepo.findOne({ userId: vendorId })
+
     if (!vendor)
       throw new CustomError('Vendor not found', HTTP_STATUS.NOT_FOUND)
     if (!vendor._id)
@@ -63,9 +65,9 @@ export class CreateServiceUseCase implements ICreateServiceUseCase {
     const uploadedImageUrls: string[] = []
     for (const file of images) {
       const url = await this.storageService.uploadFile(
-        S3_BUCKET_IMAGE_FOLDERS.SERVICE_IMAGES, //name of the folder to store these images
+        config.storageConfig.bucket!,
         file,
-        `services/${serviceId}`
+        `${S3_BUCKET_IMAGE_FOLDERS.SERVICE_IMAGES}/${serviceId}`
       )
       uploadedImageUrls.push(url)
     }

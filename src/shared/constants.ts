@@ -120,7 +120,7 @@ export const ERROR_MESSAGES = {
 
 export const S3_BUCKET_IMAGE_FOLDERS = {
   SUB_SERVICE_CATEGORY_IMAGES: 'SubServiceCategoryImages',
-  SERVICE_IMAGES: 'fixora-services-bucket',
+  SERVICE_IMAGES: 'ServiceImages',
 }
 export const VERIFICATION_MAIL_CONTENT = (otp: string) => `
 <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">

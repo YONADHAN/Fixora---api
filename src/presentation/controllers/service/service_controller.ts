@@ -43,4 +43,11 @@ export class ServiceController implements IServiceController {
       handleErrorResponse(req, res, error)
     }
   }
+
+  async getAllServices(req: Request, res: Response): Promise<void> {
+    try {
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
 }

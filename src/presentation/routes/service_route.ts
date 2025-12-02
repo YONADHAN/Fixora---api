@@ -20,16 +20,16 @@ export class ServiceRoutes extends BaseRoute {
       verifyAuth,
       authorizeRole(['vendor']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      handleMulterError(upload.array('images', 10)),
+      handleMulterError(upload.array('images', 1)),
       (req, res) => serviceController.createService(req, res)
     )
 
-    // // --------------------------
-    // // GET /service/all
-    // // --------------------------
-    // this.router.get('/', (req, res) =>
-    //   serviceController.getAllServices(req, res)
-    // )
+    // --------------------------
+    // GET /service/all
+    // --------------------------
+    this.router.get('/', (req, res) =>
+      serviceController.getAllServices(req, res)
+    )
 
     // // --------------------------
     // // GET /service/:id

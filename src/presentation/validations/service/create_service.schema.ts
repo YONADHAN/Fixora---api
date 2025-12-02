@@ -67,6 +67,7 @@ export const createServiceZodValidationSchema = z.object({
       })
     )
     .min(1, 'At least one image is required')
+    .max(1, 'maximum 1 image can be uploaded')
     .refine(
       (files) =>
         files.every((f) =>

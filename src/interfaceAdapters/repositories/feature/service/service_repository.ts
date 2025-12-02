@@ -23,11 +23,11 @@ export class ServiceRepository
   protected toModel(entity: Partial<IServiceEntity>): Partial<IServiceModel> {
     return {
       vendorRef: entity.vendorRef
-        ? new Schema.Types.ObjectId(entity.vendorRef)
+        ? new Types.ObjectId(entity.vendorRef)
         : undefined,
 
       subServiceCategoryRef: entity.subServiceCategoryRef
-        ? new Schema.Types.ObjectId(entity.subServiceCategoryRef)
+        ? new Types.ObjectId(entity.subServiceCategoryRef)
         : undefined,
 
       title: entity.title,
@@ -66,7 +66,7 @@ export class ServiceRepository
 
       serviceHistoryRefs: entity.serviceHistoryRefs
         ? entity.serviceHistoryRefs.map((id) =>
-            typeof id === 'string' ? new Schema.Types.ObjectId(id) : id
+            typeof id === 'string' ? new Types.ObjectId(id) : id
           )
         : undefined,
     }

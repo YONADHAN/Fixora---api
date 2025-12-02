@@ -36,7 +36,7 @@ export interface IServiceEntity {
     holidayDates?: Date[]
   }
 
-  serviceHistoryRefs?: (string | ObjectId)[]
+  serviceHistoryRefs?: string[]
 
   createdAt?: Date
   updatedAt?: Date
