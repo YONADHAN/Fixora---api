@@ -112,7 +112,9 @@ export class ServiceRepository
         holidayDates: model.schedule.holidayDates,
       },
 
-      serviceHistoryRefs: model.serviceHistoryRefs.map((ref) => ref.toString()),
+      serviceHistoryRefs: model.serviceHistoryRefs
+        ? model.serviceHistoryRefs.map((ref) => ref.toString())
+        : [],
 
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,

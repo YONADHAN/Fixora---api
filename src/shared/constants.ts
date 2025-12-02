@@ -59,7 +59,7 @@ export const SUCCESS_MESSAGES = {
     'Verification status of the user changed successfully.',
   PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
 
-  //services
+  //service category
   SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
     'Service categories found successfully.',
   SERVICE_CATGORIES_CREATED_SUCCESSFULLY:
@@ -70,7 +70,7 @@ export const SUCCESS_MESSAGES = {
   CREATED_SUB_SERVICE_CATEGORY:
     'Successfully created the sub service category.',
 
-  //Sub Services
+  //Sub Services category
   SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
     'Sub Service Categories Found Succesfully.',
   EDITED_SUB_SERVICE_CATEGORY: 'Edited Sub Service Category Successfully.',
@@ -80,6 +80,9 @@ export const SUCCESS_MESSAGES = {
     'Sub service category status changed successfully.',
   SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY:
     'Sub service category verification status changed successfully.',
+
+  //service
+  SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
 }
 
 export const ERROR_MESSAGES = {
@@ -117,6 +120,7 @@ export const ERROR_MESSAGES = {
 
 export const S3_BUCKET_IMAGE_FOLDERS = {
   SUB_SERVICE_CATEGORY_IMAGES: 'SubServiceCategoryImages',
+  SERVICE_IMAGES: 'fixora-services-bucket',
 }
 export const VERIFICATION_MAIL_CONTENT = (otp: string) => `
 <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">

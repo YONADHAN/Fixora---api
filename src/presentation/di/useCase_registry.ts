@@ -176,6 +176,8 @@ import { IGetVendorSubServiceCategoriesUseCase } from '../../domain/useCaseInter
 import { GetVendorSubServiceCategoriesUseCase } from '../../application/usecase/sub_service_category/get_vendor_sub_service_categories_usecase'
 import { IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase.interface'
 import { GetAllSubServiceCategoriesBasedOnServiceCategoryId } from '../../application/usecase/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase'
+import { ICreateServiceUseCase } from '../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
+import { CreateServiceUseCase } from '../../application/usecase/service/create_service_usecase'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -298,6 +300,10 @@ export class UseCaseRegistry {
         useClass: ToggleVerificationStatusOfSubServiceCategoryUseCase,
       }
     )
+
+    container.register<ICreateServiceUseCase>('ICreateServiceUseCase', {
+      useClass: CreateServiceUseCase,
+    })
 
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {

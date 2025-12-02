@@ -13,7 +13,7 @@ export interface IServiceEntity {
     pricePerSlot: number
     isAdvanceRequired: boolean
     advanceAmountPerSlot: number
-    currency: string
+    currency?: string
   }
 
   images: string[]

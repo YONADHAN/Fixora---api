@@ -15,6 +15,7 @@ import { CustomRequestHandler } from '../../shared/types/custom_request'
 import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
+import { ServiceRoutes } from './service_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -42,6 +43,8 @@ export class VendorRoutes extends BaseRoute {
       '/sub-service-category',
       new SubServiceCategoryRoutes().router
     )
+
+    this.router.use('/service', new ServiceRoutes().router)
 
     //logout
     this.router.post('/logout', (req: Request, res: Response) => {
