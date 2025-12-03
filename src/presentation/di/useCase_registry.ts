@@ -178,6 +178,10 @@ import { IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase } from '../.
 import { GetAllSubServiceCategoriesBasedOnServiceCategoryId } from '../../application/usecase/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase'
 import { ICreateServiceUseCase } from '../../domain/useCaseInterfaces/service/create_service_category_usecase.interface'
 import { CreateServiceUseCase } from '../../application/usecase/service/create_service_usecase'
+import { IGetAllServicesUseCase } from '../../domain/useCaseInterfaces/service/get_all_services_usecase.interface'
+import { GetAllServicesUseCase } from '../../application/usecase/service/get_all_service_usecase'
+import { IGetServiceByIdUseCase } from '../../domain/useCaseInterfaces/service/get_service_by_id_usecase.interface'
+import { GetServiceByIdUseCase } from '../../application/usecase/service/get_service_by_id_usecase'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -305,6 +309,12 @@ export class UseCaseRegistry {
       useClass: CreateServiceUseCase,
     })
 
+    container.register<IGetAllServicesUseCase>('IGetAllServicesUseCase', {
+      useClass: GetAllServicesUseCase,
+    })
+    container.register<IGetServiceByIdUseCase>('IGetServiceByIdUseCase', {
+      useClass: GetServiceByIdUseCase,
+    })
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,

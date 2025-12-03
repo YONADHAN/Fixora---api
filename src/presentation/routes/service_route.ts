@@ -27,16 +27,19 @@ export class ServiceRoutes extends BaseRoute {
     // --------------------------
     // GET /service/all
     // --------------------------
-    this.router.get('/', (req, res) =>
-      serviceController.getAllServices(req, res)
+    this.router.get(
+      '/',
+      verifyAuth as CustomRequestHandler,
+      authorizeRole(['vendor']),
+      (req, res) => serviceController.getAllServices(req, res)
     )
 
-    // // --------------------------
-    // // GET /service/:id
-    // // --------------------------
-    // this.router.get('/:serviceId', (req, res) =>
-    //   serviceController.getServiceById(req, res)
-    // )
+    // --------------------------
+    // GET /service/:id
+    // --------------------------
+    this.router.get('/:serviceId', (req, res) =>
+      serviceController.getServiceById(req, res)
+    )
 
     // // --------------------------
     // // PATCH /service/:id/edit

@@ -3,6 +3,10 @@ import { IServiceModel } from '../models/service_model'
 
 export const ServiceSchema = new Schema<IServiceModel>(
   {
+    serviceId: {
+      type: String,
+      required: true,
+    },
     vendorRef: {
       type: Schema.Types.ObjectId,
       ref: 'Vendor',

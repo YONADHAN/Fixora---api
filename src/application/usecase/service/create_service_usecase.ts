@@ -75,7 +75,7 @@ export class CreateServiceUseCase implements ICreateServiceUseCase {
     const entity: IServiceEntity = {
       vendorRef: vendor._id.toString(),
       subServiceCategoryRef: category._id.toString(),
-
+      serviceId,
       title,
       description,
 

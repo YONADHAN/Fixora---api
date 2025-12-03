@@ -91,7 +91,14 @@ export abstract class BaseRepository<TModel, TEntity>
   ) {
     const filter: FilterQuery<TModel> = {
       ...extraFilters,
-      ...(search ? { name: { $regex: search, $options: 'i' } } : {}),
+      ...(search
+        ? {
+            $or: [
+              { name: { $regex: search, $options: 'i' } },
+              { title: { $regex: search, $options: 'i' } },
+            ],
+          }
+        : {}),
     }
 
     const total = await this.model.countDocuments(filter)

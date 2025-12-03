@@ -32,6 +32,8 @@ export class VendorRoutes extends BaseRoute {
       }
     )
 
+    this.router.use('/service', new ServiceRoutes().router)
+
     //  Global middlewares for all authenticated vendor routes
     this.router.use(
       verifyAuth as CustomRequestHandler,
@@ -43,8 +45,6 @@ export class VendorRoutes extends BaseRoute {
       '/sub-service-category',
       new SubServiceCategoryRoutes().router
     )
-
-    this.router.use('/service', new ServiceRoutes().router)
 
     //logout
     this.router.post('/logout', (req: Request, res: Response) => {

@@ -83,6 +83,7 @@ export const SUCCESS_MESSAGES = {
 
   //service
   SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
+  SERVICE_FOUND_SUCCESSFULLY: 'Service found successfully.',
 }
 
 export const ERROR_MESSAGES = {

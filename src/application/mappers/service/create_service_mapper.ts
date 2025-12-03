@@ -1,4 +1,3 @@
-// src/application/mappers/service/create_service_mapper.ts
 import { recurrenceType } from '../../../shared/constants'
 
 export class CreateServiceRequestMapper {

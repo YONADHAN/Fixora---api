@@ -6,7 +6,7 @@ import {
 import { BaseRepository } from '../../base_repository'
 import { IServiceRepository } from '../../../../domain/repositoryInterfaces/feature/service/service_repository.interface'
 import { IServiceEntity } from '../../../../domain/models/service_entity'
-import { Schema, Types } from 'mongoose'
+import { Types } from 'mongoose'
 
 @injectable()
 export class ServiceRepository
@@ -29,7 +29,7 @@ export class ServiceRepository
       subServiceCategoryRef: entity.subServiceCategoryRef
         ? new Types.ObjectId(entity.subServiceCategoryRef)
         : undefined,
-
+      serviceId: entity.serviceId,
       title: entity.title,
       description: entity.description,
 
@@ -78,7 +78,7 @@ export class ServiceRepository
   protected toEntity(model: IServiceModel): IServiceEntity {
     return {
       _id: model._id.toString(),
-
+      serviceId: model.serviceId,
       vendorRef: model.vendorRef.toString(),
       subServiceCategoryRef: model.subServiceCategoryRef.toString(),
 

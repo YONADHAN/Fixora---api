@@ -16,6 +16,7 @@ import { CustomRequestHandler } from '../../shared/types/custom_request'
 import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
+import { ServiceRoutes } from './service_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -31,6 +32,8 @@ export class CustomerRoutes extends BaseRoute {
         authController.handleTokenRefresh(req, res)
       }
     )
+
+    this.router.use('/service', new ServiceRoutes().router)
 
     this.router.get('/service_category', (req: Request, res: Response) => {
       serviceCategoryController.getActiveServiceCategories(req, res)
