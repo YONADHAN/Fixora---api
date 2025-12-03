@@ -102,3 +102,74 @@ export interface ResponseGetServiceByIdDTO {
 
   images: string[]
 }
+
+export interface RequestEditServiceDTO {
+  title?: string
+  description?: string
+
+  pricing?: {
+    pricePerSlot?: number
+    isAdvanceRequired?: boolean
+    advanceAmountPerSlot?: number
+    currency?: string
+  }
+
+  isActiveStatusByVendor?: boolean
+  adminStatusNote?: string
+
+  schedule?: {
+    visibilityStartDate?: Date
+    visibilityEndDate?: Date
+
+    workStartTime?: string
+    workEndTime?: string
+
+    slotDurationMinutes?: number
+
+    recurrenceType?: recurrenceType
+
+    weeklyWorkingDays?: number[]
+    monthlyWorkingDates?: number[]
+    holidayDates?: Date[]
+  }
+
+  images?: Express.Multer.File[]
+}
+
+export interface ResponseEditServiceDTO {
+  serviceId: string
+
+  title: string
+  description: string
+
+  pricing: {
+    pricePerSlot: number
+    isAdvanceRequired: boolean
+    advanceAmountPerSlot: number
+    currency: string
+  }
+
+  schedule: {
+    visibilityStartDate: Date
+    visibilityEndDate: Date
+
+    workStartTime: string
+    workEndTime: string
+
+    slotDurationMinutes: number
+    recurrenceType: recurrenceType
+
+    weeklyWorkingDays: number[]
+    monthlyWorkingDates: number[]
+    holidayDates: Date[]
+  }
+
+  images: string[]
+
+  isActiveStatusByVendor: boolean
+  isActiveStatusByAdmin: boolean
+  adminStatusNote: string
+
+  createdAt: Date
+  updatedAt: Date
+}

@@ -13,6 +13,9 @@ import { IGetAllServicesUseCase } from '../../../domain/useCaseInterfaces/servic
 import { GetServiceByIdZodValidationSchema } from '../../validations/service/get_service_by_id.schema'
 import { GetServiceByIdRequestMapper } from '../../../application/mappers/service/get_service_by_id_mapper'
 import { IGetServiceByIdUseCase } from '../../../domain/useCaseInterfaces/service/get_service_by_id_usecase.interface'
+import { editServiceZodValidationSchema } from '../../validations/service/edit_service.schema'
+import { EditServiceRequestMapper } from '../../../application/mappers/service/edit_service_mapper'
+import { IEditServiceUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_usecase.interface'
 
 @injectable()
 export class ServiceController implements IServiceController {
@@ -22,7 +25,9 @@ export class ServiceController implements IServiceController {
     @inject('IGetAllServicesUseCase')
     private _getAllServicesUseCase: IGetAllServicesUseCase,
     @inject('IGetServiceByIdUseCase')
-    private _getServiceByIdUseCase: IGetServiceByIdUseCase
+    private _getServiceByIdUseCase: IGetServiceByIdUseCase,
+    @inject('IEditServiceUseCase')
+    private _editServiceUseCase: IEditServiceUseCase
   ) {}
   async createService(req: Request, res: Response): Promise<void> {
     try {
@@ -85,6 +90,33 @@ export class ServiceController implements IServiceController {
         success: true,
         message: SUCCESS_MESSAGES.SERVICE_FOUND_SUCCESSFULLY,
         data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async editService(req: Request, res: Response): Promise<void> {
+    try {
+      const validated = editServiceZodValidationSchema.parse({
+        params: req.params,
+        body: req.body,
+        files: req.files,
+      })
+
+      const { serviceId } = validated.params
+
+      const dto = EditServiceRequestMapper.toDTO({
+        rawData: validated.body,
+        files: validated.files,
+      })
+
+      const updated = await this._editServiceUseCase.execute(serviceId, dto)
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Service updated successfully',
+        data: updated,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

@@ -46,3 +46,36 @@ export class GetServiceByIdResponseMapper {
     }
   }
 }
+
+import { ResponseEditServiceDTO } from '../../dtos/service_dto'
+
+export class EditServiceResponseMapper {
+  static toDTO(entity: any): ResponseEditServiceDTO {
+    return {
+      serviceId: entity.serviceId,
+
+      title: entity.title,
+      description: entity.description,
+
+      pricing: {
+        pricePerSlot: entity.pricing.pricePerSlot,
+        isAdvanceRequired: entity.pricing.isAdvanceRequired,
+        advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
+        currency: entity.pricing.currency,
+      },
+
+      schedule: {
+        ...entity.schedule,
+      },
+
+      images: entity.images,
+
+      isActiveStatusByVendor: entity.isActiveStatusByVendor,
+      isActiveStatusByAdmin: entity.isActiveStatusByAdmin,
+      adminStatusNote: entity.adminStatusNote,
+
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    }
+  }
+}

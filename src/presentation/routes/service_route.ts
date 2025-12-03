@@ -41,17 +41,17 @@ export class ServiceRoutes extends BaseRoute {
       serviceController.getServiceById(req, res)
     )
 
-    // // --------------------------
-    // // PATCH /service/:id/edit
-    // // --------------------------
-    // this.router.patch(
-    //   '/:serviceId/edit',
-    //   verifyAuth,
-    //   authorizeRole(['vendor']),
-    //   blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-    //   handleMulterError(upload.array('images', 10)),
-    //   (req, res) => serviceController.editService(req, res)
-    // )
+    // --------------------------
+    // PATCH /service/:id/edit
+    // --------------------------
+    this.router.patch(
+      '/:serviceId/edit',
+      verifyAuth,
+      authorizeRole(['vendor']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      handleMulterError(upload.array('images', 1)),
+      (req, res) => serviceController.editService(req, res)
+    )
 
     // // --------------------------
     // // PATCH /service/:id/toggleblock
