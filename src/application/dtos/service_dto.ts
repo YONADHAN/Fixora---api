@@ -173,3 +173,11 @@ export interface ResponseEditServiceDTO {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface RequestToggleBlockServiceDTO {
+  serviceId: string
+}
+
+export interface ResponseToggleBlockServiceDTO {
+  isActiveStatusByVendor: boolean
+}

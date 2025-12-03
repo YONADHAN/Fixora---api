@@ -16,6 +16,8 @@ import { IGetServiceByIdUseCase } from '../../../domain/useCaseInterfaces/servic
 import { editServiceZodValidationSchema } from '../../validations/service/edit_service.schema'
 import { EditServiceRequestMapper } from '../../../application/mappers/service/edit_service_mapper'
 import { IEditServiceUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_usecase.interface'
+import { toggleServiceBlockZodValidationSchema } from '../../validations/service/toggle_service_block_status'
+import { IToggleBlockServiceUseCase } from '../../../domain/useCaseInterfaces/service/toggle_block_service_usecase.interface'
 
 @injectable()
 export class ServiceController implements IServiceController {
@@ -27,7 +29,9 @@ export class ServiceController implements IServiceController {
     @inject('IGetServiceByIdUseCase')
     private _getServiceByIdUseCase: IGetServiceByIdUseCase,
     @inject('IEditServiceUseCase')
-    private _editServiceUseCase: IEditServiceUseCase
+    private _editServiceUseCase: IEditServiceUseCase,
+    @inject('IToggleBlockServiceUseCase')
+    private _toggleBlockServiceUseCase: IToggleBlockServiceUseCase
   ) {}
   async createService(req: Request, res: Response): Promise<void> {
     try {
@@ -98,6 +102,8 @@ export class ServiceController implements IServiceController {
 
   async editService(req: Request, res: Response): Promise<void> {
     try {
+      console.log('files', req.files)
+      console.log('body', req.body)
       const validated = editServiceZodValidationSchema.parse({
         params: req.params,
         body: req.body,
@@ -105,18 +111,40 @@ export class ServiceController implements IServiceController {
       })
 
       const { serviceId } = validated.params
-
+      console.log('serviceId', serviceId)
+      console.log('raw data', validated.body)
+      if (validated.files) {
+        console.log()
+      }
       const dto = EditServiceRequestMapper.toDTO({
         rawData: validated.body,
         files: validated.files,
       })
-
+      console.log('Edited data', dto)
       const updated = await this._editServiceUseCase.execute(serviceId, dto)
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Service updated successfully',
         data: updated,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async toggleServiceBlock(req: Request, res: Response): Promise<void> {
+    try {
+      const validated = toggleServiceBlockZodValidationSchema.parse({
+        params: req.params,
+      })
+      const result = await this._toggleBlockServiceUseCase.execute(
+        validated.params
+      )
+      res.status(200).json({
+        success: true,
+        message: `Service ${result.isActiveStatusByVendor ? 'unblocked' : 'blocked'} successfully`,
+        data: result,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

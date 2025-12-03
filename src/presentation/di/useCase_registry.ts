@@ -184,6 +184,8 @@ import { IGetServiceByIdUseCase } from '../../domain/useCaseInterfaces/service/g
 import { GetServiceByIdUseCase } from '../../application/usecase/service/get_service_by_id_usecase'
 import { IEditServiceUseCase } from '../../domain/useCaseInterfaces/service/edit_service_usecase.interface'
 import { EditServiceUseCase } from '../../application/usecase/service/edit_service_usecase'
+import { IToggleBlockServiceUseCase } from '../../domain/useCaseInterfaces/service/toggle_block_service_usecase.interface'
+import { ToggleBlockServiceUseCase } from '../../application/usecase/service/toggle_block_service_usecase'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -320,6 +322,12 @@ export class UseCaseRegistry {
     container.register<IEditServiceUseCase>('IEditServiceUseCase', {
       useClass: EditServiceUseCase,
     })
+    container.register<IToggleBlockServiceUseCase>(
+      'IToggleBlockServiceUseCase',
+      {
+        useClass: ToggleBlockServiceUseCase,
+      }
+    )
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,

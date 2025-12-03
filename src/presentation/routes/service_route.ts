@@ -53,15 +53,15 @@ export class ServiceRoutes extends BaseRoute {
       (req, res) => serviceController.editService(req, res)
     )
 
-    // // --------------------------
-    // // PATCH /service/:id/toggleblock
-    // // --------------------------
-    // this.router.patch(
-    //   '/:serviceId/toggleblock',
-    //   verifyAuth,
-    //   authorizeRole(['vendor', 'admin']),
-    //   blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-    //   (req, res) => serviceController.toggleServiceBlock(req, res) //here on the controller use factory and strategyy
-    // )
+    // --------------------------
+    // PATCH /service/:id/toggleblock
+    // --------------------------
+    this.router.patch(
+      '/:serviceId/toggleblock',
+      verifyAuth,
+      authorizeRole(['vendor']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      (req, res) => serviceController.toggleServiceBlock(req, res)
+    )
   }
 }

@@ -43,7 +43,11 @@ export const editServiceZodValidationSchema = z.object({
   files: z
     .array(
       z.object({
+        fieldname: z.string(),
+        originalname: z.string(),
+        encoding: z.string(),
         mimetype: z.string(),
+        buffer: z.instanceof(Buffer),
         size: z.number(),
       })
     )
