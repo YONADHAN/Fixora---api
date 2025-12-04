@@ -32,7 +32,12 @@ export class ServiceCategoryRoutes extends BaseRoute {
         handleMulterError(upload.single('ServiceCategoryBannerImage')),
         (req, res) => serviceCategoryController.editServiceCategory(req, res)
       )
-
+    /* -----------------------------
+       BLOCK / UNBLOCK
+    ------------------------------ */
+    this.router.patch('/block', (req, res) =>
+      serviceCategoryController.blockServiceCategory(req, res)
+    )
     /* -----------------------------
        GET SINGLE + EDIT (single ID)
     ------------------------------ */
@@ -41,12 +46,8 @@ export class ServiceCategoryRoutes extends BaseRoute {
       .get((req, res) =>
         serviceCategoryController.getSingleServiceCategory(req, res)
       )
-
-    /* -----------------------------
-       BLOCK / UNBLOCK
-    ------------------------------ */
-    this.router.patch('/block', (req, res) =>
-      serviceCategoryController.blockServiceCategory(req, res)
-    )
+      .patch(handleMulterError(upload.single('bannerImage')), (req, res) => {
+        serviceCategoryController.editServiceCategory(req, res)
+      })
   }
 }
