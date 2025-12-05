@@ -3,7 +3,7 @@ import { IServiceCategoryEntity } from '../../../../domain/models/service_catego
 import { serviceCategorySchema } from '../schemas/service_category_schema'
 
 export interface IServiceCategoryModel
-  extends IServiceCategoryEntity,
+  extends Omit<IServiceCategoryEntity, '_id'>,
     Document {
   _id: ObjectId
 }

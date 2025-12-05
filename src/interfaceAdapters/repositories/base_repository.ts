@@ -6,7 +6,6 @@ export abstract class BaseRepository<TModel, TEntity>
 {
   constructor(protected model: Model<TModel>) {}
 
-  // Required mappers
   protected abstract toEntity(model: TModel): TEntity
   protected abstract toModel(entity: Partial<TEntity>): Partial<TModel>
 
@@ -109,6 +108,71 @@ export abstract class BaseRepository<TModel, TEntity>
       .limit(limit)
       .sort({ createdAt: -1 })
       .lean()
+
+    return {
+      data: this.toEntityArray(results as TModel[]),
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    }
+  }
+
+  async findOneAndPopulate(
+    filter: FilterQuery<TModel>,
+    populateFields: string | string[] | object | object[]
+  ): Promise<TEntity | null> {
+    let query = this.model.findOne(filter)
+
+    if (Array.isArray(populateFields)) {
+      for (const field of populateFields) {
+        query = query.populate(field as any)
+      }
+    } else {
+      query = query.populate(populateFields as any)
+    }
+
+    const result = await query.lean()
+
+    return result ? this.toEntity(result as TModel) : null
+  }
+
+  async findAllDocumentsWithFilterationAndPopulate(
+    page: number,
+    limit: number,
+    search: string = '',
+    extraFilters: FilterQuery<TModel> = {},
+    populateFields?: string | string[] | object | object[]
+  ) {
+    const filter: FilterQuery<TModel> = {
+      ...extraFilters,
+      ...(search
+        ? {
+            $or: [
+              { name: { $regex: search, $options: 'i' } },
+              { title: { $regex: search, $options: 'i' } },
+            ],
+          }
+        : {}),
+    }
+
+    const total = await this.model.countDocuments(filter)
+
+    let query = this.model
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+
+    if (populateFields) {
+      if (Array.isArray(populateFields)) {
+        populateFields.forEach((field) => {
+          query = query.populate(field as any)
+        })
+      } else {
+        query = query.populate(populateFields as any)
+      }
+    }
+
+    const results = await query.lean()
 
     return {
       data: this.toEntityArray(results as TModel[]),

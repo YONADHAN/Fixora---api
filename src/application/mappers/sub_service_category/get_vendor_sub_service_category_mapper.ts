@@ -31,8 +31,8 @@ export class GetVendorSubServiceCategoriesResponseMapper {
       let document = response.data[i]
       const filteredDoc = {
         subServiceCategoryId: document.subServiceCategoryId,
-        serviceCategoryId: document.serviceCategoryId,
-        serviceCategoryName: document.serviceCategoryName,
+        serviceCategoryId: document.serviceCategory?.serviceCategoryId || '',
+        serviceCategoryName: document.serviceCategory?.name || '',
         name: document.name,
         description: document.description,
         bannerImage: document.bannerImage,

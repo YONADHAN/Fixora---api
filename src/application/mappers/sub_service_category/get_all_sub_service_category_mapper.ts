@@ -33,8 +33,8 @@ export class GetAllSubServiceCategoriesResponseMapper {
       const rawItem = data[i]
       const item = {
         subServiceCategoryId: rawItem.subServiceCategoryId,
-        serviceCategoryId: rawItem.serviceCategoryId,
-        serviceCategoryName: rawItem.serviceCategoryName,
+        serviceCategoryId: rawItem.serviceCategory?.serviceCategoryId || '',
+        serviceCategoryName: rawItem.serviceCategory?.name || '',
         name: rawItem.name,
         description: rawItem.description,
         bannerImage: rawItem.bannerImage,

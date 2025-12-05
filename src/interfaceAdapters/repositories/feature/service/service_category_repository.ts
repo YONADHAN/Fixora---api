@@ -18,6 +18,7 @@ export class ServiceCategoryRepository
 
   protected toEntity(model: IServiceCategoryModel): IServiceCategoryEntity {
     return {
+      _id: model._id.toString(),
       serviceCategoryId: model.serviceCategoryId,
       name: model.name,
       description: model.description,

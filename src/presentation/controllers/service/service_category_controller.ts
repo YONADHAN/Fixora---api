@@ -53,10 +53,10 @@ export class ServiceCategoryController implements IServiceCategoryController {
     try {
       const { name, description } = req.body
       const bannerImage = req.file
-      console.log('The create service category', name, description)
-      if (bannerImage) {
-        console.log('banner image also got')
-      }
+     // console.log('The create service category', name, description)
+      // if (bannerImage) {
+      //   console.log('banner image also got')
+      // }
       await this._createServiceCategoryUseCase.execute({
         name,
         description,
@@ -94,9 +94,9 @@ export class ServiceCategoryController implements IServiceCategoryController {
 
   async blockServiceCategory(req: Request, res: Response): Promise<void> {
     try {
-      console.log('entereed the block service catgory')
+      //console.log('entereed the block service catgory')
       const { categoryId, status } = req.body
-      console.log('The data is blockservice category controller, ', req.body)
+      //console.log('The data is blockservice category controller, ', req.body)
       await this._blockServiceCategoryUseCase.execute(categoryId, status)
       res
         .status(HTTP_STATUS.OK)

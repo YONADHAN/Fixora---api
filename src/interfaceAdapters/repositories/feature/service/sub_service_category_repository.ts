@@ -6,8 +6,28 @@ import {
 
 import { BaseRepository } from '../../base_repository'
 import { ISubServiceCategoryRepository } from '../../../../domain/repositoryInterfaces/feature/service/sub_service_catgory_repository.interface'
-import { ISubServiceCategoryEntity } from '../../../../domain/models/sub_service_category_entity'
+import {
+  ISubServiceCategoryEntity,
+  IServiceCategoryPopulated,
+} from '../../../../domain/models/sub_service_category_entity'
+import { Types } from 'mongoose'
 
+/* ------------------------------------------------------------------
+   TYPE GUARD FUNCTION — PLACE IT ABOVE CLASS (BEST PRACTICE)
+-------------------------------------------------------------------*/
+function isPopulated(ref: any): ref is IServiceCategoryPopulated {
+  return (
+    ref &&
+    typeof ref === 'object' &&
+    '_id' in ref &&
+    'name' in ref &&
+    'serviceCategoryId' in ref
+  )
+}
+
+/* ------------------------------------------------------------------
+   REPOSITORY CLASS
+-------------------------------------------------------------------*/
 @injectable()
 export class SubServiceCategoryRepository
   extends BaseRepository<ISubServiceCategoryModel, ISubServiceCategoryEntity>
@@ -16,14 +36,27 @@ export class SubServiceCategoryRepository
   constructor() {
     super(SubServiceCategoryModel)
   }
+
   protected toEntity(
     model: ISubServiceCategoryModel
   ): ISubServiceCategoryEntity {
+    let serviceCategory = undefined
+
+    if (isPopulated(model.serviceCategoryRef)) {
+      serviceCategory = {
+        _id: model.serviceCategoryRef._id.toString(),
+        name: model.serviceCategoryRef.name,
+        serviceCategoryId: model.serviceCategoryRef.serviceCategoryId,
+      }
+    }
+
     return {
       _id: model._id,
       subServiceCategoryId: model.subServiceCategoryId,
-      serviceCategoryId: model.serviceCategoryId,
-      serviceCategoryName: model.serviceCategoryName,
+
+      serviceCategoryRef: model.serviceCategoryRef.toString(),
+      serviceCategory,
+
       name: model.name,
       description: model.description,
       bannerImage: model.bannerImage,
@@ -39,10 +72,19 @@ export class SubServiceCategoryRepository
   protected toModel(
     entity: Partial<ISubServiceCategoryEntity>
   ): Partial<ISubServiceCategoryModel> {
+    let serviceCategoryRef: any = undefined
+
+    if (entity.serviceCategoryRef) {
+      if (typeof entity.serviceCategoryRef === 'string') {
+        serviceCategoryRef = new Types.ObjectId(entity.serviceCategoryRef)
+      } else if (typeof entity.serviceCategoryRef === 'object') {
+        serviceCategoryRef = undefined
+      }
+    }
+
     return {
       subServiceCategoryId: entity.subServiceCategoryId,
-      serviceCategoryId: entity.serviceCategoryId,
-      serviceCategoryName: entity.serviceCategoryName,
+      serviceCategoryRef,
       name: entity.name,
       description: entity.description,
       bannerImage: entity.bannerImage,

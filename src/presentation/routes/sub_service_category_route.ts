@@ -20,10 +20,11 @@ export class SubServiceCategoryRoutes extends BaseRoute {
         handleMulterError(upload.single('SubServiceCategoryImage')),
         blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
         (req, res) =>
-          subServiceCategoryController.createSubServiceCategories(req, res)
+          subServiceCategoryController.createSubServiceCategories(req, res) //🤍
       )
-      .get((req, res) =>
-        subServiceCategoryController.getAllSubServiceCategories(req, res)
+      .get(
+        (req, res) =>
+          subServiceCategoryController.getAllSubServiceCategories(req, res) //🤍
       )
       .patch(
         verifyAuth,
@@ -31,13 +32,13 @@ export class SubServiceCategoryRoutes extends BaseRoute {
         blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
         handleMulterError(upload.single('SubServiceCategoryImage')),
         (req, res) =>
-          subServiceCategoryController.editSubServiceCategory(req, res)
+          subServiceCategoryController.editSubServiceCategory(req, res) //🤍
       )
 
     this.router
       .route('/vendor-created')
       .get(verifyAuth, authorizeRole(['vendor']), (req, res) => {
-        subServiceCategoryController.getVendorSubServiceCategories(req, res)
+        subServiceCategoryController.getVendorSubServiceCategories(req, res) //🤍
       })
     this.router.patch(
       '/verification/:subServiceCategoryId',
@@ -49,24 +50,24 @@ export class SubServiceCategoryRoutes extends BaseRoute {
           res
         )
       }
-    )
+    ) //🤍
 
     this.router.get('/search/sub-service-categories', (req, res) => {
       subServiceCategoryController.getAllSubServiceCategoriesBasedOnServiceCategoryId(
         req,
         res
       )
-    })
+    }) //🤍
     this.router
       .route('/:subServiceCategoryId')
       .get((req, res) =>
         subServiceCategoryController.getSingleSubServiceCategory(req, res)
-      )
+      ) //🤍
       .patch(verifyAuth, authorizeRole(['admin']), (req, res) =>
         subServiceCategoryController.toggleBlockStatusOfSubServiceCategory(
           req,
           res
         )
-      )
+      ) //🤍
   }
 }

@@ -1,5 +1,10 @@
-import { ISubServiceCategoryEntity } from '../../../domain/models/sub_service_category_entity'
+import { ObjectId } from 'mongoose'
+import {
+  IServiceCategoryPopulated,
+  ISubServiceCategoryEntity,
+} from '../../../domain/models/sub_service_category_entity'
 import { statusTypes } from '../../../shared/constants'
+import { ResponseCreateSubServiceCategoryDTO } from '../../dtos/sub_service_category_dto'
 
 export class CreateSubServiceCategoryRequestMapper {
   static toDTO({
@@ -13,7 +18,6 @@ export class CreateSubServiceCategoryRequestMapper {
       name: string
       description: string
       serviceCategoryId: string
-      serviceCategoryName: string
     }
     file: Express.Multer.File
     createdById: string
@@ -24,7 +28,6 @@ export class CreateSubServiceCategoryRequestMapper {
       name: body.name,
       description: body.description,
       serviceCategoryId: body.serviceCategoryId,
-      serviceCategoryName: body.serviceCategoryName,
       bannerImage: file,
       createdById,
       createdByRole,
@@ -32,14 +35,17 @@ export class CreateSubServiceCategoryRequestMapper {
     }
   }
 }
-
 export class CreateSubServiceCategoryResponseMapper {
-  static toDTO(payload: ISubServiceCategoryEntity) {
+  static toDTO(
+    payload: ISubServiceCategoryEntity
+  ): ResponseCreateSubServiceCategoryDTO {
+    const populated = payload.serviceCategory as IServiceCategoryPopulated
+
     return {
       name: payload.name,
       description: payload.description,
-      serviceCategoryId: payload.serviceCategoryId,
-      serviceCategoryName: payload.serviceCategoryName,
+      serviceCategoryId: populated?.serviceCategoryId ?? '',
+      serviceCategoryName: populated?.name ?? '',
       subServiceCategoryId: payload.subServiceCategoryId,
       bannerImage: payload.bannerImage,
     }

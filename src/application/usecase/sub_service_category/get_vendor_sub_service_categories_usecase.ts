@@ -41,11 +41,16 @@ export class GetVendorSubServiceCategoriesUseCase
     const safeLimit = Math.max(Number(limit), 1)
 
     const response =
-      await this._subServiceCategoryRepository.findAllDocumentsWithFilteration(
+      await this._subServiceCategoryRepository.findAllDocumentsWithFilterationAndPopulate(
         safePage,
         safeLimit,
         search ?? '',
-        { createdById: vendorId }
+        { createdById: vendorId },
+        {
+          path: 'serviceCategoryRef',
+          select: 'name serviceCategoryId',
+          model: 'ServiceCategory',
+        }
       )
 
     return GetVendorSubServiceCategoriesResponseMapper.toDTO(response)

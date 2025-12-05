@@ -267,10 +267,10 @@ let AuthController = class AuthController {
                 const { currentPassword, newPassword } = req.body;
                 const userId = req.user.userId;
                 const role = req.user.role;
-                console.log('current', currentPassword);
-                console.log('new', newPassword);
-                console.log('userId', userId);
-                console.log('role', role);
+//console.log('current', currentPassword);
+//console.log('new', newPassword);
+//console.log('userId', userId);
+              //  console.log('role', role);
                 if (currentPassword.trim() === newPassword.trim()) {
                     res.status(constants_1.HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
@@ -279,7 +279,7 @@ let AuthController = class AuthController {
                     return;
                 }
                 const response = yield this._changeMyPasswordUsecase.execute(currentPassword, newPassword, userId, role);
-                console.log('successfully changed');
+              //  console.log('successfully changed');
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
                     message: constants_1.SUCCESS_MESSAGES.PASSWORD_CHANGED_SUCCESSFULLY,

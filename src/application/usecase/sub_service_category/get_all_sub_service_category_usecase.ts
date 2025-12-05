@@ -19,12 +19,16 @@ export class GetAllSubServiceCategoryUseCase
     payload: RequestGetAllSubServiceCategoriesDTO
   ): Promise<ResponseGetAllSubServiceCategoriesDTO> {
     const { page, limit, search } = payload
+    // console.log('payload', payload)
     const rawResponse =
-      await this._subServiceCategoryRepository.findAllDocuments(
+      await this._subServiceCategoryRepository.findAllDocumentsWithFilterationAndPopulate(
         page,
         limit,
-        search
+        search,
+        {},
+        { path: 'serviceCategoryRef', select: 'name serviceCategoryId' }
       )
+    //console.log('rawResponse', rawResponse)
     return GetAllSubServiceCategoriesResponseMapper.toDTO(rawResponse)
   }
 }

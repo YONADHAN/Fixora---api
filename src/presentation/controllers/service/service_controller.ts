@@ -102,8 +102,8 @@ export class ServiceController implements IServiceController {
 
   async editService(req: Request, res: Response): Promise<void> {
     try {
-      console.log('files', req.files)
-      console.log('body', req.body)
+      // console.log('files', req.files)
+      // console.log('body', req.body)
       const validated = editServiceZodValidationSchema.parse({
         params: req.params,
         body: req.body,
@@ -111,16 +111,16 @@ export class ServiceController implements IServiceController {
       })
 
       const { serviceId } = validated.params
-      console.log('serviceId', serviceId)
-      console.log('raw data', validated.body)
-      if (validated.files) {
-        console.log()
-      }
+      // console.log('serviceId', serviceId)
+      //console.log('raw data', validated.body)
+      // if (validated.files) {
+      //   console.log()
+      // }
       const dto = EditServiceRequestMapper.toDTO({
         rawData: validated.body,
         files: validated.files,
       })
-      console.log('Edited data', dto)
+      //  console.log('Edited data', dto)
       const updated = await this._editServiceUseCase.execute(serviceId, dto)
 
       res.status(HTTP_STATUS.OK).json({

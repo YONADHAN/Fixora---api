@@ -9,7 +9,6 @@ export class EditSubServiceCategoryRequestMapper {
       name: string
       description: string
       serviceCategoryId: string
-      serviceCategoryName: string
       subServiceCategoryId: string
     }
     file: Express.Multer.File
@@ -18,7 +17,6 @@ export class EditSubServiceCategoryRequestMapper {
       name: body.name,
       description: body.description,
       serviceCategoryId: body.serviceCategoryId,
-      serviceCategoryName: body.serviceCategoryName,
       subServiceCategoryId: body.subServiceCategoryId,
       bannerImage: file,
     }
@@ -30,8 +28,8 @@ export class EditSubServiceCategoryResponseMapper {
     return {
       name: payload.name,
       description: payload.description,
-      serviceCategoryId: payload.serviceCategoryId,
-      serviceCategoryName: payload.serviceCategoryName,
+      serviceCategoryId: payload.serviceCategory?.serviceCategoryId || '',
+      serviceCategoryName: payload.serviceCategory?.name || '',
       subServiceCategoryId: payload.subServiceCategoryId,
       bannerImage: payload.bannerImage,
     }

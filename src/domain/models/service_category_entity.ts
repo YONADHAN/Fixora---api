@@ -1,4 +1,7 @@
+import { ObjectId } from 'mongoose'
+
 export interface IServiceCategoryEntity {
+  _id?: string
   serviceCategoryId: string
   name: string
   description: string

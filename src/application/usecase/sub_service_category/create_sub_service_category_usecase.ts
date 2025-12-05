@@ -16,6 +16,7 @@ import { randomUUID } from 'crypto'
 import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { CreateSubServiceCategoryResponseMapper } from '../../mappers/sub_service_category/create_sub_service_category_mapper'
+import { Schema } from 'mongoose'
 @injectable()
 export class CreateSubServiceCategoryUseCase
   implements ICreateSubServiceCategoryUseCase
@@ -34,11 +35,11 @@ export class CreateSubServiceCategoryUseCase
     description,
     bannerImage,
     serviceCategoryId,
-    serviceCategoryName,
     createdById,
     createdByRole,
     isActive,
   }: RequestCreateSubServiceCategoryDTO): Promise<ResponseCreateSubServiceCategoryDTO> {
+    //console.log('entered into the  create sub service category usecase ')
     const AlreadyExistServiceCategory =
       await this._serviceCategoryRepository.findOne({ serviceCategoryId })
     if (!AlreadyExistServiceCategory) {
@@ -47,7 +48,10 @@ export class CreateSubServiceCategoryUseCase
         HTTP_STATUS.NOT_FOUND
       )
     }
-
+    // console.log(
+    //   'The service category get found , ',
+    //   AlreadyExistServiceCategory
+    // )
     const AlreadyExistSubServiceCategory =
       await this._subServiceCategoryRepository.findOne({
         name,
@@ -58,7 +62,7 @@ export class CreateSubServiceCategoryUseCase
         HTTP_STATUS.CONFLICT
       )
     }
-
+    // console.log('sub service catgories', AlreadyExistSubServiceCategory)
     const bannerImageUrl = await this._storageService.uploadFile(
       config.storageConfig.bucket!,
       bannerImage,
@@ -66,21 +70,38 @@ export class CreateSubServiceCategoryUseCase
     )
 
     const subServiceCategoryId = randomUUID()
+    if (!AlreadyExistServiceCategory._id) {
+      throw new CustomError('Service id not  existing', HTTP_STATUS.NOT_FOUND)
+    }
+    const serviceCategoryRef = AlreadyExistServiceCategory._id.toString()
     const verification: verificationTypes = 'pending'
     const data = {
       name,
       description,
       bannerImage: bannerImageUrl,
-      serviceCategoryId,
-      serviceCategoryName,
+      serviceCategoryRef,
       subServiceCategoryId,
       createdById,
       createdByRole,
       isActive,
       verification,
     }
-
-    const entity = await this._subServiceCategoryRepository.save(data)
+    //console.log('The data ,', data)
+    await this._subServiceCategoryRepository.save(data)
+    //console.log('Th save')
+    const entity = await this._subServiceCategoryRepository.findOneAndPopulate(
+      {
+        subServiceCategoryId,
+      },
+      'serviceCategoryRef'
+    )
+    // console.log('The entity', entity)
+    if (!entity) {
+      throw new CustomError(
+        'Failed to fetch created sub-service category',
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      )
+    }
 
     return CreateSubServiceCategoryResponseMapper.toDTO(entity)
   }

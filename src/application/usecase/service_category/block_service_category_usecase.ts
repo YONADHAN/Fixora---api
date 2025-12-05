@@ -14,12 +14,12 @@ export class BlockServiceCategoryUseCase
   ) {}
 
   async execute(categoryId: string, status: string) {
-    console.log(
-      'The data arrived on the backend usecase block service category usecase ,',
-      categoryId,
-      ' and the status is ',
-      status
-    )
+    // console.log(
+    //   'The data arrived on the backend usecase block service category usecase ,',
+    //   categoryId,
+    //   ' and the status is ',
+    //   status
+    // )
     const category = await this._serviceCategoryRepository.findOne({
       serviceCategoryId: categoryId,
     })

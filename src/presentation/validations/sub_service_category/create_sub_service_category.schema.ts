@@ -5,7 +5,6 @@ export const createSubServiceCategoryZodValidationSchema = z.object({
     name: z.string().min(1, 'Name is required'),
     description: z.string(),
     serviceCategoryId: z.string(),
-    serviceCategoryName: z.string(),
   }),
   file: z
     .any()

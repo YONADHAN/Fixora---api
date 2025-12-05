@@ -44,7 +44,7 @@ const extractToken = (
 
 const isBlacklisted = async (token: string): Promise<boolean> => {
   const result = await redisClient.get(token)
-  console.log('is token blacklisted', result)
+  // console.log('is token blacklisted', result)
   return result !== null
 }
 

@@ -6,7 +6,6 @@ export interface RequestCreateSubServiceCategoryDTO {
   description: string
   bannerImage: Express.Multer.File
   serviceCategoryId: string
-  serviceCategoryName: string
   createdById: string
   createdByRole: string
   isActive: statusTypes
@@ -17,8 +16,8 @@ export interface ResponseCreateSubServiceCategoryDTO {
   description: string
   bannerImage: string
   serviceCategoryId: string
-  serviceCategoryName: string
   subServiceCategoryId: string
+  serviceCategoryName: string
 }
 
 //get all sub service category controller
@@ -50,7 +49,6 @@ export interface RequestEditSubServiceCategoriesDTO {
   name: string
   description: string
   serviceCategoryId: string
-  serviceCategoryName: string
   bannerImage: Express.Multer.File
 }
 

@@ -20,12 +20,15 @@ export class GetSingleSubServiceCategoryUseCase
   async execute(
     subServiceCategoryId: RequestGetSingleSubServiceCategoryDTO
   ): Promise<ResponseGetSingleSubServiceCategoryDTO> {
-    console.log('entered here', subServiceCategoryId.subServiceCategoryId)
+    // console.log('entered here', subServiceCategoryId.subServiceCategoryId)
     const subServiceCategoryExists =
-      await this._subServiceCategoryRepository.findOne({
-        subServiceCategoryId: subServiceCategoryId.subServiceCategoryId,
-      })
-    console.log('subServiceCategoryExists', subServiceCategoryExists)
+      await this._subServiceCategoryRepository.findOneAndPopulate(
+        {
+          subServiceCategoryId: subServiceCategoryId.subServiceCategoryId,
+        },
+        'serviceCategoryRef'
+      )
+    //console.log('subServiceCategoryExists', subServiceCategoryExists)
     if (!subServiceCategoryExists) {
       throw new CustomError(
         'Sub Service Category Is Not Existing',

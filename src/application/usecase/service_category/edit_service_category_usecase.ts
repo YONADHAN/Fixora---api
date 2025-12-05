@@ -21,7 +21,7 @@ export class EditServiceCategoryUseCase implements IEditServiceCategoryUseCase {
     description: string,
     bannerImage?: Express.Multer.File
   ) {
-    console.log('category id got:', categoryId)
+    //console.log('category id got:', categoryId)
     const category = await this._serviceCategoryRepository.findOne({
       serviceCategoryId: categoryId,
     })

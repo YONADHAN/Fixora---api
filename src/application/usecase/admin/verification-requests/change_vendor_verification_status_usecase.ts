@@ -64,7 +64,7 @@ export class ChangeVendorVerificationStatusUseCase
     reviewedBy: { adminId: string; reviewedAt: Date }
     description: string
   }> {
-    console.log('entered the change vendor verification status usecase')
+    // console.log('entered the change vendor verification status usecase')
 
     const vendor = await this._vendorRepository.findOne({ userId })
     if (!vendor) {
@@ -123,7 +123,7 @@ export class ChangeVendorVerificationStatusUseCase
 
     await this._vendorRepository.update({ userId }, vendor)
 
-    console.log(' Vendor verification status updated successfully')
+    //console.log(' Vendor verification status updated successfully')
 
     return {
       userId: vendor.userId ?? '',
