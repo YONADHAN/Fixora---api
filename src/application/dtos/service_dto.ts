@@ -4,15 +4,20 @@ export interface RequestCreateServiceDTO {
   vendorId: string
   subServiceCategoryId: string
 
-  title: string
-  description: string
+  name: string
+  description?: string
+  serviceVariants?: {
+    name: string
+    description?: string
+    price?: number
+  }[]
 
   pricing: {
     pricePerSlot: number
-    isAdvanceRequired: boolean
     advanceAmountPerSlot: number
-    currency?: string
   }
+
+  mainImage: Express.Multer.File
 
   isActiveStatusByVendor: boolean
   isActiveStatusByAdmin?: boolean
@@ -22,18 +27,30 @@ export interface RequestCreateServiceDTO {
     visibilityStartDate: Date
     visibilityEndDate: Date
 
-    workStartTime: string
-    workEndTime: string
+    dailyWorkingWindows: {
+      startTime: string
+      endTime: string
+    }[]
 
     slotDurationMinutes: number
-    recurrenceType: recurrenceType
 
+    recurrenceType: recurrenceType
     weeklyWorkingDays?: number[]
     monthlyWorkingDates?: number[]
-    holidayDates?: Date[]
-  }
 
-  images: Express.Multer.File[]
+    overrideBlock?: {
+      startDateTime: Date
+      endDateTime: Date
+      reason?: string
+    }[]
+
+    overrideCustom?: {
+      startDateTime: Date
+      endDateTime: Date
+      startTime?: string
+      endTime?: string
+    }[]
+  }
 }
 
 export interface ResponseServiceDTO {
@@ -54,9 +71,9 @@ export interface RequestGetAllServicesDTO {
 export interface ResponseGetAllServicesDTO {
   data: {
     serviceId: string
-    title: string
+    name: string
     description?: string
-    images: string[]
+    mainImage: string
     isActiveStatusByVendor: boolean
   }[]
   totalPages: number
@@ -68,74 +85,124 @@ export interface RequestGetServiceByIdDTO {
 }
 
 export interface ResponseGetServiceByIdDTO {
+  serviceId: string
   vendorId: string
   subServiceCategoryId: string
 
-  title: string
+  name: string
   description?: string
+
+  serviceVariants?: {
+    name: string
+    description?: string
+    price?: number
+  }[]
 
   pricing: {
     pricePerSlot: number
-    isAdvanceRequired: boolean
     advanceAmountPerSlot: number
-    currency?: string
   }
 
+  mainImage: string
+
   isActiveStatusByVendor: boolean
-  isActiveStatusByAdmin?: boolean
+  isActiveStatusByAdmin: boolean
   adminStatusNote?: string
 
   schedule: {
     visibilityStartDate?: Date
     visibilityEndDate?: Date
 
-    workStartTime?: string
-    workEndTime?: string
+    dailyWorkingWindows: {
+      startTime: string
+      endTime: string
+    }[]
 
-    slotDurationMinutes?: number
+    slotDurationMinutes: number
+
     recurrenceType?: recurrenceType
-
     weeklyWorkingDays?: number[]
     monthlyWorkingDates?: number[]
-    holidayDates?: Date[]
+
+    overrideBlock?: {
+      startDateTime: Date
+      endDateTime: Date
+      reason?: string
+    }[]
+
+    overrideCustom?: {
+      startDateTime: Date
+      endDateTime: Date
+      startTime?: string
+      endTime?: string
+    }[]
   }
 
-  images: string[]
+  populatedValues?: {
+    vendor?: {
+      name: string
+      userId: string
+      profileImage?: string
+    }
+    subServiceCategory?: {
+      subServiceCategoryId: string
+      name: string
+      isActive: string
+    }
+  }
+
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface RequestEditServiceDTO {
-  title?: string
+  serviceId: string
+  subServiceCategoryId: string
+  name: string
   description?: string
 
-  pricing?: {
-    pricePerSlot?: number
-    isAdvanceRequired?: boolean
-    advanceAmountPerSlot?: number
-    currency?: string
+  serviceVariants?: {
+    name: string
+    description?: string
+    price?: number
+  }[]
+
+  pricing: {
+    pricePerSlot: number
+    advanceAmountPerSlot: number
   }
 
-  isActiveStatusByVendor?: boolean
-  adminStatusNote?: string
+  mainImage: Express.Multer.File
 
-  schedule?: {
-    visibilityStartDate?: Date
-    visibilityEndDate?: Date
+  schedule: {
+    visibilityStartDate: Date
+    visibilityEndDate: Date
 
-    workStartTime?: string
-    workEndTime?: string
+    dailyWorkingWindows: {
+      startTime: string
+      endTime: string
+    }[]
 
-    slotDurationMinutes?: number
-
+    slotDurationMinutes: number
     recurrenceType?: recurrenceType
 
     weeklyWorkingDays?: number[]
     monthlyWorkingDates?: number[]
-    holidayDates?: Date[]
+
+    overrideBlock?: {
+      startDateTime: Date
+      endDateTime: Date
+      reason?: string
+    }[]
+
+    overrideCustom?: {
+      startDateTime: Date
+      endDateTime: Date
+      startTime?: string
+      endTime?: string
+    }[]
   }
-
-  images?: Express.Multer.File[]
 }
-
 export interface ResponseEditServiceDTO {
   serviceId: string
 

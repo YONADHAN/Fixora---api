@@ -19,7 +19,13 @@ export class GetServiceByIdUseCase implements IGetServiceByIdUseCase {
     dto: RequestGetServiceByIdDTO
   ): Promise<ResponseGetServiceByIdDTO> {
     const { serviceId } = dto
-    const serviceExists = await this._serviceRepo.findOne({ serviceId })
+    const serviceExists = await this._serviceRepo.findOneAndPopulate(
+      { serviceId },
+      [
+        { path: 'serviceCategoryRef', select: 'name serviceCategoryId' },
+        { path: 'vendorRef', select: 'userId profileImage name' },
+      ]
+    )
     if (!serviceExists) {
       throw new CustomError('Service is not found', HTTP_STATUS.NOT_FOUND)
     }

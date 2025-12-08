@@ -1,78 +1,95 @@
+import {
+  editServiceNestedZodSchemaForPricing,
+  editServiceNestedZodSchemaForSchedule,
+  editServiceNestedZodSchemaForServiceVariants,
+} from '../../../presentation/validations/service/edit_service.schema'
 import { recurrenceType } from '../../../shared/constants'
 
+interface editServiceRequestMapperDTO {
+  vendorId: string
+  serviceId: string
+  subServiceCategoryId: string
+  name: string
+  description?: string
+  serviceVariants?: string
+  pricing: string
+  schedule: string
+  files: { mimetype: string; size: number }[]
+}
 export class EditServiceRequestMapper {
-  static toDTO({ rawData, files }: any) {
-    const dto: any = {}
+  static toDTO(payload: editServiceRequestMapperDTO): any {
+    const pasrsedServiceVariants = payload.serviceVariants
+      ? JSON.parse(payload.serviceVariants)
+      : []
 
-    if (rawData.title !== undefined) dto.title = rawData.title
-    if (rawData.description !== undefined) dto.description = rawData.description
+    const parsedPricing = payload.pricing ? JSON.parse(payload.pricing) : {}
+    const parsedSchedule = payload.schedule ? JSON.parse(payload.schedule) : {}
 
-    if (rawData.pricing) {
-      dto.pricing = {
-        pricePerSlot: rawData.pricing.pricePerSlot
-          ? Number(rawData.pricing.pricePerSlot)
-          : undefined,
+    editServiceNestedZodSchemaForServiceVariants.parse(pasrsedServiceVariants)
+    editServiceNestedZodSchemaForPricing.parse(parsedPricing)
+    editServiceNestedZodSchemaForSchedule.parse(parsedSchedule)
 
-        isAdvanceRequired:
-          rawData.pricing.isAdvanceRequired !== undefined
-            ? rawData.pricing.isAdvanceRequired === 'true'
-            : undefined,
+    const dailyWorkingWindows = parsedSchedule.dailyWorkingWindows || []
 
-        advanceAmountPerSlot: rawData.pricing.advanceAmountPerSlot
-          ? Number(rawData.pricing.advanceAmountPerSlot)
-          : undefined,
+    const weeklyWorkingDays =
+      parsedSchedule.weeklyWorkingDays?.map(Number) || []
 
-        currency: rawData.pricing.currency,
-      }
+    const monthlyWorkingDates =
+      parsedSchedule.monthlyWorkingDates?.map(Number) || []
+
+    const overrideBlock =
+      parsedSchedule.overrideBlock?.map((b: any) => ({
+        startDateTime: new Date(b.startDateTime),
+        endDateTime: new Date(b.endDateTime),
+        reason: b.reason ?? '',
+      })) || []
+
+    const overrideCustom =
+      parsedSchedule.overrideCustom?.map((c: any) => ({
+        startDateTime: new Date(c.startDateTime),
+        endDateTime: new Date(c.endDateTime),
+        startTime: c.startTime,
+        endTime: c.endTime,
+      })) || []
+
+    const mainImage = payload.files?.[0] || null
+
+    return {
+      serviceId: payload.serviceId,
+      vendorId: payload.vendorId,
+      subServiceCategoryId: payload.subServiceCategoryId,
+
+      name: payload.name,
+      description: payload.description ?? '',
+
+      serviceVariants: pasrsedServiceVariants.map((v: any) => ({
+        name: v.name,
+        description: v.description,
+        price: v.price !== undefined ? Number(v.price) : undefined,
+      })),
+
+      pricing: {
+        pricePerSlot: Number(parsedPricing.pricePerSlot),
+        advanceAmountPerSlot: Number(parsedPricing.advanceAmountPerSlot),
+      },
+
+      mainImage,
+
+      schedule: {
+        visibilityStartDate: new Date(parsedSchedule.visibilityStartDate),
+        visibilityEndDate: new Date(parsedSchedule.visibilityEndDate),
+
+        dailyWorkingWindows,
+        slotDurationMinutes: Number(parsedSchedule.slotDurationMinutes),
+
+        recurrenceType: parsedSchedule.recurrenceType as recurrenceType,
+
+        weeklyWorkingDays,
+        monthlyWorkingDates,
+
+        overrideBlock,
+        overrideCustom,
+      },
     }
-
-    if (rawData.isActiveStatusByVendor !== undefined)
-      dto.isActiveStatusByVendor = rawData.isActiveStatusByVendor === 'true'
-
-    if (rawData.adminStatusNote !== undefined)
-      dto.adminStatusNote = rawData.adminStatusNote
-
-    if (rawData.schedule) {
-      dto.schedule = {
-        visibilityStartDate: rawData.schedule.visibilityStartDate
-          ? new Date(rawData.schedule.visibilityStartDate)
-          : undefined,
-
-        visibilityEndDate: rawData.schedule.visibilityEndDate
-          ? new Date(rawData.schedule.visibilityEndDate)
-          : undefined,
-
-        workStartTime: rawData.schedule.workStartTime,
-        workEndTime: rawData.schedule.workEndTime,
-
-        slotDurationMinutes: rawData.schedule.slotDurationMinutes
-          ? Number(rawData.schedule.slotDurationMinutes)
-          : undefined,
-
-        recurrenceType: rawData.schedule.recurrenceType
-          ? (rawData.schedule.recurrenceType as recurrenceType)
-          : undefined,
-
-        weeklyWorkingDays: rawData.schedule.weeklyWorkingDays
-          ? rawData.schedule.weeklyWorkingDays.split(',').map(Number)
-          : undefined,
-
-        monthlyWorkingDates: rawData.schedule.monthlyWorkingDates
-          ? rawData.schedule.monthlyWorkingDates.split(',').map(Number)
-          : undefined,
-
-        holidayDates: rawData.schedule.holidayDates
-          ? rawData.schedule.holidayDates
-              .split(',')
-              .map((d: string) => new Date(d))
-          : undefined,
-      }
-    }
-
-    if (files && files.length > 0) {
-      dto.images = files
-    }
-
-    return dto
   }
 }

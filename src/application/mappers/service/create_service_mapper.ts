@@ -1,53 +1,95 @@
+import {
+  createServiceNestedZodSchemaForServiceVariants,
+  createServiceNestedZodSchemaForPricing,
+  createServiceNestedZodSchemaForSchedule,
+} from '../../../presentation/validations/service/create_service.schema'
+
 import { recurrenceType } from '../../../shared/constants'
 
 export class CreateServiceRequestMapper {
   static toDTO({ rawData, files }: any) {
+    // ------------------------------
+    // 1. Parse JSON
+    // ------------------------------
+    const parsedServiceVariants = rawData.serviceVariants
+      ? JSON.parse(rawData.serviceVariants)
+      : []
+
+    const parsedPricing = rawData.pricing ? JSON.parse(rawData.pricing) : {}
+
+    const parsedSchedule = rawData.schedule ? JSON.parse(rawData.schedule) : {}
+
+    // ------------------------------
+    // 2. VALIDATE NESTED STRUCTURES
+    // ------------------------------
+    createServiceNestedZodSchemaForServiceVariants.parse(parsedServiceVariants)
+    createServiceNestedZodSchemaForPricing.parse(parsedPricing)
+    createServiceNestedZodSchemaForSchedule.parse(parsedSchedule)
+
+    // ------------------------------
+    // 3. Convert fields
+    // ------------------------------
+    const dailyWorkingWindows = parsedSchedule.dailyWorkingWindows || []
+    const weeklyWorkingDays =
+      parsedSchedule.weeklyWorkingDays?.map(Number) || []
+    const monthlyWorkingDates =
+      parsedSchedule.monthlyWorkingDates?.map(Number) || []
+
+    const overrideBlock =
+      parsedSchedule.overrideBlock?.map((b: any) => ({
+        startDateTime: new Date(b.startDateTime),
+        endDateTime: new Date(b.endDateTime),
+        reason: b.reason ?? '',
+      })) || []
+
+    const overrideCustom =
+      parsedSchedule.overrideCustom?.map((c: any) => ({
+        startDateTime: new Date(c.startDateTime),
+        endDateTime: new Date(c.endDateTime),
+        startTime: c.startTime,
+        endTime: c.endTime,
+      })) || []
+
+    // ------------------------------
+    // 4. Main Image
+    // ------------------------------
+    const mainImage = files?.[0] || null
+
+    // ------------------------------
+    // 5. Final DTO
+    // ------------------------------
     return {
       vendorId: rawData.vendorId,
       subServiceCategoryId: rawData.subServiceCategoryId,
 
-      title: rawData.title,
-      description: rawData.description,
+      name: rawData.name,
+      description: rawData.description ?? '',
+
+      serviceVariants: parsedServiceVariants,
 
       pricing: {
-        pricePerSlot: Number(rawData.pricing.pricePerSlot),
-        isAdvanceRequired: rawData.pricing.isAdvanceRequired === 'true',
-        advanceAmountPerSlot: Number(rawData.pricing.advanceAmountPerSlot),
-        currency: rawData.pricing.currency ?? 'INR',
+        pricePerSlot: Number(parsedPricing.pricePerSlot),
+        advanceAmountPerSlot: Number(parsedPricing.advanceAmountPerSlot),
       },
 
-      isActiveStatusByVendor: rawData.isActiveStatusByVendor === 'true',
-      isActiveStatusByAdmin:
-        rawData.isActiveStatusByAdmin === 'true' ? true : false,
-      adminStatusNote: rawData.adminStatusNote ?? '',
+      mainImage,
 
       schedule: {
-        visibilityStartDate: new Date(rawData.schedule.visibilityStartDate),
-        visibilityEndDate: new Date(rawData.schedule.visibilityEndDate),
+        visibilityStartDate: new Date(parsedSchedule.visibilityStartDate),
+        visibilityEndDate: new Date(parsedSchedule.visibilityEndDate),
 
-        workStartTime: rawData.schedule.workStartTime,
-        workEndTime: rawData.schedule.workEndTime,
-
-        slotDurationMinutes: Number(rawData.schedule.slotDurationMinutes),
-
-        recurrenceType: rawData.schedule.recurrenceType as recurrenceType,
-
-        weeklyWorkingDays: rawData.schedule.weeklyWorkingDays
-          ? rawData.schedule.weeklyWorkingDays.split(',').map(Number)
-          : [],
-
-        monthlyWorkingDates: rawData.schedule.monthlyWorkingDates
-          ? rawData.schedule.monthlyWorkingDates.split(',').map(Number)
-          : [],
-
-        holidayDates: rawData.schedule.holidayDates
-          ? rawData.schedule.holidayDates
-              .split(',')
-              .map((date: string) => new Date(date))
-          : [],
+        dailyWorkingWindows,
+        slotDurationMinutes: Number(parsedSchedule.slotDurationMinutes),
+        recurrenceType: parsedSchedule.recurrenceType as recurrenceType,
+        weeklyWorkingDays,
+        monthlyWorkingDates,
+        overrideBlock,
+        overrideCustom,
       },
 
-      images: files,
+      isActiveStatusByVendor: true,
+      isActiveStatusByAdmin: true,
+      adminStatusNote: '',
     }
   }
 }

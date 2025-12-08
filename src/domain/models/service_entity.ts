@@ -1,21 +1,24 @@
-import { recurrenceType } from '../../shared/constants'
+import { recurrenceType, statusTypes } from '../../shared/constants'
+
 export interface IServiceEntity {
   _id?: string
   serviceId: string
   vendorRef: string
   subServiceCategoryRef: string
 
-  title: string
-  description?: string
+  name: string
 
+  description?: string
+  serviceVariants?: {
+    name: string
+    description?: string
+    price?: number
+  }[]
   pricing: {
     pricePerSlot: number
-    isAdvanceRequired: boolean
     advanceAmountPerSlot: number
-    currency?: string
   }
-
-  images: string[]
+  mainImage: string
 
   isActiveStatusByAdmin: boolean
   isActiveStatusByVendor: boolean
@@ -25,17 +28,54 @@ export interface IServiceEntity {
     visibilityStartDate?: Date
     visibilityEndDate?: Date
 
-    workStartTime?: string
-    workEndTime?: string
-    slotDurationMinutes?: number
+    dailyWorkingWindows: {
+      startTime: string
+      endTime: string
+    }[]
+
+    slotDurationMinutes: number
 
     recurrenceType?: recurrenceType
     weeklyWorkingDays?: number[]
     monthlyWorkingDates?: number[]
-    holidayDates?: Date[]
+
+    overrideBlock?: {
+      startDateTime: Date
+      endDateTime: Date
+      reason?: string
+    }[]
+
+    overrideCustom?: {
+      startDateTime: Date
+      endDateTime: Date
+      startTime?: string
+      endTime?: string
+    }[]
   }
 
-  serviceHistoryRefs?: string[]
+  populatedValues?: {
+    vendor?: {
+      name: string
+      userId: string
+      profileImage?: string
+      geoLocation?: {
+        type?: 'Point'
+        coordinates?: number[]
+      }
+      location?: {
+        name?: string
+        displayName?: string
+        zipCode?: string
+      }
+      status?: statusTypes
+    }
+
+    subServiceCategory?: {
+      subServiceCategoryId: string
+      name: string
+      isActive: statusTypes
+    }
+  }
 
   createdAt?: Date
   updatedAt?: Date

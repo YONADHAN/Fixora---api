@@ -36,14 +36,14 @@ export class ServiceController implements IServiceController {
   async createService(req: Request, res: Response): Promise<void> {
     try {
       const validated = createServiceZodValidationSchema.parse({
-        body: req.body,
+        ...req.body,
         files: req.files,
       })
 
       const vendorId = (req as CustomRequest).user?.userId ?? ''
 
       const rawData = {
-        ...validated.body,
+        ...validated,
         vendorId,
       }
 
@@ -102,31 +102,25 @@ export class ServiceController implements IServiceController {
 
   async editService(req: Request, res: Response): Promise<void> {
     try {
-      // console.log('files', req.files)
-      // console.log('body', req.body)
       const validated = editServiceZodValidationSchema.parse({
-        params: req.params,
-        body: req.body,
+        ...req.params,
+        ...req.body,
         files: req.files,
       })
 
-      const { serviceId } = validated.params
-      // console.log('serviceId', serviceId)
-      //console.log('raw data', validated.body)
-      // if (validated.files) {
-      //   console.log()
-      // }
+      const { serviceId } = validated
+      const vendorId = (req as CustomRequest).user.userId
       const dto = EditServiceRequestMapper.toDTO({
-        rawData: validated.body,
-        files: validated.files,
+        ...validated,
+        vendorId,
+        files: req.files as Express.Multer.File[],
       })
-      //  console.log('Edited data', dto)
-      const updated = await this._editServiceUseCase.execute(serviceId, dto)
+
+      await this._editServiceUseCase.execute(dto)
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Service updated successfully',
-        data: updated,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

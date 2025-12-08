@@ -13,7 +13,7 @@ export class ServiceRoutes extends BaseRoute {
 
   protected initializeRoutes(): void {
     // --------------------------
-    // POST /service/create
+    // POST /service/create💖
     // --------------------------
     this.router.post(
       '/',
@@ -25,7 +25,7 @@ export class ServiceRoutes extends BaseRoute {
     )
 
     // --------------------------
-    // GET /service/all
+    // GET /service/all💖
     // --------------------------
     this.router.get(
       '/',
@@ -35,7 +35,7 @@ export class ServiceRoutes extends BaseRoute {
     )
 
     // --------------------------
-    // GET /service/:id
+    // GET /service/:id💖
     // --------------------------
     this.router.get('/:serviceId', (req, res) =>
       serviceController.getServiceById(req, res)
@@ -50,7 +50,7 @@ export class ServiceRoutes extends BaseRoute {
       authorizeRole(['vendor']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       handleMulterError(upload.array('images', 1)),
-      (req, res) => serviceController.editService(req, res)
+      (req, res) => serviceController.editService(req, res) //💖
     )
 
     // --------------------------
@@ -61,7 +61,7 @@ export class ServiceRoutes extends BaseRoute {
       verifyAuth,
       authorizeRole(['vendor']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      (req, res) => serviceController.toggleServiceBlock(req, res)
+      (req, res) => serviceController.toggleServiceBlock(req, res) //💖
     )
   }
 }
