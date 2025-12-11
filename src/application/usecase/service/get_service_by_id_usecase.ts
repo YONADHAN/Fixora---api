@@ -22,7 +22,7 @@ export class GetServiceByIdUseCase implements IGetServiceByIdUseCase {
     const serviceExists = await this._serviceRepo.findOneAndPopulate(
       { serviceId },
       [
-        { path: 'serviceCategoryRef', select: 'name serviceCategoryId' },
+        { path: 'subServiceCategoryRef', select: 'name subServiceCategoryId' },
         { path: 'vendorRef', select: 'userId profileImage name' },
       ]
     )
@@ -30,6 +30,7 @@ export class GetServiceByIdUseCase implements IGetServiceByIdUseCase {
       throw new CustomError('Service is not found', HTTP_STATUS.NOT_FOUND)
     }
     const response = GetServiceByIdResponseMapper.toDTO(serviceExists)
+    console.log('Response is ', response)
     return response
   }
 }

@@ -117,6 +117,7 @@ export const ERROR_MESSAGES = {
   PASSWORD_REQUIRED: 'Password required',
   USERS_NOT_FOUND: 'Users not found',
   STATUS_ALREADY_EXISTS: 'Status already exists.',
+  SUB_SERVICES_NOT_FOUND: 'Sub services not found',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

@@ -28,6 +28,7 @@ import { IGetVendorSubServiceCategoriesUseCase } from '../../../domain/useCaseIn
 import { GetAllSubServiceCategoriesBasedOnServiceCategoryIdZodValidationSchema } from '../../validations/sub_service_category/get_sub_service_categories_based_on_service_category_id.schema'
 import { GetAllSubServiceCategoriesBasedOnServiceCategoryIdRequestMapper } from '../../../application/mappers/sub_service_category/get_sub_service_catergories_based_on_service_category_mapper'
 import { IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase.interface'
+import { IGetActiveSubServiceCategoriesUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_active_sub_service_categories_usecase'
 
 @injectable()
 export class SubServiceCategoryController
@@ -49,7 +50,9 @@ export class SubServiceCategoryController
     @inject('IGetVendorSubServiceCategoriesUseCase')
     private _getVendorSubServiceCategoriesUseCase: IGetVendorSubServiceCategoriesUseCase,
     @inject('IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase')
-    private _getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase: IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase
+    private _getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase: IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase,
+    @inject('IGetActiveSubServiceCategoriesUseCase')
+    private _getActiveSubServiceCategoriesUseCase: IGetActiveSubServiceCategoriesUseCase
   ) {}
 
   async createSubServiceCategories(req: Request, res: Response): Promise<void> {
@@ -265,6 +268,23 @@ export class SubServiceCategoryController
           dto
         )
 
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getActiveSubServiceCategories(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const response =
+        await this._getActiveSubServiceCategoriesUseCase.execute()
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY,

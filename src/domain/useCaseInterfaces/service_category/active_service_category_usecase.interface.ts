@@ -1,5 +1,5 @@
-import { ResponseActiveServiceCategoryDTO } from '../../../application/dtos/service_category_dto'
+import { ResponseActiveServiceCategoriesDTO } from '../../../application/dtos/service_category_dto'
 
-export interface IGetActiveServiceCategoryUseCase {
-  execute(): Promise<ResponseActiveServiceCategoryDTO>
+export interface IGetActiveServiceCategoriesUseCase {
+  execute(): Promise<ResponseActiveServiceCategoriesDTO>
 }

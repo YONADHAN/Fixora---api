@@ -138,3 +138,10 @@ export interface ResponseGetAllSubServiceCategoriesBasedOnServiceCategoryDTO {
   currentPage: number
   totalPages: number
 }
+
+export interface ResponseGetActiveSubServiceCategoriesDTO {
+  data: {
+    subServiceCategoryId: string
+    name: string
+  }[]
+}

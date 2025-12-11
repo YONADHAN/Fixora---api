@@ -18,6 +18,13 @@ import { EditServiceRequestMapper } from '../../../application/mappers/service/e
 import { IEditServiceUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_usecase.interface'
 import { toggleServiceBlockZodValidationSchema } from '../../validations/service/toggle_service_block_status'
 import { IToggleBlockServiceUseCase } from '../../../domain/useCaseInterfaces/service/toggle_block_service_usecase.interface'
+import { success } from 'zod'
+import { RequestSearchServicesForCustomerRequestMapper } from '../../../application/mappers/service/search_services_for_customer_mapper'
+import {
+  SearchCustomerServicesBasicSchema,
+  SearchCustomerServicesDTOSchema,
+} from '../../validations/service/search_services_for_customer.schema'
+import { ISearchServicesForCustomersUseCase } from '../../../domain/useCaseInterfaces/service/search_services_for_customers_usecase.interface'
 
 @injectable()
 export class ServiceController implements IServiceController {
@@ -31,7 +38,9 @@ export class ServiceController implements IServiceController {
     @inject('IEditServiceUseCase')
     private _editServiceUseCase: IEditServiceUseCase,
     @inject('IToggleBlockServiceUseCase')
-    private _toggleBlockServiceUseCase: IToggleBlockServiceUseCase
+    private _toggleBlockServiceUseCase: IToggleBlockServiceUseCase,
+    @inject('ISearchServicesForCustomersUseCase')
+    private _searchServicesForCustomersUseCase: ISearchServicesForCustomersUseCase
   ) {}
   async createService(req: Request, res: Response): Promise<void> {
     try {
@@ -88,7 +97,9 @@ export class ServiceController implements IServiceController {
       const validated = GetServiceByIdZodValidationSchema.parse({
         params: req.params,
       })
+
       const dto = GetServiceByIdRequestMapper.toDTO(validated)
+
       const response = await this._getServiceByIdUseCase.execute(dto)
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -102,12 +113,16 @@ export class ServiceController implements IServiceController {
 
   async editService(req: Request, res: Response): Promise<void> {
     try {
+      console.log('inputs', { ...req.params, ...req.body })
+      if (req.files) {
+        console.log('files received')
+      }
       const validated = editServiceZodValidationSchema.parse({
         ...req.params,
         ...req.body,
         files: req.files,
       })
-
+      console.log('Validated', validated)
       const { serviceId } = validated
       const vendorId = (req as CustomRequest).user.userId
       const dto = EditServiceRequestMapper.toDTO({
@@ -115,7 +130,7 @@ export class ServiceController implements IServiceController {
         vendorId,
         files: req.files as Express.Multer.File[],
       })
-
+      console.log('dto', dto)
       await this._editServiceUseCase.execute(dto)
 
       res.status(HTTP_STATUS.OK).json({
@@ -139,6 +154,27 @@ export class ServiceController implements IServiceController {
         success: true,
         message: `Service ${result.isActiveStatusByVendor ? 'unblocked' : 'blocked'} successfully`,
         data: result,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async searchServicesForCustomer(req: Request, res: Response) {
+    try {
+      const basic = SearchCustomerServicesBasicSchema.parse(req.query)
+
+      const dto = RequestSearchServicesForCustomerRequestMapper.toDTO(basic)
+
+      const validatedDTO = SearchCustomerServicesDTOSchema.parse(dto)
+
+      const response =
+        await this._searchServicesForCustomersUseCase.execute(validatedDTO)
+
+      res.status(200).json({
+        success: true,
+        message: 'Service found successfully',
+        data: response,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

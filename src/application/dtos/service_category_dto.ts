@@ -16,7 +16,7 @@ export interface ResponseServiceCategoryDTO {
   totalPages: number
 }
 
-export interface ResponseActiveServiceCategoryDTO {
+export interface ResponseActiveServiceCategoriesDTO {
   data: {
     serviceCategoryId: string
     name: string

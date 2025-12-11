@@ -17,6 +17,13 @@ export abstract class BaseRepository<TModel, TEntity>
     const result = await this.model.findOne(filter).lean()
     return result ? this.toEntity(result as TModel) : null
   }
+  async findAllDocsWithoutPagination(
+    filter: FilterQuery<TModel>
+  ): Promise<TEntity[]> {
+    const result = await this.model.find(filter).lean()
+
+    return this.toEntityArray(result as TModel[])
+  }
 
   async save(data: Partial<TEntity>): Promise<TEntity> {
     const modelData = this.toModel(data)

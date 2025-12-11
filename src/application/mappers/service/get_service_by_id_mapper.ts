@@ -8,14 +8,15 @@ export class GetServiceByIdRequestMapper {
     }
   }
 }
-
 export class GetServiceByIdResponseMapper {
   static toDTO(entity: IServiceEntity): ResponseGetServiceByIdDTO {
     return {
       serviceId: entity.serviceId,
 
-      vendorId: entity.vendorRef,
-      subServiceCategoryId: entity.subServiceCategoryRef,
+      vendorId: entity.populatedValues?.vendor?.userId ?? '',
+
+      subServiceCategoryId:
+        entity.populatedValues?.subServiceCategory?.subServiceCategoryId ?? '',
 
       name: entity.name,
       description: entity.description,

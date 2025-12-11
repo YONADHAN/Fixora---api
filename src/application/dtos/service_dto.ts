@@ -1,4 +1,4 @@
-import { recurrenceType } from '../../shared/constants'
+import { recurrenceType, statusTypes } from '../../shared/constants'
 
 export interface RequestCreateServiceDTO {
   vendorId: string
@@ -172,7 +172,7 @@ export interface RequestEditServiceDTO {
     advanceAmountPerSlot: number
   }
 
-  mainImage: Express.Multer.File
+  mainImage?: Express.Multer.File
 
   schedule: {
     visibilityStartDate: Date
@@ -247,4 +247,110 @@ export interface RequestToggleBlockServiceDTO {
 
 export interface ResponseToggleBlockServiceDTO {
   isActiveStatusByVendor: boolean
+}
+
+export interface RequestSearchServicesForCustomerDTO {
+  subServiceCategoryId: string
+
+  search: string
+
+  minPrice?: number
+  maxPrice?: number
+
+  availableFrom?: Date
+  availableTo?: Date
+
+  workStartTime?: string
+  workEndTime?: string
+
+  recurrenceType?: 'daily' | 'weekly' | 'monthly'
+
+  weeklyDays?: number[]
+
+  page: number
+  limit: number
+}
+
+export interface SubServiceCategoryDTO {
+  subServiceCategoryId: string
+  name: string
+  isActive: statusTypes
+}
+export interface VendorDTO {
+  name: string
+  userId: string
+  profileImage?: string | null
+
+  geoLocation?: {
+    type?: 'Point'
+    coordinates?: number[]
+  }
+
+  location?: {
+    name?: string
+    displayName?: string
+    zipCode?: string
+  }
+
+  status?: statusTypes
+}
+export interface ScheduleDTO {
+  visibilityStartDate?: Date
+  visibilityEndDate?: Date
+
+  dailyWorkingWindows: {
+    startTime: string
+    endTime: string
+  }[]
+
+  slotDurationMinutes: number
+
+  recurrenceType?: recurrenceType
+  weeklyWorkingDays?: number[]
+  monthlyWorkingDates?: number[]
+
+  overrideBlock?: {
+    startDateTime: Date
+    endDateTime: Date
+    reason?: string
+  }[]
+
+  overrideCustom?: {
+    startDateTime: Date
+    endDateTime: Date
+    startTime?: string
+    endTime?: string
+  }[]
+}
+
+export interface ResponseSearchServicesForCustomerItemDTO {
+  serviceId: string
+
+  name: string
+  description: string
+
+  serviceVariants: {
+    name: string
+    description: string
+    price: number
+  }[]
+
+  pricing: {
+    pricePerSlot: number
+    advanceAmountPerSlot: number
+  }
+
+  mainImage: string
+
+  schedule: ScheduleDTO
+
+  vendor: VendorDTO | null
+
+  subServiceCategory: SubServiceCategoryDTO | null
+}
+
+export interface ResponseSearchServicesForCustomerDTO {
+  data: ResponseSearchServicesForCustomerItemDTO[]
+  totalPages: number
+  currentPage: number
 }

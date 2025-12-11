@@ -33,7 +33,12 @@ export class ServiceRoutes extends BaseRoute {
       authorizeRole(['vendor']),
       (req, res) => serviceController.getAllServices(req, res)
     )
-
+    // --------------------------
+    // GET /service/all for customers💖
+    // --------------------------
+    this.router.get('/search_services', (req, res) =>
+      serviceController.searchServicesForCustomer(req, res)
+    )
     // --------------------------
     // GET /service/:id💖
     // --------------------------
@@ -50,7 +55,7 @@ export class ServiceRoutes extends BaseRoute {
       authorizeRole(['vendor']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       handleMulterError(upload.array('images', 1)),
-      (req, res) => serviceController.editService(req, res) //💖
+      (req, res) => serviceController.editService(req, res)
     )
 
     // --------------------------

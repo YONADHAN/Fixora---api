@@ -27,18 +27,22 @@ export class EditServiceUseCase implements IEditServiceUseCase {
     if (!service) {
       throw new CustomError('Service not found', HTTP_STATUS.NOT_FOUND)
     }
+    let mainImage = service.mainImage
 
-    const url = await this.storageService.uploadFile(
-      config.storageConfig.bucket!,
-      payload.mainImage,
-      `${S3_BUCKET_IMAGE_FOLDERS.SERVICE_IMAGES}/${payload.serviceId}`
-    )
+    if (payload.mainImage) {
+      const url = await this.storageService.uploadFile(
+        config.storageConfig.bucket!,
+        payload.mainImage,
+        `${S3_BUCKET_IMAGE_FOLDERS.SERVICE_IMAGES}/${payload.serviceId}`
+      )
 
-    let mainImage = url
+      mainImage = url
+    }
 
     //logics
 
     //
+    console.log('the payload in usecase edit service : ', payload)
 
     const updatedEntity: Partial<IServiceEntity> = {
       name: payload.name,

@@ -65,8 +65,8 @@ import { IBlockServiceCategoryUseCase } from '../../domain/useCaseInterfaces/ser
 import { BlockServiceCategoryUseCase } from '../../application/usecase/service_category/block_service_category_usecase'
 import { IGetSingleServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/single_service_category_usecase.interface'
 import { GetSingleServiceCategoryUseCase } from '../../application/usecase/service_category/single_service_category_usecase'
-import { IGetActiveServiceCategoryUseCase } from '../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
-import { GetActiveServiceCategoryUseCase } from '../../application/usecase/service_category/active_service_categories_usecase'
+import { IGetActiveServiceCategoriesUseCase } from '../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
+import { GetActiveServiceCategoriesUseCase } from '../../application/usecase/service_category/active_service_categories_usecase'
 import { ICreateSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/create_sub_service_usecase.interface'
 import { CreateSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/create_sub_service_category_usecase'
 import { IEditSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/edit_sub_service_category_usecase.interface'
@@ -79,6 +79,8 @@ import { IToggleBlockStatusOfSubServiceCategoryUseCase } from '../../domain/useC
 import { ToggleBlockStatusOfSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/toggle_block_status_of_sub_service_category_usecase'
 import { IToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../domain/useCaseInterfaces/sub_service_category/toggle_verification_status_of_sub_service_category_usecase.interface'
 import { ToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/toggle_verification_status_of_sub_service_category_usecase'
+import { ISearchServicesForCustomersUseCase } from '../../domain/useCaseInterfaces/service/search_services_for_customers_usecase.interface'
+import { SearchServicesForCustomersUseCase } from '../../application/usecase/service/search_services_for_customers_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -186,6 +188,8 @@ import { IEditServiceUseCase } from '../../domain/useCaseInterfaces/service/edit
 import { EditServiceUseCase } from '../../application/usecase/service/edit_service_usecase'
 import { IToggleBlockServiceUseCase } from '../../domain/useCaseInterfaces/service/toggle_block_service_usecase.interface'
 import { ToggleBlockServiceUseCase } from '../../application/usecase/service/toggle_block_service_usecase'
+import { IGetActiveSubServiceCategoriesUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_active_sub_service_categories_usecase'
+import { GetActiveSubServiceCategoriesUseCase } from '../../application/usecase/sub_service_category/get_active_sub_service_categories_usecase'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -328,6 +332,12 @@ export class UseCaseRegistry {
         useClass: ToggleBlockServiceUseCase,
       }
     )
+    container.register<ISearchServicesForCustomersUseCase>(
+      'ISearchServicesForCustomersUseCase',
+      {
+        useClass: SearchServicesForCustomersUseCase,
+      }
+    )
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -355,10 +365,10 @@ export class UseCaseRegistry {
       }
     )
 
-    container.register<IGetActiveServiceCategoryUseCase>(
-      'IGetActiveServiceCategoryUseCase',
+    container.register<IGetActiveServiceCategoriesUseCase>(
+      'IGetActiveServiceCategoriesUseCase',
       {
-        useClass: GetActiveServiceCategoryUseCase,
+        useClass: GetActiveServiceCategoriesUseCase,
       }
     )
     container.register<ICreateSubServiceCategoryUseCase>(
@@ -398,12 +408,20 @@ export class UseCaseRegistry {
       }
     )
 
+    container.register<IGetActiveSubServiceCategoriesUseCase>(
+      'IGetActiveSubServiceCategoriesUseCase',
+      {
+        useClass: GetActiveSubServiceCategoriesUseCase,
+      }
+    )
+
     container.register<IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase>(
       'IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase',
       {
         useClass: GetAllSubServiceCategoriesBasedOnServiceCategoryId,
       }
     )
+
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

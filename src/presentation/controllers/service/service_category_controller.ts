@@ -11,7 +11,7 @@ import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/
 import { IGetSingleServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/single_service_category_usecase.interface'
 
 import { ServiceCategoryResponseDTO } from '../../../application/dtos/admin/service_category_dto'
-import { IGetActiveServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
+import { IGetActiveServiceCategoriesUseCase } from '../../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
 
 @injectable()
 export class ServiceCategoryController implements IServiceCategoryController {
@@ -26,8 +26,8 @@ export class ServiceCategoryController implements IServiceCategoryController {
     private _blockServiceCategoryUseCase: IBlockServiceCategoryUseCase,
     @inject('IGetSingleServiceCategoryUseCase')
     private _getSingleServiceCategoryUseCase: IGetSingleServiceCategoryUseCase,
-    @inject('IGetActiveServiceCategoryUseCase')
-    private _getActiveSubServiceCategories: IGetActiveServiceCategoryUseCase
+    @inject('IGetActiveServiceCategoriesUseCase')
+    private _getActiveSubServiceCategories: IGetActiveServiceCategoriesUseCase
   ) {}
   async getAllServiceCategories(req: Request, res: Response): Promise<void> {
     try {
@@ -53,7 +53,7 @@ export class ServiceCategoryController implements IServiceCategoryController {
     try {
       const { name, description } = req.body
       const bannerImage = req.file
-     // console.log('The create service category', name, description)
+      // console.log('The create service category', name, description)
       // if (bannerImage) {
       //   console.log('banner image also got')
       // }

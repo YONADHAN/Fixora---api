@@ -2,6 +2,7 @@ import { FilterQuery } from 'mongoose'
 
 export interface IBaseRepository<TModel, TEntity = TModel> {
   findOne(filter: FilterQuery<TModel>): Promise<TEntity | null>
+  findAllDocsWithoutPagination(filter: FilterQuery<TModel>): Promise<TEntity[]>
 
   save(data: Partial<TEntity>): Promise<TEntity>
 
