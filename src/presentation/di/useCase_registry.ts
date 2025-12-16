@@ -10,6 +10,7 @@ import { ITokenService } from '../../domain/serviceInterfaces/token_service_inte
 import { JWTService } from '../../interfaceAdapters/services/jwt_service'
 import { IStorageService } from '../../domain/serviceInterfaces/s3_storage_service_interface'
 import { S3StorageService } from '../../interfaceAdapters/services/s3_storage_service'
+import { IBookingServices } from '../../domain/serviceInterfaces/booking_service_interface'
 //security
 import { IBcrypt } from '../security/bcrypt_interface'
 import { OtpBcrypt } from '../security/otp_bcrypt'
@@ -81,6 +82,8 @@ import { IToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../doma
 import { ToggleVerificationStatusOfSubServiceCategoryUseCase } from '../../application/usecase/sub_service_category/toggle_verification_status_of_sub_service_category_usecase'
 import { ISearchServicesForCustomersUseCase } from '../../domain/useCaseInterfaces/service/search_services_for_customers_usecase.interface'
 import { SearchServicesForCustomersUseCase } from '../../application/usecase/service/search_services_for_customers_usecase'
+import { IGetAvailableSlotsForCustomerUseCase } from '../../domain/useCaseInterfaces/booking/get_available_slots_for_customer_usecase_interface'
+import { GetAvailableSlotsForCustomerUseCase } from '../../application/usecase/booking/get_available_slots_for_customer_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -190,6 +193,7 @@ import { IToggleBlockServiceUseCase } from '../../domain/useCaseInterfaces/servi
 import { ToggleBlockServiceUseCase } from '../../application/usecase/service/toggle_block_service_usecase'
 import { IGetActiveSubServiceCategoriesUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_active_sub_service_categories_usecase'
 import { GetActiveSubServiceCategoriesUseCase } from '../../application/usecase/sub_service_category/get_active_sub_service_categories_usecase'
+import { BookingServices } from '../../interfaceAdapters/services/booking_service'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -338,6 +342,12 @@ export class UseCaseRegistry {
         useClass: SearchServicesForCustomersUseCase,
       }
     )
+    container.register<IGetAvailableSlotsForCustomerUseCase>(
+      'IGetAvailableSlotsForCustomerUseCase',
+      {
+        useClass: GetAvailableSlotsForCustomerUseCase,
+      }
+    )
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -451,6 +461,9 @@ export class UseCaseRegistry {
         useClass: VendorGoogleRegistrationStrategy,
       }
     )
+    container.register<IBookingServices>('IBookingServices', {
+      useClass: BookingServices,
+    })
     //factory
     container.register<IRegistrationStrategyFactory>(
       'IRegistrationStrategyFactory',

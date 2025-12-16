@@ -30,7 +30,7 @@ export class GetServiceByIdUseCase implements IGetServiceByIdUseCase {
       throw new CustomError('Service is not found', HTTP_STATUS.NOT_FOUND)
     }
     const response = GetServiceByIdResponseMapper.toDTO(serviceExists)
-    console.log('Response is ', response)
+
     return response
   }
 }

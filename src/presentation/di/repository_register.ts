@@ -13,6 +13,8 @@ import { ISubServiceCategoryRepository } from '../../domain/repositoryInterfaces
 import { SubServiceCategoryRepository } from '../../interfaceAdapters/repositories/feature/service/sub_service_category_repository'
 import { IServiceRepository } from '../../domain/repositoryInterfaces/feature/service/service_repository.interface'
 import { ServiceRepository } from '../../interfaceAdapters/repositories/feature/service/service_repository'
+import { IBookingRepository } from '../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
+import { BookingRepository } from '../../interfaceAdapters/repositories/feature/booking/booking_repository'
 
 export class RepositoryRegistry {
   static registerRepositories(): void {
@@ -54,6 +56,10 @@ export class RepositoryRegistry {
     )
     container.register<IServiceRepository>('IServiceRepository', {
       useClass: ServiceRepository,
+    })
+
+    container.register<IBookingRepository>('IBookingRepository', {
+      useClass: BookingRepository,
     })
   }
 }

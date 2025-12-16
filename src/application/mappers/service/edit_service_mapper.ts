@@ -11,11 +11,9 @@ interface editServiceRequestMapperDTO {
   name: string
   description?: string
 
-  // ✅ FLATTENED pricing
   'pricing.pricePerSlot': string
   'pricing.advanceAmountPerSlot': string
 
-  // ✅ FLATTENED schedule
   'schedule.visibilityStartDate': string
   'schedule.visibilityEndDate': string
   'schedule.dailyWorkingWindows[0].startTime': string
@@ -23,12 +21,11 @@ interface editServiceRequestMapperDTO {
   'schedule.slotDurationMinutes': string
   'schedule.recurrenceType': string
 
-  // ✅ FILES (PATCH SAFE)
   files?: Express.Multer.File[]
 }
 export class EditServiceRequestMapper {
   static toDTO(payload: editServiceRequestMapperDTO) {
-    const mainImage = payload.files?.[0] // ✅ optional
+    const mainImage = payload.files?.[0]
 
     return {
       serviceId: payload.serviceId,
@@ -43,7 +40,7 @@ export class EditServiceRequestMapper {
         advanceAmountPerSlot: Number(payload['pricing.advanceAmountPerSlot']),
       },
 
-      mainImage, // ✅ optional for edit
+      mainImage,
 
       schedule: {
         visibilityStartDate: new Date(payload['schedule.visibilityStartDate']),

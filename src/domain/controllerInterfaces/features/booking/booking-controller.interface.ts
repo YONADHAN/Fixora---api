@@ -1,0 +1,5 @@
+import { Request, Response } from 'express'
+
+export interface IBookingController {
+  getAvailableSlotsForCustomer(req: Request, res: Response): Promise<void>
+}

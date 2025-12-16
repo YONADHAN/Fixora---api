@@ -15,6 +15,9 @@ import { ISubServiceCategoryController } from '../../domain/controllerInterfaces
 import { SubServiceCategoryController } from '../controllers/service/sub_service_category_controller'
 import { IServiceController } from '../../domain/controllerInterfaces/features/service/service-controller.interface'
 import { ServiceController } from '../controllers/service/service_controller'
+import { IBookingController } from '../../domain/controllerInterfaces/features/booking/booking-controller.interface'
+import { BookingController } from '../controllers/booking/booking_controller'
+
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
@@ -30,5 +33,7 @@ export const subServiceCategoryController =
   container.resolve<ISubServiceCategoryController>(SubServiceCategoryController)
 export const serviceController =
   container.resolve<IServiceController>(ServiceController)
+export const bookingController =
+  container.resolve<IBookingController>(BookingController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

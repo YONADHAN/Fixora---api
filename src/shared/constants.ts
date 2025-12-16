@@ -84,6 +84,9 @@ export const SUCCESS_MESSAGES = {
   //service
   SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
   SERVICE_FOUND_SUCCESSFULLY: 'Service found successfully.',
+
+  //booking
+  SLOTS_FETCHED: 'Slots fetched successfully.',
 }
 
 export const ERROR_MESSAGES = {
@@ -118,6 +121,7 @@ export const ERROR_MESSAGES = {
   USERS_NOT_FOUND: 'Users not found',
   STATUS_ALREADY_EXISTS: 'Status already exists.',
   SUB_SERVICES_NOT_FOUND: 'Sub services not found',
+  SERVICES_NOT_FOUND: 'Service not found.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {
