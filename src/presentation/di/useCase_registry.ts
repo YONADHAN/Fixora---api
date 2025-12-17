@@ -84,6 +84,8 @@ import { ISearchServicesForCustomersUseCase } from '../../domain/useCaseInterfac
 import { SearchServicesForCustomersUseCase } from '../../application/usecase/service/search_services_for_customers_usecase'
 import { IGetAvailableSlotsForCustomerUseCase } from '../../domain/useCaseInterfaces/booking/get_available_slots_for_customer_usecase_interface'
 import { GetAvailableSlotsForCustomerUseCase } from '../../application/usecase/booking/get_available_slots_for_customer_usecase'
+import { ICreateBookingHoldUseCase } from '../../domain/useCaseInterfaces/booking_hold/create_booking_hold_usecase_interface'
+import { CreateBookingHoldUseCase } from '../../application/usecase/booking_hold/create_booking_hold_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -348,6 +350,10 @@ export class UseCaseRegistry {
         useClass: GetAvailableSlotsForCustomerUseCase,
       }
     )
+
+    container.register<ICreateBookingHoldUseCase>('ICreateBookingHoldUseCase', {
+      useClass: CreateBookingHoldUseCase,
+    })
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,

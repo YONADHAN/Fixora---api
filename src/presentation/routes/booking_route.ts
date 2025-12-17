@@ -26,6 +26,13 @@ export class BookingRoutes extends BaseRoute {
     this.router.get('/slots/availability', (req: Request, res: Response) =>
       bookingController.getAvailableSlotsForCustomer(req, res)
     )
+    this.router.post(
+      '/booking-holds',
+      verifyAuth,
+      authorizeRole(['customer']),
+      (req: Request, res: Response) =>
+        bookingController.createBookingHold(req, res)
+    )
     // this.router.post(
     //   '/slots/book',
     //   bookingController.createNewBooking

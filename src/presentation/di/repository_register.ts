@@ -15,7 +15,10 @@ import { IServiceRepository } from '../../domain/repositoryInterfaces/feature/se
 import { ServiceRepository } from '../../interfaceAdapters/repositories/feature/service/service_repository'
 import { IBookingRepository } from '../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
 import { BookingRepository } from '../../interfaceAdapters/repositories/feature/booking/booking_repository'
-
+import { IBookingHoldRepository } from '../../domain/repositoryInterfaces/feature/booking/booking_hold_repository.interface'
+import { BookingHoldRepository } from '../../interfaceAdapters/repositories/feature/booking/booking_hold_repository'
+import { IRedisSlotLockRepository } from '../../domain/repositoryInterfaces/redis/redis_slot_lock_repository_interface'
+import { RedisSlotLockRepository } from '../../interfaceAdapters/repositories/redis/redis_slot_lock_repository'
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -60,6 +63,14 @@ export class RepositoryRegistry {
 
     container.register<IBookingRepository>('IBookingRepository', {
       useClass: BookingRepository,
+    })
+
+    container.register<IBookingHoldRepository>('IBookingHoldRepository', {
+      useClass: BookingHoldRepository,
+    })
+
+    container.register<IRedisSlotLockRepository>('IRedisSlotLockRepository', {
+      useClass: RedisSlotLockRepository,
     })
   }
 }

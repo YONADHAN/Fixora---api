@@ -87,6 +87,7 @@ export const SUCCESS_MESSAGES = {
 
   //booking
   SLOTS_FETCHED: 'Slots fetched successfully.',
+  BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
 }
 
 export const ERROR_MESSAGES = {

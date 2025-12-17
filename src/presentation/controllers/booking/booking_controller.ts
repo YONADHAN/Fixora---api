@@ -10,12 +10,21 @@ import {
   GetAvailableSlotsForCustomerRequestSchema,
 } from '../../validations/booking/get_available_slots_for_customer_schema'
 import { RequestGetAvailableSlotsForCustomerRequestMapper } from '../../../application/mappers/booking/get_available_slots_for_customer_mapper'
+import {
+  CreateBookingHoldBasicSchema,
+  CreateBookingHoldRequestSchema,
+} from '../../validations/booking_hold/create_booking_hold_schema'
+import { CreateBookingHoldRequestMapper } from '../../../application/mappers/booking_hold/create_booking_hold_mapper'
+import { ICreateBookingHoldUseCase } from '../../../domain/useCaseInterfaces/booking_hold/create_booking_hold_usecase_interface'
+import { CustomRequest } from '../../middleware/auth_middleware'
 
 @injectable()
 export class BookingController implements IBookingController {
   constructor(
     @inject('IGetAvailableSlotsForCustomerUseCase')
-    private readonly _getAvailableSlotsForCustomerUseCase: IGetAvailableSlotsForCustomerUseCase
+    private readonly _getAvailableSlotsForCustomerUseCase: IGetAvailableSlotsForCustomerUseCase,
+    @inject('ICreateBookingHoldUseCase')
+    private readonly _createBookingHoldUseCase: ICreateBookingHoldUseCase
   ) {}
 
   async getAvailableSlotsForCustomer(
@@ -35,6 +44,26 @@ export class BookingController implements IBookingController {
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.SLOTS_FETCHED,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async createBookingHold(req: Request, res: Response): Promise<void> {
+    try {
+      const basic = CreateBookingHoldBasicSchema.parse(req.body)
+      const dto = CreateBookingHoldRequestMapper.toDTO(basic)
+      const validatedDTO = CreateBookingHoldRequestSchema.parse(dto)
+      const customerId = (req as CustomRequest).user.userId
+      const response = await this._createBookingHoldUseCase.execute(
+        validatedDTO,
+        customerId
+      )
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.BOOKING_HOLD_CREATED,
         data: response,
       })
     } catch (error) {
