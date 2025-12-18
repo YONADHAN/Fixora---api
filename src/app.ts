@@ -4,6 +4,7 @@ import { createServer } from 'http'
 import { config } from './shared/config'
 import chalk from 'chalk'
 import { MongoConnect } from './interfaceAdapters/database/mongoDb/mongoConnect'
+import { startBookingHoldExpiryScheduler } from './interfaceAdapters/shedulers/booking_hold_expiry.sheduler'
 
 async function startApp() {
   const expressServer = new ExpressServer()
@@ -27,6 +28,7 @@ async function startApp() {
       console.log(
         chalk.greenBright('\n-------------------------------------------\n')
       )
+      startBookingHoldExpiryScheduler()
     })
   } catch (error) {
     console.error(chalk.redBright.bold(' Failed to start server'), error)

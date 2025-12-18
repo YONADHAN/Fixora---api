@@ -196,6 +196,12 @@ import { ToggleBlockServiceUseCase } from '../../application/usecase/service/tog
 import { IGetActiveSubServiceCategoriesUseCase } from '../../domain/useCaseInterfaces/sub_service_category/get_active_sub_service_categories_usecase'
 import { GetActiveSubServiceCategoriesUseCase } from '../../application/usecase/sub_service_category/get_active_sub_service_categories_usecase'
 import { BookingServices } from '../../interfaceAdapters/services/booking_service'
+import { ICreateStripePaymentIntentUseCase } from '../../domain/useCaseInterfaces/booking_hold/create_stripe_payment_intent_usecase_interface'
+import { CreateStripePaymentIntentUseCase } from '../../application/usecase/booking_hold/create_stripe_payment_intent_usecase'
+import { IStripePaymentSucceedUseCase } from '../../domain/useCaseInterfaces/booking_hold/stripe_payment_succeeded_usecase_interface'
+import { StripePaymentSucceededUseCase } from '../../application/usecase/booking_hold/stripe_payment_succeeded_usecase'
+import { IStripePaymentFailedUseCase } from '../../domain/useCaseInterfaces/booking_hold/stripe_payment_failed_usecase_interface'
+import { StripePaymentFailedUseCase } from '../../application/usecase/booking_hold/stripe_payment_failed_usecase'
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -354,6 +360,13 @@ export class UseCaseRegistry {
     container.register<ICreateBookingHoldUseCase>('ICreateBookingHoldUseCase', {
       useClass: CreateBookingHoldUseCase,
     })
+
+    container.register<ICreateStripePaymentIntentUseCase>(
+      'ICreateStripePaymentIntentUseCase',
+      {
+        useClass: CreateStripePaymentIntentUseCase,
+      }
+    )
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -438,6 +451,19 @@ export class UseCaseRegistry {
       }
     )
 
+    container.register<IStripePaymentSucceedUseCase>(
+      'IStripePaymentSucceedUseCase',
+      {
+        useClass: StripePaymentSucceededUseCase,
+      }
+    )
+
+    container.register<IStripePaymentFailedUseCase>(
+      'IStripePaymentFailedUseCase',
+      {
+        useClass: StripePaymentFailedUseCase,
+      }
+    )
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

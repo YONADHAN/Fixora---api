@@ -49,6 +49,11 @@ export const config = {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID!,
   },
 
+  stripe: {
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY!,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET!,
+  },
+
   OtpExpiry: process.env.OTP_EXPIRY_IN_MINUTES || '2',
 
   bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),

@@ -20,9 +20,9 @@ export class BookingRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-    // // -------------------------------
-    // // SLOT AVAILABILITY (Customer)
-    // // -------------------------------
+    // -------------------------------
+    // SLOT AVAILABILITY
+    // -------------------------------
     this.router.get('/slots/availability', (req: Request, res: Response) =>
       bookingController.getAvailableSlotsForCustomer(req, res)
     )
@@ -33,54 +33,13 @@ export class BookingRoutes extends BaseRoute {
       (req: Request, res: Response) =>
         bookingController.createBookingHold(req, res)
     )
-    // this.router.post(
-    //   '/slots/book',
-    //   bookingController.createNewBooking
-    // )
-    // // -------------------------------
-    // // SLOT HOLD (Before Payment)
-    // // -------------------------------
-    // this.router.post(
-    //   '/holds',
-    //   verifyAuth,
-    //   authorizeRole(['customer']),
-    //   bookingController.createSlotHold
-    // )
-    // this.router.get(
-    //   '/holds/:holdId',
-    //   verifyAuth,
-    //   authorizeRole(['customer']),
-    //   bookingController.getSlotHoldDetails
-    // )
-    // // -------------------------------
-    // // CONFIRMED BOOKINGS
-    // // -------------------------------
-    // this.router.get(
-    //   '/bookings/:bookingId',
-    //   verifyAuth,
-    //   bookingController.getBookingDetails
-    // )
-    // this.router.get(
-    //   '/bookings/:bookingId/payment-status',
-    //   verifyAuth,
-    //   bookingController.getBookingPaymentStatus
-    // )
-    // this.router.get(
-    //     '/bookings/:bookingId/work-status',
-    //     verifyAuth,
-    //     bookingController.getBookingWorkStatus
-    // )
-    // this.router.patch(
-    //   '/bookings/:bookingId/cancel',
-    //   verifyAuth,
-    //   authorizeRole(['customer']),
-    //   bookingController.cancelBooking
-    // )
-    // this.router.get(
-    //   '/bookings/service/:serviceId',
-    //   verifyAuth,
-    //   authorizeRole(['vendor', 'admin']),
-    //   bookingController.getAllBookingsForService
-    // )
+
+    this.router.post(
+      '/booking-holds/:holdId/payment-intent',
+      verifyAuth,
+      authorizeRole(['customer']),
+      (req: Request, res: Response) =>
+        bookingController.createPaymentIntent(req, res)
+    )
   }
 }

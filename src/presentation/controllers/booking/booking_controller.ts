@@ -17,6 +17,8 @@ import {
 import { CreateBookingHoldRequestMapper } from '../../../application/mappers/booking_hold/create_booking_hold_mapper'
 import { ICreateBookingHoldUseCase } from '../../../domain/useCaseInterfaces/booking_hold/create_booking_hold_usecase_interface'
 import { CustomRequest } from '../../middleware/auth_middleware'
+import { createStripePaymentIntentSchema } from '../../validations/booking_hold/create_stripe_payment_intent_schema'
+import { ICreateStripePaymentIntentUseCase } from '../../../domain/useCaseInterfaces/booking_hold/create_stripe_payment_intent_usecase_interface'
 
 @injectable()
 export class BookingController implements IBookingController {
@@ -24,7 +26,9 @@ export class BookingController implements IBookingController {
     @inject('IGetAvailableSlotsForCustomerUseCase')
     private readonly _getAvailableSlotsForCustomerUseCase: IGetAvailableSlotsForCustomerUseCase,
     @inject('ICreateBookingHoldUseCase')
-    private readonly _createBookingHoldUseCase: ICreateBookingHoldUseCase
+    private readonly _createBookingHoldUseCase: ICreateBookingHoldUseCase,
+    @inject('ICreateStripePaymentIntentUseCase')
+    private readonly _createStripePaymentIntentUseCase: ICreateStripePaymentIntentUseCase
   ) {}
 
   async getAvailableSlotsForCustomer(
@@ -38,8 +42,9 @@ export class BookingController implements IBookingController {
 
       const validatedDTO = GetAvailableSlotsForCustomerRequestSchema.parse(dto)
 
-      const response =
-        await this._getAvailableSlotsForCustomerUseCase.execute(validatedDTO)
+      const response = await this._getAvailableSlotsForCustomerUseCase.execute(
+        validatedDTO
+      )
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -64,6 +69,24 @@ export class BookingController implements IBookingController {
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.BOOKING_HOLD_CREATED,
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async createPaymentIntent(req: Request, res: Response): Promise<void> {
+    try {
+      const { holdId } = req.params
+      const validatedDTO = createStripePaymentIntentSchema.parse(holdId)
+      const response = await this._createStripePaymentIntentUseCase.execute(
+        validatedDTO
+      )
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Payment intent created',
         data: response,
       })
     } catch (error) {

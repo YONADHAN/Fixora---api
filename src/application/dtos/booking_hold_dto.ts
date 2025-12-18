@@ -22,3 +22,7 @@ export interface ResponseCreateBookingHoldDTO {
   }
   expiresAt: Date
 }
+
+export interface CreatePaymentIntentResponseDTO {
+  clientSecret: string
+}

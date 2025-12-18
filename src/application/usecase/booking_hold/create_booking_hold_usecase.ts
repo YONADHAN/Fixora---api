@@ -71,7 +71,7 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
 
         if (!locked) {
           throw new CustomError(
-            `Slot ${slot.date} ${slot.start} is no longer available`,
+            `Slot ${slot.date} ${slot.start} is on hold`,
             409
           )
         }

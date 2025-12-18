@@ -17,6 +17,8 @@ import { IServiceController } from '../../domain/controllerInterfaces/features/s
 import { ServiceController } from '../controllers/service/service_controller'
 import { IBookingController } from '../../domain/controllerInterfaces/features/booking/booking-controller.interface'
 import { BookingController } from '../controllers/booking/booking_controller'
+import { StripeWebhookController } from '../controllers/webhook/stripe_webhook_controller'
+import { IStripeWebhookController } from '../../domain/controllerInterfaces/features/webhook/stripe-webhook-controller.interface'
 
 DependencyInjection.registerAll()
 
@@ -35,5 +37,7 @@ export const serviceController =
   container.resolve<IServiceController>(ServiceController)
 export const bookingController =
   container.resolve<IBookingController>(BookingController)
+export const stripeWebhookController =
+  container.resolve<IStripeWebhookController>(StripeWebhookController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

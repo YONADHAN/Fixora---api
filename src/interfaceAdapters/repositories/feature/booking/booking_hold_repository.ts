@@ -161,4 +161,19 @@ export class BookingHoldRepository
   async markHoldAsFailed(holdId: string): Promise<void> {
     await this.model.updateOne({ holdId }, { $set: { status: 'failed' } })
   }
+
+  async findExpiredActiveHolds(now: Date): Promise<IBookingHoldEntity[]> {
+    const holds = await this.model
+      .find({
+        status: 'active',
+        expiresAt: { $lt: now },
+      })
+      .lean()
+
+    return holds.map((h) => this.toEntity(h))
+  }
+
+  async markHoldAsExpired(holdId: string): Promise<void> {
+    await this.model.updateOne({ holdId }, { $set: { status: 'expired' } })
+  }
 }
