@@ -9,7 +9,17 @@ export type recurrenceType = 'daily' | 'weekly' | 'monthly'
 export type bookingStatus = 'available' | 'booked' | 'cancelled'
 export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
+
 export type TRole = 'customer' | 'admin' | 'vendor'
+
+export type WalletTransactionType = 'credit' | 'debit'
+
+export type WalletTransactionSource =
+  | 'wallet-topup'
+  | 'booking-refund'
+  | 'admin-adjustment'
+  | 'service-payout'
+  | 'opening-balance'
 
 export const HTTP_STATUS = {
   OK: 200,

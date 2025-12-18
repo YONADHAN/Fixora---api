@@ -12,9 +12,6 @@ import {
   IVendorPopulated,
 } from '../../../../shared/types/populated_values'
 
-// -------------------------------------
-// TYPE GUARDS
-// -------------------------------------
 function isVendorPopulated(ref: any): ref is IVendorPopulated {
   return (
     ref &&
@@ -44,9 +41,6 @@ export class ServiceRepository
     super(ServiceModel)
   }
 
-  // ------------------------------------
-  //          ENTITY → MODEL
-  // ------------------------------------
   protected toModel(entity: Partial<IServiceEntity>): Partial<IServiceModel> {
     return {
       vendorRef: entity.vendorRef
@@ -117,9 +111,6 @@ export class ServiceRepository
     }
   }
 
-  // ------------------------------------
-  //          MODEL → ENTITY
-  // ------------------------------------
   protected toEntity(model: IServiceModel): IServiceEntity {
     const entity: IServiceEntity = {
       _id: model._id.toString(),

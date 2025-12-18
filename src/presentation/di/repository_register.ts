@@ -19,6 +19,10 @@ import { IBookingHoldRepository } from '../../domain/repositoryInterfaces/featur
 import { BookingHoldRepository } from '../../interfaceAdapters/repositories/feature/booking/booking_hold_repository'
 import { IRedisSlotLockRepository } from '../../domain/repositoryInterfaces/redis/redis_slot_lock_repository_interface'
 import { RedisSlotLockRepository } from '../../interfaceAdapters/repositories/redis/redis_slot_lock_repository'
+import { IWalletRepository } from '../../domain/repositoryInterfaces/feature/payment/wallet_repository.interface'
+import { WalletRepository } from '../../interfaceAdapters/repositories/feature/payment/wallet_repository'
+import { IWalletTransactionRepository } from '../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
+import { WalletTransactionRepository } from '../../interfaceAdapters/repositories/feature/payment/wallet_transaction_repository'
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -72,5 +76,16 @@ export class RepositoryRegistry {
     container.register<IRedisSlotLockRepository>('IRedisSlotLockRepository', {
       useClass: RedisSlotLockRepository,
     })
+
+    container.register<IWalletRepository>('IWalletRepository', {
+      useClass: WalletRepository,
+    })
+
+    container.register<IWalletTransactionRepository>(
+      'IWalletTransactionRepository',
+      {
+        useClass: WalletTransactionRepository,
+      }
+    )
   }
 }
