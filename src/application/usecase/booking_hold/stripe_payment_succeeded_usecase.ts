@@ -5,6 +5,7 @@ import { IBookingHoldRepository } from '../../../domain/repositoryInterfaces/fea
 import { IBookingRepository } from '../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
 import { IRedisSlotLockRepository } from '../../../domain/repositoryInterfaces/redis/redis_slot_lock_repository_interface'
 import { IStripePaymentSucceedUseCase } from '../../../domain/useCaseInterfaces/booking_hold/stripe_payment_succeeded_usecase_interface'
+import { CustomError } from '../../../domain/utils/custom.error'
 
 @injectable()
 export class StripePaymentSucceededUseCase
@@ -33,7 +34,7 @@ export class StripePaymentSucceededUseCase
     }
 
     console.log('creating confirmed bookings')
-    //  Create confirmed bookings
+
     for (const slot of hold.slots) {
       await this._bookingRepository.save({
         bookingId: `BOOK_${crypto.randomUUID()}`,
@@ -52,10 +53,8 @@ export class StripePaymentSucceededUseCase
       })
     }
 
-    //  Mark hold completed
     await this._bookingHoldRepository.markHoldAsCompleted(hold.holdId)
 
-    //  Release Redis locks
     for (const slot of hold.slots) {
       await this._redisSlotLockRepository.releaseSlot(
         hold.serviceRef,

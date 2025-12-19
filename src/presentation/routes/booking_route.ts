@@ -20,9 +20,6 @@ export class BookingRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-    // -------------------------------
-    // SLOT AVAILABILITY
-    // -------------------------------
     this.router.get('/slots/availability', (req: Request, res: Response) =>
       bookingController.getAvailableSlotsForCustomer(req, res)
     )
@@ -40,6 +37,27 @@ export class BookingRoutes extends BaseRoute {
       authorizeRole(['customer']),
       (req: Request, res: Response) =>
         bookingController.createPaymentIntent(req, res)
+    )
+
+    this.router.get(
+      '/customer',
+      verifyAuth,
+      authorizeRole(['customer']),
+      (req, res) => bookingController.getMyBookings(req, res)
+    )
+
+    this.router.get(
+      '/vendor',
+      verifyAuth,
+      authorizeRole(['vendor']),
+      (req, res) => bookingController.getMyBookings(req, res)
+    )
+
+    this.router.get(
+      '/admin',
+      verifyAuth,
+      authorizeRole(['admin']),
+      (req, res) => bookingController.getMyBookings(req, res)
     )
   }
 }

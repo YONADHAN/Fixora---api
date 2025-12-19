@@ -41,6 +41,8 @@ export interface IBaseRepository<TModel, TEntity = TModel> {
     populateFields: string | string[] | object | object[]
   ): Promise<TEntity | null>
 
+  countDocuments(filter: FilterQuery<TModel>): Promise<number>
+
   findAllDocumentsWithFilterationAndPopulate(
     page: number,
     limit: number,

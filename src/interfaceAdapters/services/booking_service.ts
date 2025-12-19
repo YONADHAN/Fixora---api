@@ -1,315 +1,3 @@
-// import { IServiceEntity } from '../../domain/models/service_entity'
-// import { CustomError } from '../../domain/utils/custom.error'
-// import { injectable } from 'tsyringe'
-// import { IBookingServices } from '../../domain/serviceInterfaces/booking_service_interface'
-// import { IBookingEntity } from '../../domain/models/booking_entity'
-// import { GetAvailableSlotsForCustomerResponseDTO } from '../../application/dtos/booking_dto'
-
-// type TimeWindow = {
-//   start: Date
-//   end: Date
-// }
-
-// type Timeline = {
-//   [date: string]: TimeWindow[]
-// }
-
-// @injectable()
-// export class BookingServices implements IBookingServices {
-//   constructor() {}
-
-//   validationChecker = (service: IServiceEntity | null) => {
-//     if (!service) {
-//       throw new CustomError('Service not found', 404)
-//     }
-
-//     if (!service.isActiveStatusByAdmin || !service.isActiveStatusByVendor) {
-//       throw new CustomError('Service is not active', 403)
-//     }
-
-//     if (!service.schedule.slotDurationMinutes) {
-//       throw new CustomError('Slot duration not configured', 400)
-//     }
-
-//     if (
-//       !service.schedule.dailyWorkingWindows ||
-//       service.schedule.dailyWorkingWindows.length === 0
-//     ) {
-//       throw new CustomError('Daily working windows not configured', 400)
-//     }
-//   }
-
-//   toLocalDateKey(date: Date): string {
-//     const y = date.getFullYear()
-//     const m = String(date.getMonth() + 1).padStart(2, '0')
-//     const d = String(date.getDate()).padStart(2, '0')
-//     return `${y}-${m}-${d}`
-//   }
-
-//   showAvailableSlotsForCustomers = async (
-//     service: IServiceEntity,
-//     month: number,
-//     year: number,
-//     bookedSlots: IBookingEntity[]
-//   ) => {
-//     this.validationChecker(service)
-
-//     let timeline: Timeline = {}
-
-//     timeline = this.buildDateRange(timeline, service, month, year)
-//     timeline = this.applyRecurrence(timeline, service)
-//     timeline = this.buildBaseWindows(timeline, service)
-//     timeline = this.applyCustomOverrides(timeline, service)
-//     timeline = this.applyBlockOverrides(timeline, service)
-//     timeline = this.removeBookedSlots(timeline, bookedSlots)
-//     timeline = await this.removeHeldSlots(timeline, service)
-
-//     return this.sliceIntoSlots(timeline, service.schedule.slotDurationMinutes)
-//   }
-
-//   buildDateRange = (
-//     timeline: Timeline,
-//     service: IServiceEntity,
-//     month: number,
-//     year: number
-//   ): Timeline => {
-//     const monthStart = new Date(year, month, 1)
-//     const monthEnd = new Date(year, month + 1, 0)
-
-//     const start = service.schedule.visibilityStartDate
-//       ? new Date(
-//           Math.max(
-//             monthStart.getTime(),
-//             service.schedule.visibilityStartDate.getTime()
-//           )
-//         )
-//       : monthStart
-
-//     const end = service.schedule.visibilityEndDate
-//       ? new Date(
-//           Math.min(
-//             monthEnd.getTime(),
-//             service.schedule.visibilityEndDate.getTime()
-//           )
-//         )
-//       : monthEnd
-
-//     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-//       const key = this.toLocalDateKey(d)
-//       timeline[key] = []
-//     }
-
-//     return timeline
-//   }
-
-//   applyRecurrence = (timeline: Timeline, service: IServiceEntity): Timeline => {
-//     const { recurrenceType, weeklyWorkingDays, monthlyWorkingDates } =
-//       service.schedule
-
-//     for (const dateKey of Object.keys(timeline)) {
-//       const date = new Date(dateKey)
-
-//       if (
-//         recurrenceType === 'weekly' &&
-//         Array.isArray(weeklyWorkingDays) &&
-//         !weeklyWorkingDays.includes(date.getDay())
-//       ) {
-//         delete timeline[dateKey]
-//         continue
-//       }
-
-//       if (
-//         recurrenceType === 'monthly' &&
-//         Array.isArray(monthlyWorkingDates) &&
-//         !monthlyWorkingDates.includes(date.getDate())
-//       ) {
-//         delete timeline[dateKey]
-//       }
-//     }
-
-//     return timeline
-//   }
-
-//   buildBaseWindows = (
-//     timeline: Timeline,
-//     service: IServiceEntity
-//   ): Timeline => {
-//     for (const dateKey of Object.keys(timeline)) {
-//       const date = new Date(dateKey)
-
-//       timeline[dateKey] = service.schedule.dailyWorkingWindows.map((w) => {
-//         const [sh, sm] = w.startTime.split(':').map(Number)
-//         const [eh, em] = w.endTime.split(':').map(Number)
-
-//         const start = new Date(date)
-//         start.setHours(sh, sm, 0, 0)
-
-//         const end = new Date(date)
-//         end.setHours(eh, em, 0, 0)
-
-//         return { start, end }
-//       })
-//     }
-
-//     return timeline
-//   }
-
-//   applyCustomOverrides = (
-//     timeline: Timeline,
-//     service: IServiceEntity
-//   ): Timeline => {
-//     const overrides = service.schedule.overrideCustom || []
-
-//     const overriddenDates = new Set<string>()
-
-//     for (const o of overrides) {
-//       for (
-//         let d = new Date(o.startDateTime);
-//         d <= o.endDateTime;
-//         d.setDate(d.getDate() + 1)
-//       ) {
-//         const key = this.toLocalDateKey(d)
-//         if (!timeline[key]) continue
-
-//         if (!overriddenDates.has(key)) {
-//           timeline[key] = []
-//           overriddenDates.add(key)
-//         }
-
-//         const start = new Date(d)
-//         const end = new Date(d)
-
-//         if (o.startTime && o.endTime) {
-//           const [sh, sm] = o.startTime.split(':').map(Number)
-//           const [eh, em] = o.endTime.split(':').map(Number)
-//           start.setHours(sh, sm, 0, 0)
-//           end.setHours(eh, em, 0, 0)
-//         } else {
-//           start.setTime(o.startDateTime.getTime())
-//           end.setTime(o.endDateTime.getTime())
-//         }
-
-//         timeline[key].push({ start, end })
-//       }
-//     }
-
-//     return timeline
-//   }
-
-//   applyBlockOverrides = (
-//     timeline: Timeline,
-//     service: IServiceEntity
-//   ): Timeline => {
-//     const blocks = service.schedule.overrideBlock || []
-
-//     for (const block of blocks) {
-//       const key = this.toLocalDateKey(block.startDateTime)
-//       if (!timeline[key]) continue
-
-//       timeline[key] = this.subtractRange(
-//         timeline[key],
-//         block.startDateTime,
-//         block.endDateTime
-//       )
-//     }
-
-//     return timeline
-//   }
-
-//   removeBookedSlots = (
-//     timeline: Timeline,
-//     bookedSlots: IBookingEntity[]
-//   ): Timeline => {
-//     for (const booking of bookedSlots) {
-//       if (!booking.slotStart || !booking.slotEnd) continue
-
-//       const dateKey = this.toLocalDateKey(booking.slotStart)
-//       if (!timeline[dateKey]) continue
-
-//       timeline[dateKey] = this.subtractRange(
-//         timeline[dateKey],
-//         booking.slotStart,
-//         booking.slotEnd
-//       )
-//     }
-
-//     return timeline
-//   }
-
-//   removeHeldSlots = async (
-//     timeline: Timeline,
-//     service: IServiceEntity
-//   ): Promise<Timeline> => {
-//     // TODO:
-//     // Redis TTL based holds
-//     return timeline
-//   }
-
-//   subtractRange = (
-//     windows: TimeWindow[],
-//     removeStart: Date,
-//     removeEnd: Date
-//   ): TimeWindow[] => {
-//     const result: TimeWindow[] = []
-
-//     for (const w of windows) {
-//       if (removeEnd <= w.start || removeStart >= w.end) {
-//         result.push(w)
-//         continue
-//       }
-
-//       if (removeStart > w.start) {
-//         result.push({ start: w.start, end: new Date(removeStart) })
-//       }
-
-//       if (removeEnd < w.end) {
-//         result.push({ start: new Date(removeEnd), end: w.end })
-//       }
-//     }
-
-//     return result
-//   }
-
-//   sliceIntoSlots = (
-//     timeline: Timeline,
-//     slotDurationMinutes: number
-//   ): GetAvailableSlotsForCustomerResponseDTO => {
-//     const result: Record<string, { start: string; end: string }[]> = {}
-
-//     for (const date in timeline) {
-//       const slots = []
-
-//       for (const window of timeline[date]) {
-//         let cursor = new Date(window.start)
-
-//         while (
-//           cursor.getTime() + slotDurationMinutes * 60000 <=
-//           window.end.getTime()
-//         ) {
-//           const slotStart = new Date(cursor)
-//           const slotEnd = new Date(
-//             cursor.getTime() + slotDurationMinutes * 60000
-//           )
-
-//           const pad = (n: number) => n.toString().padStart(2, '0')
-
-//           slots.push({
-//             start: `${pad(slotStart.getHours())}:${pad(slotStart.getMinutes())}`,
-//             end: `${pad(slotEnd.getHours())}:${pad(slotEnd.getMinutes())}`,
-//           })
-
-//           cursor = slotEnd
-//         }
-//       }
-
-//       if (slots.length > 0) {
-//         result[date] = slots
-//       }
-//     }
-
-//     return result
-//   }
-// }
 import { IServiceEntity } from '../../domain/models/service_entity'
 import { CustomError } from '../../domain/utils/custom.error'
 import { injectable } from 'tsyringe'
@@ -330,7 +18,7 @@ type Timeline = {
 export class BookingServices implements IBookingServices {
   constructor() {}
 
-  // Helper to create Date in local time
+  // create date in local time
   private createLocalDate(
     year: number,
     month: number,
@@ -341,7 +29,6 @@ export class BookingServices implements IBookingServices {
     return new Date(year, month, day, hours, minutes, 0, 0)
   }
 
-  // Helper to convert any Date to local midnight
   private toLocalMidnight(date: Date): Date {
     return this.createLocalDate(
       date.getFullYear(),
@@ -661,8 +348,7 @@ export class BookingServices implements IBookingServices {
     timeline: Timeline,
     service: IServiceEntity
   ): Promise<Timeline> => {
-    // TODO:
-    // Redis TTL based holds
+    // Redis
     return timeline
   }
 
@@ -715,7 +401,9 @@ export class BookingServices implements IBookingServices {
           const pad = (n: number) => n.toString().padStart(2, '0')
 
           slots.push({
-            start: `${pad(slotStart.getHours())}:${pad(slotStart.getMinutes())}`,
+            start: `${pad(slotStart.getHours())}:${pad(
+              slotStart.getMinutes()
+            )}`,
             end: `${pad(slotEnd.getHours())}:${pad(slotEnd.getMinutes())}`,
           })
 

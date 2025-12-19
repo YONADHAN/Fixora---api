@@ -20,10 +20,8 @@ export class ExpireBookingHoldsUseCase implements IExpireBookingHoldsUseCase {
       await this._bookingHoldRepository.findExpiredActiveHolds(now)
 
     for (const hold of expiredHolds) {
-      //  Mark expired
       await this._bookingHoldRepository.markHoldAsExpired(hold.holdId)
 
-      // Release Redis locks
       for (const slot of hold.slots) {
         await this._redisSlotLockRepository.releaseSlot(
           hold.serviceRef,

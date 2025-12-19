@@ -142,6 +142,10 @@ export abstract class BaseRepository<TModel, TEntity>
     return result ? this.toEntity(result as TModel) : null
   }
 
+  async countDocuments(filter: FilterQuery<TModel> = {}): Promise<number> {
+    return this.model.countDocuments(filter)
+  }
+
   async findAllDocumentsWithFilterationAndPopulate(
     page: number,
     limit: number,

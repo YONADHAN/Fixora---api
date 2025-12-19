@@ -21,7 +21,6 @@ export class StripePaymentFailedUseCase implements IStripePaymentFailedUseCase {
     )
 
     if (!hold || hold.status !== 'active') {
-      // Already handled / invalid
       return
     }
 

@@ -93,4 +93,19 @@ export class BookingController implements IBookingController {
       handleErrorResponse(req, res, error)
     }
   }
+
+  async getMyBookings(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as CustomRequest).user.userId
+      const role = (req as CustomRequest).user.role
+
+      // const bookings = await this._getBookingsUseCase.execute(userId, role)
+      // res.status(HTTP_STATUS.OK).json({
+      //   success: true,
+      //   data: bookings,
+      // })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
 }
