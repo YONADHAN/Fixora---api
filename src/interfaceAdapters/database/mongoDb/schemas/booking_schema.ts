@@ -17,10 +17,18 @@ export const BookingSchema = new Schema<IBookingModel>(
 
     paymentStatus: {
       type: String,
-      enum: ['pending', 'advance-paid', 'paid', 'refunded', 'failed'],
+      enum: [
+        'pending',
+        'advance-paid',
+        'paid',
+        'pending-refund',
+        'refunded',
+        'failed',
+      ],
       default: 'pending',
     },
-
+    stripePaymentIntentId: { type: String },
+    stripeSlotPaymentRefundId: { type: String },
     serviceStatus: {
       type: String,
       enum: ['scheduled', 'in-progress', 'completed', 'cancelled'],

@@ -86,6 +86,10 @@ import { IGetAvailableSlotsForCustomerUseCase } from '../../domain/useCaseInterf
 import { GetAvailableSlotsForCustomerUseCase } from '../../application/usecase/booking/get_available_slots_for_customer_usecase'
 import { ICreateBookingHoldUseCase } from '../../domain/useCaseInterfaces/booking_hold/create_booking_hold_usecase_interface'
 import { CreateBookingHoldUseCase } from '../../application/usecase/booking_hold/create_booking_hold_usecase'
+import { IGetBookingsUseCase } from '../../domain/useCaseInterfaces/booking/get_bookings_usecase'
+import { GetBookingsUseCase } from '../../application/usecase/booking/get_booking_usecase'
+import { ICancelBookingUseCase } from '../../domain/useCaseInterfaces/booking/cancel_booking_usecase_interface'
+import { CancelBookingUseCase } from '../../application/usecase/booking/cancel_booking_usecase'
 //factory
 import { RegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory'
 import { IRegistrationStrategyFactory } from '../../application/factories/auth/registration/registration_strategy_factory.interface'
@@ -109,6 +113,10 @@ import { IChangePasswordFactory } from '../../application/factories/auth/change_
 import { ChangePasswordFactory } from '../../application/factories/auth/change_password/change_password_strategy_factory'
 import { IProfileImageUploadFactory } from '../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
 import { ProfileImageUploadFactory } from '../../application/factories/commonFeatures/profile/profile_image_upload_factory'
+import { IGetBookingsFactory } from '../../application/factories/booking/get_booking_factory.interface'
+import { GetBookingsFactory } from '../../application/factories/booking/get_booking_factory'
+import { ICancelBookingFactory } from '../../application/factories/booking/cancel_booking_factory.interface'
+import { CancelBookingFactory } from '../../application/factories/booking/cancel_booking_factory'
 //Mapper Factory
 import { IUserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory'
 import { UserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory.impl'
@@ -202,6 +210,18 @@ import { IStripePaymentSucceedUseCase } from '../../domain/useCaseInterfaces/boo
 import { StripePaymentSucceededUseCase } from '../../application/usecase/booking_hold/stripe_payment_succeeded_usecase'
 import { IStripePaymentFailedUseCase } from '../../domain/useCaseInterfaces/booking_hold/stripe_payment_failed_usecase_interface'
 import { StripePaymentFailedUseCase } from '../../application/usecase/booking_hold/stripe_payment_failed_usecase'
+import { IGetBookingForAdminStrategyInterface } from '../../application/strategies/booking/get_bookings/get_booking_for_admin_strategy.interface'
+import { GetBookingForAdminStrategy } from '../../application/strategies/booking/get_bookings/get_booking_for_admin_strategy'
+import { IGetBookingForVendorStrategyInterface } from '../../application/strategies/booking/get_bookings/get_booking_for_vendor_strategy.interface'
+import { GetBookingForVendorStrategy } from '../../application/strategies/booking/get_bookings/get_booking_for_vendor_strategy'
+import { IGetBookingForCustomerStrategyInterface } from '../../application/strategies/booking/get_bookings/get_booking_for_customer_strategy.interface'
+import { GetBookingForCustomerStrategy } from '../../application/strategies/booking/get_bookings/get_booking_for_customer_strategy'
+
+import { ICustomerCancelBookingStrategyInterface } from '../../application/strategies/booking/cancel_bookings/customer_cancel_booking_strategy.interface'
+import { CustomerCancelBookingStrategy } from '../../application/strategies/booking/cancel_bookings/customer_cancel_booking_strategy'
+import { IVendorCancelBookingStrategyInterface } from '../../application/strategies/booking/cancel_bookings/vendor_cancel_booking_strategy.interface'
+import { VendorCancelBookingStrategy } from '../../application/strategies/booking/cancel_bookings/vendor_cancel_booking_strategy'
+
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -367,6 +387,15 @@ export class UseCaseRegistry {
         useClass: CreateStripePaymentIntentUseCase,
       }
     )
+
+    container.register<IGetBookingsUseCase>('IGetBookingsUseCase', {
+      useClass: GetBookingsUseCase,
+    })
+
+    container.register<ICancelBookingUseCase>('ICancelBookingUseCase', {
+      useClass: CancelBookingUseCase,
+    })
+
     //security
     container.register<IBcrypt>('IPasswordBcrypt', {
       useClass: PasswordBcrypt,
@@ -561,6 +590,13 @@ export class UseCaseRegistry {
         useClass: ProfileImageUploadFactory,
       }
     )
+    container.register<IGetBookingsFactory>('IGetBookingsFactory', {
+      useClass: GetBookingsFactory,
+    })
+
+    container.register<ICancelBookingFactory>('ICancelBookingFactory', {
+      useClass: CancelBookingFactory,
+    })
     //strategy
     container.register<ICustomerRegistrationStrategy>(
       'ICustomerRegistrationStrategy',
@@ -711,6 +747,39 @@ export class UseCaseRegistry {
       'IVendorProfileImageUploadStrategy',
       {
         useClass: VendorProfileImageUploadStrategy,
+      }
+    )
+
+    container.register<IGetBookingForAdminStrategyInterface>(
+      'IGetBookingForAdminStrategyInterface',
+      {
+        useClass: GetBookingForAdminStrategy,
+      }
+    )
+    container.register<IGetBookingForVendorStrategyInterface>(
+      'IGetBookingForVendorStrategyInterface',
+      {
+        useClass: GetBookingForVendorStrategy,
+      }
+    )
+    container.register<IGetBookingForCustomerStrategyInterface>(
+      'IGetBookingForCustomerStrategyInterface',
+      {
+        useClass: GetBookingForCustomerStrategy,
+      }
+    )
+
+    container.register<ICustomerCancelBookingStrategyInterface>(
+      'ICustomerCancelBookingStrategyInterface',
+      {
+        useClass: CustomerCancelBookingStrategy,
+      }
+    )
+
+    container.register<IVendorCancelBookingStrategyInterface>(
+      'IVendorCancelBookingStrategyInterface',
+      {
+        useClass: VendorCancelBookingStrategy,
       }
     )
 

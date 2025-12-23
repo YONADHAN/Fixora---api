@@ -12,14 +12,77 @@ export type verificationTypes = 'accepted' | 'rejected' | 'pending'
 
 export type TRole = 'customer' | 'admin' | 'vendor'
 
-export type WalletTransactionType = 'credit' | 'debit'
+//wallet
 
+export type WalletTransactionType = 'credit' | 'debit'
 export type WalletTransactionSource =
   | 'wallet-topup'
   | 'booking-refund'
   | 'admin-adjustment'
   | 'service-payout'
   | 'opening-balance'
+
+//payment status
+export const PAYMENT_PHASE = {
+  ADVANCE: 'advance',
+  REMAINING: 'remaining',
+} as const
+
+export type TPaymentPhase = (typeof PAYMENT_PHASE)[keyof typeof PAYMENT_PHASE]
+
+export const ADVANCE_PAYMENT_STATUS = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  FAILED: 'failed',
+} as const
+
+export type TAdvancePaymentStatus =
+  (typeof ADVANCE_PAYMENT_STATUS)[keyof typeof ADVANCE_PAYMENT_STATUS]
+
+export const REMAINING_PAYMENT_STATUS = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  FAILED: 'failed',
+} as const
+
+export type TRemainingPaymentStatus =
+  (typeof REMAINING_PAYMENT_STATUS)[keyof typeof REMAINING_PAYMENT_STATUS]
+
+export const REFUND_STATUS = {
+  PENDING: 'pending',
+  SUCCEEDED: 'succeeded',
+  FAILED: 'failed',
+} as const
+
+export type TRefundStatus = (typeof REFUND_STATUS)[keyof typeof REFUND_STATUS]
+
+export const SLOT_PAYMENT_STATUS = {
+  ADVANCE_PAID: 'advance-paid',
+  ADVANCE_REFUNDED: 'advance-refunded',
+  REMAINING_PENDING: 'remaining-pending',
+  FULLY_PAID: 'fully-paid',
+  CANCELLED: 'cancelled',
+} as const
+
+export type TSlotPaymentStatus =
+  (typeof SLOT_PAYMENT_STATUS)[keyof typeof SLOT_PAYMENT_STATUS]
+
+export const PAYMENT_STATUS = {
+  ADVANCE_PAID: 'advance-paid',
+  PARTIALLY_REFUNDED: 'partially-refunded',
+  REFUNDED: 'refunded',
+  PARTIALLY_PAID: 'partially-paid',
+  FULLY_PAID: 'fully-paid',
+} as const
+
+export type TPaymentStatus =
+  (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
+
+export const CURRENCY = {
+  INR: 'INR',
+} as const
+
+export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
 
 export const HTTP_STATUS = {
   OK: 200,
@@ -98,6 +161,7 @@ export const SUCCESS_MESSAGES = {
   //booking
   SLOTS_FETCHED: 'Slots fetched successfully.',
   BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
+  CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
 }
 
 export const ERROR_MESSAGES = {
@@ -133,6 +197,8 @@ export const ERROR_MESSAGES = {
   STATUS_ALREADY_EXISTS: 'Status already exists.',
   SUB_SERVICES_NOT_FOUND: 'Sub services not found',
   SERVICES_NOT_FOUND: 'Service not found.',
+  NO_BOOKING_FOUND: 'No booking found.',
+  CONFLICTING_INPUTS: 'Credentials are conflicting each other.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

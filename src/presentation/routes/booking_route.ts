@@ -1,9 +1,5 @@
-import {
-  bookingController,
-  customerController,
-  serviceController,
-  blockMyUserMiddleware,
-} from '../di/resolver'
+import { CustomRequestHandler } from '../../shared/types/custom_request'
+import { bookingController, blockMyUserMiddleware } from '../di/resolver'
 
 import {
   authorizeRole,
@@ -13,7 +9,7 @@ import {
 
 import { BaseRoute } from './base_route'
 import { Request, Response } from 'express'
-import { CustomRequestHandler } from '../../shared/types/custom_request'
+
 export class BookingRoutes extends BaseRoute {
   constructor() {
     super()
@@ -40,24 +36,20 @@ export class BookingRoutes extends BaseRoute {
     )
 
     this.router.get(
-      '/customer',
+      '/me',
       verifyAuth,
-      authorizeRole(['customer']),
+      decodeToken,
+      authorizeRole(['customer', 'vendor', 'admin']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       (req, res) => bookingController.getMyBookings(req, res)
     )
 
-    this.router.get(
-      '/vendor',
+    this.router.patch(
+      '/:bookingId/cancel',
       verifyAuth,
-      authorizeRole(['vendor']),
-      (req, res) => bookingController.getMyBookings(req, res)
-    )
-
-    this.router.get(
-      '/admin',
-      verifyAuth,
-      authorizeRole(['admin']),
-      (req, res) => bookingController.getMyBookings(req, res)
+      authorizeRole(['customer', 'vendor', 'admin']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      (req: Request, res: Response) => bookingController.cancelBooking(req, res)
     )
   }
 }

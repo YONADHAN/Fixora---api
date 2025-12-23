@@ -15,9 +15,16 @@ export interface BookingMongoBase {
 
   paymentRef?: Types.ObjectId
 
-  paymentStatus: 'pending' | 'advance-paid' | 'paid' | 'refunded' | 'failed'
+  paymentStatus:
+    | 'pending'
+    | 'advance-paid'
+    | 'paid'
+    | 'pending-refund'
+    | 'refunded'
+    | 'failed'
   serviceStatus: 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
-
+  stripePaymentIntentId?: string
+  stripeSlotPaymentRefundId?: string
   cancelInfo?: {
     cancelledByRole?: 'customer' | 'vendor' | 'admin'
     cancelledByRef?: Types.ObjectId
