@@ -221,6 +221,18 @@ import { ICustomerCancelBookingStrategyInterface } from '../../application/strat
 import { CustomerCancelBookingStrategy } from '../../application/strategies/booking/cancel_bookings/customer_cancel_booking_strategy'
 import { IVendorCancelBookingStrategyInterface } from '../../application/strategies/booking/cancel_bookings/vendor_cancel_booking_strategy.interface'
 import { VendorCancelBookingStrategy } from '../../application/strategies/booking/cancel_bookings/vendor_cancel_booking_strategy'
+import { IGetAddressUseCase } from '../../domain/useCaseInterfaces/address/get_address_usecase_interface'
+import { GetAddressUseCase } from '../../application/usecase/address/get_address_usecase'
+import { IEditAddressUseCase } from '../../domain/useCaseInterfaces/address/edit_address_usecase_interface'
+import { EditAddressUseCase } from '../../application/usecase/address/edit_address_usecase'
+import { IAddAddressUseCase } from '../../domain/useCaseInterfaces/address/add_address_usecase_interface'
+import { AddAddressUseCase } from '../../application/usecase/address/add_address_usecase'
+import { ISetDefaultAddressUseCase } from '../../domain/useCaseInterfaces/address/set_default_address_usecase_interface'
+import { SetDefaultAddressUseCase } from '../../application/usecase/address/set_default_address_usecase'
+import { IDeleteAddressUseCase } from '../../domain/useCaseInterfaces/address/delete_address_usecase_interface'
+import { DeleteAddressUseCase } from '../../application/usecase/address/delete_address_usecase'
+import { IGetSingleAddressUseCase } from '../../domain/useCaseInterfaces/address/get_single_address_usecase_interface'
+import { GetSingleAddressUseCase } from '../../application/usecase/address/get_single_address_usecase'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -493,6 +505,30 @@ export class UseCaseRegistry {
         useClass: StripePaymentFailedUseCase,
       }
     )
+
+    container.register<IGetAddressUseCase>('IGetAddressUseCase', {
+      useClass: GetAddressUseCase,
+    })
+
+    container.register<IEditAddressUseCase>('IEditAddressUseCase', {
+      useClass: EditAddressUseCase,
+    })
+
+    container.register<IAddAddressUseCase>('IAddAddressUseCase', {
+      useClass: AddAddressUseCase,
+    })
+
+    container.register<ISetDefaultAddressUseCase>('ISetDefaultAddressUseCase', {
+      useClass: SetDefaultAddressUseCase,
+    })
+
+    container.register<IDeleteAddressUseCase>('IDeleteAddressUseCase', {
+      useClass: DeleteAddressUseCase,
+    })
+
+    container.register<IGetSingleAddressUseCase>('IGetSingleAddressUseCase', {
+      useClass: GetSingleAddressUseCase,
+    })
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

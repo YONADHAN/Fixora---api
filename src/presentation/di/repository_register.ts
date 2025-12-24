@@ -23,6 +23,8 @@ import { IWalletRepository } from '../../domain/repositoryInterfaces/feature/pay
 import { WalletRepository } from '../../interfaceAdapters/repositories/feature/payment/wallet_repository'
 import { IWalletTransactionRepository } from '../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { WalletTransactionRepository } from '../../interfaceAdapters/repositories/feature/payment/wallet_transaction_repository'
+import { IAddressRepository } from '../../domain/repositoryInterfaces/feature/address/address_repository.interface'
+import { AddressRepository } from '../../interfaceAdapters/repositories/feature/address/address_repository'
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -87,5 +89,9 @@ export class RepositoryRegistry {
         useClass: WalletTransactionRepository,
       }
     )
+
+    container.register<IAddressRepository>('IAddressRepository', {
+      useClass: AddressRepository,
+    })
   }
 }

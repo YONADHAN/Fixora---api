@@ -19,6 +19,8 @@ import { IBookingController } from '../../domain/controllerInterfaces/features/b
 import { BookingController } from '../controllers/booking/booking_controller'
 import { StripeWebhookController } from '../controllers/webhook/stripe_webhook_controller'
 import { IStripeWebhookController } from '../../domain/controllerInterfaces/features/webhook/stripe-webhook-controller.interface'
+import { IAddressController } from '../../domain/controllerInterfaces/features/address/address-controller.interface'
+import { AddressController } from '../controllers/address/address_controller'
 
 DependencyInjection.registerAll()
 
@@ -39,5 +41,7 @@ export const bookingController =
   container.resolve<IBookingController>(BookingController)
 export const stripeWebhookController =
   container.resolve<IStripeWebhookController>(StripeWebhookController)
+export const addressController =
+  container.resolve<IAddressController>(AddressController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

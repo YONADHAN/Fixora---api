@@ -162,6 +162,15 @@ export const SUCCESS_MESSAGES = {
   SLOTS_FETCHED: 'Slots fetched successfully.',
   BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
   CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
+
+  //address
+  ADDRESS_FOUND_SUCCESSFULLY: 'Address found successfully.',
+  ADDRESS_ADDED_SUCCESSFULLY: 'Address added successfully.',
+  EDIT_ADDRESS_SUCCESSFULLY: 'Address edited successfully.',
+  ADDRESS_SET_AS_DEFAULT_ADDRESS_SUCCESSFULLY:
+    'Address set as default address successfully.',
+  DELETED_SELECTED_ADDRESS_SUCCESSFULLY:
+    'The selected address deleted successfully',
 }
 
 export const ERROR_MESSAGES = {
@@ -199,6 +208,9 @@ export const ERROR_MESSAGES = {
   SERVICES_NOT_FOUND: 'Service not found.',
   NO_BOOKING_FOUND: 'No booking found.',
   CONFLICTING_INPUTS: 'Credentials are conflicting each other.',
+
+  //address
+  ADDRESS_NOT_FOUND: 'Address not found.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

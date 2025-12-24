@@ -2,7 +2,6 @@ import {
   authController,
   customerController,
   blockMyUserMiddleware,
-  vendorController,
   serviceCategoryController,
 } from '../di/resolver'
 import {
