@@ -1,5 +1,7 @@
 import { Server } from 'socket.io'
 import http from 'http'
+import chalk from 'chalk'
+
 import { socketAuthMiddleware } from './socket.auth'
 import { registerRooms } from './socket.room'
 import { registerSocketEvents } from './socket.events'
@@ -20,8 +22,15 @@ export const initSocketServer = (httpServer: http.Server) => {
     registerRooms(socket)
     registerSocketEvents(socket)
 
-    console.log('Socket connected:', socket.id)
+    console.log(
+      chalk.cyanBright('🔌 Socket connected:'),
+      chalk.white(socket.id)
+    )
   })
+
+  console.log(
+    chalk.greenBright.bold('⚡ Socket.IO server initialized and ready')
+  )
 
   return io
 }
