@@ -89,6 +89,25 @@ export const CURRENCY = {
 
 export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
 
+//socket.io
+export const SOCKET_EVENTS = {
+  NOTIFICATION_READ: 'notifications:read',
+  NOTIFICATION_READ_ALL: 'notifications:read-all',
+
+  CHAT_JOIN: 'chat:join',
+  CHAT_LEAVE: 'chat:leave',
+  CHAT_SEND: 'chat:message:send',
+
+  PRESENCE_PING: 'presence:ping',
+}
+
+export interface SocketUser {
+  userId: string
+  role: 'customer' | 'vendor' | 'admin'
+  email: string
+}
+
+//http status
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
