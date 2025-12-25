@@ -21,7 +21,8 @@ import { StripeWebhookController } from '../controllers/webhook/stripe_webhook_c
 import { IStripeWebhookController } from '../../domain/controllerInterfaces/features/webhook/stripe-webhook-controller.interface'
 import { IAddressController } from '../../domain/controllerInterfaces/features/address/address-controller.interface'
 import { AddressController } from '../controllers/address/address_controller'
-
+import { IWalletController } from '../../domain/controllerInterfaces/features/wallet/wallet-controller.interface'
+import { WalletController } from '../controllers/wallet/wallet_controller'
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
@@ -43,5 +44,7 @@ export const stripeWebhookController =
   container.resolve<IStripeWebhookController>(StripeWebhookController)
 export const addressController =
   container.resolve<IAddressController>(AddressController)
+export const walletController =
+  container.resolve<IWalletController>(WalletController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

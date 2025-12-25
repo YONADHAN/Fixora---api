@@ -241,6 +241,8 @@ import { IGetBookingDetailsForVendorStrategy } from '../../application/strategie
 import { GetBookingDetailsForVendorStrategy } from '../../application/strategies/booking/get_booking_details/get_booking_details_for_vendor_strategy'
 import { IGetBookingDetailsFactory } from '../../application/factories/booking/get_booking_details_factory.interface'
 import { GetBookingDetailsFactory } from '../../application/factories/booking/get_booking_details_factory'
+import { IGetWalletUseCase } from '../../domain/useCaseInterfaces/wallet/get_my_wallet_usecase_interface'
+import { GetWalletUseCase } from '../../application/usecase/wallet/get_my_wallet_usecase'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -418,6 +420,10 @@ export class UseCaseRegistry {
 
     container.register<IGetBookingDetailsUseCase>('IGetBookingDetailsUseCase', {
       useClass: GetBookingDetailsUseCase,
+    })
+
+    container.register<IGetWalletUseCase>('IGetWalletUseCase', {
+      useClass: GetWalletUseCase,
     })
 
     //security
