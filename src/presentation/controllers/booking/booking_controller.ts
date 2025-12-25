@@ -1,7 +1,12 @@
 import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
 import 'reflect-metadata'
-import { HTTP_STATUS, SUCCESS_MESSAGES, TRole } from '../../../shared/constants'
+import {
+  ERROR_MESSAGES,
+  HTTP_STATUS,
+  SUCCESS_MESSAGES,
+  TRole,
+} from '../../../shared/constants'
 import { IBookingController } from '../../../domain/controllerInterfaces/features/booking/booking-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { IGetAvailableSlotsForCustomerUseCase } from '../../../domain/useCaseInterfaces/booking/get_available_slots_for_customer_usecase_interface'
@@ -20,8 +25,10 @@ import { CustomRequest } from '../../middleware/auth_middleware'
 import { createStripePaymentIntentSchema } from '../../validations/booking_hold/create_stripe_payment_intent_schema'
 import { ICreateStripePaymentIntentUseCase } from '../../../domain/useCaseInterfaces/booking_hold/create_stripe_payment_intent_usecase_interface'
 import { getMyBookingsRequestSchema } from '../../validations/booking/get_bookings_schema'
-import { IGetBookingsUseCase } from '../../../domain/useCaseInterfaces/booking/get_bookings_usecase'
+import { IGetBookingsUseCase } from '../../../domain/useCaseInterfaces/booking/get_bookings_usecase_interface'
 import { ICancelBookingUseCase } from '../../../domain/useCaseInterfaces/booking/cancel_booking_usecase_interface'
+import { IGetBookingDetailsUseCase } from '../../../domain/useCaseInterfaces/booking/get_booking_details_usecase_interface'
+import { CustomError } from '../../../domain/utils/custom.error'
 
 @injectable()
 export class BookingController implements IBookingController {
@@ -35,7 +42,9 @@ export class BookingController implements IBookingController {
     @inject('IGetBookingsUseCase')
     private readonly _getBookingsUseCase: IGetBookingsUseCase,
     @inject('ICancelBookingUseCase')
-    private readonly _cancelBookingUseCase: ICancelBookingUseCase
+    private readonly _cancelBookingUseCase: ICancelBookingUseCase,
+    @inject('IGetBookingDetailsUseCase')
+    private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase
   ) {}
 
   async getAvailableSlotsForCustomer(
@@ -100,6 +109,7 @@ export class BookingController implements IBookingController {
       handleErrorResponse(req, res, error)
     }
   }
+
   async getMyBookings(req: Request, res: Response): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
@@ -127,18 +137,45 @@ export class BookingController implements IBookingController {
   async cancelBooking(req: Request, res: Response): Promise<void> {
     try {
       const bookingId = req.params.bookingId
-      const reason = req.params.reason
+      const { reason } = req.body
       const userId = (req as CustomRequest).user.userId
       const role = (req as CustomRequest).user.role as TRole
+
+      if (!reason || typeof reason !== 'string' || !reason.trim()) {
+        throw new CustomError(
+          ERROR_MESSAGES.CANCELLATION_REASON_NEEDED,
+          HTTP_STATUS.BAD_REQUEST
+        )
+      }
       await this._cancelBookingUseCase.execute({
         bookingId,
         userId,
         role,
-        reason,
+        reason: reason.trim(),
       })
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.CANCELLED_BOOKING_SUCCESSFULLY,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getBookingDetails(req: Request, res: Response): Promise<void> {
+    try {
+      const bookingId = req.params.bookingId
+      const userId = (req as CustomRequest).user.userId
+      const role = (req as CustomRequest).user.role as TRole
+      const data = await this._getBookingDetailsUseCase.execute({
+        bookingId,
+        userId,
+        role,
+      })
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.FOUND_BOOKING_DETAILS,
+        data,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

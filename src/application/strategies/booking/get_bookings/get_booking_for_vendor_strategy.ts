@@ -21,7 +21,7 @@ export class GetBookingForVendorStrategy
     private readonly _vendorRepository: IVendorRepository
   ) {}
   async strategy(dto: GetBookingRequestDTO): Promise<GetBookingResponseDTO> {
-    const { page, limit, search = '', userId, role } = dto
+    const { page, limit, search = '', userId } = dto
     const vendor = await this._vendorRepository.findOne({ userId })
     if (!vendor) {
       throw new CustomError(
@@ -29,13 +29,12 @@ export class GetBookingForVendorStrategy
         HTTP_STATUS.NOT_FOUND
       )
     }
-    const booking =
-      await this._bookingRepository.findAllDocumentsWithFilteration(
-        page,
-        limit,
-        search,
-        { vendorRef: vendor._id }
-      )
+    const booking = await this._bookingRepository.findBookingsForUser(
+      page,
+      limit,
+      search,
+      { vendorRef: vendor._id }
+    )
     return GetBookingResponseMapper.toDTO(booking)
   }
 }

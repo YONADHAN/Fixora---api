@@ -58,7 +58,7 @@ export const PaymentSchema = new Schema(
           message: String,
           type: {
             type: String,
-            enum: ['card_error', 'api_error', 'validation_error'],
+            enum: ['card_error', 'api_error'],
           },
           stripeEventId: String,
           occurredAt: Date,

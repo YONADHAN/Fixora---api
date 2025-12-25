@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe'
-import { Types } from 'mongoose'
+import { FilterQuery, Types } from 'mongoose'
 
 import { BaseRepository } from '../../base_repository'
 import {
@@ -137,4 +137,57 @@ export class BookingRepository
 
     return bookings.map((b) => this.toEntity(b))
   }
+
+  async findBookingsForUser(
+    page: number,
+    limit: number,
+    search: string = '',
+    filters: FilterQuery<IBookingModel> = {}
+  ): Promise<{
+    data: IBookingEntity[]
+    currentPage: number
+    totalPages: number
+  }> {
+    const skip = (page - 1) * limit
+
+    const filter: FilterQuery<IBookingModel> = {
+      ...filters,
+
+      ...(search
+        ? {
+            $or: [
+              { bookingId: { $regex: search, $options: 'i' } },
+              { bookingGroupId: { $regex: search, $options: 'i' } },
+              { paymentStatus: { $regex: search, $options: 'i' } },
+              { serviceStatus: { $regex: search, $options: 'i' } },
+            ],
+          }
+        : {}),
+    }
+
+    const [documents, totalCount] = await Promise.all([
+      this.model
+        .find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean<BookingMongoBase[]>(),
+
+      this.model.countDocuments(filter),
+    ])
+
+    return {
+      data: documents.map((doc) => this.toEntity(doc)),
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+    }
+  }
+
+  // async findBookingWithDetailsForVendor(filter: FilterQuery<IBookingModel>) {
+  //   return this.model
+  //     .findOne(filter)
+  //     .populate('customerRef', 'userId email name')
+  //     .populate('serviceRef', 'name bannerImage')
+  //     .lean()
+  // }
 }

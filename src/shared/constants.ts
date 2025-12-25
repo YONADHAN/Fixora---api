@@ -11,16 +11,21 @@ export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
 
 export type TRole = 'customer' | 'admin' | 'vendor'
-
 //wallet
 
-export type WalletTransactionType = 'credit' | 'debit'
+export const WALLET_TRANSACTION_TYPES = ['credit', 'debit'] as const
+export type WalletTransactionType = (typeof WALLET_TRANSACTION_TYPES)[number]
+
+export const WALLET_TRANSACTION_SOURCES = [
+  'service-booking',
+  'wallet-topup',
+  'booking-refund',
+  'admin-adjustment',
+  'service-payout',
+  'opening-balance',
+] as const
 export type WalletTransactionSource =
-  | 'wallet-topup'
-  | 'booking-refund'
-  | 'admin-adjustment'
-  | 'service-payout'
-  | 'opening-balance'
+  (typeof WALLET_TRANSACTION_SOURCES)[number]
 
 //payment status
 export const PAYMENT_PHASE = {
@@ -162,6 +167,7 @@ export const SUCCESS_MESSAGES = {
   SLOTS_FETCHED: 'Slots fetched successfully.',
   BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
   CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
+  FOUND_BOOKING_DETAILS: 'Found booking details successfully.',
 
   //address
   ADDRESS_FOUND_SUCCESSFULLY: 'Address found successfully.',
@@ -211,6 +217,8 @@ export const ERROR_MESSAGES = {
 
   //address
   ADDRESS_NOT_FOUND: 'Address not found.',
+
+  CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

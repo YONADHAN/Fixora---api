@@ -50,3 +50,94 @@ export type CancelBookingRequestDTO = {
   role: TRole
   reason: string
 }
+export interface GetBookingDetailsRequestDTO {
+  bookingId: string
+  userId: string
+  role: TRole
+}
+
+export interface GetBookingDetailsForVendorStrategyResponseDTO {
+  booking: {
+    bookingId: string
+    bookingGroupId: string
+    date: string
+    slotStart?: Date
+    slotEnd?: Date
+    paymentStatus: string
+    serviceStatus: string
+    cancelInfo?: {
+      cancelledByRole?: string
+      reason?: string
+      cancelledAt?: Date
+    }
+  }
+
+  service: {
+    serviceId: string
+    name: string
+    pricing: {
+      pricePerSlot: number
+      advanceAmountPerSlot: number
+    }
+    variants?: {
+      name: string
+      description?: string
+      price?: number
+    }[]
+  }
+
+  customer: {
+    name: string
+    email: string
+    phone?: string
+    profileImage?: string
+    location?: {
+      name?: string
+      displayName?: string
+      zipCode?: string
+    }
+  }
+}
+
+export interface GetBookingDetailsForCustomerStrategyResponseDTO {
+  booking: {
+    bookingId: string
+    bookingGroupId: string
+    date: string
+    slotStart?: Date
+    slotEnd?: Date
+    paymentStatus: string
+    serviceStatus: string
+    cancelInfo?: {
+      cancelledByRole?: string
+      reason?: string
+      cancelledAt?: Date
+    }
+  }
+
+  service: {
+    serviceId: string
+    name: string
+    description?: string
+    pricing: {
+      pricePerSlot: number
+      advanceAmountPerSlot: number
+    }
+    variants?: {
+      name: string
+      description?: string
+      price?: number
+    }[]
+    mainImage: string
+  } | null
+
+  vendor: {
+    name: string
+    profileImage?: string
+    location?: {
+      name?: string
+      displayName?: string
+      zipCode?: string
+    }
+  } | null
+}

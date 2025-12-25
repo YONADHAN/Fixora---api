@@ -17,9 +17,9 @@ export class CancelBookingFactory implements ICancelBookingFactory {
   async getStrategy(payload: CancelBookingRequestDTO): Promise<void> {
     switch (payload.role) {
       case 'customer':
-        await this._customerCancelBookingStrategy.execute(payload)
+        return await this._customerCancelBookingStrategy.execute(payload)
       case 'vendor':
-        await this._vendorCancelBookingStrategy.execute(payload)
+        return await this._vendorCancelBookingStrategy.execute(payload)
 
       default:
         throw new CustomError(

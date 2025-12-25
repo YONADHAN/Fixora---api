@@ -44,6 +44,15 @@ export class BookingRoutes extends BaseRoute {
       (req, res) => bookingController.getMyBookings(req, res)
     )
 
+    this.router.get(
+      '/:bookingId',
+      verifyAuth,
+      decodeToken,
+      authorizeRole(['customer', 'vendor', 'admin']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      (req, res) => bookingController.getBookingDetails(req, res)
+    )
+
     this.router.patch(
       '/:bookingId/cancel',
       verifyAuth,

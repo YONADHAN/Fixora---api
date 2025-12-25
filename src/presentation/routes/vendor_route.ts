@@ -16,6 +16,7 @@ import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
 import { ServiceRoutes } from './service_route'
+import { BookingRoutes } from './booking_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -33,6 +34,8 @@ export class VendorRoutes extends BaseRoute {
     )
 
     this.router.use('/service', new ServiceRoutes().router)
+
+    this.router.use('/booking', new BookingRoutes().router)
 
     //  Global middlewares for all authenticated vendor routes
     this.router.use(

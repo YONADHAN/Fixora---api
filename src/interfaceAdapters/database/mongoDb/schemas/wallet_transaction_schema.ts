@@ -1,5 +1,8 @@
 import { Schema } from 'mongoose'
-
+import {
+  WALLET_TRANSACTION_SOURCES,
+  WALLET_TRANSACTION_TYPES,
+} from '../../../../shared/constants'
 export const WalletTransactionSchema = new Schema(
   {
     transactionId: {
@@ -24,7 +27,7 @@ export const WalletTransactionSchema = new Schema(
 
     type: {
       type: String,
-      enum: ['credit', 'debit'],
+      enum: WALLET_TRANSACTION_TYPES,
       required: true,
     },
 
@@ -40,13 +43,8 @@ export const WalletTransactionSchema = new Schema(
 
     source: {
       type: String,
-      enum: [
-        'wallet-topup',
-        'booking-refund',
-        'admin-adjustment',
-        'service-payout',
-        'opening-balance',
-      ],
+      enum: WALLET_TRANSACTION_SOURCES,
+
       required: true,
     },
 
@@ -54,7 +52,6 @@ export const WalletTransactionSchema = new Schema(
       type: String,
     },
 
-  
     bookingRef: {
       type: Schema.Types.ObjectId,
       ref: 'Booking',

@@ -5,7 +5,7 @@ import {
 } from '../../dtos/booking_dto'
 import { GetBookingResponseMapper } from '../../mappers/booking/get_bookings_strategy_mapper'
 import { IGetBookingsFactory } from '../../factories/booking/get_booking_factory.interface'
-import { IGetBookingsUseCase } from '../../../domain/useCaseInterfaces/booking/get_bookings_usecase'
+import { IGetBookingsUseCase } from '../../../domain/useCaseInterfaces/booking/get_bookings_usecase_interface'
 
 @injectable()
 export class GetBookingsUseCase implements IGetBookingsUseCase {

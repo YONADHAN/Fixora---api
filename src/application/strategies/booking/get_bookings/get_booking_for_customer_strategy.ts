@@ -21,7 +21,7 @@ export class GetBookingForCustomerStrategy
     private readonly _customerRepository: ICustomerRepository
   ) {}
   async strategy(dto: GetBookingRequestDTO): Promise<GetBookingResponseDTO> {
-    const { page, limit, search = '', userId, role } = dto
+    const { page, limit, search = '', userId } = dto
     const customer = await this._customerRepository.findOne({ userId })
     if (!customer) {
       throw new CustomError(
@@ -29,13 +29,12 @@ export class GetBookingForCustomerStrategy
         HTTP_STATUS.NOT_FOUND
       )
     }
-    const booking =
-      await this._bookingRepository.findAllDocumentsWithFilteration(
-        page,
-        limit,
-        search,
-        { customerRef: customer._id }
-      )
+    const booking = await this._bookingRepository.findBookingsForUser(
+      page,
+      limit,
+      search,
+      { customerRef: customer._id }
+    )
     return GetBookingResponseMapper.toDTO(booking)
   }
 }

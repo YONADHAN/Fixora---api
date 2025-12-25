@@ -86,7 +86,7 @@ import { IGetAvailableSlotsForCustomerUseCase } from '../../domain/useCaseInterf
 import { GetAvailableSlotsForCustomerUseCase } from '../../application/usecase/booking/get_available_slots_for_customer_usecase'
 import { ICreateBookingHoldUseCase } from '../../domain/useCaseInterfaces/booking_hold/create_booking_hold_usecase_interface'
 import { CreateBookingHoldUseCase } from '../../application/usecase/booking_hold/create_booking_hold_usecase'
-import { IGetBookingsUseCase } from '../../domain/useCaseInterfaces/booking/get_bookings_usecase'
+import { IGetBookingsUseCase } from '../../domain/useCaseInterfaces/booking/get_bookings_usecase_interface'
 import { GetBookingsUseCase } from '../../application/usecase/booking/get_booking_usecase'
 import { ICancelBookingUseCase } from '../../domain/useCaseInterfaces/booking/cancel_booking_usecase_interface'
 import { CancelBookingUseCase } from '../../application/usecase/booking/cancel_booking_usecase'
@@ -233,6 +233,14 @@ import { IDeleteAddressUseCase } from '../../domain/useCaseInterfaces/address/de
 import { DeleteAddressUseCase } from '../../application/usecase/address/delete_address_usecase'
 import { IGetSingleAddressUseCase } from '../../domain/useCaseInterfaces/address/get_single_address_usecase_interface'
 import { GetSingleAddressUseCase } from '../../application/usecase/address/get_single_address_usecase'
+import { IGetBookingDetailsUseCase } from '../../domain/useCaseInterfaces/booking/get_booking_details_usecase_interface'
+import { GetBookingDetailsUseCase } from '../../application/usecase/booking/get_booking_details_usecase'
+import { IGetBookingDetailsForCustomerStrategy } from '../../application/strategies/booking/get_booking_details/get_booking_details_for_customer_strategy.interface'
+import { GetBookingDetailsForCustomerStrategy } from '../../application/strategies/booking/get_booking_details/get_booking_details_for_customer_strategy'
+import { IGetBookingDetailsForVendorStrategy } from '../../application/strategies/booking/get_booking_details/get_booking_details_for_vendor_strategy.interface'
+import { GetBookingDetailsForVendorStrategy } from '../../application/strategies/booking/get_booking_details/get_booking_details_for_vendor_strategy'
+import { IGetBookingDetailsFactory } from '../../application/factories/booking/get_booking_details_factory.interface'
+import { GetBookingDetailsFactory } from '../../application/factories/booking/get_booking_details_factory'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -406,6 +414,10 @@ export class UseCaseRegistry {
 
     container.register<ICancelBookingUseCase>('ICancelBookingUseCase', {
       useClass: CancelBookingUseCase,
+    })
+
+    container.register<IGetBookingDetailsUseCase>('IGetBookingDetailsUseCase', {
+      useClass: GetBookingDetailsUseCase,
     })
 
     //security
@@ -633,6 +645,10 @@ export class UseCaseRegistry {
     container.register<ICancelBookingFactory>('ICancelBookingFactory', {
       useClass: CancelBookingFactory,
     })
+
+    container.register<IGetBookingDetailsFactory>('IGetBookingDetailsFactory', {
+      useClass: GetBookingDetailsFactory,
+    })
     //strategy
     container.register<ICustomerRegistrationStrategy>(
       'ICustomerRegistrationStrategy',
@@ -816,6 +832,20 @@ export class UseCaseRegistry {
       'IVendorCancelBookingStrategyInterface',
       {
         useClass: VendorCancelBookingStrategy,
+      }
+    )
+
+    container.register<IGetBookingDetailsForCustomerStrategy>(
+      'IGetBookingDetailsForCustomerStrategy',
+      {
+        useClass: GetBookingDetailsForCustomerStrategy,
+      }
+    )
+
+    container.register<IGetBookingDetailsForVendorStrategy>(
+      'IGetBookingDetailsForVendorStrategy',
+      {
+        useClass: GetBookingDetailsForVendorStrategy,
       }
     )
 

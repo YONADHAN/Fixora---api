@@ -26,6 +26,16 @@ export class CreateStripePaymentIntentUseCase
     if (hold.expiresAt < new Date()) {
       throw new CustomError('Booking hold expired', 410)
     }
+
+    if (hold.stripePaymentIntentId) {
+      const existingIntent = await stripe.paymentIntents.retrieve(
+        hold.stripePaymentIntentId
+      )
+
+      return {
+        clientSecret: existingIntent.client_secret!,
+      }
+    }
     const paymentIntent = await stripe.paymentIntents.create({
       amount: hold.pricing.advanceAmount * 100,
       currency: 'inr',

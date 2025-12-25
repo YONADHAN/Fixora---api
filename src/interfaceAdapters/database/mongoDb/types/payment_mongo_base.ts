@@ -19,7 +19,7 @@ export interface PaymentMongoBase {
     failures: {
       code?: string
       message?: string
-      type?: 'card_error' | 'api_error' | 'validation_error'
+      type?: 'card_error' | 'api_error'
       stripeEventId?: string
       occurredAt: Date
     }[]

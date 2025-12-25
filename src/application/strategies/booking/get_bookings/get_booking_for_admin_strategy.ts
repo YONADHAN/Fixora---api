@@ -17,13 +17,12 @@ export class GetBookingForAdminStrategy
   ) {}
   async strategy(dto: GetBookingRequestDTO): Promise<GetBookingResponseDTO> {
     const { page, limit, search = '' } = dto
-    const booking =
-      await this._bookingRepository.findAllDocumentsWithFilteration(
-        page,
-        limit,
-        search,
-        {}
-      )
+    const booking = await this._bookingRepository.findBookingsForUser(
+      page,
+      limit,
+      search,
+      {}
+    )
     return GetBookingResponseMapper.toDTO(booking)
   }
 }

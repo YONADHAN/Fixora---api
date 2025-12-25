@@ -15,7 +15,7 @@ export interface IBaseFailure {
 }
 
 export interface IPaymentIntentFailure extends IBaseFailure {
-  type: 'card_error' | 'api_error' | 'validation_error'
+  type: 'card_error' | 'api_error'
 }
 export interface IPaymentEntity {
   _id?: string
