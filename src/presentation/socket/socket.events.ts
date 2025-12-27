@@ -1,22 +1,50 @@
 import { Socket } from 'socket.io'
+import { container } from 'tsyringe'
 import { SOCKET_EVENTS } from '../../shared/constants'
 
+import { IMarkNotificationReadUseCase } from '../../domain/useCaseInterfaces/notification/mark_notification_read_usecase.interface'
+import { IMarkAllNotificationsReadUseCase } from '../../domain/useCaseInterfaces/notification/mark_all_notifications_read_usecase.interface'
+
 export const registerSocketEvents = (socket: Socket) => {
-  //  Notification events
-  socket.on(SOCKET_EVENTS.NOTIFICATION_READ, (notificationId: string) => {
-    console.log(
-      `User ${socket.data.user.userId} read notification ${notificationId}`
+  const markReadUseCase = container.resolve<IMarkNotificationReadUseCase>(
+    'IMarkNotificationReadUseCase'
+  )
+
+  const markAllReadUseCase =
+    container.resolve<IMarkAllNotificationsReadUseCase>(
+      'IMarkAllNotificationsReadUseCase'
     )
 
-    // Later:
-    // dispatchEvent('NOTIFICATION_READ', { notificationId })
-  })
+  /* -------------------- NOTIFICATIONS -------------------- */
 
-  socket.on(SOCKET_EVENTS.NOTIFICATION_READ_ALL, () => {
-    console.log(`User ${socket.data.user.userId} read all notifications`)
-  })
+  socket.on(
+    SOCKET_EVENTS.NOTIFICATION_READ,
+    async (notificationId: string, ack?: (res: any) => void) => {
+      try {
+        await markReadUseCase.execute(notificationId, socket.data.user.userId)
 
-  //  Chat events
+        ack?.({ success: true })
+      } catch (error) {
+        ack?.({ success: false })
+      }
+    }
+  )
+
+  socket.on(
+    SOCKET_EVENTS.NOTIFICATION_READ_ALL,
+    async (ack?: (res: any) => void) => {
+      try {
+        await markAllReadUseCase.execute(socket.data.user.userId)
+
+        ack?.({ success: true })
+      } catch (error) {
+        ack?.({ success: false })
+      }
+    }
+  )
+
+  /* -------------------- CHAT  -------------------- */
+
   socket.on(SOCKET_EVENTS.CHAT_JOIN, (roomId: string) => {
     socket.join(`chat:${roomId}`)
   })
@@ -29,12 +57,9 @@ export const registerSocketEvents = (socket: Socket) => {
     console.log('Chat message received:', payload)
   })
 
-  //  Presence
+  /* -------------------- PRESENCE -------------------- */
+
   socket.on(SOCKET_EVENTS.PRESENCE_PING, () => {
     socket.emit('presence:pong')
-  })
-
-  socket.on('disconnect', () => {
-    console.log('Socket disconnected:', socket.id)
   })
 }

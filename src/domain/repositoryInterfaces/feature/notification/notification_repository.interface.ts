@@ -1,6 +1,8 @@
 import { INotificationEntity } from '../../../models/notification_entity'
+import { IBaseRepository } from '../../base_repository.interface'
 
-export interface INotificationRepository {
+export interface INotificationRepository
+  extends IBaseRepository<INotificationEntity> {
   findByRecipient(
     recipientId: string,
     page: number,

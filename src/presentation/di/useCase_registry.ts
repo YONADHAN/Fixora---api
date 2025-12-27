@@ -243,6 +243,14 @@ import { IGetBookingDetailsFactory } from '../../application/factories/booking/g
 import { GetBookingDetailsFactory } from '../../application/factories/booking/get_booking_details_factory'
 import { IGetWalletUseCase } from '../../domain/useCaseInterfaces/wallet/get_my_wallet_usecase_interface'
 import { GetWalletUseCase } from '../../application/usecase/wallet/get_my_wallet_usecase'
+import { ICreateNotificationUseCase } from '../../domain/useCaseInterfaces/notification/create_notification_usecase_interface'
+import { CreateNotificationUseCase } from '../../application/usecase/notification/create_notification_usecase'
+import { IGetMyNotificationsUseCase } from '../../domain/useCaseInterfaces/notification/get_my_notifications_usecase_interface'
+import { GetMyNotificationsUseCase } from '../../application/usecase/notification/get_my_notifications_usecase'
+import { IMarkAllNotificationsReadUseCase } from '../../domain/useCaseInterfaces/notification/mark_all_notifications_read_usecase.interface'
+import { MarkAllNotificationsReadUseCase } from '../../application/usecase/notification/mark_all_notifications_read_usecase'
+import { IMarkNotificationReadUseCase } from '../../domain/useCaseInterfaces/notification/mark_notification_read_usecase.interface'
+import { MarkNotificationReadUseCase } from '../../application/usecase/notification/mark_notification_read_usecase'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -547,6 +555,30 @@ export class UseCaseRegistry {
     container.register<IGetSingleAddressUseCase>('IGetSingleAddressUseCase', {
       useClass: GetSingleAddressUseCase,
     })
+    container.register<ICreateNotificationUseCase>(
+      'ICreateNotificationUseCase',
+      {
+        useClass: CreateNotificationUseCase,
+      }
+    )
+    container.register<IGetMyNotificationsUseCase>(
+      'IGetMyNotificationsUseCase',
+      {
+        useClass: GetMyNotificationsUseCase,
+      }
+    )
+    container.register<IMarkAllNotificationsReadUseCase>(
+      'IMarkAllNotificationsReadUseCase',
+      {
+        useClass: MarkAllNotificationsReadUseCase,
+      }
+    )
+    container.register<IMarkNotificationReadUseCase>(
+      'IMarkNotificationReadUseCase',
+      {
+        useClass: MarkNotificationReadUseCase,
+      }
+    )
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

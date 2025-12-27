@@ -18,6 +18,7 @@ import { SubServiceCategoryRoutes } from './sub_service_category_route'
 import { ServiceRoutes } from './service_route'
 import { BookingRoutes } from './booking_route'
 import { WalletRoutes } from './wallet_route'
+import { NotificationRoutes } from './notification_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -42,6 +43,8 @@ export class CustomerRoutes extends BaseRoute {
     })
 
     this.router.use('/wallet', new WalletRoutes().router)
+
+    this.router.use('/notification', new NotificationRoutes().router)
 
     this.router.use(
       '/sub-service-category',

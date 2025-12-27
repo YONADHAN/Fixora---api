@@ -11,7 +11,7 @@ let io: Server
 export const initSocketServer = (httpServer: http.Server) => {
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL,
+      origin: process.env.NEXT_FRONTEND_URL,
       credentials: true,
     },
   })

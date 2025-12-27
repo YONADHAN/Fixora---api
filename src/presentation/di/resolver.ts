@@ -23,6 +23,8 @@ import { IAddressController } from '../../domain/controllerInterfaces/features/a
 import { AddressController } from '../controllers/address/address_controller'
 import { IWalletController } from '../../domain/controllerInterfaces/features/wallet/wallet-controller.interface'
 import { WalletController } from '../controllers/wallet/wallet_controller'
+import { INotificationController } from '../../domain/controllerInterfaces/features/notification/notification-controller.interface'
+import { NotificationController } from '../controllers/notification/notification_controller'
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
@@ -46,5 +48,7 @@ export const addressController =
   container.resolve<IAddressController>(AddressController)
 export const walletController =
   container.resolve<IWalletController>(WalletController)
+export const notificationController =
+  container.resolve<INotificationController>(NotificationController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

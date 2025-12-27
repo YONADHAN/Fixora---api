@@ -91,6 +91,7 @@ export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
 
 //socket.io
 export const SOCKET_EVENTS = {
+  NOTIFICATION_NEW: 'notifications:new',
   NOTIFICATION_READ: 'notifications:read',
   NOTIFICATION_READ_ALL: 'notifications:read-all',
 
@@ -238,6 +239,9 @@ export const ERROR_MESSAGES = {
   ADDRESS_NOT_FOUND: 'Address not found.',
 
   CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
+
+  //NOTIFICATION
+  NOTIFICATION_NOT_FOUND: 'Notification not found',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

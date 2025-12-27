@@ -27,6 +27,8 @@ import { IAddressRepository } from '../../domain/repositoryInterfaces/feature/ad
 import { AddressRepository } from '../../interfaceAdapters/repositories/feature/address/address_repository'
 import { IPaymentRepository } from '../../domain/repositoryInterfaces/feature/payment/payment_repository.interface'
 import { PaymentRepository } from '../../interfaceAdapters/repositories/feature/payment/payment_repository'
+import { INotificationRepository } from '../../domain/repositoryInterfaces/feature/notification/notification_repository.interface'
+import { NotificationRepository } from '../../interfaceAdapters/repositories/feature/notification/notification_repository'
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -98,6 +100,10 @@ export class RepositoryRegistry {
 
     container.register<IPaymentRepository>('IPaymentRepository', {
       useClass: PaymentRepository,
+    })
+
+    container.register<INotificationRepository>('INotificationRepository', {
+      useClass: NotificationRepository,
     })
   }
 }
