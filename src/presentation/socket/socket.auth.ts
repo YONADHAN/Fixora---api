@@ -112,6 +112,13 @@ export const socketAuthMiddleware = (
 
       if (!decoded || typeof decoded === 'string') {
         console.log('❌ Invalid access token')
+
+        if (refreshToken) {
+          console.log('⚠️ Access token invalid, but Refresh token present. Allowing as guest.')
+          socket.data.user = null
+          return next()
+        }
+
         return next(new CustomError('Invalid socket token', 401))
       }
 
@@ -139,10 +146,16 @@ export const socketAuthMiddleware = (
     /**
      * ❌ NO TOKENS AT ALL
      */
-    console.log('❌ No tokens found')
-    return next(new CustomError('Socket authentication failed', 401))
+    /**
+     * ❌ NO TOKENS AT ALL
+     * Allow connection as guest.
+     */
+    console.log('⚠️  No tokens found, connecting as guest')
+    socket.data.user = null
+    return next()
   } catch (error) {
     console.log('❌ Socket auth middleware error:', error)
+    // Even on error, we might want to allow connection or fail safely
     return next(new CustomError('Invalid socket token', 401))
   }
 }

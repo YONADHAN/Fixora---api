@@ -46,7 +46,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
       const io = getIO()
       io.to(`user:${data.recipientId}`).emit(
         SOCKET_EVENTS.NOTIFICATION_NEW,
-        socketPayload
+        //socketPayload
+        saved
       )
     } catch (err) {
       console.error('Socket notification emit failed', err)
