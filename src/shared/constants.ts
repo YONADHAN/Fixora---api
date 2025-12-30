@@ -91,14 +91,28 @@ export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
 
 //socket.io
 export const SOCKET_EVENTS = {
+  /* ---------------- Notifications ---------------- */
   NOTIFICATION_NEW: 'notifications:new',
   NOTIFICATION_READ: 'notifications:read',
   NOTIFICATION_READ_ALL: 'notifications:read-all',
 
+  /* ---------------- Chat lifecycle ---------------- */
   CHAT_JOIN: 'chat:join',
   CHAT_LEAVE: 'chat:leave',
-  CHAT_SEND: 'chat:message:send',
 
+  /* ---------------- Messaging ---------------- */
+  CHAT_SEND: 'chat:message:send',
+  CHAT_NEW: 'chat:message:new',
+
+  CHAT_READ: 'chat:message:read',
+
+  /* ---------------- Typing ---------------- */
+  CHAT_TYPING_START: 'chat:typing:start',
+  CHAT_TYPING_STOP: 'chat:typing:stop',
+
+  /* ---------------- Presence ---------------- */
+  USER_ONLINE: 'presence:online',
+  USER_OFFLINE: 'presence:offline',
   PRESENCE_PING: 'presence:ping',
 }
 

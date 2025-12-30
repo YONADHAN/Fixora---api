@@ -62,4 +62,18 @@ export const registerSocketEvents = (socket: Socket) => {
   socket.on(SOCKET_EVENTS.PRESENCE_PING, () => {
     socket.emit('presence:pong')
   })
+
+  /*--------------------TYPING------------------*/
+
+  socket.on(SOCKET_EVENTS.CHAT_TYPING_START, ({ chatId }) => {
+    socket.to(`chat:${chatId}`).emit(SOCKET_EVENTS.CHAT_TYPING_START, {
+      userId: socket.data.user.userId,
+    })
+  })
+
+  socket.on(SOCKET_EVENTS.CHAT_TYPING_STOP, ({ chatId }) => {
+    socket.to(`chat:${chatId}`).emit(SOCKET_EVENTS.CHAT_TYPING_STOP, {
+      userId: socket.data.user.userId,
+    })
+  })
 }
