@@ -252,6 +252,13 @@ import { MarkAllNotificationsReadUseCase } from '../../application/usecase/notif
 import { IMarkNotificationReadUseCase } from '../../domain/useCaseInterfaces/notification/mark_notification_read_usecase.interface'
 import { MarkNotificationReadUseCase } from '../../application/usecase/notification/mark_notification_read_usecase'
 
+import { ISendMessageUseCase } from '../../domain/useCaseInterfaces/chat/send_message_usecase.interface'
+import { SendMessageUseCase } from '../../application/usecase/chat/send_message_usecase'
+import { IGetChatMessagesUseCase } from '../../domain/repositoryInterfaces/feature/chat/get_chat_messages_usecase.interface'
+import { GetChatMessagesUseCase } from '../../application/usecase/chat/get_chat_messages_usecase'
+import { IMarkChatReadUseCase } from '../../domain/useCaseInterfaces/chat/mark_chat_read_usecase.interface'
+import { MarkChatReadUseCase } from '../../application/usecase/chat/mark_chat_read_usecase'
+
 export class UseCaseRegistry {
   static registerUseCases(): void {
     container.register<IOtpService>('IOtpService', {
@@ -579,6 +586,18 @@ export class UseCaseRegistry {
         useClass: MarkNotificationReadUseCase,
       }
     )
+
+    container.register<ISendMessageUseCase>('ISendMessageUseCase', {
+      useClass: SendMessageUseCase,
+    })
+
+    container.register<IGetChatMessagesUseCase>('IGetChatMessagesUseCase', {
+      useClass: GetChatMessagesUseCase,
+    })
+
+    container.register<IMarkChatReadUseCase>('IMarkChatReadUseCase', {
+      useClass: MarkChatReadUseCase,
+    })
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

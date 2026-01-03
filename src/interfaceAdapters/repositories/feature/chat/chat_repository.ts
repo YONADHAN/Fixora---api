@@ -137,4 +137,12 @@ export class ChatRepository
   async deactivateChat(chatId: string): Promise<void> {
     await this.model.updateOne({ chatId }, { $set: { isActive: false } })
   }
+
+  async findByChatId(chatId: string): Promise<IChatEntity | null> {
+    const chat = await this.model
+      .findOne({ chatId })
+      .lean<ChatMongoBase | null>()
+
+    return chat ? this.toEntity(chat) : null
+  }
 }

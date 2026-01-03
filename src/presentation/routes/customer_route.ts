@@ -19,6 +19,7 @@ import { ServiceRoutes } from './service_route'
 import { BookingRoutes } from './booking_route'
 import { WalletRoutes } from './wallet_route'
 import { NotificationRoutes } from './notification_route'
+import { ChatRoutes } from './chat_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -34,6 +35,9 @@ export class CustomerRoutes extends BaseRoute {
         authController.handleTokenRefresh(req, res)
       }
     )
+
+    this.router.use('/chat', new ChatRoutes().router)
+
     this.router.use('/booking', new BookingRoutes().router)
 
     this.router.use('/service', new ServiceRoutes().router)

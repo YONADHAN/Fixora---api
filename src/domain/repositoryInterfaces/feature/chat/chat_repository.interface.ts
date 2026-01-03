@@ -24,4 +24,6 @@ export interface IChatRepository {
   ): Promise<void>
 
   deactivateChat(chatId: string): Promise<void>
+
+  findByChatId(chatId: string): Promise<IChatEntity | null>
 }

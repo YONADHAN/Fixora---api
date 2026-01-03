@@ -25,6 +25,8 @@ import { IWalletController } from '../../domain/controllerInterfaces/features/wa
 import { WalletController } from '../controllers/wallet/wallet_controller'
 import { INotificationController } from '../../domain/controllerInterfaces/features/notification/notification-controller.interface'
 import { NotificationController } from '../controllers/notification/notification_controller'
+import { IChatController } from '../../domain/controllerInterfaces/features/chat/chat-controller.interface'
+import { ChatController } from '../controllers/chat/chat_controller'
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
@@ -50,5 +52,6 @@ export const walletController =
   container.resolve<IWalletController>(WalletController)
 export const notificationController =
   container.resolve<INotificationController>(NotificationController)
+export const chatController = container.resolve<IChatController>(ChatController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

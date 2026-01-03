@@ -18,6 +18,7 @@ import { SubServiceCategoryRoutes } from './sub_service_category_route'
 import { ServiceRoutes } from './service_route'
 import { BookingRoutes } from './booking_route'
 import { WalletRoutes } from './wallet_route'
+import { ChatRoutes } from './chat_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -33,6 +34,8 @@ export class VendorRoutes extends BaseRoute {
         authController.handleTokenRefresh(req, res)
       }
     )
+
+    this.router.use('/chat', new ChatRoutes().router)
 
     this.router.use('/service', new ServiceRoutes().router)
 

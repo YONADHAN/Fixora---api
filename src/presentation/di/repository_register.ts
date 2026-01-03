@@ -29,6 +29,11 @@ import { IPaymentRepository } from '../../domain/repositoryInterfaces/feature/pa
 import { PaymentRepository } from '../../interfaceAdapters/repositories/feature/payment/payment_repository'
 import { INotificationRepository } from '../../domain/repositoryInterfaces/feature/notification/notification_repository.interface'
 import { NotificationRepository } from '../../interfaceAdapters/repositories/feature/notification/notification_repository'
+import { IChatRepository } from '../../domain/repositoryInterfaces/feature/chat/chat_repository.interface'
+import { ChatRepository } from '../../interfaceAdapters/repositories/feature/chat/chat_repository'
+import { IMessageRepository } from '../../domain/repositoryInterfaces/feature/chat/message_repository.interface'
+import { MessageRepository } from '../../interfaceAdapters/repositories/feature/chat/message_repository'
+
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -104,6 +109,14 @@ export class RepositoryRegistry {
 
     container.register<INotificationRepository>('INotificationRepository', {
       useClass: NotificationRepository,
+    })
+
+    container.register<IChatRepository>('IChatRepository', {
+      useClass: ChatRepository,
+    })
+
+    container.register<IMessageRepository>('IMessageRepository', {
+      useClass: MessageRepository,
     })
   }
 }
