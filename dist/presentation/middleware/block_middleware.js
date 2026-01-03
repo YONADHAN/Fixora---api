@@ -43,6 +43,9 @@ let BlockMyUserMiddleware = class BlockMyUserMiddleware {
                     return;
                 }
                 const { userId, role } = req.user;
+                if (role === 'admin') {
+                    return next();
+                }
                 const cacheKey = `user_block_status:${role}:${userId}`;
                 let status = yield redis_client_1.redisClient.get(cacheKey);
                 if (!status) {

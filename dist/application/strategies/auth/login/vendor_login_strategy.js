@@ -34,7 +34,9 @@ let VendorLoginStrategy = class VendorLoginStrategy {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = user;
             const normalizedEmail = email.toLowerCase();
-            const vendor = yield this._vendorRepository.findOne({ normalizedEmail });
+            const vendor = yield this._vendorRepository.findOne({
+                email: normalizedEmail,
+            });
             if (!vendor)
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.USER_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             if (!password) {

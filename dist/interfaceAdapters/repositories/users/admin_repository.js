@@ -17,6 +17,31 @@ let AdminRepository = class AdminRepository extends base_repository_1.BaseReposi
     constructor() {
         super(admin_model_1.AdminModel);
     }
+    toEntity(model) {
+        return {
+            userId: model.userId,
+            _id: model._id, //-------------------------------
+            name: model.name,
+            email: model.email,
+            phone: model.phone,
+            password: model.password,
+            role: model.role,
+            status: model.status,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+        };
+    }
+    toModel(entity) {
+        return {
+            userId: entity.userId,
+            name: entity.name,
+            email: entity.email,
+            phone: entity.phone,
+            password: entity.password,
+            role: entity.role,
+            status: entity.status,
+        };
+    }
 };
 exports.AdminRepository = AdminRepository;
 exports.AdminRepository = AdminRepository = __decorate([

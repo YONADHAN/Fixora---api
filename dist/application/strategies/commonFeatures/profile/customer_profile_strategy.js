@@ -29,8 +29,14 @@ let CustomerProfileStrategy = class CustomerProfileStrategy {
     constructor(_CustomerRepository) {
         this._CustomerRepository = _CustomerRepository;
     }
-    execute(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ userId }) {
+    // async execute({ userId }: { userId: string }) {
+    //   const data = await this._CustomerRepository.findOne({ userId })
+    //   if (!data) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND)
+    //   return CustomerProfileMapper.toDTO(data)
+    // }
+    execute(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { userId } = params;
             const data = yield this._CustomerRepository.findOne({ userId });
             if (!data)
                 throw new Error(constants_1.ERROR_MESSAGES.USER_NOT_FOUND);

@@ -33,7 +33,7 @@ const extractToken = (req) => {
 };
 const isBlacklisted = (token) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield redis_client_1.redisClient.get(token);
-    console.log('is token blacklisted', result);
+    // console.log('is token blacklisted', result)
     return result !== null;
 });
 const verifyAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -118,9 +118,6 @@ const authorizeRole = (allowedRoles) => {
     return (req, res, next) => {
         const user = req.user;
         if (!user || !allowedRoles.includes(user.role)) {
-            // console.log(
-            //   `${user.role}  is not allowed: AuthorizeRole from auth_middleware`
-            // )
             res.status(constants_1.HTTP_STATUS.FORBIDDEN).json({
                 message: constants_1.ERROR_MESSAGES.NOT_ALLOWED,
                 user: user ? user.role : '',

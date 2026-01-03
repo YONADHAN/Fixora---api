@@ -18,6 +18,8 @@ const http_1 = require("http");
 const config_1 = require("./shared/config");
 const chalk_1 = __importDefault(require("chalk"));
 const mongoConnect_1 = require("./interfaceAdapters/database/mongoDb/mongoConnect");
+const booking_hold_expiry_sheduler_1 = require("./interfaceAdapters/shedulers/booking_hold_expiry.sheduler");
+const socket_server_1 = require("./presentation/socket/socket.server");
 function startApp() {
     return __awaiter(this, void 0, void 0, function* () {
         const expressServer = new server_1.ExpressServer();
@@ -26,9 +28,11 @@ function startApp() {
             console.log(chalk_1.default.greenBright('-------------------------------------------\n'));
             yield mongoConnect.connectDB();
             const httpServer = (0, http_1.createServer)(expressServer.getApp());
+            (0, socket_server_1.initSocketServer)(httpServer);
             httpServer.listen(config_1.config.server.PORT, () => {
                 console.log(chalk_1.default.yellowBright.bold(`🚀 Server running at ${chalk_1.default.blueBright(`http://localhost:${config_1.config.server.PORT}`)}`));
                 console.log(chalk_1.default.greenBright('\n-------------------------------------------\n'));
+                (0, booking_hold_expiry_sheduler_1.startBookingHoldExpiryScheduler)();
             });
         }
         catch (error) {

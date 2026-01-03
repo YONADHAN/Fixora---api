@@ -22,5 +22,25 @@ export class ChatRoutes extends BaseRoute {
         chatController.getChatMessages(req, res)
       }
     )
+
+    this.router.post(
+      '/initiate',
+      verifyAuth,
+      authorizeRole(['customer', 'vendor']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      (req: Request, res: Response) => {
+        chatController.initiateChat(req, res)
+      }
+    )
+
+    this.router.get(
+      '/',
+      verifyAuth,
+      authorizeRole(['customer', 'vendor']),
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+      (req: Request, res: Response) => {
+        chatController.getUserChats(req, res)
+      }
+    )
   }
 }

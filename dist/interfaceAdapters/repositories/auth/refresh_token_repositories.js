@@ -26,6 +26,24 @@ let RefreshTokenRepository = class RefreshTokenRepository extends base_repositor
     constructor() {
         super(refresh_token_model_1.RefreshTokenModel);
     }
+    toEntity(model) {
+        return {
+            token: model.token,
+            user: model.user,
+            userType: model.userType,
+            expiresAt: model.expiresAt,
+        };
+    }
+    toModel(entity) {
+        return {
+            token: entity.token,
+            user: entity.user,
+            userType: entity.userType,
+            expiresAt: entity.expiresAt,
+            createdAt: entity.createdAt,
+            updatedAt: entity.updatedAt,
+        };
+    }
     revokeRefreshToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             yield refresh_token_model_1.RefreshTokenModel.deleteOne({ token });

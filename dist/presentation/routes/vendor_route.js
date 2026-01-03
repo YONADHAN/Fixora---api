@@ -6,6 +6,11 @@ const auth_middleware_1 = require("../middleware/auth_middleware");
 const base_route_1 = require("./base_route");
 const multer_error_middleware_1 = require("../middleware/multer_error_middleware");
 const multer_config_1 = require("../../interfaceAdapters/config/multer.config");
+const sub_service_category_route_1 = require("./sub_service_category_route");
+const service_route_1 = require("./service_route");
+const booking_route_1 = require("./booking_route");
+const wallet_route_1 = require("./wallet_route");
+const chat_route_1 = require("./chat_route");
 class VendorRoutes extends base_route_1.BaseRoute {
     constructor() {
         super();
@@ -15,8 +20,13 @@ class VendorRoutes extends base_route_1.BaseRoute {
         this.router.post('/refresh-token', auth_middleware_1.decodeToken, (req, res) => {
             resolver_1.authController.handleTokenRefresh(req, res);
         });
+        this.router.use('/chat', new chat_route_1.ChatRoutes().router);
+        this.router.use('/service', new service_route_1.ServiceRoutes().router);
+        this.router.use('/booking', new booking_route_1.BookingRoutes().router);
+        this.router.use('/wallet', new wallet_route_1.WalletRoutes().router);
         //  Global middlewares for all authenticated vendor routes
         this.router.use(auth_middleware_1.verifyAuth, resolver_1.blockMyUserMiddleware.checkMyUserBlockStatus, (0, auth_middleware_1.authorizeRole)(['vendor']));
+        this.router.use('/sub-service-category', new sub_service_category_route_1.SubServiceCategoryRoutes().router);
         //logout
         this.router.post('/logout', (req, res) => {
             resolver_1.vendorController.logout(req, res);

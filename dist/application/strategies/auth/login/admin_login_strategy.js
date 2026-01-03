@@ -39,7 +39,10 @@ let AdminLoginStrategy = class AdminLoginStrategy {
             if (!email) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.INVALID_CREDENTIALS, constants_1.HTTP_STATUS.BAD_REQUEST);
             }
-            const admin = yield this._adminRepository.findOne({ email });
+            const normalizedEmail = email.toLowerCase();
+            const admin = yield this._adminRepository.findOne({
+                email: normalizedEmail,
+            });
             if (!admin)
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.USER_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             const isPasswordValid = yield this._passwordBcrypt.compare(password, admin.password);

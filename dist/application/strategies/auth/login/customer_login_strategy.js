@@ -36,7 +36,12 @@ let CustomerLoginStrategy = class CustomerLoginStrategy {
             if (!(password === null || password === void 0 ? void 0 : password.trim()) || !(email === null || email === void 0 ? void 0 : email.trim())) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.INVALID_CREDENTIALS, constants_1.HTTP_STATUS.BAD_REQUEST);
             }
-            const customer = yield this._customerRepository.findOne({ email });
+            // console.log('Email coming on login time on the login usecase : ', email)
+            const generalizedEmail = email.toLowerCase();
+            const customer = yield this._customerRepository.findOne({
+                email: generalizedEmail,
+            });
+            // console.log('The customer', customer)
             if (!customer)
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.USER_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             const isPasswordValid = yield this._passwordBcrypt.compare(password, customer.password);

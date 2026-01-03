@@ -15,8 +15,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 @injectable()
 export class BookingRepository
   extends BaseRepository<IBookingModel, IBookingEntity>
-  implements IBookingRepository
-{
+  implements IBookingRepository {
   constructor() {
     super(BookingModel)
   }
@@ -63,13 +62,13 @@ export class BookingRepository
 
       cancelInfo: entity.cancelInfo
         ? {
-            cancelledByRole: entity.cancelInfo.cancelledByRole,
-            cancelledByRef: entity.cancelInfo.cancelledByRef
-              ? new Types.ObjectId(entity.cancelInfo.cancelledByRef)
-              : undefined,
-            reason: entity.cancelInfo.reason,
-            cancelledAt: entity.cancelInfo.cancelledAt,
-          }
+          cancelledByRole: entity.cancelInfo.cancelledByRole,
+          cancelledByRef: entity.cancelInfo.cancelledByRef
+            ? new Types.ObjectId(entity.cancelInfo.cancelledByRef)
+            : undefined,
+          reason: entity.cancelInfo.reason,
+          cancelledAt: entity.cancelInfo.cancelledAt,
+        }
         : undefined,
     }
   }
@@ -96,17 +95,34 @@ export class BookingRepository
 
       cancelInfo: model.cancelInfo
         ? {
-            cancelledByRole: model.cancelInfo.cancelledByRole,
-            cancelledByRef: model.cancelInfo.cancelledByRef?.toString(),
-            reason: model.cancelInfo.reason,
-            cancelledAt: model.cancelInfo.cancelledAt,
-          }
+          cancelledByRole: model.cancelInfo.cancelledByRole,
+          cancelledByRef: model.cancelInfo.cancelledByRef?.toString(),
+          reason: model.cancelInfo.reason,
+          cancelledAt: model.cancelInfo.cancelledAt,
+        }
         : undefined,
 
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
     }
   }
+  async getBookingById(bookingId: string): Promise<IBookingEntity | null> {
+    if (Types.ObjectId.isValid(bookingId)) {
+      const booking = await this.model
+        .findById(bookingId)
+        .lean<BookingMongoBase>()
+      if (booking) return this.toEntity(booking)
+    }
+
+    // Fallback: search by custom bookingId field if applicable, or return null
+    // Assuming strict ObjectId check for now, but if bookingId can be a custom string ID:
+    const bookingByCustomId = await this.model
+      .findOne({ bookingId: bookingId })
+      .lean<BookingMongoBase>()
+
+    return bookingByCustomId ? this.toEntity(bookingByCustomId) : null
+  }
+
   async findConfirmedBookedSlotsForService(
     serviceRef: string,
     month: number,
@@ -155,13 +171,13 @@ export class BookingRepository
 
       ...(search
         ? {
-            $or: [
-              { bookingId: { $regex: search, $options: 'i' } },
-              { bookingGroupId: { $regex: search, $options: 'i' } },
-              { paymentStatus: { $regex: search, $options: 'i' } },
-              { serviceStatus: { $regex: search, $options: 'i' } },
-            ],
-          }
+          $or: [
+            { bookingId: { $regex: search, $options: 'i' } },
+            { bookingGroupId: { $regex: search, $options: 'i' } },
+            { paymentStatus: { $regex: search, $options: 'i' } },
+            { serviceStatus: { $regex: search, $options: 'i' } },
+          ],
+        }
         : {}),
     }
 

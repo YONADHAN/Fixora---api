@@ -29,13 +29,14 @@ const error_handler_1 = require("../../../shared/utils/error_handler");
 const cookie_helper_1 = require("../../../shared/utils/cookie_helper");
 const config_1 = require("../../../shared/config");
 let CustomerController = class CustomerController {
-    constructor(_blacklistTokenUseCase, _revokeRefreshTokenUseCase, _getProfileInfoUseCase, _profileInfoUpdateUseCase, storageService, _profileImageUploadFactory) {
+    constructor(_blacklistTokenUseCase, _revokeRefreshTokenUseCase, _getProfileInfoUseCase, _profileInfoUpdateUseCase, storageService, _profileImageUploadFactory, _getAllServiceCategoryUseCase) {
         this._blacklistTokenUseCase = _blacklistTokenUseCase;
         this._revokeRefreshTokenUseCase = _revokeRefreshTokenUseCase;
         this._getProfileInfoUseCase = _getProfileInfoUseCase;
         this._profileInfoUpdateUseCase = _profileInfoUpdateUseCase;
         this.storageService = storageService;
         this._profileImageUploadFactory = _profileImageUploadFactory;
+        this._getAllServiceCategoryUseCase = _getAllServiceCategoryUseCase;
     }
     logout(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -112,6 +113,22 @@ let CustomerController = class CustomerController {
             }
         });
     }
+    getServiceCategories(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { page, limit, search } = req.query;
+                const response = yield this._getAllServiceCategoryUseCase.execute({
+                    page: Number(page),
+                    limit: Number(limit),
+                    search,
+                });
+                res.status(constants_1.HTTP_STATUS.OK).json({ success: true, response });
+            }
+            catch (error) {
+                (0, error_handler_1.handleErrorResponse)(req, res, error);
+            }
+        });
+    }
 };
 exports.CustomerController = CustomerController;
 exports.CustomerController = CustomerController = __decorate([
@@ -122,5 +139,6 @@ exports.CustomerController = CustomerController = __decorate([
     __param(3, (0, tsyringe_1.inject)('IProfileInfoUpdateUseCase')),
     __param(4, (0, tsyringe_1.inject)('IStorageService')),
     __param(5, (0, tsyringe_1.inject)('IProfileImageUploadFactory')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
+    __param(6, (0, tsyringe_1.inject)('IGetAllServiceCategoryUseCase')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object, Object])
 ], CustomerController);

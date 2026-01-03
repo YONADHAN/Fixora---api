@@ -26,9 +26,31 @@ let ServiceCategoryRepository = class ServiceCategoryRepository extends base_rep
     constructor() {
         super(service_category_model_1.ServiceCategoryModel);
     }
+    toEntity(model) {
+        return {
+            _id: model._id.toString(),
+            serviceCategoryId: model.serviceCategoryId,
+            name: model.name,
+            description: model.description,
+            bannerImage: model.bannerImage,
+            isActive: model.isActive,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+        };
+    }
+    toModel(entity) {
+        return {
+            serviceCategoryId: entity.serviceCategoryId,
+            name: entity.name,
+            description: entity.description,
+            bannerImage: entity.bannerImage,
+            isActive: entity.isActive,
+        };
+    }
     findActiveCategories() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.model.find({ isActive: true }).sort({ displayOrder: 1 }).lean();
+            const result = yield this.model.find({ isActive: true }).lean();
+            return result.map((m) => this.toEntity(m));
         });
     }
 };

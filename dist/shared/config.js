@@ -45,13 +45,12 @@ exports.config = {
         publicEndpoint: process.env.S3_PUBLIC_ENDPOINT,
         useSSL: process.env.S3_USE_SSL === 'true',
     },
-    // cloudinary: {
-    //   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-    //   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-    //   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    // },
     googleAuth: {
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    },
+    stripe: {
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+        STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     },
     OtpExpiry: process.env.OTP_EXPIRY_IN_MINUTES || '2',
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10),

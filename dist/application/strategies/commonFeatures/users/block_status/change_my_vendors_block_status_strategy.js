@@ -40,7 +40,8 @@ let ChangeMyVendorsBlockStatusStrategy = class ChangeMyVendorsBlockStatusStrateg
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.STATUS_ALREADY_EXISTS, constants_1.HTTP_STATUS.CONFLICT);
             }
             vendor.status = status;
-            yield this._vendorRepository.update(vendor._id, vendor);
+            //await this._vendorRepository.update(vendor._id, vendor)
+            yield this._vendorRepository.update({ userId: vendor.userId }, { status: vendor.status });
             if (status == 'blocked') {
                 yield redis_client_1.redisClient.set(`user_block_status:vendor:${userId}`, status, {
                     EX: 3600,

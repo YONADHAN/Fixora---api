@@ -1,11 +1,80 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PASSWORD_RESET_MAIL_CONTENT = exports.VERIFICATION_MAIL_CONTENT = exports.ERROR_MESSAGES = exports.SUCCESS_MESSAGES = exports.HTTP_STATUS = exports.ROLES = void 0;
+exports.PASSWORD_RESET_MAIL_CONTENT = exports.VERIFICATION_MAIL_CONTENT = exports.S3_BUCKET_IMAGE_FOLDERS = exports.ERROR_MESSAGES = exports.SUCCESS_MESSAGES = exports.HTTP_STATUS = exports.SOCKET_EVENTS = exports.CURRENCY = exports.PAYMENT_STATUS = exports.SLOT_PAYMENT_STATUS = exports.REFUND_STATUS = exports.REMAINING_PAYMENT_STATUS = exports.ADVANCE_PAYMENT_STATUS = exports.PAYMENT_PHASE = exports.WALLET_TRANSACTION_SOURCES = exports.WALLET_TRANSACTION_TYPES = exports.ROLES = void 0;
 exports.ROLES = {
     ADMIN: 'admin',
     CUSTOMER: 'customer',
     VENDOR: 'vendor',
 };
+//wallet
+exports.WALLET_TRANSACTION_TYPES = ['credit', 'debit'];
+exports.WALLET_TRANSACTION_SOURCES = [
+    'service-booking',
+    'wallet-topup',
+    'booking-refund',
+    'admin-adjustment',
+    'service-payout',
+    'opening-balance',
+];
+//payment status
+exports.PAYMENT_PHASE = {
+    ADVANCE: 'advance',
+    REMAINING: 'remaining',
+};
+exports.ADVANCE_PAYMENT_STATUS = {
+    PENDING: 'pending',
+    PAID: 'paid',
+    FAILED: 'failed',
+};
+exports.REMAINING_PAYMENT_STATUS = {
+    PENDING: 'pending',
+    PAID: 'paid',
+    FAILED: 'failed',
+};
+exports.REFUND_STATUS = {
+    PENDING: 'pending',
+    SUCCEEDED: 'succeeded',
+    FAILED: 'failed',
+};
+exports.SLOT_PAYMENT_STATUS = {
+    ADVANCE_PAID: 'advance-paid',
+    ADVANCE_REFUNDED: 'advance-refunded',
+    REMAINING_PENDING: 'remaining-pending',
+    FULLY_PAID: 'fully-paid',
+    CANCELLED: 'cancelled',
+};
+exports.PAYMENT_STATUS = {
+    ADVANCE_PAID: 'advance-paid',
+    PARTIALLY_REFUNDED: 'partially-refunded',
+    REFUNDED: 'refunded',
+    PARTIALLY_PAID: 'partially-paid',
+    FULLY_PAID: 'fully-paid',
+};
+exports.CURRENCY = {
+    INR: 'INR',
+};
+//socket.io
+exports.SOCKET_EVENTS = {
+    /* ---------------- Notifications ---------------- */
+    NOTIFICATION_NEW: 'notifications:new',
+    NOTIFICATION_READ: 'notifications:read',
+    NOTIFICATION_READ_ALL: 'notifications:read-all',
+    /* ---------------- Chat lifecycle ---------------- */
+    CHAT_JOIN: 'chat:join',
+    CHAT_LEAVE: 'chat:leave',
+    /* ---------------- Messaging ---------------- */
+    CHAT_SEND: 'chat:message:send',
+    CHAT_NEW: 'chat:message:new',
+    CHAT_READ: 'chat:message:read',
+    /* ---------------- Typing ---------------- */
+    CHAT_TYPING_START: 'chat:typing:start',
+    CHAT_TYPING_STOP: 'chat:typing:stop',
+    /* ---------------- Presence ---------------- */
+    USER_ONLINE: 'presence:online',
+    USER_OFFLINE: 'presence:offline',
+    PRESENCE_PING: 'presence:ping',
+};
+//http status
 exports.HTTP_STATUS = {
     OK: 200,
     CREATED: 201,
@@ -49,11 +118,32 @@ exports.SUCCESS_MESSAGES = {
     VENDOR_REQUESTS_FOUND: 'Requests found successfully.',
     VERIFICATION_STATUS_CHANGED: 'Verification status of the user changed successfully.',
     PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
-    //services
+    //service category
     SERVICE_CATEGORIES_FOUND_SUCCESSFULLY: 'Service categories found successfully.',
     SERVICE_CATGORIES_CREATED_SUCCESSFULLY: 'Service categories created successfully.',
     SERVICE_CATEGORIES_EDITED_SUCCESSFULLY: 'Service categories edited successfully.',
     SERVICE_BLOCKED_SUCCESSFULLY: 'Service blocked successfully.',
+    CREATED_SUB_SERVICE_CATEGORY: 'Successfully created the sub service category.',
+    //Sub Services category
+    SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY: 'Sub Service Categories Found Succesfully.',
+    EDITED_SUB_SERVICE_CATEGORY: 'Edited Sub Service Category Successfully.',
+    SUB_SERVICE_CATEGORY_FETCHED_SUCCESSFULLY: 'Sub Service Category Fetched Successfully',
+    SUB_SERVICE_CATEGORY_STATUS_CHANGED_SUCCESSFULLY: 'Sub service category status changed successfully.',
+    SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY: 'Sub service category verification status changed successfully.',
+    //service
+    SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
+    SERVICE_FOUND_SUCCESSFULLY: 'Service found successfully.',
+    //booking
+    SLOTS_FETCHED: 'Slots fetched successfully.',
+    BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
+    CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
+    FOUND_BOOKING_DETAILS: 'Found booking details successfully.',
+    //address
+    ADDRESS_FOUND_SUCCESSFULLY: 'Address found successfully.',
+    ADDRESS_ADDED_SUCCESSFULLY: 'Address added successfully.',
+    EDIT_ADDRESS_SUCCESSFULLY: 'Address edited successfully.',
+    ADDRESS_SET_AS_DEFAULT_ADDRESS_SUCCESSFULLY: 'Address set as default address successfully.',
+    DELETED_SELECTED_ADDRESS_SUCCESSFULLY: 'The selected address deleted successfully',
 };
 exports.ERROR_MESSAGES = {
     TOKEN_EXPIRED: 'Session expired, please log in again', //----------
@@ -83,6 +173,19 @@ exports.ERROR_MESSAGES = {
     PASSWORD_REQUIRED: 'Password required',
     USERS_NOT_FOUND: 'Users not found',
     STATUS_ALREADY_EXISTS: 'Status already exists.',
+    SUB_SERVICES_NOT_FOUND: 'Sub services not found',
+    SERVICES_NOT_FOUND: 'Service not found.',
+    NO_BOOKING_FOUND: 'No booking found.',
+    CONFLICTING_INPUTS: 'Credentials are conflicting each other.',
+    //address
+    ADDRESS_NOT_FOUND: 'Address not found.',
+    CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
+    //NOTIFICATION
+    NOTIFICATION_NOT_FOUND: 'Notification not found',
+};
+exports.S3_BUCKET_IMAGE_FOLDERS = {
+    SUB_SERVICE_CATEGORY_IMAGES: 'SubServiceCategoryImages',
+    SERVICE_IMAGES: 'ServiceImages',
 };
 const VERIFICATION_MAIL_CONTENT = (otp) => `
 <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">

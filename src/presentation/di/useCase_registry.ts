@@ -258,6 +258,10 @@ import { IGetChatMessagesUseCase } from '../../domain/repositoryInterfaces/featu
 import { GetChatMessagesUseCase } from '../../application/usecase/chat/get_chat_messages_usecase'
 import { IMarkChatReadUseCase } from '../../domain/useCaseInterfaces/chat/mark_chat_read_usecase.interface'
 import { MarkChatReadUseCase } from '../../application/usecase/chat/mark_chat_read_usecase'
+import { IInitiateChatUseCase } from '../../domain/useCaseInterfaces/chat/initiate_chat_usecase.interface'
+import { InitiateChatUseCase } from '../../application/usecase/chat/initiate_chat_usecase'
+import { IGetUserChatsUseCase } from '../../domain/useCaseInterfaces/chat/get_user_chats_usecase.interface'
+import { GetUserChatsUseCase } from '../../application/usecase/chat/get_user_chats_usecase'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -597,6 +601,12 @@ export class UseCaseRegistry {
 
     container.register<IMarkChatReadUseCase>('IMarkChatReadUseCase', {
       useClass: MarkChatReadUseCase,
+    })
+    container.register<IInitiateChatUseCase>('IInitiateChatUseCase', {
+      useClass: InitiateChatUseCase,
+    })
+    container.register<IGetUserChatsUseCase>('IGetUserChatsUseCase', {
+      useClass: GetUserChatsUseCase,
     })
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {

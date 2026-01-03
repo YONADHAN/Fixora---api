@@ -15,8 +15,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 @injectable()
 export class ChatRepository
   extends BaseRepository<IChatModel, IChatEntity>
-  implements IChatRepository
-{
+  implements IChatRepository {
   constructor() {
     super(ChatModel)
   }
@@ -92,15 +91,11 @@ export class ChatRepository
     }
   }
 
-  async findMyChats(
-    userId: string,
-    role: 'customer' | 'vendor'
-  ): Promise<IChatEntity[]> {
-    const filter: FilterQuery<IChatModel> =
-      role === 'customer' ? { customerId: userId } : { vendorId: userId }
-
+  async getUserChats(userId: string): Promise<IChatEntity[]> {
     const chats = await this.model
-      .find(filter)
+      .find({
+        $or: [{ customerId: userId }, { vendorId: userId }],
+      })
       .sort({ updatedAt: -1 })
       .lean<ChatMongoBase[]>()
 

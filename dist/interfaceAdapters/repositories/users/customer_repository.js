@@ -17,6 +17,61 @@ let CustomerRepository = class CustomerRepository extends base_repository_1.Base
     constructor() {
         super(customer_model_1.CustomerModel);
     }
+    toEntity(model) {
+        return {
+            userId: model.userId,
+            _id: model._id,
+            name: model.name,
+            email: model.email,
+            phone: model.phone,
+            password: model.password,
+            role: model.role,
+            status: model.status,
+            googleId: model.googleId,
+            profileImage: model.profileImage,
+            geoLocation: model.geoLocation
+                ? {
+                    type: model.geoLocation.type,
+                    coordinates: model.geoLocation.coordinates,
+                }
+                : undefined,
+            location: model.location
+                ? {
+                    name: model.location.name,
+                    displayName: model.location.displayName,
+                    zipCode: model.location.zipCode,
+                }
+                : undefined,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+        };
+    }
+    toModel(entity) {
+        return {
+            userId: entity.userId,
+            name: entity.name,
+            email: entity.email,
+            phone: entity.phone,
+            password: entity.password,
+            role: entity.role,
+            status: entity.status,
+            googleId: entity.googleId,
+            profileImage: entity.profileImage,
+            geoLocation: entity.geoLocation
+                ? {
+                    type: entity.geoLocation.type,
+                    coordinates: entity.geoLocation.coordinates,
+                }
+                : undefined,
+            location: entity.location
+                ? {
+                    name: entity.location.name,
+                    displayName: entity.location.displayName,
+                    zipCode: entity.location.zipCode,
+                }
+                : undefined,
+        };
+    }
 };
 exports.CustomerRepository = CustomerRepository;
 exports.CustomerRepository = CustomerRepository = __decorate([

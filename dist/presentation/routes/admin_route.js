@@ -5,6 +5,7 @@ const resolver_1 = require("../di/resolver");
 const base_route_1 = require("./base_route");
 const auth_middleware_1 = require("../middleware/auth_middleware");
 const service_category_route_1 = require("./service_category_route");
+const sub_service_category_route_1 = require("./sub_service_category_route");
 class AdminRoutes extends base_route_1.BaseRoute {
     constructor() {
         super();
@@ -32,6 +33,7 @@ class AdminRoutes extends base_route_1.BaseRoute {
         });
         //service-category route
         this.router.use('/category', new service_category_route_1.ServiceCategoryRoutes().router);
+        this.router.use('/sub-service-category', new sub_service_category_route_1.SubServiceCategoryRoutes().router);
     }
 }
 exports.AdminRoutes = AdminRoutes;

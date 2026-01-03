@@ -9,9 +9,8 @@ export interface IChatRepository {
     serviceId: string
   ): Promise<IChatEntity | null>
 
-  findMyChats(
-    userId: string,
-    role: 'customer' | 'vendor'
+  getUserChats(
+    userId: string
   ): Promise<IChatEntity[]>
 
   incrementUnread(chatId: string, role: 'customer' | 'vendor'): Promise<void>

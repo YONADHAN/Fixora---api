@@ -26,9 +26,27 @@ let OtpRepository = class OtpRepository extends base_repository_1.BaseRepository
     constructor() {
         super(otp_model_1.OtpModel);
     }
+    toEntity(model) {
+        return {
+            otp: model.otp,
+            email: model.email,
+            expiresAt: model.expiresAt,
+        };
+    }
+    toModel(entity) {
+        return {
+            otp: entity.otp,
+            email: entity.email,
+            expiresAt: entity.expiresAt,
+        };
+    }
     findLatestOtp(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.model.findOne({ email }).sort({ createdAt: -1 }).exec();
+            const result = yield this.model
+                .findOne({ email })
+                .sort({ createdAt: -1 })
+                .lean();
+            return result ? this.toEntity(result) : null;
         });
     }
 };

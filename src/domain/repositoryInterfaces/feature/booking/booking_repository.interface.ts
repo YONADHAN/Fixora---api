@@ -21,5 +21,7 @@ export interface IBookingRepository extends IBaseRepository<IBookingEntity> {
     totalPages: number
   }>
 
+  getBookingById(bookingId: string): Promise<IBookingEntity | null>
+
   //  findBookingWithDetailsForVendor(filter: FilterQuery<IBookingModel>)
 }
