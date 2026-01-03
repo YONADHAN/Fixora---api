@@ -15,10 +15,10 @@ import { CustomError } from '../../../domain/utils/custom.error'
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
-    @inject('ChatRepository')
+    @inject('IChatRepository')
     private readonly chatRepository: IChatRepository,
 
-    @inject('MessageRepository')
+    @inject('IMessageRepository')
     private readonly messageRepository: IMessageRepository
   ) {}
 
