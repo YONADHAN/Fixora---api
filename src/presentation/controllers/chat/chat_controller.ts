@@ -17,53 +17,76 @@ export class ChatController implements IChatController {
     private readonly initiateChatUseCase: IInitiateChatUseCase,
     @inject('IGetUserChatsUseCase')
     private readonly getUserChatsUseCase: IGetUserChatsUseCase
-  ) { }
+  ) {}
 
   async getChatMessages(req: Request, res: Response): Promise<void> {
-    const { chatId } = req.params
-    const { page = '1', limit = '20' } = req.query
+    try {
+      const { chatId } = req.params
+      console.log('Requested chatId:', req.params.chatId)
 
-    const user = (req as CustomRequest).user
+      const { page = '1', limit = '20' } = req.query
 
-    const result = await this.getChatMessagesUseCase.execute({
-      chatId,
-      requesterId: user.userId,
-      requesterRole: user.role as 'customer' | 'vendor',
-      page: Number(page),
-      limit: Number(limit),
-    })
+      const user = (req as CustomRequest).user
 
-    res.status(200).json({
-      success: true,
-      data: result,
-    })
+      const result = await this.getChatMessagesUseCase.execute({
+        chatId,
+        requesterId: user.userId,
+        requesterRole: user.role as 'customer' | 'vendor',
+        page: Number(page),
+        limit: Number(limit),
+      })
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      })
+    } catch (error: any) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || 'Internal Server Error',
+      })
+    }
   }
 
   async initiateChat(req: Request, res: Response): Promise<void> {
-    const { bookingId } = req.body
-    const user = (req as CustomRequest).user
+    try {
+      const { bookingId } = req.body
+      const user = (req as CustomRequest).user
 
-    const chatId = await this.initiateChatUseCase.execute({
-      bookingId,
-      requesterId: user.userId,
-      requesterRole: user.role as 'customer' | 'vendor',
-    })
+      const chatId = await this.initiateChatUseCase.execute({
+        bookingId,
+        requesterId: user.userId,
+        requesterRole: user.role as 'customer' | 'vendor',
+      })
 
-    res.status(201).json({
-      success: true,
-      message: 'Chat initiated successfully',
-      data: { chatId },
-    })
+      res.status(201).json({
+        success: true,
+        message: 'Chat initiated successfully',
+        data: { chatId },
+      })
+    } catch (error: any) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || 'Internal Server Error',
+      })
+    }
   }
 
   async getUserChats(req: Request, res: Response): Promise<void> {
-    const user = (req as CustomRequest).user
+    try {
+      const user = (req as CustomRequest).user
 
-    const chats = await this.getUserChatsUseCase.execute(user.userId)
+      const chats = await this.getUserChatsUseCase.execute(user.userId)
 
-    res.status(200).json({
-      success: true,
-      data: chats,
-    })
+      res.status(200).json({
+        success: true,
+        data: chats,
+      })
+    } catch (error: any) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || 'Internal Server Error',
+      })
+    }
   }
 }

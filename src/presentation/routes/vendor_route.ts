@@ -35,7 +35,7 @@ export class VendorRoutes extends BaseRoute {
       }
     )
 
-    this.router.use('/chat', new ChatRoutes().router)
+    this.router.use('/chats', new ChatRoutes().router)
 
     this.router.use('/service', new ServiceRoutes().router)
 
