@@ -88,26 +88,26 @@ export class NotificationController implements INotificationController {
     }
   }
 
-  async testNotification(req: Request, res: Response) {
-    const user = (req as CustomRequest).user
+  // async testNotification(req: Request, res: Response) {
+  //   const user = (req as CustomRequest).user
 
-    await this.createNotificationUseCase.execute({
-      recipientId: user.userId,
-      recipientRole: user.role as TRole,
+  //   await this.createNotificationUseCase.execute({
+  //     recipientId: user.userId,
+  //     recipientRole: user.role as TRole,
 
-      type: 'ADMIN_MESSAGE',
+  //     type: 'ADMIN_MESSAGE',
 
-      title: 'Test Notification',
-      message: 'If you see this, socket is working 🔔',
+  //     title: 'Test Notification',
+  //     message: 'If you see this, socket is working 🔔',
 
-      metadata: {
-        redirectUrl: '/notifications',
-      },
-    })
+  //     metadata: {
+  //       redirectUrl: '/notifications',
+  //     },
+  //   })
 
-    res.status(200).json({
-      success: true,
-      message: 'Test notification sent',
-    })
-  }
+  //   res.status(200).json({
+  //     success: true,
+  //     message: 'Test notification sent',
+  //   })
+  // }
 }
