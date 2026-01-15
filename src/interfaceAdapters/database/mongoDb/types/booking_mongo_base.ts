@@ -10,6 +10,7 @@ export interface BookingMongoBase {
   customerRef: Types.ObjectId
 
   date: string
+  addressId?: string
   slotStart?: Date
   slotEnd?: Date
 

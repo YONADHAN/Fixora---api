@@ -10,6 +10,7 @@ export interface IBookingEntity {
   customerRef: string
 
   date: string
+  addressId?: string
   slotStart?: Date
   slotEnd?: Date
 

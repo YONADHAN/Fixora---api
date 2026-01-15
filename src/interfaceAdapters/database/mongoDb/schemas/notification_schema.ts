@@ -32,6 +32,7 @@ export const NotificationSchema = new Schema<INotificationModel>(
         'PAYMENT_SUCCESS',
         'PAYMENT_FAILED',
         'ADMIN_MESSAGE',
+        'VENDOR_DOCUMENTS_SUBMITTED',
       ],
       required: true,
       index: true,
@@ -52,6 +53,7 @@ export const NotificationSchema = new Schema<INotificationModel>(
       serviceId: { type: String },
       paymentId: { type: String },
       redirectUrl: { type: String },
+      vendorRef: { type: String },
     },
 
     isRead: {

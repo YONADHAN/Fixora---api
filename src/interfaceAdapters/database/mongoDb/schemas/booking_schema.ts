@@ -10,6 +10,7 @@ export const BookingSchema = new Schema<IBookingModel>(
     customerRef: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 
     date: { type: String, required: true },
+    addressId: { type: String },
     slotStart: Date,
     slotEnd: Date,
 

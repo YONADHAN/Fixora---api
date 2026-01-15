@@ -13,7 +13,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
   constructor(
     @inject('INotificationRepository')
     private readonly notificationRepository: INotificationRepository
-  ) {}
+  ) { }
 
   async execute(data: CreateNotificationInput): Promise<INotificationEntity> {
     const notification: INotificationEntity = {
@@ -46,7 +46,6 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
       const io = getIO()
       io.to(`user:${data.recipientId}`).emit(
         SOCKET_EVENTS.NOTIFICATION_NEW,
-        //socketPayload
         saved
       )
     } catch (err) {

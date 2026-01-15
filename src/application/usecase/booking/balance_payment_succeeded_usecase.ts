@@ -3,6 +3,9 @@ import Stripe from 'stripe'
 import { IBalancePaymentSucceededUseCase } from '../../../domain/useCaseInterfaces/booking/balance_payment_succeeded_usecase_interface'
 import { IPaymentRepository } from '../../../domain/repositoryInterfaces/feature/payment/payment_repository.interface'
 import { IBookingRepository } from '../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
+import { ICreateNotificationUseCase } from '../../../domain/useCaseInterfaces/notification/create_notification_usecase_interface'
+import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
+import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 
 @injectable()
 export class BalancePaymentSucceededUseCase
@@ -11,7 +14,13 @@ export class BalancePaymentSucceededUseCase
     @inject('IPaymentRepository')
     private readonly _paymentRepository: IPaymentRepository,
     @inject('IBookingRepository')
-    private readonly _bookingRepository: IBookingRepository
+    private readonly _bookingRepository: IBookingRepository,
+    @inject('ICreateNotificationUseCase')
+    private readonly _createNotificationUseCase: ICreateNotificationUseCase,
+    @inject('ICustomerRepository')
+    private readonly _customerRepository: ICustomerRepository,
+    @inject('IVendorRepository')
+    private readonly _vendorRepository: IVendorRepository
   ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -47,6 +56,35 @@ export class BalancePaymentSucceededUseCase
         { bookingId: booking.bookingId },
         { paymentStatus: 'fully-paid' }
       )
+    }
+
+    const customer = await this._customerRepository.findOne({
+      _id: payment.customerRef,
+    })
+    const vendor = await this._vendorRepository.findOne({
+      _id: payment.vendorRef,
+    })
+
+    if (customer) {
+      await this._createNotificationUseCase.execute({
+        recipientId: customer.userId as string,
+        recipientRole: 'customer',
+        type: 'PAYMENT_SUCCESS',
+        title: 'Payment Completed',
+        message: `Balance payment successful for booking group ${payment.bookingGroupId}`,
+        metadata: { bookingId: payment.bookingGroupId },
+      })
+    }
+
+    if (vendor) {
+      await this._createNotificationUseCase.execute({
+        recipientId: vendor.userId as string,
+        recipientRole: 'vendor',
+        type: 'PAYMENT_SUCCESS',
+        title: 'Payment Received',
+        message: `Balance payment received for booking group ${payment.bookingGroupId}`,
+        metadata: { bookingId: payment.bookingGroupId },
+      })
     }
   }
 }

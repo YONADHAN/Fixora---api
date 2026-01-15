@@ -1,4 +1,5 @@
 import { IBookingEntity } from '../../../domain/models/booking_entity'
+import { IAddressEntity } from '../../../domain/models/address_entity'
 import { IServiceEntity } from '../../../domain/models/service_entity'
 import { ICustomerEntity } from '../../../domain/models/customer_entity'
 import {
@@ -11,7 +12,8 @@ export class GetBookingDetailsForVendorResponseMapper {
   static toDTO(
     booking: IBookingEntity,
     service: IServiceEntity,
-    customer: ICustomerEntity
+    customer: ICustomerEntity,
+    address?: IAddressEntity | null
   ): GetBookingDetailsForVendorStrategyResponseDTO {
     return {
       booking: {
@@ -42,6 +44,23 @@ export class GetBookingDetailsForVendorResponseMapper {
         geoLocation: customer.geoLocation
           ? {
             coordinates: customer.geoLocation.coordinates || [],
+          }
+          : undefined,
+        bookingAddress: address
+          ? {
+            name: address.label,
+            addressLine1: address.addressLine1,
+            addressLine2: address.addressLine2,
+            city: address.city,
+            state: address.state,
+            zipCode: address.zipCode,
+            country: address.country,
+            location: address.location,
+            geoLocation: address.geoLocation
+              ? {
+                coordinates: address.geoLocation.coordinates || [],
+              }
+              : undefined,
           }
           : undefined,
       },

@@ -51,6 +51,7 @@ export class BookingRepository
         : undefined,
 
       date: entity.date,
+      addressId: entity.addressId,
       slotStart: entity.slotStart,
       slotEnd: entity.slotEnd,
 
@@ -102,6 +103,8 @@ export class BookingRepository
           cancelledAt: model.cancelInfo.cancelledAt,
         }
         : undefined,
+
+      addressId: model.addressId,
 
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,

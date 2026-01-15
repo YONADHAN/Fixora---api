@@ -260,15 +260,12 @@ export interface RequestSearchServicesForCustomerDTO {
   availableFrom?: Date
   availableTo?: Date
 
-  workStartTime?: string
-  workEndTime?: string
-
-  recurrenceType?: 'daily' | 'weekly' | 'monthly'
-
-  weeklyDays?: number[]
-
   page: number
   limit: number
+
+  latitude?: number
+  longitude?: number
+  radius?: number
 }
 
 export interface SubServiceCategoryDTO {

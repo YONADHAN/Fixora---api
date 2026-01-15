@@ -8,6 +8,8 @@ import {
 } from '../middleware/auth_middleware'
 import { ServiceCategoryRoutes } from './service_category_route'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
+import { NotificationRoutes } from './notification_route'
+
 export class AdminRoutes extends BaseRoute {
   constructor() {
     super()
@@ -84,5 +86,7 @@ export class AdminRoutes extends BaseRoute {
       '/sub-service-category',
       new SubServiceCategoryRoutes().router
     )
+
+    this.router.use('/notification', new NotificationRoutes().router)
   }
 }

@@ -9,11 +9,13 @@ import { IStripePaymentSucceedUseCase } from '../../../domain/useCaseInterfaces/
 import { IWalletTransactionRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { IPaymentRepository } from '../../../domain/repositoryInterfaces/feature/payment/payment_repository.interface'
 import { IWalletRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_repository.interface'
+import { ICreateNotificationUseCase } from '../../../domain/useCaseInterfaces/notification/create_notification_usecase_interface'
+import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
+import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 
 @injectable()
 export class StripePaymentSucceededUseCase
-  implements IStripePaymentSucceedUseCase
-{
+  implements IStripePaymentSucceedUseCase {
   constructor(
     @inject('IBookingHoldRepository')
     private _bookingHoldRepository: IBookingHoldRepository,
@@ -31,8 +33,17 @@ export class StripePaymentSucceededUseCase
     private _walletTransactionRepository: IWalletTransactionRepository,
 
     @inject('IWalletRepository')
-    private _walletRepository: IWalletRepository
-  ) {}
+    private _walletRepository: IWalletRepository,
+
+    @inject('ICreateNotificationUseCase')
+    private _createNotificationUseCase: ICreateNotificationUseCase,
+
+    @inject('ICustomerRepository')
+    private _customerRepository: ICustomerRepository,
+
+    @inject('IVendorRepository')
+    private _vendorRepository: IVendorRepository
+  ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     const hold =
@@ -55,6 +66,7 @@ export class StripePaymentSucceededUseCase
         serviceRef: hold.serviceRef,
         vendorRef: hold.vendorRef,
         customerRef: hold.customerRef,
+        addressId: hold.addressId,
 
         date: slot.date,
         slotStart: new Date(`${slot.date}T${slot.start}`),
@@ -138,6 +150,35 @@ export class StripePaymentSucceededUseCase
         slot.date,
         slot.start
       )
+    }
+
+    const customer = await this._customerRepository.findOne({
+      _id: hold.customerRef,
+    })
+    const vendor = await this._vendorRepository.findOne({
+      _id: hold.vendorRef,
+    })
+
+    if (customer) {
+      await this._createNotificationUseCase.execute({
+        recipientId: customer.userId as string,
+        recipientRole: 'customer',
+        type: 'PAYMENT_SUCCESS',
+        title: 'Payment Successful',
+        message: `Advance payment successful for booking group ${hold.holdId}`,
+        metadata: { bookingId: hold.holdId },
+      })
+    }
+
+    if (vendor) {
+      await this._createNotificationUseCase.execute({
+        recipientId: vendor.userId as string,
+        recipientRole: 'vendor',
+        type: 'PAYMENT_SUCCESS',
+        title: 'New Payment Received',
+        message: `New advance payment received for booking group ${hold.holdId}`,
+        metadata: { bookingId: hold.holdId },
+      })
     }
   }
 }

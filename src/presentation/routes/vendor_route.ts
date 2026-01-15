@@ -20,6 +20,7 @@ import { BookingRoutes } from './booking_route'
 import { WalletRoutes } from './wallet_route'
 import { ChatRoutes } from './chat_route'
 import { PaymentRoutes } from './payment_route'
+import { NotificationRoutes } from './notification_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -45,6 +46,8 @@ export class VendorRoutes extends BaseRoute {
     this.router.use('/wallet', new WalletRoutes().router)
 
     this.router.use('/payment', new PaymentRoutes().router)
+
+    this.router.use('/notification', new NotificationRoutes().router)
 
 
     this.router.use(

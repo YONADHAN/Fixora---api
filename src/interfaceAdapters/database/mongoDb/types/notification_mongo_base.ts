@@ -8,12 +8,13 @@ export interface NotificationMongoBase {
   recipientRole: 'customer' | 'vendor' | 'admin'
 
   type:
-    | 'BOOKING_CREATED'
-    | 'BOOKING_CANCELLED'
-    | 'BOOKING_CONFIRMED'
-    | 'PAYMENT_SUCCESS'
-    | 'PAYMENT_FAILED'
-    | 'ADMIN_MESSAGE'
+  | 'BOOKING_CREATED'
+  | 'BOOKING_CANCELLED'
+  | 'BOOKING_CONFIRMED'
+  | 'PAYMENT_SUCCESS'
+  | 'PAYMENT_FAILED'
+  | 'ADMIN_MESSAGE'
+  | 'VENDOR_DOCUMENTS_SUBMITTED'
 
   title: string
   message: string
@@ -23,6 +24,7 @@ export interface NotificationMongoBase {
     serviceId?: string
     paymentId?: string
     redirectUrl?: string
+    vendorRef?: string
   }
 
   isRead: boolean

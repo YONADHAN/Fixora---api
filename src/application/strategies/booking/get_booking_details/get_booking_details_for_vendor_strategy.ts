@@ -5,7 +5,9 @@ import { IBookingRepository } from '../../../../domain/repositoryInterfaces/feat
 
 import { IVendorRepository } from '../../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { ICustomerRepository } from '../../../../domain/repositoryInterfaces/users/customer_repository.interface'
+import { IAddressRepository } from '../../../../domain/repositoryInterfaces/feature/address/address_repository.interface'
 import { IServiceRepository } from '../../../../domain/repositoryInterfaces/feature/service/service_repository.interface'
+import { IAddressEntity } from '../../../../domain/models/address_entity'
 import {
   GetBookingDetailsForVendorStrategyResponseDTO,
   GetBookingDetailsRequestDTO,
@@ -14,8 +16,7 @@ import { GetBookingDetailsForVendorResponseMapper } from '../../../mappers/booki
 import { IGetBookingDetailsForVendorStrategy } from './get_booking_details_for_vendor_strategy.interface'
 @injectable()
 export class GetBookingDetailsForVendorStrategy
-  implements IGetBookingDetailsForVendorStrategy
-{
+  implements IGetBookingDetailsForVendorStrategy {
   constructor(
     @inject('IVendorRepository')
     private readonly _vendorRepository: IVendorRepository,
@@ -27,8 +28,11 @@ export class GetBookingDetailsForVendorStrategy
     private readonly _serviceRepository: IServiceRepository,
 
     @inject('ICustomerRepository')
-    private readonly _customerRepository: ICustomerRepository
-  ) {}
+    private readonly _customerRepository: ICustomerRepository,
+
+    @inject('IAddressRepository')
+    private readonly _addressRepository: IAddressRepository
+  ) { }
 
   async execute(
     payload: GetBookingDetailsRequestDTO
@@ -80,10 +84,18 @@ export class GetBookingDetailsForVendorStrategy
       )
     }
 
+    let address: IAddressEntity | null = null
+    if (booking.addressId) {
+      address = await this._addressRepository.findOne({
+        addressId: booking.addressId,
+      })
+    }
+
     return GetBookingDetailsForVendorResponseMapper.toDTO(
       booking,
       service,
-      customer
+      customer,
+      address
     )
   }
 }
