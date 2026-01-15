@@ -19,7 +19,10 @@ import { ServiceRoutes } from './service_route'
 import { BookingRoutes } from './booking_route'
 import { WalletRoutes } from './wallet_route'
 import { NotificationRoutes } from './notification_route'
+
 import { ChatRoutes } from './chat_route'
+import { AddressRoutes } from './address_route'
+import { PaymentRoutes } from './payment_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -27,7 +30,7 @@ export class CustomerRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-    //Post Refresh Token Route
+
     this.router.post(
       '/refresh-token',
       decodeToken,
@@ -50,29 +53,33 @@ export class CustomerRoutes extends BaseRoute {
 
     this.router.use('/notification', new NotificationRoutes().router)
 
+    this.router.use('/payment', new PaymentRoutes().router)
+
     this.router.use(
       '/sub-service-category',
       new SubServiceCategoryRoutes().router
     )
 
-    //  Global middlewares for all authenticated customer routes
+
     this.router.use(
       verifyAuth as CustomRequestHandler,
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       authorizeRole(['customer'])
     )
 
-    //  Logout
+    this.router.use('/address', new AddressRoutes().router)
+
+
     this.router.post('/logout', (req: Request, res: Response) => {
       customerController.logout(req, res)
     })
 
-    //  Get profile
+
     this.router.get('/profile-info', (req: Request, res: Response) => {
       customerController.profileInfo(req, res)
     })
 
-    //  Update profile
+
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
       customerController.profileUpdate(req, res)
     })

@@ -37,12 +37,10 @@ let InitiateChatUseCase = class InitiateChatUseCase {
     execute(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const { bookingId, requesterId, requesterRole } = data;
-            // 1. Validate Booking
             const booking = yield this.bookingRepository.getBookingById(bookingId);
             if (!booking) {
                 throw new custom_error_1.CustomError('Booking not found', constants_1.HTTP_STATUS.NOT_FOUND);
             }
-            // 2. Fetch Entities to get UUIDs
             const customer = yield this.customerRepository.findOne({ _id: booking.customerRef });
             const vendor = yield this.vendorRepository.findOne({ _id: booking.vendorRef });
             const service = yield this.serviceRepository.findOne({ _id: booking.serviceRef });
@@ -55,18 +53,15 @@ let InitiateChatUseCase = class InitiateChatUseCase {
             if (!customerUuid || !vendorUuid || !serviceUuid) {
                 throw new custom_error_1.CustomError('Invalid entity data: Missing UUIDs', constants_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
             }
-            // 3. Validate Ownership (Security Gate) using UUIDs
             const isCustomer = customerUuid === requesterId;
             const isVendor = vendorUuid === requesterId;
             if (!isCustomer && !isVendor) {
                 throw new custom_error_1.CustomError('Unauthorized: You are not a party to this booking', constants_1.HTTP_STATUS.FORBIDDEN);
             }
-            // 4. Check for Existing Chat (Idempotency)
             const existingChat = yield this.chatRepository.findChatByParticipants(customerUuid, vendorUuid, serviceUuid);
             if (existingChat) {
                 return existingChat.chatId;
             }
-            // 5. Create New Chat
             const newChat = yield this.chatRepository.createChat({
                 chatId: (0, uuid_1.v4)(),
                 customerId: customerUuid,

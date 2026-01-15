@@ -30,15 +30,8 @@ let ChangeVendorVerificationStatusUseCase = class ChangeVendorVerificationStatus
         this._vendorRepository = _vendorRepository;
         this._storageService = _storageService;
     }
-    /**
-     * Extract bucket and key from AWS S3 URL
-     * Example: https://fixora-storage-yonadhan.s3.ap-south-1.amazonaws.com/vendor-verification-docs/abc123.png
-     */
     extractBucketAndKey(url) {
         try {
-            // Example URL parts:
-            //   domain = fixora-storage-yonadhan.s3.ap-south-1.amazonaws.com
-            //   bucket = fixora-storage-yonadhan
             const match = url.match(/^https?:\/\/([^.]+)\.s3[.-][^/]+\.amazonaws\.com\/(.+)$/);
             if (!match) {
                 console.warn('⚠️ Invalid AWS S3 URL format:', url);
@@ -87,7 +80,6 @@ let ChangeVendorVerificationStatusUseCase = class ChangeVendorVerificationStatus
                         console.error(` Failed to delete ${parsed.key}:`, err);
                     }
                 }
-                // 🧹 Clear MongoDB docs reference
                 vendor.documents = [];
             }
             vendor.isVerified = {

@@ -18,6 +18,7 @@ exports.BookingSchema = new mongoose_1.Schema({
             'pending',
             'advance-paid',
             'paid',
+            'fully-paid',
             'pending-refund',
             'refunded',
             'failed',

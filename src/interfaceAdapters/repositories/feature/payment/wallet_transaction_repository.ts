@@ -15,10 +15,27 @@ import { IWalletTransactionEntity } from '../../../../domain/models/wallet_trans
 @injectable()
 export class WalletTransactionRepository
   extends BaseRepository<IWalletTransactionModel, IWalletTransactionEntity>
-  implements IWalletTransactionRepository
-{
+  implements IWalletTransactionRepository {
   constructor() {
     super(WalletTransactionModel)
+  }
+
+  async findAllDocsWithoutPagination(
+    filter: any,
+    sortOptions?: {
+      sortBy: 'amount' | 'createdAt' | 'type'
+      order: 'asc' | 'desc'
+    }
+  ): Promise<IWalletTransactionEntity[]> {
+    const sort: any = {}
+    if (sortOptions) {
+      sort[sortOptions.sortBy] = sortOptions.order === 'asc' ? 1 : -1
+    } else {
+      sort.createdAt = -1 // Default sort
+    }
+
+    const result = await this.model.find(filter).sort(sort).lean()
+    return this.toEntityArray(result as any)
   }
 
   protected toModel(

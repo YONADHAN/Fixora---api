@@ -9,12 +9,14 @@ class BookingRoutes extends base_route_1.BaseRoute {
         super();
     }
     initializeRoutes() {
+        this.router.get('/payment/:paymentId', auth_middleware_1.verifyAuth, (0, auth_middleware_1.authorizeRole)(['customer']), (req, res) => resolver_1.bookingController.getBookingByPaymentId(req, res));
         this.router.get('/slots/availability', (req, res) => resolver_1.bookingController.getAvailableSlotsForCustomer(req, res));
         this.router.post('/booking-holds', auth_middleware_1.verifyAuth, (0, auth_middleware_1.authorizeRole)(['customer']), (req, res) => resolver_1.bookingController.createBookingHold(req, res));
         this.router.post('/booking-holds/:holdId/payment-intent', auth_middleware_1.verifyAuth, (0, auth_middleware_1.authorizeRole)(['customer']), (req, res) => resolver_1.bookingController.createPaymentIntent(req, res));
         this.router.get('/me', auth_middleware_1.verifyAuth, auth_middleware_1.decodeToken, (0, auth_middleware_1.authorizeRole)(['customer', 'vendor', 'admin']), resolver_1.blockMyUserMiddleware.checkMyUserBlockStatus, (req, res) => resolver_1.bookingController.getMyBookings(req, res));
         this.router.get('/:bookingId', auth_middleware_1.verifyAuth, auth_middleware_1.decodeToken, (0, auth_middleware_1.authorizeRole)(['customer', 'vendor', 'admin']), resolver_1.blockMyUserMiddleware.checkMyUserBlockStatus, (req, res) => resolver_1.bookingController.getBookingDetails(req, res));
         this.router.patch('/:bookingId/cancel', auth_middleware_1.verifyAuth, (0, auth_middleware_1.authorizeRole)(['customer', 'vendor', 'admin']), resolver_1.blockMyUserMiddleware.checkMyUserBlockStatus, (req, res) => resolver_1.bookingController.cancelBooking(req, res));
+        this.router.post('/:bookingId/pay-balance', auth_middleware_1.verifyAuth, (0, auth_middleware_1.authorizeRole)(['customer']), (req, res) => resolver_1.bookingController.payBalance(req, res));
     }
 }
 exports.BookingRoutes = BookingRoutes;

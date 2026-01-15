@@ -19,6 +19,7 @@ import { ServiceRoutes } from './service_route'
 import { BookingRoutes } from './booking_route'
 import { WalletRoutes } from './wallet_route'
 import { ChatRoutes } from './chat_route'
+import { PaymentRoutes } from './payment_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -26,7 +27,7 @@ export class VendorRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-    // Post Refresh Token Route
+
     this.router.post(
       '/refresh-token',
       decodeToken,
@@ -43,7 +44,9 @@ export class VendorRoutes extends BaseRoute {
 
     this.router.use('/wallet', new WalletRoutes().router)
 
-    //  Global middlewares for all authenticated vendor routes
+    this.router.use('/payment', new PaymentRoutes().router)
+
+
     this.router.use(
       verifyAuth as CustomRequestHandler,
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
@@ -55,12 +58,12 @@ export class VendorRoutes extends BaseRoute {
       new SubServiceCategoryRoutes().router
     )
 
-    //logout
+
     this.router.post('/logout', (req: Request, res: Response) => {
       vendorController.logout(req, res)
     })
 
-    // Post Verification Document
+
     this.router.post(
       '/upload_verification_document',
       handleMulterError(upload.array('files', 3)),
@@ -69,16 +72,16 @@ export class VendorRoutes extends BaseRoute {
       }
     )
 
-    // Get Profile
+
     this.router.get('/profile-info', (req: Request, res: Response) => {
       vendorController.profileInfo(req, res)
     })
 
-    // Update Profile
+
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
       vendorController.profileUpdate(req, res)
     })
-    // Upload Profile Image
+
     this.router.post(
       '/avatar',
       handleMulterError(upload.single('profileImage')),
@@ -87,7 +90,7 @@ export class VendorRoutes extends BaseRoute {
       }
     )
 
-    //Get Status
+
     this.router.get('/status', (req: Request, res: Response) => {
       vendorController.vendorVerificationDocStatusCheck(req, res)
     })

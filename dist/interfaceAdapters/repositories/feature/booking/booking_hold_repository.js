@@ -51,6 +51,7 @@ let BookingHoldRepository = class BookingHoldRepository extends base_repository_
             customerRef: entity.customerRef
                 ? new mongoose_1.Types.ObjectId(entity.customerRef)
                 : undefined,
+            addressId: entity.addressId,
             slots: (_a = entity.slots) === null || _a === void 0 ? void 0 : _a.map((s) => ({
                 date: s.date,
                 start: s.start,
@@ -85,6 +86,7 @@ let BookingHoldRepository = class BookingHoldRepository extends base_repository_
             serviceRef: model.serviceRef.toString(),
             vendorRef: model.vendorRef.toString(),
             customerRef: model.customerRef.toString(),
+            addressId: model.addressId,
             slots: model.slots.map((s) => ({
                 date: s.date,
                 start: s.start,

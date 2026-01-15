@@ -14,13 +14,12 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 @injectable()
 export class NotificationRepository
   extends BaseRepository<INotificationModel, INotificationEntity>
-  implements INotificationRepository
-{
+  implements INotificationRepository {
   constructor() {
     super(NotificationModel)
   }
 
-  /* -------------------- MAPPERS -------------------- */
+
 
   protected toEntity(model: NotificationMongoBase): INotificationEntity {
     return {
@@ -63,46 +62,59 @@ export class NotificationRepository
     }
   }
 
-  /* -------------------- CUSTOM METHODS -------------------- */
+
 
   async findByRecipient(
     recipientId: string,
-    page: number,
-    limit: number
+    limit: number,
+    cursor?: string,
+    filterType: 'all' | 'unread' = 'all',
+    search?: string
   ): Promise<{
     data: INotificationEntity[]
-    currentPage: number
-    totalPages: number
+    nextCursor: string | null
     unreadCount: number
   }> {
-    const skip = (page - 1) * limit
-
-    const filter: FilterQuery<INotificationModel> = {
+    const query: FilterQuery<INotificationModel> = {
       recipientId,
       isActive: true,
     }
 
-    const [documents, totalCount, unreadCount] = await Promise.all([
-      this.model
-        .find(filter)
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .lean<NotificationMongoBase[]>(),
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { message: { $regex: search, $options: 'i' } },
+      ]
+    }
 
-      this.model.countDocuments(filter),
+    if (filterType === 'unread') {
+      query.isRead = false
+    }
 
-      this.model.countDocuments({
-        recipientId,
-        isRead: false,
-        isActive: true,
-      }),
-    ])
+    if (cursor) {
+      query.createdAt = { $lt: new Date(cursor) }
+    }
+
+    const notifications = await this.model
+      .find(query)
+      .sort({ createdAt: -1 })
+      .limit(limit + 1)
+      .lean<NotificationMongoBase[]>()
+
+    const hasNextPage = notifications.length > limit
+    const data = hasNextPage ? notifications.slice(0, -1) : notifications
+    const lastItem = data[data.length - 1]
+    const nextCursor = lastItem ? lastItem.createdAt.toISOString() : null
+
+    const unreadCount = await this.model.countDocuments({
+      recipientId,
+      isRead: false,
+      isActive: true,
+    })
 
     return {
-      data: documents.map((doc) => this.toEntity(doc)),
-      currentPage: page,
-      totalPages: Math.ceil(totalCount / limit),
+      data: data.map((doc) => this.toEntity(doc)),
+      nextCursor: hasNextPage ? nextCursor : null,
       unreadCount,
     }
   }

@@ -35,6 +35,7 @@ export type GetBookingResponseDTO = {
     bookingGroupId: string
     paymentStatus: string
     serviceStatus: string
+    serviceName?: string
     cancelInfo?: {
       cancelledByRole?: TRole
       reason?: string
@@ -79,11 +80,14 @@ export interface GetBookingDetailsForVendorStrategyResponseDTO {
       pricePerSlot: number
       advanceAmountPerSlot: number
     }
+    description?: string
+    price?: number
     variants?: {
       name: string
       description?: string
       price?: number
     }[]
+    mainImage?: string
   }
 
   customer: {
@@ -95,6 +99,9 @@ export interface GetBookingDetailsForVendorStrategyResponseDTO {
       name?: string
       displayName?: string
       zipCode?: string
+    }
+    geoLocation?: {
+      coordinates: number[]
     }
   }
 }
@@ -133,11 +140,21 @@ export interface GetBookingDetailsForCustomerStrategyResponseDTO {
 
   vendor: {
     name: string
+    email: string
+    phone?: string
     profileImage?: string
     location?: {
       name?: string
       displayName?: string
       zipCode?: string
     }
+    geoLocation?: {
+      coordinates: number[]
+    }
   } | null
+}
+
+export interface GetBookingByPaymentIdResponseDTO {
+  bookingId: string
+  bookingGroupId: string
 }

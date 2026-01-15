@@ -6,7 +6,6 @@ exports.ROLES = {
     CUSTOMER: 'customer',
     VENDOR: 'vendor',
 };
-//wallet
 exports.WALLET_TRANSACTION_TYPES = ['credit', 'debit'];
 exports.WALLET_TRANSACTION_SOURCES = [
     'service-booking',
@@ -16,7 +15,6 @@ exports.WALLET_TRANSACTION_SOURCES = [
     'service-payout',
     'opening-balance',
 ];
-//payment status
 exports.PAYMENT_PHASE = {
     ADVANCE: 'advance',
     REMAINING: 'remaining',
@@ -53,28 +51,21 @@ exports.PAYMENT_STATUS = {
 exports.CURRENCY = {
     INR: 'INR',
 };
-//socket.io
 exports.SOCKET_EVENTS = {
-    /* ---------------- Notifications ---------------- */
     NOTIFICATION_NEW: 'notifications:new',
     NOTIFICATION_READ: 'notifications:read',
     NOTIFICATION_READ_ALL: 'notifications:read-all',
-    /* ---------------- Chat lifecycle ---------------- */
     CHAT_JOIN: 'chat:join',
     CHAT_LEAVE: 'chat:leave',
-    /* ---------------- Messaging ---------------- */
     CHAT_SEND: 'chat:message:send',
     CHAT_NEW: 'chat:message:new',
     CHAT_READ: 'chat:message:read',
-    /* ---------------- Typing ---------------- */
     CHAT_TYPING_START: 'chat:typing:start',
     CHAT_TYPING_STOP: 'chat:typing:stop',
-    /* ---------------- Presence ---------------- */
     USER_ONLINE: 'presence:online',
     USER_OFFLINE: 'presence:offline',
     PRESENCE_PING: 'presence:ping',
 };
-//http status
 exports.HTTP_STATUS = {
     OK: 200,
     CREATED: 201,
@@ -118,27 +109,22 @@ exports.SUCCESS_MESSAGES = {
     VENDOR_REQUESTS_FOUND: 'Requests found successfully.',
     VERIFICATION_STATUS_CHANGED: 'Verification status of the user changed successfully.',
     PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
-    //service category
     SERVICE_CATEGORIES_FOUND_SUCCESSFULLY: 'Service categories found successfully.',
     SERVICE_CATGORIES_CREATED_SUCCESSFULLY: 'Service categories created successfully.',
     SERVICE_CATEGORIES_EDITED_SUCCESSFULLY: 'Service categories edited successfully.',
     SERVICE_BLOCKED_SUCCESSFULLY: 'Service blocked successfully.',
     CREATED_SUB_SERVICE_CATEGORY: 'Successfully created the sub service category.',
-    //Sub Services category
     SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY: 'Sub Service Categories Found Succesfully.',
     EDITED_SUB_SERVICE_CATEGORY: 'Edited Sub Service Category Successfully.',
     SUB_SERVICE_CATEGORY_FETCHED_SUCCESSFULLY: 'Sub Service Category Fetched Successfully',
     SUB_SERVICE_CATEGORY_STATUS_CHANGED_SUCCESSFULLY: 'Sub service category status changed successfully.',
     SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY: 'Sub service category verification status changed successfully.',
-    //service
     SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
     SERVICE_FOUND_SUCCESSFULLY: 'Service found successfully.',
-    //booking
     SLOTS_FETCHED: 'Slots fetched successfully.',
     BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
     CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
     FOUND_BOOKING_DETAILS: 'Found booking details successfully.',
-    //address
     ADDRESS_FOUND_SUCCESSFULLY: 'Address found successfully.',
     ADDRESS_ADDED_SUCCESSFULLY: 'Address added successfully.',
     EDIT_ADDRESS_SUCCESSFULLY: 'Address edited successfully.',
@@ -177,10 +163,8 @@ exports.ERROR_MESSAGES = {
     SERVICES_NOT_FOUND: 'Service not found.',
     NO_BOOKING_FOUND: 'No booking found.',
     CONFLICTING_INPUTS: 'Credentials are conflicting each other.',
-    //address
     ADDRESS_NOT_FOUND: 'Address not found.',
     CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
-    //NOTIFICATION
     NOTIFICATION_NOT_FOUND: 'Notification not found',
 };
 exports.S3_BUCKET_IMAGE_FOLDERS = {

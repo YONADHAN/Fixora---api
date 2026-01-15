@@ -34,13 +34,15 @@ const create_stripe_payment_intent_schema_1 = require("../../validations/booking
 const get_bookings_schema_1 = require("../../validations/booking/get_bookings_schema");
 const custom_error_1 = require("../../../domain/utils/custom.error");
 let BookingController = class BookingController {
-    constructor(_getAvailableSlotsForCustomerUseCase, _createBookingHoldUseCase, _createStripePaymentIntentUseCase, _getBookingsUseCase, _cancelBookingUseCase, _getBookingDetailsUseCase) {
+    constructor(_getAvailableSlotsForCustomerUseCase, _createBookingHoldUseCase, _createStripePaymentIntentUseCase, _getBookingsUseCase, _cancelBookingUseCase, _getBookingDetailsUseCase, _getBookingByPaymentIdUseCase, _payBalanceUseCase) {
         this._getAvailableSlotsForCustomerUseCase = _getAvailableSlotsForCustomerUseCase;
         this._createBookingHoldUseCase = _createBookingHoldUseCase;
         this._createStripePaymentIntentUseCase = _createStripePaymentIntentUseCase;
         this._getBookingsUseCase = _getBookingsUseCase;
         this._cancelBookingUseCase = _cancelBookingUseCase;
         this._getBookingDetailsUseCase = _getBookingDetailsUseCase;
+        this._getBookingByPaymentIdUseCase = _getBookingByPaymentIdUseCase;
+        this._payBalanceUseCase = _payBalanceUseCase;
     }
     getAvailableSlotsForCustomer(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -89,6 +91,22 @@ let BookingController = class BookingController {
                     success: true,
                     message: 'Payment intent created',
                     data: response,
+                });
+            }
+            catch (error) {
+                (0, error_handler_1.handleErrorResponse)(req, res, error);
+            }
+        });
+    }
+    payBalance(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { bookingId } = req.params;
+                const checkoutUrl = yield this._payBalanceUseCase.execute(bookingId);
+                res.status(constants_1.HTTP_STATUS.OK).json({
+                    success: true,
+                    message: 'Balance payment session created',
+                    checkoutUrl
                 });
             }
             catch (error) {
@@ -163,6 +181,33 @@ let BookingController = class BookingController {
             }
         });
     }
+    getBookingByPaymentId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { paymentId } = req.params;
+                const userId = req.user.userId;
+                const role = req.user.role;
+                const booking = yield this._getBookingByPaymentIdUseCase.execute(paymentId);
+                if (!booking) {
+                    throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.NO_BOOKING_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
+                }
+                // Reuse the getBookingDetails usecase logic to get full details
+                const data = yield this._getBookingDetailsUseCase.execute({
+                    bookingId: booking.bookingId,
+                    userId,
+                    role,
+                });
+                res.status(constants_1.HTTP_STATUS.OK).json({
+                    success: true,
+                    message: constants_1.SUCCESS_MESSAGES.FOUND_BOOKING_DETAILS,
+                    data,
+                });
+            }
+            catch (error) {
+                (0, error_handler_1.handleErrorResponse)(req, res, error);
+            }
+        });
+    }
 };
 exports.BookingController = BookingController;
 exports.BookingController = BookingController = __decorate([
@@ -173,5 +218,7 @@ exports.BookingController = BookingController = __decorate([
     __param(3, (0, tsyringe_1.inject)('IGetBookingsUseCase')),
     __param(4, (0, tsyringe_1.inject)('ICancelBookingUseCase')),
     __param(5, (0, tsyringe_1.inject)('IGetBookingDetailsUseCase')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
+    __param(6, (0, tsyringe_1.inject)('IGetBookingByPaymentIdUseCase')),
+    __param(7, (0, tsyringe_1.inject)('IPayBalanceUseCase')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object, Object, Object])
 ], BookingController);

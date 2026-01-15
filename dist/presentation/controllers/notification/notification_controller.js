@@ -33,16 +33,17 @@ let NotificationController = class NotificationController {
         this.markAllNotificationsReadUseCase = markAllNotificationsReadUseCase;
         this.createNotificationUseCase = createNotificationUseCase;
     }
-    /* -------------------- GET MY NOTIFICATIONS -------------------- */
     getMyNotifications(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { page = 1, limit = 10 } = req.query;
+                const { cursor, limit = 10, filter = 'all', search } = req.query;
                 const user = req.user;
                 const result = yield this.getMyNotificationsUseCase.execute({
                     userId: user.userId,
-                    page: Number(page),
                     limit: Number(limit),
+                    cursor: cursor,
+                    filter: filter,
+                    search: search,
                 });
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
@@ -54,7 +55,6 @@ let NotificationController = class NotificationController {
             }
         });
     }
-    /* -------------------- MARK ONE AS READ -------------------- */
     markNotificationRead(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -71,7 +71,6 @@ let NotificationController = class NotificationController {
             }
         });
     }
-    /* -------------------- MARK ALL AS READ -------------------- */
     markAllNotificationsRead(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -85,25 +84,6 @@ let NotificationController = class NotificationController {
             catch (error) {
                 (0, error_handler_1.handleErrorResponse)(req, res, error);
             }
-        });
-    }
-    testNotification(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = req.user;
-            yield this.createNotificationUseCase.execute({
-                recipientId: user.userId,
-                recipientRole: user.role,
-                type: 'ADMIN_MESSAGE',
-                title: 'Test Notification',
-                message: 'If you see this, socket is working 🔔',
-                metadata: {
-                    redirectUrl: '/notifications',
-                },
-            });
-            res.status(200).json({
-                success: true,
-                message: 'Test notification sent',
-            });
         });
     }
 };

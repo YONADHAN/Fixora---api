@@ -30,6 +30,7 @@ export class GetBookingDetailsForVendorResponseMapper {
         name: service.name,
         pricing: service.pricing,
         variants: service.serviceVariants,
+        mainImage: service.mainImage,
       },
 
       customer: {
@@ -38,6 +39,11 @@ export class GetBookingDetailsForVendorResponseMapper {
         phone: customer.phone,
         profileImage: customer.profileImage,
         location: customer.location,
+        geoLocation: customer.geoLocation
+          ? {
+            coordinates: customer.geoLocation.coordinates || [],
+          }
+          : undefined,
       },
     }
   }
@@ -64,21 +70,29 @@ export class GetBookingDetailsForCustomerResponseMapper {
 
       service: service
         ? {
-            serviceId: service.serviceId,
-            name: service.name,
-            description: service.description,
-            pricing: service.pricing,
-            variants: service.serviceVariants,
-            mainImage: service.mainImage,
-          }
+          serviceId: service.serviceId,
+          name: service.name,
+          description: service.description,
+          pricing: service.pricing,
+          variants: service.serviceVariants,
+          mainImage: service.mainImage,
+        }
         : null,
 
       vendor: vendor
         ? {
-            name: vendor.name,
-            profileImage: vendor.profileImage,
-            location: vendor.location,
-          }
+          name: vendor.name,
+          email: vendor.email,
+          phone: vendor.phone,
+          profileImage: vendor.profileImage,
+
+          location: vendor.location,
+          geoLocation: vendor.geoLocation
+            ? {
+              coordinates: vendor.geoLocation.coordinates || [],
+            }
+            : undefined,
+        }
         : null,
     }
   }

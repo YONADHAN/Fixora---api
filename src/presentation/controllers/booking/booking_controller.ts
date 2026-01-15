@@ -28,7 +28,9 @@ import { getMyBookingsRequestSchema } from '../../validations/booking/get_bookin
 import { IGetBookingsUseCase } from '../../../domain/useCaseInterfaces/booking/get_bookings_usecase_interface'
 import { ICancelBookingUseCase } from '../../../domain/useCaseInterfaces/booking/cancel_booking_usecase_interface'
 import { IGetBookingDetailsUseCase } from '../../../domain/useCaseInterfaces/booking/get_booking_details_usecase_interface'
+import { IGetBookingByPaymentIdUseCase } from '../../../domain/useCaseInterfaces/booking/get_booking_by_payment_id_usecase_interface'
 import { CustomError } from '../../../domain/utils/custom.error'
+import { IPayBalanceUseCase } from '../../../domain/useCaseInterfaces/booking/pay_balance_usecase_interface'
 
 @injectable()
 export class BookingController implements IBookingController {
@@ -44,8 +46,12 @@ export class BookingController implements IBookingController {
     @inject('ICancelBookingUseCase')
     private readonly _cancelBookingUseCase: ICancelBookingUseCase,
     @inject('IGetBookingDetailsUseCase')
-    private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase
-  ) {}
+    private readonly _getBookingDetailsUseCase: IGetBookingDetailsUseCase,
+    @inject('IGetBookingByPaymentIdUseCase')
+    private readonly _getBookingByPaymentIdUseCase: IGetBookingByPaymentIdUseCase,
+    @inject('IPayBalanceUseCase')
+    private readonly _payBalanceUseCase: IPayBalanceUseCase
+  ) { }
 
   async getAvailableSlotsForCustomer(
     req: Request,
@@ -110,6 +116,24 @@ export class BookingController implements IBookingController {
     }
   }
 
+  async payBalance(req: Request, res: Response): Promise<void> {
+    try {
+      const { bookingId } = req.params
+
+      const checkoutUrl = await this._payBalanceUseCase.execute(bookingId)
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Balance payment session created',
+        checkoutUrl
+      })
+
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+
   async getMyBookings(req: Request, res: Response): Promise<void> {
     try {
       const userId = (req as CustomRequest).user.userId
@@ -172,6 +196,40 @@ export class BookingController implements IBookingController {
         userId,
         role,
       })
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: SUCCESS_MESSAGES.FOUND_BOOKING_DETAILS,
+        data,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+
+
+  async getBookingByPaymentId(req: Request, res: Response): Promise<void> {
+    try {
+      const { paymentId } = req.params
+      const userId = (req as CustomRequest).user.userId
+      const role = (req as CustomRequest).user.role as TRole
+
+      const booking = await this._getBookingByPaymentIdUseCase.execute(paymentId)
+
+      if (!booking) {
+        throw new CustomError(
+          ERROR_MESSAGES.NO_BOOKING_FOUND,
+          HTTP_STATUS.NOT_FOUND
+        )
+      }
+
+      // Reuse the getBookingDetails usecase logic to get full details
+      const data = await this._getBookingDetailsUseCase.execute({
+        bookingId: booking.bookingId,
+        userId,
+        role,
+      })
+
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.FOUND_BOOKING_DETAILS,

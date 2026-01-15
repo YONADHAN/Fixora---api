@@ -31,7 +31,6 @@ class AdminRoutes extends base_route_1.BaseRoute {
         this.router.post('/change-password', (req, res) => {
             resolver_1.authController.changeMyPassword(req, res);
         });
-        //service-category route
         this.router.use('/category', new service_category_route_1.ServiceCategoryRoutes().router);
         this.router.use('/sub-service-category', new sub_service_category_route_1.SubServiceCategoryRoutes().router);
     }

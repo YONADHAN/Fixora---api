@@ -26,19 +26,21 @@ export class NotificationController implements INotificationController {
 
     @inject('ICreateNotificationUseCase')
     private readonly createNotificationUseCase: ICreateNotificationUseCase
-  ) {}
+  ) { }
 
-  /* -------------------- GET MY NOTIFICATIONS -------------------- */
+
 
   async getMyNotifications(req: Request, res: Response): Promise<void> {
     try {
-      const { page = 1, limit = 10 } = req.query
+      const { cursor, limit = 10, filter = 'all', search } = req.query as any
       const user = (req as CustomRequest).user
 
       const result = await this.getMyNotificationsUseCase.execute({
         userId: user.userId,
-        page: Number(page),
         limit: Number(limit),
+        cursor: cursor as string,
+        filter: filter as 'all' | 'unread',
+        search: search as string,
       })
 
       res.status(HTTP_STATUS.OK).json({
@@ -50,7 +52,7 @@ export class NotificationController implements INotificationController {
     }
   }
 
-  /* -------------------- MARK ONE AS READ -------------------- */
+
 
   async markNotificationRead(req: Request, res: Response): Promise<void> {
     try {
@@ -71,7 +73,7 @@ export class NotificationController implements INotificationController {
     }
   }
 
-  /* -------------------- MARK ALL AS READ -------------------- */
+
 
   async markAllNotificationsRead(req: Request, res: Response): Promise<void> {
     try {
@@ -88,26 +90,5 @@ export class NotificationController implements INotificationController {
     }
   }
 
-  // async testNotification(req: Request, res: Response) {
-  //   const user = (req as CustomRequest).user
 
-  //   await this.createNotificationUseCase.execute({
-  //     recipientId: user.userId,
-  //     recipientRole: user.role as TRole,
-
-  //     type: 'ADMIN_MESSAGE',
-
-  //     title: 'Test Notification',
-  //     message: 'If you see this, socket is working 🔔',
-
-  //     metadata: {
-  //       redirectUrl: '/notifications',
-  //     },
-  //   })
-
-  //   res.status(200).json({
-  //     success: true,
-  //     message: 'Test notification sent',
-  //   })
-  // }
 }

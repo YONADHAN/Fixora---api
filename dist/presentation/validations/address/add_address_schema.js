@@ -24,7 +24,7 @@ exports.AddAddressRequestSchema = zod_1.z.object({
     customerId: zod_1.z.string(),
     label: zod_1.z.string(),
     addressType: zod_1.z.enum(['home', 'office', 'other']),
-    isDefault: zod_1.z.boolean(),
+    isDefault: zod_1.z.boolean().optional().default(false),
     contactName: zod_1.z.string().optional(),
     contactPhone: zod_1.z.string().optional(),
     addressLine1: zod_1.z.string(),

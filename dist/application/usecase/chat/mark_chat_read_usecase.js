@@ -32,20 +32,16 @@ let MarkChatReadUseCase = class MarkChatReadUseCase {
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
             const { chatId, readerId, readerRole } = input;
-            /*  Fetch chat */
             const chat = yield this.chatRepository.findByChatId(chatId);
             if (!chat) {
                 throw new custom_error_1.CustomError('Chat not found', 404);
             }
-            /*  Authorize reader */
             const isCustomer = readerRole === 'customer' && chat.customerId === readerId;
             const isVendor = readerRole === 'vendor' && chat.vendorId === readerId;
             if (!isCustomer && !isVendor) {
                 throw new custom_error_1.CustomError('You are not allowed to read this chat', 403);
             }
-            /*  Reset unread count for reader */
             yield this.chatRepository.resetUnread(chatId, readerRole);
-            /*  Mark messages as read */
             yield this.messageRepository.markMessagesAsRead(chatId, readerId);
         });
     }

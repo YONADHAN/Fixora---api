@@ -35,7 +35,7 @@ export class VendorController implements IVendorController {
     private _uploadVendorDocsUsecase: IUploadVendorDocsUseCase,
     @inject('IProfileImageUploadFactory')
     private _profileImageUploadFactory: IProfileImageUploadFactory
-  ) {}
+  ) { }
 
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
     try {
@@ -124,7 +124,7 @@ export class VendorController implements IVendorController {
 
   async uploadProfileImage(req: Request, res: Response): Promise<void> {
     try {
-      const vendorId = (req as CustomRequest).user.id
+      const vendorId = (req as CustomRequest).user.userId
       const file = req.file as Express.Multer.File
 
       if (!file) {
@@ -136,7 +136,7 @@ export class VendorController implements IVendorController {
       const bucketName = config.storageConfig.bucket!
       const folder = 'profile-images'
 
-      // FIX: add await here
+
       const uploadedProfileImageUrl = await this.storageService.uploadFile(
         bucketName,
         file,

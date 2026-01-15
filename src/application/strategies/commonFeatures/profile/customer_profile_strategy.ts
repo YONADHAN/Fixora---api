@@ -15,12 +15,6 @@ export class CustomerProfileStrategy implements ICustomerProfileStrategy {
     private _CustomerRepository: ICustomerRepository
   ) {}
 
-  // async execute({ userId }: { userId: string }) {
-  //   const data = await this._CustomerRepository.findOne({ userId })
-  //   if (!data) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND)
-  //   return CustomerProfileMapper.toDTO(data)
-  // }
-
   async execute(params: {
     userId: string
   }): Promise<CustomerProfileInfoDTO | VendorProfileInfoDTO> {

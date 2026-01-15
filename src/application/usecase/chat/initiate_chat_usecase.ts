@@ -25,13 +25,13 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
     async execute(data: InitiateChatDto): Promise<string> {
         const { bookingId, requesterId, requesterRole } = data
 
-        // 1. Validate Booking
+
         const booking = await this.bookingRepository.getBookingById(bookingId)
         if (!booking) {
             throw new AppError('Booking not found', HttpStatus.NOT_FOUND)
         }
 
-        // 2. Fetch Entities to get UUIDs
+
         const customer = await this.customerRepository.findOne({ _id: booking.customerRef })
         const vendor = await this.vendorRepository.findOne({ _id: booking.vendorRef })
         const service = await this.serviceRepository.findOne({ _id: booking.serviceRef })
@@ -48,7 +48,7 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
             throw new AppError('Invalid entity data: Missing UUIDs', HttpStatus.INTERNAL_SERVER_ERROR)
         }
 
-        // 3. Validate Ownership (Security Gate) using UUIDs
+
         const isCustomer = customerUuid === requesterId
         const isVendor = vendorUuid === requesterId
 
@@ -59,7 +59,7 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
             )
         }
 
-        // 4. Check for Existing Chat (Idempotency)
+
         const existingChat = await this.chatRepository.findChatByParticipants(
             customerUuid,
             vendorUuid,
@@ -70,7 +70,7 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
             return existingChat.chatId
         }
 
-        // 5. Create New Chat
+
         const newChat = await this.chatRepository.createChat({
             chatId: uuidv4(),
             customerId: customerUuid,

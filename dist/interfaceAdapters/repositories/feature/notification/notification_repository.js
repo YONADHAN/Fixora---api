@@ -27,7 +27,6 @@ let NotificationRepository = class NotificationRepository extends base_repositor
     constructor() {
         super(notification_model_1.NotificationModel);
     }
-    /* -------------------- MAPPERS -------------------- */
     toEntity(model) {
         return {
             _id: model._id.toString(),
@@ -58,32 +57,41 @@ let NotificationRepository = class NotificationRepository extends base_repositor
             isActive: (_b = entity.isActive) !== null && _b !== void 0 ? _b : true,
         };
     }
-    /* -------------------- CUSTOM METHODS -------------------- */
-    findByRecipient(recipientId, page, limit) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const skip = (page - 1) * limit;
-            const filter = {
+    findByRecipient(recipientId_1, limit_1, cursor_1) {
+        return __awaiter(this, arguments, void 0, function* (recipientId, limit, cursor, filterType = 'all', search) {
+            const query = {
                 recipientId,
                 isActive: true,
             };
-            const [documents, totalCount, unreadCount] = yield Promise.all([
-                this.model
-                    .find(filter)
-                    .skip(skip)
-                    .limit(limit)
-                    .sort({ createdAt: -1 })
-                    .lean(),
-                this.model.countDocuments(filter),
-                this.model.countDocuments({
-                    recipientId,
-                    isRead: false,
-                    isActive: true,
-                }),
-            ]);
+            if (search) {
+                query.$or = [
+                    { title: { $regex: search, $options: 'i' } },
+                    { message: { $regex: search, $options: 'i' } },
+                ];
+            }
+            if (filterType === 'unread') {
+                query.isRead = false;
+            }
+            if (cursor) {
+                query.createdAt = { $lt: new Date(cursor) };
+            }
+            const notifications = yield this.model
+                .find(query)
+                .sort({ createdAt: -1 })
+                .limit(limit + 1)
+                .lean();
+            const hasNextPage = notifications.length > limit;
+            const data = hasNextPage ? notifications.slice(0, -1) : notifications;
+            const lastItem = data[data.length - 1];
+            const nextCursor = lastItem ? lastItem.createdAt.toISOString() : null;
+            const unreadCount = yield this.model.countDocuments({
+                recipientId,
+                isRead: false,
+                isActive: true,
+            });
             return {
-                data: documents.map((doc) => this.toEntity(doc)),
-                currentPage: page,
-                totalPages: Math.ceil(totalCount / limit),
+                data: data.map((doc) => this.toEntity(doc)),
+                nextCursor: hasNextPage ? nextCursor : null,
                 unreadCount,
             };
         });

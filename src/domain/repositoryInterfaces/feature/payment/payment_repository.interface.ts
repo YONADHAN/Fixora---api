@@ -18,4 +18,37 @@ export interface IPaymentRepository
       failures: IBaseFailure[]
     }
   ): Promise<void>
+
+  updateRemainingPaymentByBookingId(
+    bookingId: string,
+    remainingPayment: {
+      stripePaymentIntentId: string
+      amount: number
+      status: 'paid' | 'failed'
+      paidAt: Date
+      failures: IBaseFailure[]
+    }
+  ): Promise<void>
+
+  updateRemainingPaymentByBookingGroupId(
+    bookingGroupId: string,
+    remainingPayment: {
+      stripePaymentIntentId: string
+      amount: number
+      status: 'paid' | 'failed'
+      paidAt: Date
+      failures: IBaseFailure[]
+    }
+  ): Promise<void>
+
+  findAllPayments(
+    page: number,
+    limit: number,
+    filter: any
+  ): Promise<{
+    data: IPaymentEntity[]
+    currentPage: number
+    totalPages: number
+    totalCount: number
+  }>
 }

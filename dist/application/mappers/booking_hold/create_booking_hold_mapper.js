@@ -5,6 +5,7 @@ class CreateBookingHoldRequestMapper {
     static toDTO(basic) {
         return {
             serviceId: basic.serviceId.trim(),
+            addressId: basic.addressId.trim(),
             paymentMethod: basic.paymentMethod,
             slots: basic.slots.map((slot) => {
                 var _a;

@@ -4,7 +4,9 @@ export interface IBookingController {
   getAvailableSlotsForCustomer(req: Request, res: Response): Promise<void>
   createBookingHold(req: Request, res: Response): Promise<void>
   createPaymentIntent(req: Request, res: Response): Promise<void>
+  payBalance(req: Request, res: Response): Promise<void>
   getMyBookings(req: Request, res: Response): Promise<void>
   cancelBooking(req: Request, res: Response): Promise<void>
   getBookingDetails(req: Request, res: Response): Promise<void>
+  getBookingByPaymentId(req: Request, res: Response): Promise<void>
 }

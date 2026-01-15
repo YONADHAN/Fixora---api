@@ -154,18 +154,14 @@ let AdminController = class AdminController {
     changeMyVendorVerificationStatus(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // console.log('Entered the change my vendor veriifaction controller')
                 const adminId = req.user.userId;
                 const { userId, verificationStatus, description } = req.body;
-                //console.log('adminId', adminId)
-                //console.log('req.body', req.body)
                 if (!['rejected', 'accepted'].includes(verificationStatus)) {
                     res
                         .status(constants_1.HTTP_STATUS.BAD_REQUEST)
                         .json({ message: constants_1.ERROR_MESSAGES.INVALID_CREDENTIALS });
                     return;
                 }
-                // console.log('going to work in usecase')
                 const response = yield this._changeVendorVerificationStatusUseCase.execute({
                     userId,
                     verificationStatus,

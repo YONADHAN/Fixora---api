@@ -16,6 +16,8 @@ import { SubServiceCategoryController } from '../controllers/service/sub_service
 import { IServiceController } from '../../domain/controllerInterfaces/features/service/service-controller.interface'
 import { ServiceController } from '../controllers/service/service_controller'
 import { IBookingController } from '../../domain/controllerInterfaces/features/booking/booking-controller.interface'
+import { PayBalanceUseCase } from '../../application/usecase/booking/pay_balance_usecase'
+import { BalancePaymentSucceededUseCase } from '../../application/usecase/booking/balance_payment_succeeded_usecase'
 import { BookingController } from '../controllers/booking/booking_controller'
 import { StripeWebhookController } from '../controllers/webhook/stripe_webhook_controller'
 import { IStripeWebhookController } from '../../domain/controllerInterfaces/features/webhook/stripe-webhook-controller.interface'
@@ -27,6 +29,8 @@ import { INotificationController } from '../../domain/controllerInterfaces/featu
 import { NotificationController } from '../controllers/notification/notification_controller'
 import { IChatController } from '../../domain/controllerInterfaces/features/chat/chat-controller.interface'
 import { ChatController } from '../controllers/chat/chat_controller'
+import { IPaymentController } from '../../domain/controllerInterfaces/features/payment/payment_controller.interface'
+import { PaymentController } from '../controllers/payment/payment_controller'
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
@@ -42,6 +46,12 @@ export const subServiceCategoryController =
   container.resolve<ISubServiceCategoryController>(SubServiceCategoryController)
 export const serviceController =
   container.resolve<IServiceController>(ServiceController)
+container.register('IPayBalanceUseCase', {
+  useClass: PayBalanceUseCase,
+})
+container.register('IBalancePaymentSucceededUseCase', {
+  useClass: BalancePaymentSucceededUseCase,
+})
 export const bookingController =
   container.resolve<IBookingController>(BookingController)
 export const stripeWebhookController =
@@ -55,3 +65,4 @@ export const notificationController =
 export const chatController = container.resolve<IChatController>(ChatController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)
+export const paymentController = container.resolve<IPaymentController>(PaymentController)

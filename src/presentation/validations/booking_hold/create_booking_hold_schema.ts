@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const CreateBookingHoldBasicSchema = z.object({
   serviceId: z.string().min(1),
+  addressId: z.string().min(1),
 
   paymentMethod: z.literal('stripe'),
 
@@ -27,6 +28,7 @@ export const CreateBookingHoldBasicSchema = z.object({
 export const CreateBookingHoldRequestSchema = z
   .object({
     serviceId: z.string().min(1),
+    addressId: z.string().min(1),
 
     paymentMethod: z.literal('stripe'),
 

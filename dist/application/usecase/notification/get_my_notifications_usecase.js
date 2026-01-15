@@ -29,7 +29,7 @@ let GetMyNotificationsUseCase = class GetMyNotificationsUseCase {
     }
     execute(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.notificationRepository.findByRecipient(data.userId, data.page, data.limit);
+            return this.notificationRepository.findByRecipient(data.userId, data.limit, data.cursor, data.filter, data.search);
         });
     }
 };

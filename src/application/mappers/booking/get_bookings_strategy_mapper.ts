@@ -11,12 +11,24 @@ export class GetBookingResponseMapper {
       bookingGroupId: booking.bookingGroupId,
       paymentStatus: booking.paymentStatus,
       serviceStatus: booking.serviceStatus,
+      date: booking.date,
+      slotStart: booking.slotStart,
+      slotEnd: booking.slotEnd,
+      serviceName: booking.serviceName,
+      slots: booking.slots?.map((slot) => ({
+        bookingId: slot.bookingId,
+        date: slot.date,
+        slotStart: slot.slotStart,
+        slotEnd: slot.slotEnd,
+        paymentStatus: slot.paymentStatus,
+        serviceStatus: slot.serviceStatus,
+      })),
 
       cancelInfo: booking.cancelInfo
         ? {
-            cancelledByRole: booking.cancelInfo.cancelledByRole,
-            reason: booking.cancelInfo.reason,
-          }
+          cancelledByRole: booking.cancelInfo.cancelledByRole,
+          reason: booking.cancelInfo.reason,
+        }
         : undefined,
     }))
     return {

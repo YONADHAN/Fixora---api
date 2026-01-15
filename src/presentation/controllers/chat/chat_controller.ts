@@ -17,12 +17,11 @@ export class ChatController implements IChatController {
     private readonly initiateChatUseCase: IInitiateChatUseCase,
     @inject('IGetUserChatsUseCase')
     private readonly getUserChatsUseCase: IGetUserChatsUseCase
-  ) {}
+  ) { }
 
   async getChatMessages(req: Request, res: Response): Promise<void> {
     try {
       const { chatId } = req.params
-      console.log('Requested chatId:', req.params.chatId)
 
       const { page = '1', limit = '20' } = req.query
 

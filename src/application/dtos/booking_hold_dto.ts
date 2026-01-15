@@ -1,5 +1,6 @@
 export interface RequestCreateBookingHoldDTO {
   serviceId: string
+  addressId: string
   paymentMethod: 'stripe'
   slots: {
     date: string

@@ -23,6 +23,7 @@ const tsyringe_1 = require("tsyringe");
 const mongoose_1 = require("mongoose");
 const base_repository_1 = require("../../base_repository");
 const booking_model_1 = require("../../../database/mongoDb/models/booking_model");
+const service_model_1 = require("../../../database/mongoDb/models/service_model");
 const custom_error_1 = require("../../../../domain/utils/custom.error");
 let BookingRepository = class BookingRepository extends base_repository_1.BaseRepository {
     constructor() {
@@ -108,8 +109,6 @@ let BookingRepository = class BookingRepository extends base_repository_1.BaseRe
                 if (booking)
                     return this.toEntity(booking);
             }
-            // Fallback: search by custom bookingId field if applicable, or return null
-            // Assuming strict ObjectId check for now, but if bookingId can be a custom string ID:
             const bookingByCustomId = yield this.model
                 .findOne({ bookingId: bookingId })
                 .lean();
@@ -131,7 +130,7 @@ let BookingRepository = class BookingRepository extends base_repository_1.BaseRe
                 .find({
                 serviceRef: new mongoose_1.Types.ObjectId(serviceRef),
                 serviceStatus: { $ne: 'cancelled' },
-                paymentStatus: { $in: ['advance-paid', 'paid'] },
+                paymentStatus: { $in: ['advance-paid', 'paid', 'fully-paid'] },
                 slotStart: { $gte: startOfMonth },
                 slotEnd: { $lte: endOfMonth },
             })
@@ -141,8 +140,9 @@ let BookingRepository = class BookingRepository extends base_repository_1.BaseRe
     }
     findBookingsForUser(page_1, limit_1) {
         return __awaiter(this, arguments, void 0, function* (page, limit, search = '', filters = {}) {
+            var _a;
             const skip = (page - 1) * limit;
-            const filter = Object.assign(Object.assign({}, filters), (search
+            const matchStage = Object.assign(Object.assign({}, filters), (search
                 ? {
                     $or: [
                         { bookingId: { $regex: search, $options: 'i' } },
@@ -152,17 +152,70 @@ let BookingRepository = class BookingRepository extends base_repository_1.BaseRe
                     ],
                 }
                 : {}));
-            const [documents, totalCount] = yield Promise.all([
-                this.model
-                    .find(filter)
-                    .skip(skip)
-                    .limit(limit)
-                    .sort({ createdAt: -1 })
-                    .lean(),
-                this.model.countDocuments(filter),
-            ]);
+            const pipeline = [
+                { $match: matchStage },
+                { $sort: { createdAt: -1 } },
+                {
+                    $group: {
+                        _id: '$bookingGroupId',
+                        doc: { $first: '$$ROOT' },
+                        slots: { $push: '$$ROOT' },
+                    },
+                },
+                {
+                    $replaceRoot: {
+                        newRoot: {
+                            $mergeObjects: ['$doc', { slots: '$slots' }],
+                        },
+                    },
+                },
+                { $sort: { createdAt: -1 } },
+                {
+                    $facet: {
+                        data: [
+                            { $skip: skip },
+                            { $limit: limit },
+                            {
+                                $lookup: {
+                                    from: service_model_1.ServiceModel.collection.name,
+                                    localField: 'serviceRef',
+                                    foreignField: '_id',
+                                    as: 'service',
+                                },
+                            },
+                            {
+                                $unwind: {
+                                    path: '$service',
+                                    preserveNullAndEmptyArrays: true,
+                                },
+                            },
+                            {
+                                $addFields: {
+                                    serviceName: '$service.name',
+                                },
+                            },
+                            {
+                                $project: {
+                                    service: 0,
+                                },
+                            },
+                        ],
+                        metadata: [{ $count: 'total' }],
+                    },
+                },
+            ];
+            const [result] = yield this.model.aggregate(pipeline);
+            const data = result.data || [];
+            const totalCount = ((_a = result.metadata[0]) === null || _a === void 0 ? void 0 : _a.total) || 0;
             return {
-                data: documents.map((doc) => this.toEntity(doc)),
+                data: data.map((doc) => {
+                    const entity = this.toEntity(doc);
+                    entity.serviceName = doc.serviceName;
+                    if (doc.slots && Array.isArray(doc.slots)) {
+                        entity.slots = doc.slots.map((slot) => this.toEntity(slot));
+                    }
+                    return entity;
+                }),
                 currentPage: page,
                 totalPages: Math.ceil(totalCount / limit),
             };

@@ -31,9 +31,10 @@ const config_1 = require("../../../shared/config");
 const error_handler_1 = require("../../../shared/utils/error_handler");
 const stripe = new stripe_1.default(config_1.config.stripe.STRIPE_SECRET_KEY);
 let StripeWebhookController = class StripeWebhookController {
-    constructor(_paymentSucceededUseCase, _paymentFailedUseCase) {
+    constructor(_paymentSucceededUseCase, _paymentFailedUseCase, _balancePaymentSucceededUseCase) {
         this._paymentSucceededUseCase = _paymentSucceededUseCase;
         this._paymentFailedUseCase = _paymentFailedUseCase;
+        this._balancePaymentSucceededUseCase = _balancePaymentSucceededUseCase;
     }
     handle(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -58,6 +59,15 @@ let StripeWebhookController = class StripeWebhookController {
                     case 'payment_intent.payment_failed':
                         yield this._paymentFailedUseCase.execute(event.data.object);
                         break;
+                    case 'checkout.session.completed':
+                        const session = event.data.object;
+                        if (session.payment_intent &&
+                            typeof session.payment_intent === 'string') {
+                            const paymentIntentId = session.payment_intent;
+                            const paymentIntent = yield stripe.paymentIntents.retrieve(paymentIntentId);
+                            yield this._balancePaymentSucceededUseCase.execute(paymentIntent);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -75,5 +85,6 @@ exports.StripeWebhookController = StripeWebhookController = __decorate([
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)('IStripePaymentSucceedUseCase')),
     __param(1, (0, tsyringe_1.inject)('IStripePaymentFailedUseCase')),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, tsyringe_1.inject)('IBalancePaymentSucceededUseCase')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], StripeWebhookController);

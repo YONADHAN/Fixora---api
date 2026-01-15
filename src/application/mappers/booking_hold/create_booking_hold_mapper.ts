@@ -9,6 +9,7 @@ export class CreateBookingHoldRequestMapper {
   static toDTO(basic: BasicInput) {
     return {
       serviceId: basic.serviceId.trim(),
+      addressId: basic.addressId.trim(),
 
       paymentMethod: basic.paymentMethod,
 
@@ -22,9 +23,9 @@ export class CreateBookingHoldRequestMapper {
 
         variant: slot.variant
           ? {
-              name: slot.variant.name?.trim(),
-              price: slot.variant.price,
-            }
+            name: slot.variant.name?.trim(),
+            price: slot.variant.price,
+          }
           : undefined,
       })),
     }

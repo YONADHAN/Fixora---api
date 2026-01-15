@@ -32,18 +32,15 @@ let GetChatMessagesUseCase = class GetChatMessagesUseCase {
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
             const { chatId, requesterId, requesterRole, page = 1, limit = 20 } = input;
-            /*  Fetch chat */
             const chat = yield this._chatRepository.findByChatId(chatId);
             if (!chat) {
                 throw new custom_error_1.CustomError('Chat not found', 404);
             }
-            /* Authorize requester */
             const isCustomer = requesterRole === 'customer' && chat.customerId === requesterId;
             const isVendor = requesterRole === 'vendor' && chat.vendorId === requesterId;
             if (!isCustomer && !isVendor) {
                 throw new custom_error_1.CustomError('You are not allowed to view this chat', 403);
             }
-            /*  Fetch paginated messages */
             const result = yield this._messageRepository.findMessagesByChatId(chatId, page, limit);
             return {
                 messages: result.data,

@@ -35,7 +35,7 @@ let CreateBookingHoldUseCase = class CreateBookingHoldUseCase {
     }
     execute(validatedDTO, customerId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { serviceId, slots, paymentMethod } = validatedDTO;
+            const { serviceId, slots, paymentMethod, addressId } = validatedDTO;
             if (!slots.length) {
                 throw new custom_error_1.CustomError('At least one slot is required', 400);
             }
@@ -68,10 +68,11 @@ let CreateBookingHoldUseCase = class CreateBookingHoldUseCase {
                 const advanceAmount = slots.reduce((s, x) => s + x.advancePerSlot, 0);
                 const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
                 const bookingHold = yield this._bookingHoldRepository.save({
-                    holdId: `HOLD_${(0, crypto_1.randomUUID)()}`,
+                    holdId: `BKGRP_${(0, crypto_1.randomUUID)()}`,
                     serviceRef: service._id,
                     vendorRef: service.vendorRef,
                     customerRef: customer._id.toString(),
+                    addressId,
                     slots,
                     pricing: {
                         totalAmount,

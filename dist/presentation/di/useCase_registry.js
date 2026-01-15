@@ -62,6 +62,7 @@ const change_password_strategy_factory_1 = require("../../application/factories/
 const profile_image_upload_factory_1 = require("../../application/factories/commonFeatures/profile/profile_image_upload_factory");
 const get_booking_factory_1 = require("../../application/factories/booking/get_booking_factory");
 const cancel_booking_factory_1 = require("../../application/factories/booking/cancel_booking_factory");
+const payment_history_factory_1 = require("../../application/factories/payment_history_factory/payment_history_factory");
 const user_mapper_factory_impl_1 = require("../../application/mappers/mapper_factories/user_mapper_factory.impl");
 //Mapper
 const customer_safe_user_mapper_1 = require("../../application/mappers/customer/customer_safe_user_mapper");
@@ -93,6 +94,8 @@ const vendor_status_check_usecase_1 = require("../../application/usecase/vendor/
 const change_admin_password_strategy_1 = require("../../application/strategies/auth/change_password/change_admin_password_strategy");
 const change_vendor_password_strategy_1 = require("../../application/strategies/auth/change_password/change_vendor_password_strategy");
 const change_customer_password_strategy_1 = require("../../application/strategies/auth/change_password/change_customer_password_strategy");
+const get_customer_payment_history_strategy_1 = require("../../application/strategies/payment/get_payment_history/get_customer_payment_history_strategy");
+const get_vendor_payment_history_strategy_1 = require("../../application/strategies/payment/get_payment_history/get_vendor_payment_history_strategy");
 const customer_profile_image_upload_strategy_1 = require("../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy");
 const vendor_profile_image_upload_strategy_1 = require("../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy");
 const get_vendor_sub_service_categories_usecase_1 = require("../../application/usecase/sub_service_category/get_vendor_sub_service_categories_usecase");
@@ -127,6 +130,7 @@ const create_notification_usecase_1 = require("../../application/usecase/notific
 const get_my_notifications_usecase_1 = require("../../application/usecase/notification/get_my_notifications_usecase");
 const mark_all_notifications_read_usecase_1 = require("../../application/usecase/notification/mark_all_notifications_read_usecase");
 const mark_notification_read_usecase_1 = require("../../application/usecase/notification/mark_notification_read_usecase");
+const get_booking_by_payment_id_usecase_1 = require("../../application/usecase/booking/get_booking_by_payment_id_usecase");
 const send_message_usecase_1 = require("../../application/usecase/chat/send_message_usecase");
 const get_chat_messages_usecase_1 = require("../../application/usecase/chat/get_chat_messages_usecase");
 const mark_chat_read_usecase_1 = require("../../application/usecase/chat/mark_chat_read_usecase");
@@ -330,6 +334,9 @@ class UseCaseRegistry {
         tsyringe_1.container.register('ISendMessageUseCase', {
             useClass: send_message_usecase_1.SendMessageUseCase,
         });
+        tsyringe_1.container.register('IGetBookingByPaymentIdUseCase', {
+            useClass: get_booking_by_payment_id_usecase_1.GetBookingByPaymentIdUseCase,
+        });
         tsyringe_1.container.register('IGetChatMessagesUseCase', {
             useClass: get_chat_messages_usecase_1.GetChatMessagesUseCase,
         });
@@ -409,6 +416,9 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IGetBookingDetailsFactory', {
             useClass: get_booking_details_factory_1.GetBookingDetailsFactory,
+        });
+        tsyringe_1.container.register('IPaymentHistoryFactory', {
+            useClass: payment_history_factory_1.PaymentHistoryFactory,
         });
         //strategy
         tsyringe_1.container.register('ICustomerRegistrationStrategy', {
@@ -506,6 +516,12 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IGetBookingDetailsForVendorStrategy', {
             useClass: get_booking_details_for_vendor_strategy_1.GetBookingDetailsForVendorStrategy,
+        });
+        tsyringe_1.container.register('IGetCustomerPaymentHistoryStrategy', {
+            useClass: get_customer_payment_history_strategy_1.GetCustomerPaymentHistoryStrategy,
+        });
+        tsyringe_1.container.register('IGetVendorPaymentHistoryStrategy', {
+            useClass: get_vendor_payment_history_strategy_1.GetVendorPaymentHistoryStrategy,
         });
         //mappers
         tsyringe_1.container.register('ICustomerSafeMapper', { useClass: customer_safe_user_mapper_1.CustomerSafeMapper });

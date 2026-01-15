@@ -32,8 +32,7 @@ import { IGetActiveSubServiceCategoriesUseCase } from '../../../domain/useCaseIn
 
 @injectable()
 export class SubServiceCategoryController
-  implements ISubServiceCategoryController
-{
+  implements ISubServiceCategoryController {
   constructor(
     @inject('ICreateSubServiceCategoryUseCase')
     private _createSubServiceCategoryUseCase: ICreateSubServiceCategoryUseCase,
@@ -53,16 +52,16 @@ export class SubServiceCategoryController
     private _getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase: IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase,
     @inject('IGetActiveSubServiceCategoriesUseCase')
     private _getActiveSubServiceCategoriesUseCase: IGetActiveSubServiceCategoriesUseCase
-  ) {}
+  ) { }
 
   async createSubServiceCategories(req: Request, res: Response): Promise<void> {
     try {
-      //console.log('Entering into the creat sub servic categoriy controller')
+
       const validated = createSubServiceCategoryZodValidationSchema.parse({
         body: req.body,
         file: req.file,
       })
-      //console.log('The data validated is :', validated)
+
       const createdById = (req as CustomRequest).user?.userId ?? ''
       const createdByRole = (req as CustomRequest).user?.role ?? ''
       const isActive = 'active'
@@ -74,7 +73,7 @@ export class SubServiceCategoryController
         createdByRole,
         isActive,
       })
-      //console.log('The dto enters into the use case is :', dto)
+
       const response = await this._createSubServiceCategoryUseCase.execute(dto)
 
       res.status(HTTP_STATUS.CREATED).json({
@@ -112,21 +111,17 @@ export class SubServiceCategoryController
 
   async editSubServiceCategory(req: Request, res: Response): Promise<void> {
     try {
-      //console.log('Entered')
-      //console.log('body', req.body)
-      //if (req.file) {
-      //  console.log('file got ')
-      //}
+
       const validated = editSubServiceCategoryZodValidationSchema.parse({
         body: req.body,
         file: req.file,
       })
-      // console.log('validated', validated)
+
       const dto = EditSubServiceCategoryRequestMapper.toDTO({
         body: validated.body,
         file: validated.file,
       })
-      //console.log('dto', dto)
+
       const response = await this._editSubServiceCategoryUseCase.execute(dto)
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -143,14 +138,14 @@ export class SubServiceCategoryController
     res: Response
   ): Promise<void> {
     try {
-      // console.log('entered')
+
       const validated = GetSingleSubServiceCategoryZodValidationSchema.parse({
         params: req.params,
       })
-      // console.log('params', req.params)
+
       const subServiceCategoryId =
         GetSingleSubServiceCategoryRequestMapper.toDTO(validated)
-      // console.log('validation done', validated)
+
       const response = await this._getSingleSubServiceCategoryUseCase.execute({
         subServiceCategoryId,
       })
@@ -196,10 +191,7 @@ export class SubServiceCategoryController
     res: Response
   ): Promise<void> {
     try {
-      // console.log(
-      //  'toggle verification status of sub service category,',
-      //   req.params
-      //  )
+
       const validated =
         ToggleVerificationStatusOfSubServiceCategoryZodValidationSchema.parse({
           payload: { ...req.params, ...req.query },
@@ -228,7 +220,7 @@ export class SubServiceCategoryController
     res: Response
   ): Promise<void> {
     try {
-      //  console.log('get vendor sub service category controller')
+
       const validated = getVendorSubServiceCategoriesZodValidationSchema.parse(
         req.query
       )
@@ -253,7 +245,7 @@ export class SubServiceCategoryController
     res: Response
   ): Promise<void> {
     try {
-      //  console.log('The getAllsubServiceCatgoriesBase on servcategId', req.query)
+
       const validated =
         GetAllSubServiceCategoriesBasedOnServiceCategoryIdZodValidationSchema.parse(
           { query: req.query }
@@ -262,7 +254,7 @@ export class SubServiceCategoryController
         GetAllSubServiceCategoriesBasedOnServiceCategoryIdRequestMapper.toDTO(
           validated
         )
-      //  console.log('The dto', dto)
+
       const response =
         await this._getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase.execute(
           dto

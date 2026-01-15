@@ -5,12 +5,13 @@ export interface INotificationRepository
   extends IBaseRepository<INotificationEntity> {
   findByRecipient(
     recipientId: string,
-    page: number,
-    limit: number
+    limit: number,
+    cursor?: string,
+    filterType?: 'all' | 'unread',
+    search?: string
   ): Promise<{
     data: INotificationEntity[]
-    currentPage: number
-    totalPages: number
+    nextCursor: string | null
     unreadCount: number
   }>
 

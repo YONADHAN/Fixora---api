@@ -10,6 +10,7 @@ class CustomerProfileMapper {
             role: customer.role,
             phone: customer.phone || '',
             status: customer.status,
+            profileImage: customer.profileImage,
             location: customer.location,
         };
     }

@@ -12,9 +12,7 @@ export class ServiceRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-    // --------------------------
-    // POST /service/create
-    // --------------------------
+
     this.router.post(
       '/',
       verifyAuth,
@@ -24,31 +22,23 @@ export class ServiceRoutes extends BaseRoute {
       (req, res) => serviceController.createService(req, res)
     )
 
-    // --------------------------
-    // GET /service/all
-    // --------------------------
+
     this.router.get(
       '/',
       verifyAuth as CustomRequestHandler,
       authorizeRole(['vendor']),
       (req, res) => serviceController.getAllServices(req, res)
     )
-    // --------------------------
-    // GET /service/all for customers
-    // --------------------------
+
     this.router.get('/search_services', (req, res) =>
       serviceController.searchServicesForCustomer(req, res)
     )
-    // --------------------------
-    // GET /service/:id
-    // --------------------------
+
     this.router.get('/:serviceId', (req, res) =>
       serviceController.getServiceById(req, res)
     )
 
-    // --------------------------
-    // PATCH /service/:id/edit
-    // --------------------------
+
     this.router.patch(
       '/:serviceId/edit',
       verifyAuth,
@@ -58,9 +48,7 @@ export class ServiceRoutes extends BaseRoute {
       (req, res) => serviceController.editService(req, res)
     )
 
-    // --------------------------
-    // PATCH /service/:id/toggleblock
-    // --------------------------
+
     this.router.patch(
       '/:serviceId/toggleblock',
       verifyAuth,

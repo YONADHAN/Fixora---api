@@ -15,12 +15,6 @@ export class VendorProfileStrategy implements IVendorProfileStrategy {
     private _VendorRepository: IVendorRepository
   ) {}
 
-  // async execute({ userId }: { userId: string }) {
-  //   const data = await this._VendorRepository.findOne({ userId })
-  //   if (!data) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND)
-  //   return VendorProfileMapper.toDTO(data)
-  // }
-
   async execute(params: {
     userId: string
   }): Promise<CustomerProfileInfoDTO | VendorProfileInfoDTO> {

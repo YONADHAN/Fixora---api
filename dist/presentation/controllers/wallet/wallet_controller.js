@@ -32,9 +32,12 @@ let WalletController = class WalletController {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.user.userId;
             const role = req.user.role;
+            const { sortBy, order } = req.query;
             const data = yield this._getWalletUseCase.execute({
                 userId,
                 role,
+                sortBy,
+                order,
             });
             res.status(200).json({
                 success: true,

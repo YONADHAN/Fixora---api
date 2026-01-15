@@ -48,11 +48,6 @@ const socketAuthMiddleware = (socket, next) => {
     try {
         const cookieHeader = socket.handshake.headers.cookie;
         console.log('• cookies present:', Boolean(cookieHeader));
-        /**
-         * 🚨 IMPORTANT:
-         * First polling handshake MAY NOT send cookies.
-         * Do NOT fail immediately.
-         */
         if (!cookieHeader) {
             console.log('⚠️  No cookies yet (initial handshake)');
             return next();
@@ -66,9 +61,6 @@ const socketAuthMiddleware = (socket, next) => {
             cookies.admin_refresh_token;
         console.log('• access token present :', Boolean(accessToken));
         console.log('• refresh token present:', Boolean(refreshToken));
-        /**
-         * ✅ ACCESS TOKEN PATH
-         */
         if (accessToken) {
             const decoded = tokenService.verifyAccessToken(accessToken);
             if (!decoded || typeof decoded === 'string') {
@@ -86,23 +78,11 @@ const socketAuthMiddleware = (socket, next) => {
             socket.join(`user:${payload.userId}`);
             return next();
         }
-        /**
-         * 🔁 REFRESH TOKEN PRESENT
-         * Allow connection but mark unauthenticated.
-         * Client will refresh and reconnect.
-         */
         if (refreshToken) {
             console.log('⚠️  Refresh token present, waiting for re-auth');
             socket.data.user = null;
             return next();
         }
-        /**
-         * ❌ NO TOKENS AT ALL
-         */
-        /**
-         * ❌ NO TOKENS AT ALL
-         * Allow connection as guest.
-         */
         console.log('⚠️  No tokens found, connecting as guest');
         socket.data.user = null;
         return next();

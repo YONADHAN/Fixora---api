@@ -4,6 +4,7 @@ exports.CreateBookingHoldRequestSchema = exports.CreateBookingHoldBasicSchema = 
 const zod_1 = require("zod");
 exports.CreateBookingHoldBasicSchema = zod_1.z.object({
     serviceId: zod_1.z.string().min(1),
+    addressId: zod_1.z.string().min(1),
     paymentMethod: zod_1.z.literal('stripe'),
     slots: zod_1.z.array(zod_1.z.object({
         date: zod_1.z.string().min(1),
@@ -22,6 +23,7 @@ exports.CreateBookingHoldBasicSchema = zod_1.z.object({
 exports.CreateBookingHoldRequestSchema = zod_1.z
     .object({
     serviceId: zod_1.z.string().min(1),
+    addressId: zod_1.z.string().min(1),
     paymentMethod: zod_1.z.literal('stripe'),
     slots: zod_1.z
         .array(zod_1.z.object({

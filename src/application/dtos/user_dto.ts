@@ -60,6 +60,7 @@ export interface CustomerProfileInfoDTO {
   role: string
   phone: string
   status: string
+  profileImage?: string
   location: { name: string; displayName: string; zipCode: string }
 }
 
@@ -70,6 +71,7 @@ export interface VendorProfileInfoDTO {
   role: string
   phone: string
   status: string
+  profileImage?: string
   location: { name: string; displayName: string; zipCode: string }
 }
 

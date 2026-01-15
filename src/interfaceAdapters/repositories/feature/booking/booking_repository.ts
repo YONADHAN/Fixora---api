@@ -6,6 +6,7 @@ import {
   BookingModel,
   IBookingModel,
 } from '../../../database/mongoDb/models/booking_model'
+import { ServiceModel } from '../../../database/mongoDb/models/service_model'
 
 import { IBookingRepository } from '../../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
 import { IBookingEntity } from '../../../../domain/models/booking_entity'
@@ -114,8 +115,6 @@ export class BookingRepository
       if (booking) return this.toEntity(booking)
     }
 
-    // Fallback: search by custom bookingId field if applicable, or return null
-    // Assuming strict ObjectId check for now, but if bookingId can be a custom string ID:
     const bookingByCustomId = await this.model
       .findOne({ bookingId: bookingId })
       .lean<BookingMongoBase>()
@@ -145,7 +144,7 @@ export class BookingRepository
       .find({
         serviceRef: new Types.ObjectId(serviceRef),
         serviceStatus: { $ne: 'cancelled' },
-        paymentStatus: { $in: ['advance-paid', 'paid'] },
+        paymentStatus: { $in: ['advance-paid', 'paid', 'fully-paid'] },
         slotStart: { $gte: startOfMonth },
         slotEnd: { $lte: endOfMonth },
       })
@@ -166,9 +165,8 @@ export class BookingRepository
   }> {
     const skip = (page - 1) * limit
 
-    const filter: FilterQuery<IBookingModel> = {
+    const matchStage: FilterQuery<IBookingModel> = {
       ...filters,
-
       ...(search
         ? {
           $or: [
@@ -181,19 +179,73 @@ export class BookingRepository
         : {}),
     }
 
-    const [documents, totalCount] = await Promise.all([
-      this.model
-        .find(filter)
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .lean<BookingMongoBase[]>(),
+    const pipeline: any[] = [
+      { $match: matchStage },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: '$bookingGroupId',
+          doc: { $first: '$$ROOT' },
+          slots: { $push: '$$ROOT' },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$doc', { slots: '$slots' }],
+          },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          data: [
+            { $skip: skip },
+            { $limit: limit },
+            {
+              $lookup: {
+                from: ServiceModel.collection.name,
+                localField: 'serviceRef',
+                foreignField: '_id',
+                as: 'service',
+              },
+            },
+            {
+              $unwind: {
+                path: '$service',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $addFields: {
+                serviceName: '$service.name',
+              },
+            },
+            {
+              $project: {
+                service: 0,
+              },
+            },
+          ],
+          metadata: [{ $count: 'total' }],
+        },
+      },
+    ]
 
-      this.model.countDocuments(filter),
-    ])
+    const [result] = await this.model.aggregate(pipeline)
+
+    const data = result.data || []
+    const totalCount = result.metadata[0]?.total || 0
 
     return {
-      data: documents.map((doc) => this.toEntity(doc)),
+      data: data.map((doc: any) => {
+        const entity = this.toEntity(doc)
+        entity.serviceName = doc.serviceName
+        if (doc.slots && Array.isArray(doc.slots)) {
+          entity.slots = doc.slots.map((slot: any) => this.toEntity(slot))
+        }
+        return entity
+      }),
       currentPage: page,
       totalPages: Math.ceil(totalCount / limit),
     }

@@ -55,10 +55,6 @@ let ServiceCategoryController = class ServiceCategoryController {
             try {
                 const { name, description } = req.body;
                 const bannerImage = req.file;
-                // console.log('The create service category', name, description)
-                // if (bannerImage) {
-                //   console.log('banner image also got')
-                // }
                 yield this._createServiceCategoryUseCase.execute({
                     name,
                     description,
@@ -92,9 +88,7 @@ let ServiceCategoryController = class ServiceCategoryController {
     blockServiceCategory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                //console.log('entereed the block service catgory')
                 const { categoryId, status } = req.body;
-                //console.log('The data is blockservice category controller, ', req.body)
                 yield this._blockServiceCategoryUseCase.execute(categoryId, status);
                 res
                     .status(constants_1.HTTP_STATUS.OK)

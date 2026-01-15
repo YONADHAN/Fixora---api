@@ -31,7 +31,7 @@ let GetWalletUseCase = class GetWalletUseCase {
         this._vendorRepository = _vendorRepository;
     }
     execute(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ userId, role, }) {
+        return __awaiter(this, arguments, void 0, function* ({ userId, role, sortBy, order, }) {
             var _b;
             const user = role === 'customer'
                 ? yield this._customerRepository.findOne({ userId })
@@ -53,7 +53,7 @@ let GetWalletUseCase = class GetWalletUseCase {
             }
             const transactions = yield this._walletTransactionRepository.findAllDocsWithoutPagination({
                 walletRef: wallet._id,
-            });
+            }, sortBy && order ? { sortBy, order } : undefined);
             return {
                 wallet: {
                     walletId: wallet.walletId,

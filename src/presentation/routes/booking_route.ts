@@ -16,6 +16,14 @@ export class BookingRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
+    this.router.get(
+      '/payment/:paymentId',
+      verifyAuth,
+      authorizeRole(['customer']),
+      (req: Request, res: Response) =>
+        bookingController.getBookingByPaymentId(req, res)
+    )
+
     this.router.get('/slots/availability', (req: Request, res: Response) =>
       bookingController.getAvailableSlotsForCustomer(req, res)
     )
@@ -60,5 +68,13 @@ export class BookingRoutes extends BaseRoute {
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       (req: Request, res: Response) => bookingController.cancelBooking(req, res)
     )
+
+    this.router.post(
+      '/:bookingId/pay-balance',
+      verifyAuth,
+      authorizeRole(['customer']),
+      (req: Request, res: Response) => bookingController.payBalance(req, res)
+    )
+
   }
 }

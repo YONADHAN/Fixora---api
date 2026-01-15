@@ -39,59 +39,95 @@ let CustomerCancelBookingStrategy = class CustomerCancelBookingStrategy {
     }
     execute(payload) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const { userId, bookingId, reason, role } = payload;
-            const booking = yield this._bookingRepository.findOne({ bookingId });
-            if (!booking) {
+            const initialBooking = yield this._bookingRepository.findOne({ bookingId });
+            if (!initialBooking) {
+                throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.NO_BOOKING_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
+            }
+            const groupBookings = yield this._bookingRepository.findAllDocsWithoutPagination({
+                bookingGroupId: initialBooking.bookingGroupId,
+            });
+            if (!groupBookings.length) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.NO_BOOKING_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             }
             const user = yield this._customerRepository.findOne({ userId });
             if (!user || !user._id) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.FILE_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             }
-            if (booking.customerRef !== user._id.toString()) {
+            if (initialBooking.customerRef !== user._id.toString()) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.CONFLICTING_INPUTS, constants_1.HTTP_STATUS.CONFLICT);
             }
             const payment = yield this._paymentRepository.findOne({
-                bookingGroupId: booking.bookingGroupId,
+                bookingGroupId: initialBooking.bookingGroupId,
             });
             if (!payment) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.FILE_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             }
             const wallet = yield this._walletRepository.findOne({
-                userRef: booking.customerRef,
+                userRef: initialBooking.customerRef,
             });
             if (!wallet || !wallet._id) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.FILE_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             }
-            yield this._walletTransactionRepository.save({
-                transactionId: `WTXN_${crypto_1.default.randomUUID()}`,
-                walletRef: wallet._id,
-                userRef: booking.customerRef,
-                type: 'credit',
-                source: 'booking-refund',
-                amount: payment.advancePayment.amount,
-                currency: payment.advancePayment.currency,
-                description: `Refund for cancelled booking ${booking.bookingId}`,
-                paymentRef: payment._id,
-            });
-            yield this._paymentRepository.updateSlotAdvanceRefund(payment.paymentId, booking.bookingId, {
-                refundId: `REF_${crypto_1.default.randomUUID()}`,
-                amount: payment.advancePayment.amount,
-                status: 'succeeded',
-                initiatedBy: role,
-                initiatedByUserId: user._id.toString(),
-                createdAt: new Date(),
-                failures: [],
-            });
-            yield this._bookingRepository.update({ bookingId }, {
-                cancelInfo: {
-                    cancelledByRef: user._id.toString(),
-                    cancelledByRole: role,
-                    reason,
-                    cancelledAt: new Date(),
-                },
-                serviceStatus: 'cancelled',
-            });
+            let totalRefundAmount = 0;
+            const refundDetailsPerSlot = [];
+            for (const booking of groupBookings) {
+                if (booking.serviceStatus === 'cancelled')
+                    continue;
+                const paymentSlot = payment.slots.find(s => s.bookingId === booking.bookingId);
+                if (paymentSlot) {
+                    const amount = paymentSlot.pricing.advanceAmount;
+                    totalRefundAmount += amount;
+                    refundDetailsPerSlot.push({ bookingId: booking.bookingId, amount });
+                }
+            }
+            if (totalRefundAmount > 0) {
+                yield this._walletTransactionRepository.save({
+                    transactionId: `WTXN_${crypto_1.default.randomUUID()}`,
+                    walletRef: wallet._id,
+                    userRef: initialBooking.customerRef,
+                    type: 'credit',
+                    source: 'booking-refund',
+                    amount: totalRefundAmount,
+                    currency: ((_a = payment.advancePayment) === null || _a === void 0 ? void 0 : _a.currency) || 'inr',
+                    description: `Refund for cancelled booking group ${initialBooking.bookingGroupId}`,
+                    paymentRef: payment._id,
+                });
+            }
+            for (const detail of refundDetailsPerSlot) {
+                yield this._paymentRepository.updateSlotAdvanceRefund(payment.paymentId, detail.bookingId, {
+                    refundId: `REF_${crypto_1.default.randomUUID()}`,
+                    amount: detail.amount,
+                    status: 'succeeded',
+                    initiatedBy: role,
+                    initiatedByUserId: user._id.toString(),
+                    createdAt: new Date(),
+                    failures: [],
+                });
+                yield this._bookingRepository.update({ bookingId: detail.bookingId }, {
+                    cancelInfo: {
+                        cancelledByRef: user._id.toString(),
+                        cancelledByRole: role,
+                        reason,
+                        cancelledAt: new Date(),
+                    },
+                    serviceStatus: 'cancelled',
+                });
+            }
+            for (const booking of groupBookings) {
+                if (booking.serviceStatus !== 'cancelled') {
+                    yield this._bookingRepository.update({ bookingId: booking.bookingId }, {
+                        cancelInfo: {
+                            cancelledByRef: user._id.toString(),
+                            cancelledByRole: role,
+                            reason,
+                            cancelledAt: new Date(),
+                        },
+                        serviceStatus: 'cancelled',
+                    });
+                }
+            }
         });
     }
 };

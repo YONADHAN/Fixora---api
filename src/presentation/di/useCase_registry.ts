@@ -117,6 +117,9 @@ import { IGetBookingsFactory } from '../../application/factories/booking/get_boo
 import { GetBookingsFactory } from '../../application/factories/booking/get_booking_factory'
 import { ICancelBookingFactory } from '../../application/factories/booking/cancel_booking_factory.interface'
 import { CancelBookingFactory } from '../../application/factories/booking/cancel_booking_factory'
+import { PaymentHistoryFactory } from '../../application/factories/payment_history_factory/payment_history_factory'
+import { IPaymentHistoryFactory } from '../../application/factories/payment_history_factory/payment_history_factory.interface'
+
 //Mapper Factory
 import { IUserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory'
 import { UserMapperFactory } from '../../application/mappers/mapper_factories/user_mapper_factory.impl'
@@ -182,6 +185,13 @@ import { IChangeVendorPasswordStrategy } from '../../application/strategies/auth
 import { ChangeVendorPasswordStrategy } from '../../application/strategies/auth/change_password/change_vendor_password_strategy'
 import { IChangeCustomerPasswordStrategy } from '../../application/strategies/auth/change_password/change_customer_password_strategy.interface'
 import { ChangeCustomerPasswordStrategy } from '../../application/strategies/auth/change_password/change_customer_password_strategy'
+
+import { IGetCustomerPaymentHistoryStrategy } from '../../application/strategies/payment/get_payment_history/get_payment_history_strategy.interface'
+import { GetCustomerPaymentHistoryStrategy } from '../../application/strategies/payment/get_payment_history/get_customer_payment_history_strategy'
+import { IGetVendorPaymentHistoryStrategy } from '../../application/strategies/payment/get_payment_history/get_payment_history_strategy.interface'
+import { GetVendorPaymentHistoryStrategy } from '../../application/strategies/payment/get_payment_history/get_vendor_payment_history_strategy'
+
+
 
 import { ICustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy.interface'
 import { CustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy'
@@ -252,6 +262,9 @@ import { MarkAllNotificationsReadUseCase } from '../../application/usecase/notif
 import { IMarkNotificationReadUseCase } from '../../domain/useCaseInterfaces/notification/mark_notification_read_usecase.interface'
 import { MarkNotificationReadUseCase } from '../../application/usecase/notification/mark_notification_read_usecase'
 
+import { IGetBookingByPaymentIdUseCase } from '../../domain/useCaseInterfaces/booking/get_booking_by_payment_id_usecase_interface'
+import { GetBookingByPaymentIdUseCase } from '../../application/usecase/booking/get_booking_by_payment_id_usecase'
+
 import { ISendMessageUseCase } from '../../domain/useCaseInterfaces/chat/send_message_usecase.interface'
 import { SendMessageUseCase } from '../../application/usecase/chat/send_message_usecase'
 import { IGetChatMessagesUseCase } from '../../domain/repositoryInterfaces/feature/chat/get_chat_messages_usecase.interface'
@@ -262,6 +275,7 @@ import { IInitiateChatUseCase } from '../../domain/useCaseInterfaces/chat/initia
 import { InitiateChatUseCase } from '../../application/usecase/chat/initiate_chat_usecase'
 import { IGetUserChatsUseCase } from '../../domain/useCaseInterfaces/chat/get_user_chats_usecase.interface'
 import { GetUserChatsUseCase } from '../../application/usecase/chat/get_user_chats_usecase'
+
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -595,6 +609,13 @@ export class UseCaseRegistry {
       useClass: SendMessageUseCase,
     })
 
+    container.register<IGetBookingByPaymentIdUseCase>(
+      'IGetBookingByPaymentIdUseCase',
+      {
+        useClass: GetBookingByPaymentIdUseCase,
+      }
+    )
+
     container.register<IGetChatMessagesUseCase>('IGetChatMessagesUseCase', {
       useClass: GetChatMessagesUseCase,
     })
@@ -715,6 +736,10 @@ export class UseCaseRegistry {
 
     container.register<IGetBookingDetailsFactory>('IGetBookingDetailsFactory', {
       useClass: GetBookingDetailsFactory,
+    })
+
+    container.register<IPaymentHistoryFactory>('IPaymentHistoryFactory', {
+      useClass: PaymentHistoryFactory,
     })
     //strategy
     container.register<ICustomerRegistrationStrategy>(
@@ -913,6 +938,20 @@ export class UseCaseRegistry {
       'IGetBookingDetailsForVendorStrategy',
       {
         useClass: GetBookingDetailsForVendorStrategy,
+      }
+    )
+
+    container.register<IGetCustomerPaymentHistoryStrategy>(
+      'IGetCustomerPaymentHistoryStrategy',
+      {
+        useClass: GetCustomerPaymentHistoryStrategy,
+      }
+    )
+
+    container.register<IGetVendorPaymentHistoryStrategy>(
+      'IGetVendorPaymentHistoryStrategy',
+      {
+        useClass: GetVendorPaymentHistoryStrategy,
       }
     )
 

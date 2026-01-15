@@ -23,6 +23,8 @@ export const BookingHoldSchema = new Schema<IBookingHoldModel>(
       required: true,
     },
 
+    addressId: { type: String, required: true },
+
     slots: [
       {
         date: { type: String, required: true },

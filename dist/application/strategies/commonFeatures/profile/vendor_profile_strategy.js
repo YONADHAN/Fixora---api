@@ -29,11 +29,6 @@ let VendorProfileStrategy = class VendorProfileStrategy {
     constructor(_VendorRepository) {
         this._VendorRepository = _VendorRepository;
     }
-    // async execute({ userId }: { userId: string }) {
-    //   const data = await this._VendorRepository.findOne({ userId })
-    //   if (!data) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND)
-    //   return VendorProfileMapper.toDTO(data)
-    // }
     execute(params) {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId } = params;

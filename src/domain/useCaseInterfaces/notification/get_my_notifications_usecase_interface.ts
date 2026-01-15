@@ -1,8 +1,10 @@
 import { INotificationEntity } from '../../models/notification_entity'
 export interface GetMyNotificationsInput {
   userId: string
-  page: number
   limit: number
+  cursor?: string
+  filter?: 'all' | 'unread'
+  search?: string
 }
 
 export interface IGetMyNotificationsUseCase {
@@ -11,7 +13,6 @@ export interface IGetMyNotificationsUseCase {
 
 export interface GetMyNotificationsResponse {
   data: INotificationEntity[]
-  currentPage: number
-  totalPages: number
+  nextCursor: string | null
   unreadCount: number
 }

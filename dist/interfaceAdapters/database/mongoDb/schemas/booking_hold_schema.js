@@ -19,6 +19,7 @@ exports.BookingHoldSchema = new mongoose_1.Schema({
         ref: 'User',
         required: true,
     },
+    addressId: { type: String, required: true },
     slots: [
         {
             date: { type: String, required: true },

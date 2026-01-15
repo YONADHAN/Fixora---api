@@ -11,7 +11,7 @@ export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
 
 export type TRole = 'customer' | 'admin' | 'vendor'
-//wallet
+
 
 export const WALLET_TRANSACTION_TYPES = ['credit', 'debit'] as const
 export type WalletTransactionType = (typeof WALLET_TRANSACTION_TYPES)[number]
@@ -27,7 +27,7 @@ export const WALLET_TRANSACTION_SOURCES = [
 export type WalletTransactionSource =
   (typeof WALLET_TRANSACTION_SOURCES)[number]
 
-//payment status
+
 export const PAYMENT_PHASE = {
   ADVANCE: 'advance',
   REMAINING: 'remaining',
@@ -89,28 +89,28 @@ export const CURRENCY = {
 
 export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
 
-//socket.io
+
 export const SOCKET_EVENTS = {
-  /* ---------------- Notifications ---------------- */
+
   NOTIFICATION_NEW: 'notifications:new',
   NOTIFICATION_READ: 'notifications:read',
   NOTIFICATION_READ_ALL: 'notifications:read-all',
 
-  /* ---------------- Chat lifecycle ---------------- */
+
   CHAT_JOIN: 'chat:join',
   CHAT_LEAVE: 'chat:leave',
 
-  /* ---------------- Messaging ---------------- */
+
   CHAT_SEND: 'chat:message:send',
   CHAT_NEW: 'chat:message:new',
 
   CHAT_READ: 'chat:message:read',
 
-  /* ---------------- Typing ---------------- */
+
   CHAT_TYPING_START: 'chat:typing:start',
   CHAT_TYPING_STOP: 'chat:typing:stop',
 
-  /* ---------------- Presence ---------------- */
+
   USER_ONLINE: 'presence:online',
   USER_OFFLINE: 'presence:offline',
   PRESENCE_PING: 'presence:ping',
@@ -122,7 +122,7 @@ export interface SocketUser {
   email: string
 }
 
-//http status
+
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
@@ -171,7 +171,7 @@ export const SUCCESS_MESSAGES = {
     'Verification status of the user changed successfully.',
   PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
 
-  //service category
+
   SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
     'Service categories found successfully.',
   SERVICE_CATGORIES_CREATED_SUCCESSFULLY:
@@ -182,7 +182,7 @@ export const SUCCESS_MESSAGES = {
   CREATED_SUB_SERVICE_CATEGORY:
     'Successfully created the sub service category.',
 
-  //Sub Services category
+
   SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
     'Sub Service Categories Found Succesfully.',
   EDITED_SUB_SERVICE_CATEGORY: 'Edited Sub Service Category Successfully.',
@@ -193,17 +193,17 @@ export const SUCCESS_MESSAGES = {
   SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY:
     'Sub service category verification status changed successfully.',
 
-  //service
+
   SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
   SERVICE_FOUND_SUCCESSFULLY: 'Service found successfully.',
 
-  //booking
+
   SLOTS_FETCHED: 'Slots fetched successfully.',
   BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
   CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
   FOUND_BOOKING_DETAILS: 'Found booking details successfully.',
 
-  //address
+
   ADDRESS_FOUND_SUCCESSFULLY: 'Address found successfully.',
   ADDRESS_ADDED_SUCCESSFULLY: 'Address added successfully.',
   EDIT_ADDRESS_SUCCESSFULLY: 'Address edited successfully.',
@@ -249,12 +249,12 @@ export const ERROR_MESSAGES = {
   NO_BOOKING_FOUND: 'No booking found.',
   CONFLICTING_INPUTS: 'Credentials are conflicting each other.',
 
-  //address
+
   ADDRESS_NOT_FOUND: 'Address not found.',
 
   CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
 
-  //NOTIFICATION
+
   NOTIFICATION_NOT_FOUND: 'Notification not found',
 }
 

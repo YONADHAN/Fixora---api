@@ -8,6 +8,7 @@ export interface BookingHoldMongoBase {
   serviceRef: Types.ObjectId
   vendorRef: Types.ObjectId
   customerRef: Types.ObjectId
+  addressId: string
 
   slots: {
     date: string

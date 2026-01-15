@@ -20,7 +20,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatController = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -32,46 +31,70 @@ let ChatController = class ChatController {
     }
     getChatMessages(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { chatId } = req.params;
-            const { page = '1', limit = '20' } = req.query;
-            const user = req.user;
-            const result = yield this.getChatMessagesUseCase.execute({
-                chatId,
-                requesterId: user.userId,
-                requesterRole: user.role,
-                page: Number(page),
-                limit: Number(limit),
-            });
-            res.status(200).json({
-                success: true,
-                data: result,
-            });
+            try {
+                const { chatId } = req.params;
+                const { page = '1', limit = '20' } = req.query;
+                const user = req.user;
+                const result = yield this.getChatMessagesUseCase.execute({
+                    chatId,
+                    requesterId: user.userId,
+                    requesterRole: user.role,
+                    page: Number(page),
+                    limit: Number(limit),
+                });
+                res.status(200).json({
+                    success: true,
+                    data: result,
+                });
+            }
+            catch (error) {
+                res.status(error.statusCode || 500).json({
+                    success: false,
+                    message: error.message || 'Internal Server Error',
+                });
+            }
         });
     }
     initiateChat(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { bookingId } = req.body;
-            const user = req.user;
-            const chatId = yield this.initiateChatUseCase.execute({
-                bookingId,
-                requesterId: user.userId,
-                requesterRole: user.role,
-            });
-            res.status(201).json({
-                success: true,
-                message: 'Chat initiated successfully',
-                data: { chatId },
-            });
+            try {
+                const { bookingId } = req.body;
+                const user = req.user;
+                const chatId = yield this.initiateChatUseCase.execute({
+                    bookingId,
+                    requesterId: user.userId,
+                    requesterRole: user.role,
+                });
+                res.status(201).json({
+                    success: true,
+                    message: 'Chat initiated successfully',
+                    data: { chatId },
+                });
+            }
+            catch (error) {
+                res.status(error.statusCode || 500).json({
+                    success: false,
+                    message: error.message || 'Internal Server Error',
+                });
+            }
         });
     }
     getUserChats(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = req.user;
-            const chats = yield this.getUserChatsUseCase.execute(user.userId);
-            res.status(200).json({
-                success: true,
-                data: chats,
-            });
+            try {
+                const user = req.user;
+                const chats = yield this.getUserChatsUseCase.execute(user.userId);
+                res.status(200).json({
+                    success: true,
+                    data: chats,
+                });
+            }
+            catch (error) {
+                res.status(error.statusCode || 500).json({
+                    success: false,
+                    message: error.message || 'Internal Server Error',
+                });
+            }
         });
     }
 };
@@ -81,5 +104,5 @@ exports.ChatController = ChatController = __decorate([
     __param(0, (0, tsyringe_1.inject)('IGetChatMessagesUseCase')),
     __param(1, (0, tsyringe_1.inject)('IInitiateChatUseCase')),
     __param(2, (0, tsyringe_1.inject)('IGetUserChatsUseCase')),
-    __metadata("design:paramtypes", [Object, typeof (_a = typeof IInitiateChatUseCase !== "undefined" && IInitiateChatUseCase) === "function" ? _a : Object, typeof (_b = typeof IGetUserChatsUseCase !== "undefined" && IGetUserChatsUseCase) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], ChatController);

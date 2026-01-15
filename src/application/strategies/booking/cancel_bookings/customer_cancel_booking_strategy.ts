@@ -14,8 +14,7 @@ import { ICustomerCancelBookingStrategyInterface } from './customer_cancel_booki
 
 @injectable()
 export class CustomerCancelBookingStrategy
-  implements ICustomerCancelBookingStrategyInterface
-{
+  implements ICustomerCancelBookingStrategyInterface {
   constructor(
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository,
@@ -31,18 +30,32 @@ export class CustomerCancelBookingStrategy
 
     @inject('IWalletTransactionRepository')
     private _walletTransactionRepository: IWalletTransactionRepository
-  ) {}
+  ) { }
 
   async execute(payload: CancelBookingRequestDTO): Promise<void> {
     const { userId, bookingId, reason, role } = payload
 
-    const booking = await this._bookingRepository.findOne({ bookingId })
-    if (!booking) {
+
+    const initialBooking = await this._bookingRepository.findOne({ bookingId })
+    if (!initialBooking) {
       throw new CustomError(
         ERROR_MESSAGES.NO_BOOKING_FOUND,
         HTTP_STATUS.NOT_FOUND
       )
     }
+
+
+    const groupBookings = await this._bookingRepository.findAllDocsWithoutPagination({
+      bookingGroupId: initialBooking.bookingGroupId,
+    })
+
+    if (!groupBookings.length) {
+      throw new CustomError(
+        ERROR_MESSAGES.NO_BOOKING_FOUND,
+        HTTP_STATUS.NOT_FOUND
+      )
+    }
+
 
     const user = await this._customerRepository.findOne({ userId })
     if (!user || !user._id) {
@@ -52,15 +65,16 @@ export class CustomerCancelBookingStrategy
       )
     }
 
-    if (booking.customerRef !== user._id.toString()) {
+    if (initialBooking.customerRef !== user._id.toString()) {
       throw new CustomError(
         ERROR_MESSAGES.CONFLICTING_INPUTS,
         HTTP_STATUS.CONFLICT
       )
     }
 
+
     const payment = await this._paymentRepository.findOne({
-      bookingGroupId: booking.bookingGroupId,
+      bookingGroupId: initialBooking.bookingGroupId,
     })
 
     if (!payment) {
@@ -70,8 +84,9 @@ export class CustomerCancelBookingStrategy
       )
     }
 
+
     const wallet = await this._walletRepository.findOne({
-      userRef: booking.customerRef,
+      userRef: initialBooking.customerRef,
     })
 
     if (!wallet || !wallet._id) {
@@ -81,46 +96,84 @@ export class CustomerCancelBookingStrategy
       )
     }
 
-    await this._walletTransactionRepository.save({
-      transactionId: `WTXN_${crypto.randomUUID()}`,
-      walletRef: wallet._id,
-      userRef: booking.customerRef,
 
-      type: 'credit',
-      source: 'booking-refund',
+    let totalRefundAmount = 0
+    const refundDetailsPerSlot: { bookingId: string, amount: number }[] = []
 
-      amount: payment.advancePayment.amount,
-      currency: payment.advancePayment.currency,
+    for (const booking of groupBookings) {
+      if (booking.serviceStatus === 'cancelled') continue;
 
-      description: `Refund for cancelled booking ${booking.bookingId}`,
-      paymentRef: payment._id,
-    })
-
-    await this._paymentRepository.updateSlotAdvanceRefund(
-      payment.paymentId,
-      booking.bookingId,
-      {
-        refundId: `REF_${crypto.randomUUID()}`,
-        amount: payment.advancePayment.amount,
-        status: 'succeeded',
-        initiatedBy: role,
-        initiatedByUserId: user._id.toString(),
-        createdAt: new Date(),
-        failures: [],
+      const paymentSlot = payment.slots.find(s => s.bookingId === booking.bookingId)
+      if (paymentSlot) {
+        const amount = paymentSlot.pricing.advanceAmount
+        totalRefundAmount += amount
+        refundDetailsPerSlot.push({ bookingId: booking.bookingId, amount })
       }
-    )
+    }
 
-    await this._bookingRepository.update(
-      { bookingId },
-      {
-        cancelInfo: {
-          cancelledByRef: user._id.toString(),
-          cancelledByRole: role,
-          reason,
-          cancelledAt: new Date(),
-        },
-        serviceStatus: 'cancelled',
+    if (totalRefundAmount > 0) {
+      await this._walletTransactionRepository.save({
+        transactionId: `WTXN_${crypto.randomUUID()}`,
+        walletRef: wallet._id,
+        userRef: initialBooking.customerRef,
+
+        type: 'credit',
+        source: 'booking-refund',
+
+        amount: totalRefundAmount,
+        currency: payment.advancePayment?.currency || 'inr',
+
+        description: `Refund for cancelled booking group ${initialBooking.bookingGroupId}`,
+        paymentRef: payment._id,
+      })
+    }
+
+
+    for (const detail of refundDetailsPerSlot) {
+      await this._paymentRepository.updateSlotAdvanceRefund(
+        payment.paymentId,
+        detail.bookingId,
+        {
+          refundId: `REF_${crypto.randomUUID()}`,
+          amount: detail.amount,
+          status: 'succeeded',
+          initiatedBy: role,
+          initiatedByUserId: user._id.toString(),
+          createdAt: new Date(),
+          failures: [],
+        }
+      )
+
+      await this._bookingRepository.update(
+        { bookingId: detail.bookingId },
+        {
+          cancelInfo: {
+            cancelledByRef: user._id.toString(),
+            cancelledByRole: role,
+            reason,
+            cancelledAt: new Date(),
+          },
+          serviceStatus: 'cancelled',
+        }
+      )
+    }
+
+
+    for (const booking of groupBookings) {
+      if (booking.serviceStatus !== 'cancelled') {
+        await this._bookingRepository.update(
+          { bookingId: booking.bookingId },
+          {
+            cancelInfo: {
+              cancelledByRef: user._id.toString(),
+              cancelledByRole: role,
+              reason,
+              cancelledAt: new Date(),
+            },
+            serviceStatus: 'cancelled',
+          }
+        )
       }
-    )
+    }
   }
 }

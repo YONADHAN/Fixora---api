@@ -78,7 +78,7 @@ export class AdminRoutes extends BaseRoute {
         authController.changeMyPassword(req, res)
       }
     )
-    //service-category route
+
     this.router.use('/category', new ServiceCategoryRoutes().router)
     this.router.use(
       '/sub-service-category',

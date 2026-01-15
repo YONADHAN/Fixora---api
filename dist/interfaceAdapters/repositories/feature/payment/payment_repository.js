@@ -23,6 +23,7 @@ const tsyringe_1 = require("tsyringe");
 const mongoose_1 = require("mongoose");
 const base_repository_1 = require("../../base_repository");
 const payment_model_1 = require("../../../database/mongoDb/models/payment_model");
+require("../../../database/mongoDb/models/service_model");
 let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRepository {
     constructor() {
         super(payment_model_1.PaymentModel);
@@ -95,7 +96,7 @@ let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRe
         };
     }
     toEntity(model) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return {
             _id: model._id.toString(),
             paymentId: model.paymentId,
@@ -104,12 +105,12 @@ let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRe
             vendorRef: (_b = model.vendorRef) === null || _b === void 0 ? void 0 : _b.toString(),
             serviceRef: (_c = model.serviceRef) === null || _c === void 0 ? void 0 : _c.toString(),
             advancePayment: {
-                stripePaymentIntentId: model.advancePayment.stripePaymentIntentId,
-                amount: model.advancePayment.amount,
-                currency: model.advancePayment.currency,
-                status: model.advancePayment.status,
-                paidAt: model.advancePayment.paidAt,
-                failures: model.advancePayment.failures.map((f) => {
+                stripePaymentIntentId: ((_d = model.advancePayment) === null || _d === void 0 ? void 0 : _d.stripePaymentIntentId) || '',
+                amount: ((_e = model.advancePayment) === null || _e === void 0 ? void 0 : _e.amount) || 0,
+                currency: ((_f = model.advancePayment) === null || _f === void 0 ? void 0 : _f.currency) || 'INR',
+                status: ((_g = model.advancePayment) === null || _g === void 0 ? void 0 : _g.status) || 'pending',
+                paidAt: (_h = model.advancePayment) === null || _h === void 0 ? void 0 : _h.paidAt,
+                failures: (((_j = model.advancePayment) === null || _j === void 0 ? void 0 : _j.failures) || []).map((f) => {
                     var _a;
                     return ({
                         code: f.code,
@@ -120,14 +121,14 @@ let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRe
                     });
                 }),
             },
-            slots: model.slots.map((slot) => {
-                var _a;
+            slots: (model.slots || []).map((slot) => {
+                var _a, _b, _c, _d;
                 return ({
                     bookingId: slot.bookingId,
                     pricing: {
-                        totalPrice: slot.pricing.totalPrice,
-                        advanceAmount: slot.pricing.advanceAmount,
-                        remainingAmount: slot.pricing.remainingAmount,
+                        totalPrice: ((_a = slot.pricing) === null || _a === void 0 ? void 0 : _a.totalPrice) || 0,
+                        advanceAmount: ((_b = slot.pricing) === null || _b === void 0 ? void 0 : _b.advanceAmount) || 0,
+                        remainingAmount: ((_c = slot.pricing) === null || _c === void 0 ? void 0 : _c.remainingAmount) || 0,
                     },
                     advanceRefund: slot.advanceRefund
                         ? {
@@ -135,9 +136,9 @@ let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRe
                             amount: slot.advanceRefund.amount,
                             status: slot.advanceRefund.status,
                             initiatedBy: slot.advanceRefund.initiatedBy,
-                            initiatedByUserId: (_a = slot.advanceRefund.initiatedByUserId) === null || _a === void 0 ? void 0 : _a.toString(),
+                            initiatedByUserId: (_d = slot.advanceRefund.initiatedByUserId) === null || _d === void 0 ? void 0 : _d.toString(),
                             createdAt: slot.advanceRefund.createdAt,
-                            failures: slot.advanceRefund.failures.map((f) => ({
+                            failures: (slot.advanceRefund.failures || []).map((f) => ({
                                 code: f.code,
                                 message: f.message,
                                 stripeEventId: f.stripeEventId,
@@ -151,7 +152,7 @@ let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRe
                             amount: slot.remainingPayment.amount,
                             status: slot.remainingPayment.status,
                             paidAt: slot.remainingPayment.paidAt,
-                            failures: slot.remainingPayment.failures.map((f) => {
+                            failures: (slot.remainingPayment.failures || []).map((f) => {
                                 var _a;
                                 return ({
                                     code: f.code,
@@ -190,6 +191,52 @@ let PaymentRepository = class PaymentRepository extends base_repository_1.BaseRe
                     'slots.$.status': 'refunded',
                 },
             });
+        });
+    }
+    updateRemainingPaymentByBookingId(bookingId, remainingPayment) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.model.updateOne({ 'slots.bookingId': bookingId }, {
+                $set: {
+                    'slots.$.remainingPayment': remainingPayment,
+                    'slots.$.status': 'fully-paid',
+                    status: 'fully-paid',
+                },
+            });
+        });
+    }
+    updateRemainingPaymentByBookingGroupId(bookingGroupId, remainingPayment) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.model.updateOne({ bookingGroupId }, {
+                $set: {
+                    'slots.$[].remainingPayment': remainingPayment,
+                    'slots.$[].status': 'fully-paid',
+                    status: 'fully-paid',
+                },
+            });
+        });
+    }
+    findAllPayments(page, limit, filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const skip = (page - 1) * limit;
+            const totalCount = yield this.model.countDocuments(filter);
+            const data = yield this.model
+                .find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate('serviceRef', 'name')
+                .populate('vendorRef', 'name')
+                .populate('customerRef', 'name')
+                .lean();
+            return {
+                data: data.map((d) => {
+                    var _a, _b, _c;
+                    return (Object.assign(Object.assign({}, this.toEntity(d)), { serviceName: (_a = d.serviceRef) === null || _a === void 0 ? void 0 : _a.name, vendorName: (_b = d.vendorRef) === null || _b === void 0 ? void 0 : _b.name, customerName: (_c = d.customerRef) === null || _c === void 0 ? void 0 : _c.name }));
+                }),
+                currentPage: page,
+                totalPages: Math.ceil(totalCount / limit),
+                totalCount,
+            };
         });
     }
 };

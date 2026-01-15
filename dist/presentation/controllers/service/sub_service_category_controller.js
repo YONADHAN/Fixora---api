@@ -57,12 +57,10 @@ let SubServiceCategoryController = class SubServiceCategoryController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d;
             try {
-                //console.log('Entering into the creat sub servic categoriy controller')
                 const validated = create_sub_service_category_schema_1.createSubServiceCategoryZodValidationSchema.parse({
                     body: req.body,
                     file: req.file,
                 });
-                //console.log('The data validated is :', validated)
                 const createdById = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId) !== null && _b !== void 0 ? _b : '';
                 const createdByRole = (_d = (_c = req.user) === null || _c === void 0 ? void 0 : _c.role) !== null && _d !== void 0 ? _d : '';
                 const isActive = 'active';
@@ -73,7 +71,6 @@ let SubServiceCategoryController = class SubServiceCategoryController {
                     createdByRole,
                     isActive,
                 });
-                //console.log('The dto enters into the use case is :', dto)
                 const response = yield this._createSubServiceCategoryUseCase.execute(dto);
                 res.status(constants_1.HTTP_STATUS.CREATED).json({
                     success: true,
@@ -110,21 +107,14 @@ let SubServiceCategoryController = class SubServiceCategoryController {
     editSubServiceCategory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                //console.log('Entered')
-                //console.log('body', req.body)
-                //if (req.file) {
-                //  console.log('file got ')
-                //}
                 const validated = edit_sub_service_category_schema_1.editSubServiceCategoryZodValidationSchema.parse({
                     body: req.body,
                     file: req.file,
                 });
-                // console.log('validated', validated)
                 const dto = edit_sub_service_category_mapper_1.EditSubServiceCategoryRequestMapper.toDTO({
                     body: validated.body,
                     file: validated.file,
                 });
-                //console.log('dto', dto)
                 const response = yield this._editSubServiceCategoryUseCase.execute(dto);
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
@@ -140,13 +130,10 @@ let SubServiceCategoryController = class SubServiceCategoryController {
     getSingleSubServiceCategory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // console.log('entered')
                 const validated = get_single_sub_service_category_schema_1.GetSingleSubServiceCategoryZodValidationSchema.parse({
                     params: req.params,
                 });
-                // console.log('params', req.params)
                 const subServiceCategoryId = get_single_sub_service_category_mapper_1.GetSingleSubServiceCategoryRequestMapper.toDTO(validated);
-                // console.log('validation done', validated)
                 const response = yield this._getSingleSubServiceCategoryUseCase.execute({
                     subServiceCategoryId,
                 });
@@ -183,10 +170,6 @@ let SubServiceCategoryController = class SubServiceCategoryController {
     toggleVerificationStatusOfSubServiceCategory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // console.log(
-                //  'toggle verification status of sub service category,',
-                //   req.params
-                //  )
                 const validated = toggle_verification_status_of_sub_service_category_schema_1.ToggleVerificationStatusOfSubServiceCategoryZodValidationSchema.parse({
                     payload: Object.assign(Object.assign({}, req.params), req.query),
                 });
@@ -206,7 +189,6 @@ let SubServiceCategoryController = class SubServiceCategoryController {
     getVendorSubServiceCategories(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                //  console.log('get vendor sub service category controller')
                 const validated = get_vendor_sub_service_category_schema_1.getVendorSubServiceCategoriesZodValidationSchema.parse(req.query);
                 const vendorId = req.user.userId;
                 const dto = get_vendor_sub_service_category_mapper_1.GetVendorSubServiceCategoriesRequestMapper.toDTO({
@@ -227,10 +209,8 @@ let SubServiceCategoryController = class SubServiceCategoryController {
     getAllSubServiceCategoriesBasedOnServiceCategoryId(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                //  console.log('The getAllsubServiceCatgoriesBase on servcategId', req.query)
                 const validated = get_sub_service_categories_based_on_service_category_id_schema_1.GetAllSubServiceCategoriesBasedOnServiceCategoryIdZodValidationSchema.parse({ query: req.query });
                 const dto = get_sub_service_catergories_based_on_service_category_mapper_1.GetAllSubServiceCategoriesBasedOnServiceCategoryIdRequestMapper.toDTO(validated);
-                //  console.log('The dto', dto)
                 const response = yield this._getAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase.execute(dto);
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,

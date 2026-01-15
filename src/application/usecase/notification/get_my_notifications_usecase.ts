@@ -13,15 +13,17 @@ export class GetMyNotificationsUseCase implements IGetMyNotificationsUseCase {
   constructor(
     @inject('INotificationRepository')
     private readonly notificationRepository: INotificationRepository
-  ) {}
+  ) { }
 
   async execute(
     data: GetMyNotificationsInput
   ): Promise<GetMyNotificationsResponse> {
     return this.notificationRepository.findByRecipient(
       data.userId,
-      data.page,
-      data.limit
+      data.limit,
+      data.cursor,
+      data.filter,
+      data.search
     )
   }
 }

@@ -15,8 +15,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 @injectable()
 export class BookingHoldRepository
   extends BaseRepository<IBookingHoldModel, IBookingHoldEntity>
-  implements IBookingHoldRepository
-{
+  implements IBookingHoldRepository {
   constructor() {
     super(BookingHoldModel)
   }
@@ -53,6 +52,8 @@ export class BookingHoldRepository
         ? new Types.ObjectId(entity.customerRef)
         : undefined,
 
+      addressId: entity.addressId,
+
       slots: entity.slots?.map((s) => ({
         date: s.date,
         start: s.start,
@@ -63,18 +64,18 @@ export class BookingHoldRepository
 
         variant: s.variant
           ? {
-              name: s.variant.name,
-              price: s.variant.price,
-            }
+            name: s.variant.name,
+            price: s.variant.price,
+          }
           : undefined,
       })),
 
       pricing: entity.pricing
         ? {
-            totalAmount: entity.pricing.totalAmount,
-            advanceAmount: entity.pricing.advanceAmount,
-            remainingAmount: entity.pricing.remainingAmount,
-          }
+          totalAmount: entity.pricing.totalAmount,
+          advanceAmount: entity.pricing.advanceAmount,
+          remainingAmount: entity.pricing.remainingAmount,
+        }
         : undefined,
 
       paymentMethod: entity.paymentMethod,
@@ -98,6 +99,7 @@ export class BookingHoldRepository
       serviceRef: model.serviceRef.toString(),
       vendorRef: model.vendorRef.toString(),
       customerRef: model.customerRef.toString(),
+      addressId: model.addressId,
 
       slots: model.slots.map((s) => ({
         date: s.date,
@@ -109,9 +111,9 @@ export class BookingHoldRepository
 
         variant: s.variant
           ? {
-              name: s.variant.name,
-              price: s.variant.price,
-            }
+            name: s.variant.name,
+            price: s.variant.price,
+          }
           : undefined,
       })),
 

@@ -92,7 +92,7 @@ let CustomerController = class CustomerController {
     uploadProfileImage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const customerId = req.user.id;
+                const customerId = req.user.userId;
                 const file = req.file;
                 if (!file) {
                     res.status(400).json({ message: 'No file uploaded' });

@@ -21,6 +21,7 @@ export const BookingSchema = new Schema<IBookingModel>(
         'pending',
         'advance-paid',
         'paid',
+        'fully-paid',
         'pending-refund',
         'refunded',
         'failed',

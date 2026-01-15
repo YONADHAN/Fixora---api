@@ -3,6 +3,7 @@ import 'reflect-metadata'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { Request, Response } from 'express'
 import { IAddressController } from '../../../domain/controllerInterfaces/features/address/address-controller.interface'
+import { CustomRequest } from '../../middleware/auth_middleware'
 
 import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
 import {
@@ -51,11 +52,15 @@ export class AddressController implements IAddressController {
     private readonly _deleteAddressUseCase: IDeleteAddressUseCase,
     @inject('IGetSingleAddressUseCase')
     private readonly _getSingleAddressUseCase: IGetSingleAddressUseCase
-  ) {}
+  ) { }
 
   async getAddress(req: Request, res: Response): Promise<void> {
     try {
-      const basic = GetAddressBasicSchema.parse(req.query)
+      const { user } = req as CustomRequest
+      const basic = GetAddressBasicSchema.parse({
+        ...req.query,
+        customerId: user?.userId,
+      })
 
       const dto = GetAddressRequestMapper.toDTO(basic)
 
@@ -75,11 +80,11 @@ export class AddressController implements IAddressController {
 
   async addAddress(req: Request, res: Response): Promise<void> {
     try {
-      const basicData = AddAddressBasicSchema.parse(req.body)
-
-      const dto = AddAddressMapper.toDTO(basicData)
-
-      const validatedDTO = AddAddressRequestSchema.parse(dto)
+      const { user } = req as CustomRequest
+      const validatedDTO = AddAddressRequestSchema.parse({
+        ...req.body,
+        customerId: user?.userId,
+      })
 
       await this._addAddressUseCase.execute(validatedDTO)
 
@@ -94,9 +99,10 @@ export class AddressController implements IAddressController {
 
   async editAddress(req: Request, res: Response): Promise<void> {
     try {
-      const basicData = EditAddressBasicSchema.parse(req.body)
-      const dto = EditAddressMapper.toDTO(basicData)
-      const validatedDTO = EditAddressRequestSchema.parse(dto)
+      const validatedDTO = EditAddressRequestSchema.parse({
+        ...req.body,
+        addressId: req.params.addressId,
+      })
       await this._editAddressUseCase.execute(validatedDTO)
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -147,7 +153,7 @@ export class AddressController implements IAddressController {
   async getSingleAddress(req: Request, res: Response): Promise<void> {
     try {
       const validatedDTO = GetSingleAddressSchema.parse(req.params)
-      const data = this._getSingleAddressUseCase.execute(validatedDTO)
+      const data = await this._getSingleAddressUseCase.execute(validatedDTO)
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.ADDRESS_FOUND_SUCCESSFULLY,

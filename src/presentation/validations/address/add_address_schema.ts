@@ -32,7 +32,7 @@ export const AddAddressRequestSchema = z.object({
   label: z.string(),
   addressType: z.enum(['home', 'office', 'other']),
 
-  isDefault: z.boolean(),
+  isDefault: z.boolean().optional().default(false),
 
   contactName: z.string().optional(),
   contactPhone: z.string().optional(),

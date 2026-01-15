@@ -19,6 +19,7 @@ class GetBookingDetailsForVendorResponseMapper {
                 name: service.name,
                 pricing: service.pricing,
                 variants: service.serviceVariants,
+                mainImage: service.mainImage,
             },
             customer: {
                 name: customer.name,
@@ -26,6 +27,11 @@ class GetBookingDetailsForVendorResponseMapper {
                 phone: customer.phone,
                 profileImage: customer.profileImage,
                 location: customer.location,
+                geoLocation: customer.geoLocation
+                    ? {
+                        coordinates: customer.geoLocation.coordinates || [],
+                    }
+                    : undefined,
             },
         };
     }
@@ -57,8 +63,15 @@ class GetBookingDetailsForCustomerResponseMapper {
             vendor: vendor
                 ? {
                     name: vendor.name,
+                    email: vendor.email,
+                    phone: vendor.phone,
                     profileImage: vendor.profileImage,
                     location: vendor.location,
+                    geoLocation: vendor.geoLocation
+                        ? {
+                            coordinates: vendor.geoLocation.coordinates || [],
+                        }
+                        : undefined,
                 }
                 : null,
         };

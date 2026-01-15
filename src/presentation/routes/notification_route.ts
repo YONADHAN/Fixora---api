@@ -9,9 +9,7 @@ export class NotificationRoutes extends BaseRoute {
       notificationController.getMyNotifications(req, res)
     )
 
-    // this.router.post('/test', verifyAuth, (req: Request, res: Response) =>
-    //   notificationController.testNotification(req, res)
-    // )
+
 
     this.router.patch(
       '/:notificationId/read',

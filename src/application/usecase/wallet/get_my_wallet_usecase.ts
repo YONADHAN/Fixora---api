@@ -19,14 +19,18 @@ export class GetWalletUseCase implements IGetWalletUseCase {
 
     @inject('IVendorRepository')
     private _vendorRepository: IVendorRepository
-  ) {}
+  ) { }
 
   async execute({
     userId,
     role,
+    sortBy,
+    order,
   }: {
     userId: string
     role: 'customer' | 'vendor'
+    sortBy?: 'amount' | 'createdAt' | 'type'
+    order?: 'asc' | 'desc'
   }) {
     const user =
       role === 'customer'
@@ -52,9 +56,12 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     }
 
     const transactions =
-      await this._walletTransactionRepository.findAllDocsWithoutPagination({
-        walletRef: wallet._id,
-      })
+      await this._walletTransactionRepository.findAllDocsWithoutPagination(
+        {
+          walletRef: wallet._id,
+        },
+        sortBy && order ? { sortBy, order } : undefined
+      )
 
     return {
       wallet: {

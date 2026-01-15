@@ -16,12 +16,13 @@ export interface BookingMongoBase {
   paymentRef?: Types.ObjectId
 
   paymentStatus:
-    | 'pending'
-    | 'advance-paid'
-    | 'paid'
-    | 'pending-refund'
-    | 'refunded'
-    | 'failed'
+  | 'pending'
+  | 'advance-paid'
+  | 'paid'
+  | 'fully-paid'
+  | 'pending-refund'
+  | 'refunded'
+  | 'failed'
   serviceStatus: 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
   stripePaymentIntentId?: string
   stripeSlotPaymentRefundId?: string

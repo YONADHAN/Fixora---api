@@ -16,13 +16,13 @@ export const PaymentSchema = new Schema(
 
     customerRef: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Customer',
       required: true,
     },
 
     vendorRef: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Vendor',
       required: true,
     },
 
@@ -92,7 +92,7 @@ export const PaymentSchema = new Schema(
           },
           initiatedByUserId: {
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            required: false,
           },
           createdAt: Date,
           failures: [

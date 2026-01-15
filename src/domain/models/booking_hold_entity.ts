@@ -6,6 +6,7 @@ export interface IBookingHoldEntity {
   serviceRef: string
   vendorRef: string
   customerRef: string
+  addressId: string
 
   slots: {
     date: string

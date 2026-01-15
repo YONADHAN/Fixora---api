@@ -29,9 +29,7 @@ const constants_1 = require("../../../shared/constants");
 const get_addresses_schema_1 = require("../../validations/address/get_addresses_schema");
 const get_addresses_mapper_1 = require("../../../application/mappers/address/get_addresses_mapper");
 const add_address_schema_1 = require("../../validations/address/add_address_schema");
-const add_address_mapper_1 = require("../../../application/mappers/address/add_address_mapper");
 const edit_address_schema_1 = require("../../validations/address/edit_address_schema");
-const edit_address_mapper_1 = require("../../../application/mappers/address/edit_address_mapper");
 const set_default_address_schema_1 = require("../../validations/address/set_default_address_schema");
 const delete_address_schema_1 = require("../../validations/address/delete_address_schema");
 const get_single_address_schema_1 = require("../../validations/address/get_single_address_schema");
@@ -47,7 +45,8 @@ let AddressController = class AddressController {
     getAddress(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const basic = get_addresses_schema_1.GetAddressBasicSchema.parse(req.query);
+                const { user } = req;
+                const basic = get_addresses_schema_1.GetAddressBasicSchema.parse(Object.assign(Object.assign({}, req.query), { customerId: user === null || user === void 0 ? void 0 : user.userId }));
                 const dto = get_addresses_mapper_1.GetAddressRequestMapper.toDTO(basic);
                 const validatedDTO = get_addresses_schema_1.GetAddressRequestSchema.parse(dto);
                 const data = yield this._getAddressUseCase.execute(validatedDTO);
@@ -65,9 +64,8 @@ let AddressController = class AddressController {
     addAddress(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const basicData = add_address_schema_1.AddAddressBasicSchema.parse(req.body);
-                const dto = add_address_mapper_1.AddAddressMapper.toDTO(basicData);
-                const validatedDTO = add_address_schema_1.AddAddressRequestSchema.parse(dto);
+                const { user } = req;
+                const validatedDTO = add_address_schema_1.AddAddressRequestSchema.parse(Object.assign(Object.assign({}, req.body), { customerId: user === null || user === void 0 ? void 0 : user.userId }));
                 yield this._addAddressUseCase.execute(validatedDTO);
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
@@ -82,9 +80,7 @@ let AddressController = class AddressController {
     editAddress(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const basicData = edit_address_schema_1.EditAddressBasicSchema.parse(req.body);
-                const dto = edit_address_mapper_1.EditAddressMapper.toDTO(basicData);
-                const validatedDTO = edit_address_schema_1.EditAddressRequestSchema.parse(dto);
+                const validatedDTO = edit_address_schema_1.EditAddressRequestSchema.parse(Object.assign(Object.assign({}, req.body), { addressId: req.params.addressId }));
                 yield this._editAddressUseCase.execute(validatedDTO);
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
@@ -136,7 +132,7 @@ let AddressController = class AddressController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const validatedDTO = get_single_address_schema_1.GetSingleAddressSchema.parse(req.params);
-                const data = this._getSingleAddressUseCase.execute(validatedDTO);
+                const data = yield this._getSingleAddressUseCase.execute(validatedDTO);
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
                     message: constants_1.SUCCESS_MESSAGES.ADDRESS_FOUND_SUCCESSFULLY,

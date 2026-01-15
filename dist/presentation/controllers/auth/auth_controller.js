@@ -58,8 +58,6 @@ let AuthController = class AuthController {
         this._googleLoginUseCase = _googleLoginUseCase;
         this._changeMyPasswordUsecase = _changeMyPasswordUsecase;
     }
-    // controller for sending otp to emails
-    // giving email as parameter
     sendOtpEmail(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -75,8 +73,6 @@ let AuthController = class AuthController {
             }
         });
     }
-    //controller for verifying otp
-    //giving email and otp as parameters
     verifyOtp(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -93,8 +89,6 @@ let AuthController = class AuthController {
             }
         });
     }
-    //controller for registering the users
-    //giving the user data + role in body
     register(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -107,7 +101,6 @@ let AuthController = class AuthController {
                     });
                     return;
                 }
-                //console.log('schema failed')
                 const validatedData = schema.parse(req.body);
                 yield this._registerUserUseCase.execute(validatedData);
                 res.status(constants_1.HTTP_STATUS.CREATED).json({
@@ -120,8 +113,6 @@ let AuthController = class AuthController {
             }
         });
     }
-    //controller for make the users login
-    //giving the email,password and role in body
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -154,8 +145,6 @@ let AuthController = class AuthController {
             }
         });
     }
-    //controller for users to click the forgot password
-    //giving email and role in body
     forgotPassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -178,8 +167,6 @@ let AuthController = class AuthController {
             }
         });
     }
-    //controller for reseting the password
-    //giving token as parameter
     resetPassword(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -267,10 +254,6 @@ let AuthController = class AuthController {
                 const { currentPassword, newPassword } = req.body;
                 const userId = req.user.userId;
                 const role = req.user.role;
-                // console.log('current', currentPassword)
-                // console.log('new', newPassword)
-                // console.log('userId', userId)
-                // console.log('role', role)
                 if (currentPassword.trim() === newPassword.trim()) {
                     res.status(constants_1.HTTP_STATUS.BAD_REQUEST).json({
                         success: false,
@@ -279,7 +262,6 @@ let AuthController = class AuthController {
                     return;
                 }
                 const response = yield this._changeMyPasswordUsecase.execute(currentPassword, newPassword, userId, role);
-                // console.log('successfully changed')
                 res.status(constants_1.HTTP_STATUS.OK).json({
                     success: true,
                     message: constants_1.SUCCESS_MESSAGES.PASSWORD_CHANGED_SUCCESSFULLY,

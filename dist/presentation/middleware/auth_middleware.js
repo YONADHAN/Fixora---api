@@ -33,7 +33,6 @@ const extractToken = (req) => {
 };
 const isBlacklisted = (token) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield redis_client_1.redisClient.get(token);
-    // console.log('is token blacklisted', result)
     return result !== null;
 });
 const verifyAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -73,18 +72,14 @@ const verifyAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 exports.verifyAuth = verifyAuth;
 const decodeToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log('entered the decode token')
         const token = extractToken(req);
         if (!(token === null || token === void 0 ? void 0 : token.refresh_token)) {
-            // console.log('no token for decode')
             res
                 .status(constants_1.HTTP_STATUS.UNAUTHORIZED)
                 .json({ message: constants_1.ERROR_MESSAGES.UNAUTHORIZED_ACCESS });
             return;
         }
-        // console.log('got the refresh token')
         const user = tokenService.verifyRefreshToken(token === null || token === void 0 ? void 0 : token.refresh_token);
-        // console.log('got user data from verifying the refresh token', user)
         const newAccessToken = tokenService.generateAccessToken({
             userId: user.userId,
             email: user.email,
@@ -100,7 +95,6 @@ const decodeToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         next();
     }
     catch (error) {
-        // console.log('failed to decode', error)
         const basePath = req.baseUrl.split('/');
         const role = basePath[3];
         if (role) {

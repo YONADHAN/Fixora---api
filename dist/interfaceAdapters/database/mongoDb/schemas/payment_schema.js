@@ -15,12 +15,12 @@ exports.PaymentSchema = new mongoose_1.Schema({
     },
     customerRef: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Customer',
         required: true,
     },
     vendorRef: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Vendor',
         required: true,
     },
     serviceRef: {
@@ -85,7 +85,7 @@ exports.PaymentSchema = new mongoose_1.Schema({
                 },
                 initiatedByUserId: {
                     type: mongoose_1.Schema.Types.ObjectId,
-                    ref: 'User',
+                    required: false,
                 },
                 createdAt: Date,
                 failures: [

@@ -6,6 +6,7 @@ import { config } from '../../../shared/config'
 import { IStripePaymentFailedUseCase } from '../../../domain/useCaseInterfaces/booking_hold/stripe_payment_failed_usecase_interface'
 import { IStripePaymentSucceedUseCase } from '../../../domain/useCaseInterfaces/booking_hold/stripe_payment_succeeded_usecase_interface'
 import { IStripeWebhookController } from '../../../domain/controllerInterfaces/features/webhook/stripe-webhook-controller.interface'
+import { IBalancePaymentSucceededUseCase } from '../../../domain/useCaseInterfaces/booking/balance_payment_succeeded_usecase_interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 const stripe = new Stripe(config.stripe.STRIPE_SECRET_KEY)
 
@@ -16,8 +17,11 @@ export class StripeWebhookController implements IStripeWebhookController {
     private _paymentSucceededUseCase: IStripePaymentSucceedUseCase,
 
     @inject('IStripePaymentFailedUseCase')
-    private _paymentFailedUseCase: IStripePaymentFailedUseCase
-  ) {}
+    private _paymentFailedUseCase: IStripePaymentFailedUseCase,
+
+    @inject('IBalancePaymentSucceededUseCase')
+    private _balancePaymentSucceededUseCase: IBalancePaymentSucceededUseCase
+  ) { }
 
   async handle(req: Request, res: Response): Promise<void> {
     try {
@@ -37,6 +41,7 @@ export class StripeWebhookController implements IStripeWebhookController {
           config.stripe.STRIPE_WEBHOOK_SECRET
         )
       } catch (err) {
+
         res.status(400).send('Webhook signature verification failed')
         return
       }
@@ -53,6 +58,22 @@ export class StripeWebhookController implements IStripeWebhookController {
             event.data.object as Stripe.PaymentIntent
           )
           break
+
+        case 'checkout.session.completed':
+          const session = event.data.object as Stripe.Checkout.Session
+          if (
+            session.payment_intent &&
+            typeof session.payment_intent === 'string'
+          ) {
+            const paymentIntentId = session.payment_intent
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              paymentIntentId
+            )
+
+            await this._balancePaymentSucceededUseCase.execute(paymentIntent)
+          }
+          break
+
         default:
           break
       }

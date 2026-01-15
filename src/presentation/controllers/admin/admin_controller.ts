@@ -32,7 +32,7 @@ export class AdminController implements IAdminController {
     private _getAllVendorRequests: IGetAllVendorRequestsUseCase,
     @inject('IChangeVendorVerificationStatusUseCase')
     private _changeVendorVerificationStatusUseCase: IChangeVendorVerificationStatusUseCase
-  ) {}
+  ) { }
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
@@ -160,18 +160,17 @@ export class AdminController implements IAdminController {
     res: Response
   ): Promise<void> {
     try {
-      // console.log('Entered the change my vendor veriifaction controller')
+
       const adminId = (req as CustomRequest).user.userId
       const { userId, verificationStatus, description } = req.body
-      //console.log('adminId', adminId)
-      //console.log('req.body', req.body)
+
       if (!['rejected', 'accepted'].includes(verificationStatus)) {
         res
           .status(HTTP_STATUS.BAD_REQUEST)
           .json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS })
         return
       }
-      // console.log('going to work in usecase')
+
       const response =
         await this._changeVendorVerificationStatusUseCase.execute({
           userId,

@@ -27,13 +27,13 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
 
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository
-  ) {}
+  ) { }
 
   async execute(
     validatedDTO: RequestCreateBookingHoldDTO,
     customerId: string
   ): Promise<ResponseCreateBookingHoldDTO> {
-    const { serviceId, slots, paymentMethod } = validatedDTO
+    const { serviceId, slots, paymentMethod, addressId } = validatedDTO
 
     if (!slots.length) {
       throw new CustomError('At least one slot is required', 400)
@@ -85,10 +85,11 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
 
       const bookingHold = await this._bookingHoldRepository.save({
-        holdId: `HOLD_${randomUUID()}`,
+        holdId: `BKGRP_${randomUUID()}`,
         serviceRef: service._id,
         vendorRef: service.vendorRef,
         customerRef: customer._id.toString(),
+        addressId,
         slots,
         pricing: {
           totalAmount,

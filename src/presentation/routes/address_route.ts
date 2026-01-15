@@ -9,12 +9,12 @@ export class AddressRoutes extends BaseRoute {
 
   protected initializeRoutes(): void {
     this.router
-      // Get all active addresses
+
       .get('/me', (req: Request, res: Response) => {
         addressController.getAddress(req, res)
       })
 
-      // Add new address
+
       .post('/', (req: Request, res: Response) => {
         addressController.addAddress(req, res)
       })
@@ -23,17 +23,17 @@ export class AddressRoutes extends BaseRoute {
         addressController.getSingleAddress(req, res)
       })
 
-      // Edit address
+
       .patch('/:addressId', (req: Request, res: Response) => {
         addressController.editAddress(req, res)
       })
 
-      // Set default address
+
       .patch('/:addressId/default', (req: Request, res: Response) => {
         addressController.setDefaultAddress(req, res)
       })
 
-      // Soft delete address
+
       .delete('/:addressId', (req: Request, res: Response) => {
         addressController.deleteAddress(req, res)
       })
