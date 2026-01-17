@@ -27,11 +27,12 @@ const custom_error_1 = require("../../../../domain/utils/custom.error");
 const constants_1 = require("../../../../shared/constants");
 const get_booking_details_strategy_mapper_1 = require("../../../mappers/booking/get_booking_details_strategy_mapper");
 let GetBookingDetailsForVendorStrategy = class GetBookingDetailsForVendorStrategy {
-    constructor(_vendorRepository, _bookingRepository, _serviceRepository, _customerRepository) {
+    constructor(_vendorRepository, _bookingRepository, _serviceRepository, _customerRepository, _addressRepository) {
         this._vendorRepository = _vendorRepository;
         this._bookingRepository = _bookingRepository;
         this._serviceRepository = _serviceRepository;
         this._customerRepository = _customerRepository;
+        this._addressRepository = _addressRepository;
     }
     execute(payload) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -60,7 +61,13 @@ let GetBookingDetailsForVendorStrategy = class GetBookingDetailsForVendorStrateg
             if (!customer) {
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.USER_NOT_FOUND, constants_1.HTTP_STATUS.NOT_FOUND);
             }
-            return get_booking_details_strategy_mapper_1.GetBookingDetailsForVendorResponseMapper.toDTO(booking, service, customer);
+            let address = null;
+            if (booking.addressId) {
+                address = yield this._addressRepository.findOne({
+                    addressId: booking.addressId,
+                });
+            }
+            return get_booking_details_strategy_mapper_1.GetBookingDetailsForVendorResponseMapper.toDTO(booking, service, customer, address);
         });
     }
 };
@@ -71,5 +78,6 @@ exports.GetBookingDetailsForVendorStrategy = GetBookingDetailsForVendorStrategy 
     __param(1, (0, tsyringe_1.inject)('IBookingRepository')),
     __param(2, (0, tsyringe_1.inject)('IServiceRepository')),
     __param(3, (0, tsyringe_1.inject)('ICustomerRepository')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object])
+    __param(4, (0, tsyringe_1.inject)('IAddressRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
 ], GetBookingDetailsForVendorStrategy);

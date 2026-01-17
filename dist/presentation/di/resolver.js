@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.paymentController = exports.blockMyUserMiddleware = exports.chatController = exports.notificationController = exports.walletController = exports.addressController = exports.stripeWebhookController = exports.bookingController = exports.serviceController = exports.subServiceCategoryController = exports.serviceCategoryController = exports.adminController = exports.customerController = exports.vendorController = exports.authController = void 0;
+exports.reviewController = exports.paymentController = exports.blockMyUserMiddleware = exports.chatController = exports.notificationController = exports.walletController = exports.addressController = exports.stripeWebhookController = exports.bookingController = exports.serviceController = exports.subServiceCategoryController = exports.serviceCategoryController = exports.adminController = exports.customerController = exports.vendorController = exports.authController = void 0;
 const tsyringe_1 = require("tsyringe");
 const index_1 = require("./index");
 const auth_controller_1 = require("../controllers/auth/auth_controller");
@@ -20,6 +20,7 @@ const wallet_controller_1 = require("../controllers/wallet/wallet_controller");
 const notification_controller_1 = require("../controllers/notification/notification_controller");
 const chat_controller_1 = require("../controllers/chat/chat_controller");
 const payment_controller_1 = require("../controllers/payment/payment_controller");
+const review_controller_1 = require("../controllers/review/review_controller");
 index_1.DependencyInjection.registerAll();
 exports.authController = tsyringe_1.container.resolve(auth_controller_1.AuthController);
 exports.vendorController = tsyringe_1.container.resolve(vendor_controller_1.VendorController);
@@ -43,3 +44,4 @@ exports.chatController = tsyringe_1.container.resolve(chat_controller_1.ChatCont
 //middleware
 exports.blockMyUserMiddleware = tsyringe_1.container.resolve(block_middleware_1.BlockMyUserMiddleware);
 exports.paymentController = tsyringe_1.container.resolve(payment_controller_1.PaymentController);
+exports.reviewController = tsyringe_1.container.resolve(review_controller_1.ReviewController);

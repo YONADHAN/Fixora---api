@@ -31,9 +31,13 @@ import { IChatController } from '../../domain/controllerInterfaces/features/chat
 import { ChatController } from '../controllers/chat/chat_controller'
 import { IPaymentController } from '../../domain/controllerInterfaces/features/payment/payment_controller.interface'
 import { PaymentController } from '../controllers/payment/payment_controller'
+import { IReviewController } from '../../domain/controllerInterfaces/features/review/review-controller.interface'
+import { ReviewController } from '../controllers/review/review_controller'
+
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
+
 export const vendorController =
   container.resolve<IVendorController>(VendorController)
 export const customerController =
@@ -66,3 +70,4 @@ export const chatController = container.resolve<IChatController>(ChatController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)
 export const paymentController = container.resolve<IPaymentController>(PaymentController)
+export const reviewController = container.resolve<IReviewController>(ReviewController)

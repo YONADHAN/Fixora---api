@@ -40,17 +40,17 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
             throw new AppError('Related entities (Customer, Vendor, or Service) not found', HttpStatus.NOT_FOUND)
         }
 
-        const customerUuid = customer.userId
-        const vendorUuid = vendor.userId
-        const serviceUuid = service.serviceId
+        const customerObjectId = customer._id
+        const vendorObjectId = vendor._id
+        const serviceObjectId = service._id
 
-        if (!customerUuid || !vendorUuid || !serviceUuid) {
+        if (!customerObjectId || !vendorObjectId || !serviceObjectId) {
             throw new AppError('Invalid entity data: Missing UUIDs', HttpStatus.INTERNAL_SERVER_ERROR)
         }
 
 
-        const isCustomer = customerUuid === requesterId
-        const isVendor = vendorUuid === requesterId
+        const isCustomer = customer.userId === requesterId
+        const isVendor = vendor.userId === requesterId
 
         if (!isCustomer && !isVendor) {
             throw new AppError(
@@ -61,9 +61,9 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
 
 
         const existingChat = await this.chatRepository.findChatByParticipants(
-            customerUuid,
-            vendorUuid,
-            serviceUuid
+            customerObjectId.toString(),
+            vendorObjectId.toString(),
+            serviceObjectId.toString()
         )
 
         if (existingChat) {
@@ -73,9 +73,9 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
 
         const newChat = await this.chatRepository.createChat({
             chatId: uuidv4(),
-            customerId: customerUuid,
-            vendorId: vendorUuid,
-            serviceId: serviceUuid,
+            customerRef: customerObjectId.toString(),
+            vendorRef: vendorObjectId.toString(),
+            serviceRef: serviceObjectId.toString(),
             unreadCount: { customer: 0, vendor: 0 },
             isActive: true,
             lastMessage: undefined,

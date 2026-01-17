@@ -10,22 +10,25 @@ export const ChatSchema = new Schema<IChatModel>(
       index: true,
     },
 
-    customerId: {
-      type: String,
+    customerRef: {
+      type: Schema.Types.ObjectId,
       required: true,
       index: true,
+      ref: 'Customer'
     },
 
-    vendorId: {
-      type: String,
+    vendorRef: {
+      type: Schema.Types.ObjectId,
       required: true,
       index: true,
+      ref: 'Vendor'
     },
 
-    serviceId: {
-      type: String,
+    serviceRef: {
+      type: Schema.Types.ObjectId,
       required: true,
       index: true,
+      ref: 'Service'
     },
 
     lastMessage: {
@@ -52,4 +55,4 @@ export const ChatSchema = new Schema<IChatModel>(
   { timestamps: true }
 )
 
-ChatSchema.index({ customerId: 1, vendorId: 1, serviceId: 1 }, { unique: true })
+ChatSchema.index({ customerRef: 1, vendorRef: 1, serviceRef: 1 }, { unique: true })

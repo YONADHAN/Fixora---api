@@ -18,6 +18,7 @@ const auth_route_1 = require("../routes/auth_route");
 const vendor_route_1 = require("../routes/vendor_route");
 const customer_route_1 = require("../routes/customer_route");
 const admin_route_1 = require("../routes/admin_route");
+const review_route_1 = require("../routes/review_route");
 const resolver_1 = require("../di/resolver");
 class ExpressServer {
     constructor() {
@@ -55,6 +56,7 @@ class ExpressServer {
         this._app.use('/api/v1/admin', new admin_route_1.AdminRoutes().router);
         this._app.use('/api/v1/vendor', new vendor_route_1.VendorRoutes().router);
         this._app.use('/api/v1/customer', new customer_route_1.CustomerRoutes().router);
+        this._app.use('/api/v1', new review_route_1.ReviewRoutes().router);
     }
     getApp() {
         return this._app;

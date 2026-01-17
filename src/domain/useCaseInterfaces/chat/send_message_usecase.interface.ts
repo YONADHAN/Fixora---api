@@ -18,7 +18,12 @@ export interface SendMessageInput {
   }
 }
 
-export type SendMessageOutput = IMessageEntity
+import { IChatEntity } from '../../models/chat_entity'
+
+export interface SendMessageOutput {
+  message: IMessageEntity
+  chat: IChatEntity
+}
 
 export interface ISendMessageUseCase {
   execute(input: SendMessageInput): Promise<SendMessageOutput>

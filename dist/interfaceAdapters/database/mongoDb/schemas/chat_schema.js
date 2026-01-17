@@ -9,20 +9,23 @@ exports.ChatSchema = new mongoose_1.Schema({
         unique: true,
         index: true,
     },
-    customerId: {
-        type: String,
+    customerRef: {
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true,
         index: true,
+        ref: 'Customer'
     },
-    vendorId: {
-        type: String,
+    vendorRef: {
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true,
         index: true,
+        ref: 'Vendor'
     },
-    serviceId: {
-        type: String,
+    serviceRef: {
+        type: mongoose_1.Schema.Types.ObjectId,
         required: true,
         index: true,
+        ref: 'Service'
     },
     lastMessage: {
         messageId: { type: String },
@@ -43,4 +46,4 @@ exports.ChatSchema = new mongoose_1.Schema({
         default: true,
     },
 }, { timestamps: true });
-exports.ChatSchema.index({ customerId: 1, vendorId: 1, serviceId: 1 }, { unique: true });
+exports.ChatSchema.index({ customerRef: 1, vendorRef: 1, serviceRef: 1 }, { unique: true });

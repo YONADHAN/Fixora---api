@@ -5,9 +5,9 @@ export interface ChatMongoBase {
 
   chatId: string
 
-  customerId: string
-  vendorId: string
-  serviceId: string
+  customerRef: Types.ObjectId
+  vendorRef: Types.ObjectId
+  serviceRef: Types.ObjectId
 
   lastMessage?: {
     messageId: string

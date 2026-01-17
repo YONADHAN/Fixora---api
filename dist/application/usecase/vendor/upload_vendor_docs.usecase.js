@@ -24,11 +24,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadVendorDocsUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
 let UploadVendorDocsUseCase = class UploadVendorDocsUseCase {
-    constructor(_vendorRepository) {
+    constructor(_vendorRepository, _createNotificationUseCase, _adminRepository) {
         this._vendorRepository = _vendorRepository;
+        this._createNotificationUseCase = _createNotificationUseCase;
+        this._adminRepository = _adminRepository;
     }
     execute(userId, files, urls) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const vendor = yield this._vendorRepository.findOne({ userId });
             if (!vendor) {
                 throw new Error('Vendor not found');
@@ -55,6 +58,18 @@ let UploadVendorDocsUseCase = class UploadVendorDocsUseCase {
                 vendor.isVerified.status = 'pending';
             }
             yield this._vendorRepository.update({ userId }, vendor);
+            const admins = yield this._adminRepository.findAllDocsWithoutPagination({});
+            if (admins.length > 0) {
+                const admin = admins[0];
+                yield this._createNotificationUseCase.execute({
+                    recipientId: admin.userId,
+                    recipientRole: 'admin',
+                    type: 'VENDOR_DOCUMENTS_SUBMITTED',
+                    title: 'New Vendor Verification Request',
+                    message: `Vendor ${vendor.userId} has submitted documents for verification`,
+                    metadata: { vendorRef: (_a = vendor._id) === null || _a === void 0 ? void 0 : _a.toString() },
+                });
+            }
         });
     }
 };
@@ -62,5 +77,7 @@ exports.UploadVendorDocsUseCase = UploadVendorDocsUseCase;
 exports.UploadVendorDocsUseCase = UploadVendorDocsUseCase = __decorate([
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)('IVendorRepository')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, tsyringe_1.inject)('ICreateNotificationUseCase')),
+    __param(2, (0, tsyringe_1.inject)('IAdminRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], UploadVendorDocsUseCase);

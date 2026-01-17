@@ -76,14 +76,18 @@ export interface VendorProfileInfoDTO {
 }
 
 export interface GetAllUsersDTO {
-  userId: string
-  name: string
-  email: string
-  role?: string
-  status: statusTypes | undefined
+  data: {
+    userId: string
+    name: string
+    email: string
+    role?: string
+    status: statusTypes | undefined
 
-  createdAt: Date
-  updatedAt?: Date
+    createdAt: Date
+    updatedAt?: Date
+  }[]
+  currentPage: number
+  totalPages: number
 }
 export interface SafeUserDTO {
   userId: string

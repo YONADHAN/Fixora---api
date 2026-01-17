@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe'
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, Types } from 'mongoose'
 
 import { BaseRepository } from '../../base_repository'
 import {
@@ -26,9 +26,9 @@ export class ChatRepository
 
       chatId: model.chatId,
 
-      customerId: model.customerId,
-      vendorId: model.vendorId,
-      serviceId: model.serviceId,
+      customerRef: (model.customerRef as any)._id ? (model.customerRef as any)._id.toString() : model.customerRef.toString(),
+      vendorRef: (model.vendorRef as any)._id ? (model.vendorRef as any)._id.toString() : model.vendorRef.toString(),
+      serviceRef: (model.serviceRef as any)._id ? (model.serviceRef as any)._id.toString() : model.serviceRef.toString(),
 
       lastMessage: model.lastMessage,
 
@@ -45,9 +45,9 @@ export class ChatRepository
     return {
       chatId: entity.chatId,
 
-      customerId: entity.customerId,
-      vendorId: entity.vendorId,
-      serviceId: entity.serviceId,
+      customerRef: new Types.ObjectId(entity.customerRef),
+      vendorRef: new Types.ObjectId(entity.vendorRef),
+      serviceRef: new Types.ObjectId(entity.serviceRef),
 
       lastMessage: entity.lastMessage,
 
@@ -63,7 +63,11 @@ export class ChatRepository
     serviceId: string
   ): Promise<IChatEntity | null> {
     const chat = await this.model
-      .findOne({ customerId, vendorId, serviceId })
+      .findOne({
+        customerRef: new Types.ObjectId(customerId),
+        vendorRef: new Types.ObjectId(vendorId),
+        serviceRef: new Types.ObjectId(serviceId)
+      })
       .lean<ChatMongoBase | null>()
 
     return chat ? this.toEntity(chat) : null
@@ -92,14 +96,27 @@ export class ChatRepository
   }
 
   async getUserChats(userId: string): Promise<IChatEntity[]> {
+    // Note: getUserChats should now query by customerRef/vendorRef.
+    // Assuming userId passed here is the ObjectId string.
     const chats = await this.model
       .find({
-        $or: [{ customerId: userId }, { vendorId: userId }],
+        $or: [{ customerRef: new Types.ObjectId(userId) }, { vendorRef: new Types.ObjectId(userId) }],
       })
+      .populate('customerRef', 'name profileImage email userId')
+      .populate('vendorRef', 'name profileImage email userId')
+      .populate('serviceRef', 'name mainImage')
       .sort({ updatedAt: -1 })
       .lean<ChatMongoBase[]>()
 
-    return chats.map((chat) => this.toEntity(chat))
+    return chats.map((chat: any) => ({
+      ...this.toEntity(chat),
+      customer: chat.customerRef,
+      vendor: chat.vendorRef,
+      service: chat.serviceRef,
+      customerRef: (chat.customerRef as any)._id?.toString() || chat.customerRef,
+      vendorRef: (chat.vendorRef as any)._id?.toString() || chat.vendorRef,
+      serviceRef: (chat.serviceRef as any)._id?.toString() || chat.serviceRef
+    }))
   }
 
   async incrementUnread(
@@ -136,8 +153,21 @@ export class ChatRepository
   async findByChatId(chatId: string): Promise<IChatEntity | null> {
     const chat = await this.model
       .findOne({ chatId })
+      .populate('customerRef', 'name profileImage email userId')
+      .populate('vendorRef', 'name profileImage email userId')
+      .populate('serviceRef', 'name mainImage')
       .lean<ChatMongoBase | null>()
 
-    return chat ? this.toEntity(chat) : null
+    if (!chat) return null
+
+    return {
+      ...this.toEntity(chat),
+      customer: chat.customerRef,
+      vendor: chat.vendorRef,
+      service: chat.serviceRef,
+      customerRef: (chat.customerRef as any)._id?.toString() || chat.customerRef,
+      vendorRef: (chat.vendorRef as any)._id?.toString() || chat.vendorRef,
+      serviceRef: (chat.serviceRef as any)._id?.toString() || chat.serviceRef
+    } as any
   }
 }

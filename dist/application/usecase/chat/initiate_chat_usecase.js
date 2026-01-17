@@ -47,26 +47,26 @@ let InitiateChatUseCase = class InitiateChatUseCase {
             if (!customer || !vendor || !service) {
                 throw new custom_error_1.CustomError('Related entities (Customer, Vendor, or Service) not found', constants_1.HTTP_STATUS.NOT_FOUND);
             }
-            const customerUuid = customer.userId;
-            const vendorUuid = vendor.userId;
-            const serviceUuid = service.serviceId;
-            if (!customerUuid || !vendorUuid || !serviceUuid) {
+            const customerObjectId = customer._id;
+            const vendorObjectId = vendor._id;
+            const serviceObjectId = service._id;
+            if (!customerObjectId || !vendorObjectId || !serviceObjectId) {
                 throw new custom_error_1.CustomError('Invalid entity data: Missing UUIDs', constants_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
             }
-            const isCustomer = customerUuid === requesterId;
-            const isVendor = vendorUuid === requesterId;
+            const isCustomer = customer.userId === requesterId;
+            const isVendor = vendor.userId === requesterId;
             if (!isCustomer && !isVendor) {
                 throw new custom_error_1.CustomError('Unauthorized: You are not a party to this booking', constants_1.HTTP_STATUS.FORBIDDEN);
             }
-            const existingChat = yield this.chatRepository.findChatByParticipants(customerUuid, vendorUuid, serviceUuid);
+            const existingChat = yield this.chatRepository.findChatByParticipants(customerObjectId.toString(), vendorObjectId.toString(), serviceObjectId.toString());
             if (existingChat) {
                 return existingChat.chatId;
             }
             const newChat = yield this.chatRepository.createChat({
                 chatId: (0, uuid_1.v4)(),
-                customerId: customerUuid,
-                vendorId: vendorUuid,
-                serviceId: serviceUuid,
+                customerRef: customerObjectId.toString(),
+                vendorRef: vendorObjectId.toString(),
+                serviceRef: serviceObjectId.toString(),
                 unreadCount: { customer: 0, vendor: 0 },
                 isActive: true,
                 lastMessage: undefined,

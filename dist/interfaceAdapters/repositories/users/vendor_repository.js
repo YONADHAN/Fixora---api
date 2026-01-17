@@ -8,6 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorRepository = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -111,6 +120,20 @@ let VendorRepository = class VendorRepository extends base_repository_1.BaseRepo
                 }
                 : undefined,
         };
+    }
+    findNearestVendors(lat, lng, radiusInKm) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const radiusInRadians = radiusInKm / 6378.1; // Earth's radius in km
+            const models = yield this.model.find({
+                'geoLocation.coordinates': {
+                    $geoWithin: {
+                        $centerSphere: [[lng, lat], radiusInRadians],
+                    },
+                },
+                status: 'active', // Ensure we only get active vendors
+            });
+            return models.map((model) => this.toEntity(model));
+        });
     }
 };
 exports.VendorRepository = VendorRepository;

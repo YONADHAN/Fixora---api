@@ -34,6 +34,9 @@ import { ChatRepository } from '../../interfaceAdapters/repositories/feature/cha
 import { IMessageRepository } from '../../domain/repositoryInterfaces/feature/chat/message_repository.interface'
 import { MessageRepository } from '../../interfaceAdapters/repositories/feature/chat/message_repository'
 
+import { IReviewRepository } from '../../domain/repositoryInterfaces/feature/review/review_repository.interface'
+import { ReviewRepository } from '../../interfaceAdapters/repositories/feature/review/review_repository'
+
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -117,6 +120,10 @@ export class RepositoryRegistry {
 
     container.register<IMessageRepository>('IMessageRepository', {
       useClass: MessageRepository,
+    })
+
+    container.register<IReviewRepository>('IReviewRepository', {
+      useClass: ReviewRepository,
     })
   }
 }

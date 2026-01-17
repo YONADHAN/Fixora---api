@@ -31,13 +31,14 @@ let MarkChatReadUseCase = class MarkChatReadUseCase {
     }
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const { chatId, readerId, readerRole } = input;
             const chat = yield this.chatRepository.findByChatId(chatId);
             if (!chat) {
                 throw new custom_error_1.CustomError('Chat not found', 404);
             }
-            const isCustomer = readerRole === 'customer' && chat.customerId === readerId;
-            const isVendor = readerRole === 'vendor' && chat.vendorId === readerId;
+            const isCustomer = readerRole === 'customer' && ((_a = chat.customer) === null || _a === void 0 ? void 0 : _a.userId) === readerId;
+            const isVendor = readerRole === 'vendor' && ((_b = chat.vendor) === null || _b === void 0 ? void 0 : _b.userId) === readerId;
             if (!isCustomer && !isVendor) {
                 throw new custom_error_1.CustomError('You are not allowed to read this chat', 403);
             }

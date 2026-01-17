@@ -20,6 +20,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatRepository = void 0;
 const tsyringe_1 = require("tsyringe");
+const mongoose_1 = require("mongoose");
 const base_repository_1 = require("../../base_repository");
 const chat_model_1 = require("../../../database/mongoDb/models/chat_model");
 const custom_error_1 = require("../../../../domain/utils/custom.error");
@@ -31,9 +32,9 @@ let ChatRepository = class ChatRepository extends base_repository_1.BaseReposito
         return {
             _id: model._id.toString(),
             chatId: model.chatId,
-            customerId: model.customerId,
-            vendorId: model.vendorId,
-            serviceId: model.serviceId,
+            customerRef: model.customerRef._id ? model.customerRef._id.toString() : model.customerRef.toString(),
+            vendorRef: model.vendorRef._id ? model.vendorRef._id.toString() : model.vendorRef.toString(),
+            serviceRef: model.serviceRef._id ? model.serviceRef._id.toString() : model.serviceRef.toString(),
             lastMessage: model.lastMessage,
             unreadCount: model.unreadCount,
             isActive: model.isActive,
@@ -44,9 +45,9 @@ let ChatRepository = class ChatRepository extends base_repository_1.BaseReposito
     toModel(entity) {
         return {
             chatId: entity.chatId,
-            customerId: entity.customerId,
-            vendorId: entity.vendorId,
-            serviceId: entity.serviceId,
+            customerRef: new mongoose_1.Types.ObjectId(entity.customerRef),
+            vendorRef: new mongoose_1.Types.ObjectId(entity.vendorRef),
+            serviceRef: new mongoose_1.Types.ObjectId(entity.serviceRef),
             lastMessage: entity.lastMessage,
             unreadCount: entity.unreadCount,
             isActive: entity.isActive,
@@ -55,7 +56,11 @@ let ChatRepository = class ChatRepository extends base_repository_1.BaseReposito
     findChatByParticipants(customerId, vendorId, serviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             const chat = yield this.model
-                .findOne({ customerId, vendorId, serviceId })
+                .findOne({
+                customerRef: new mongoose_1.Types.ObjectId(customerId),
+                vendorRef: new mongoose_1.Types.ObjectId(vendorId),
+                serviceRef: new mongoose_1.Types.ObjectId(serviceId)
+            })
                 .lean();
             return chat ? this.toEntity(chat) : null;
         });
@@ -80,13 +85,21 @@ let ChatRepository = class ChatRepository extends base_repository_1.BaseReposito
     }
     getUserChats(userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Note: getUserChats should now query by customerRef/vendorRef.
+            // Assuming userId passed here is the ObjectId string.
             const chats = yield this.model
                 .find({
-                $or: [{ customerId: userId }, { vendorId: userId }],
+                $or: [{ customerRef: new mongoose_1.Types.ObjectId(userId) }, { vendorRef: new mongoose_1.Types.ObjectId(userId) }],
             })
+                .populate('customerRef', 'name profileImage email userId')
+                .populate('vendorRef', 'name profileImage email userId')
+                .populate('serviceRef', 'name mainImage')
                 .sort({ updatedAt: -1 })
                 .lean();
-            return chats.map((chat) => this.toEntity(chat));
+            return chats.map((chat) => {
+                var _a, _b, _c;
+                return (Object.assign(Object.assign({}, this.toEntity(chat)), { customer: chat.customerRef, vendor: chat.vendorRef, service: chat.serviceRef, customerRef: ((_a = chat.customerRef._id) === null || _a === void 0 ? void 0 : _a.toString()) || chat.customerRef, vendorRef: ((_b = chat.vendorRef._id) === null || _b === void 0 ? void 0 : _b.toString()) || chat.vendorRef, serviceRef: ((_c = chat.serviceRef._id) === null || _c === void 0 ? void 0 : _c.toString()) || chat.serviceRef }));
+            });
         });
     }
     incrementUnread(chatId, role) {
@@ -111,10 +124,16 @@ let ChatRepository = class ChatRepository extends base_repository_1.BaseReposito
     }
     findByChatId(chatId) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             const chat = yield this.model
                 .findOne({ chatId })
+                .populate('customerRef', 'name profileImage email userId')
+                .populate('vendorRef', 'name profileImage email userId')
+                .populate('serviceRef', 'name mainImage')
                 .lean();
-            return chat ? this.toEntity(chat) : null;
+            if (!chat)
+                return null;
+            return Object.assign(Object.assign({}, this.toEntity(chat)), { customer: chat.customerRef, vendor: chat.vendorRef, service: chat.serviceRef, customerRef: ((_a = chat.customerRef._id) === null || _a === void 0 ? void 0 : _a.toString()) || chat.customerRef, vendorRef: ((_b = chat.vendorRef._id) === null || _b === void 0 ? void 0 : _b.toString()) || chat.vendorRef, serviceRef: ((_c = chat.serviceRef._id) === null || _c === void 0 ? void 0 : _c.toString()) || chat.serviceRef });
         });
     }
 };

@@ -29,6 +29,7 @@ exports.NotificationSchema = new mongoose_1.Schema({
             'PAYMENT_SUCCESS',
             'PAYMENT_FAILED',
             'ADMIN_MESSAGE',
+            'VENDOR_DOCUMENTS_SUBMITTED',
         ],
         required: true,
         index: true,
@@ -46,6 +47,7 @@ exports.NotificationSchema = new mongoose_1.Schema({
         serviceId: { type: String },
         paymentId: { type: String },
         redirectUrl: { type: String },
+        vendorRef: { type: String },
     },
     isRead: {
         type: Boolean,

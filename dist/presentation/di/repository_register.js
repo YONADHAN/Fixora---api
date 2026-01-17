@@ -21,6 +21,7 @@ const payment_repository_1 = require("../../interfaceAdapters/repositories/featu
 const notification_repository_1 = require("../../interfaceAdapters/repositories/feature/notification/notification_repository");
 const chat_repository_1 = require("../../interfaceAdapters/repositories/feature/chat/chat_repository");
 const message_repository_1 = require("../../interfaceAdapters/repositories/feature/chat/message_repository");
+const review_repository_1 = require("../../interfaceAdapters/repositories/feature/review/review_repository");
 class RepositoryRegistry {
     static registerRepositories() {
         tsyringe_1.container.register('IOtpRepository', {
@@ -79,6 +80,9 @@ class RepositoryRegistry {
         });
         tsyringe_1.container.register('IMessageRepository', {
             useClass: message_repository_1.MessageRepository,
+        });
+        tsyringe_1.container.register('IReviewRepository', {
+            useClass: review_repository_1.ReviewRepository,
         });
     }
 }

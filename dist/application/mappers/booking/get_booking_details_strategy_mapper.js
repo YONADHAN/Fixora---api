@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetBookingDetailsForCustomerResponseMapper = exports.GetBookingDetailsForVendorResponseMapper = void 0;
 class GetBookingDetailsForVendorResponseMapper {
-    static toDTO(booking, service, customer) {
+    static toDTO(booking, service, customer, address) {
         return {
             booking: {
                 bookingId: booking.bookingId,
@@ -30,6 +30,23 @@ class GetBookingDetailsForVendorResponseMapper {
                 geoLocation: customer.geoLocation
                     ? {
                         coordinates: customer.geoLocation.coordinates || [],
+                    }
+                    : undefined,
+                bookingAddress: address
+                    ? {
+                        name: address.label,
+                        addressLine1: address.addressLine1,
+                        addressLine2: address.addressLine2,
+                        city: address.city,
+                        state: address.state,
+                        zipCode: address.zipCode,
+                        country: address.country,
+                        location: address.location,
+                        geoLocation: address.geoLocation
+                            ? {
+                                coordinates: address.geoLocation.coordinates || [],
+                            }
+                            : undefined,
                     }
                     : undefined,
             },

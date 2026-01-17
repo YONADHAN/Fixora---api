@@ -12,6 +12,9 @@ import { IWalletRepository } from '../../../domain/repositoryInterfaces/feature/
 import { ICreateNotificationUseCase } from '../../../domain/useCaseInterfaces/notification/create_notification_usecase_interface'
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
+import { IChatRepository } from '../../../domain/repositoryInterfaces/feature/chat/chat_repository.interface'
+import { IServiceRepository } from '../../../domain/repositoryInterfaces/feature/service/service_repository.interface'
+import { v4 as uuidv4 } from 'uuid'
 
 @injectable()
 export class StripePaymentSucceededUseCase
@@ -42,7 +45,13 @@ export class StripePaymentSucceededUseCase
     private _customerRepository: ICustomerRepository,
 
     @inject('IVendorRepository')
-    private _vendorRepository: IVendorRepository
+    private _vendorRepository: IVendorRepository,
+
+    @inject('IChatRepository')
+    private _chatRepository: IChatRepository,
+
+    @inject('IServiceRepository')
+    private _serviceRepository: IServiceRepository
   ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -179,6 +188,37 @@ export class StripePaymentSucceededUseCase
         message: `New advance payment received for booking group ${hold.holdId}`,
         metadata: { bookingId: hold.holdId },
       })
+    }
+
+    // Chat Creation Logic
+    if (customer && vendor && customer._id && vendor._id) {
+      const service = await this._serviceRepository.findOne({
+        _id: hold.serviceRef,
+      })
+
+      if (service && service._id) {
+        const existingChat =
+          await this._chatRepository.findChatByParticipants(
+            customer._id.toString(),
+            vendor._id.toString(),
+            service._id.toString()
+          )
+
+        if (!existingChat) {
+          await this._chatRepository.createChat({
+            chatId: uuidv4(),
+            customerRef: customer._id.toString(),
+            vendorRef: vendor._id.toString(),
+            serviceRef: service._id.toString(),
+            unreadCount: {
+              customer: 0,
+              vendor: 0,
+            },
+            isActive: true,
+            lastMessage: undefined,
+          })
+        }
+      }
     }
   }
 }

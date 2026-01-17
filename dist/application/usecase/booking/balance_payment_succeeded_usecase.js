@@ -24,9 +24,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BalancePaymentSucceededUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
 let BalancePaymentSucceededUseCase = class BalancePaymentSucceededUseCase {
-    constructor(_paymentRepository, _bookingRepository) {
+    constructor(_paymentRepository, _bookingRepository, _createNotificationUseCase, _customerRepository, _vendorRepository) {
         this._paymentRepository = _paymentRepository;
         this._bookingRepository = _bookingRepository;
+        this._createNotificationUseCase = _createNotificationUseCase;
+        this._customerRepository = _customerRepository;
+        this._vendorRepository = _vendorRepository;
     }
     execute(paymentIntent) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +57,32 @@ let BalancePaymentSucceededUseCase = class BalancePaymentSucceededUseCase {
             for (const booking of bookings) {
                 yield this._bookingRepository.update({ bookingId: booking.bookingId }, { paymentStatus: 'fully-paid' });
             }
+            const customer = yield this._customerRepository.findOne({
+                _id: payment.customerRef,
+            });
+            const vendor = yield this._vendorRepository.findOne({
+                _id: payment.vendorRef,
+            });
+            if (customer) {
+                yield this._createNotificationUseCase.execute({
+                    recipientId: customer.userId,
+                    recipientRole: 'customer',
+                    type: 'PAYMENT_SUCCESS',
+                    title: 'Payment Completed',
+                    message: `Balance payment successful for booking group ${payment.bookingGroupId}`,
+                    metadata: { bookingId: payment.bookingGroupId },
+                });
+            }
+            if (vendor) {
+                yield this._createNotificationUseCase.execute({
+                    recipientId: vendor.userId,
+                    recipientRole: 'vendor',
+                    type: 'PAYMENT_SUCCESS',
+                    title: 'Payment Received',
+                    message: `Balance payment received for booking group ${payment.bookingGroupId}`,
+                    metadata: { bookingId: payment.bookingGroupId },
+                });
+            }
         });
     }
 };
@@ -62,5 +91,8 @@ exports.BalancePaymentSucceededUseCase = BalancePaymentSucceededUseCase = __deco
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)('IPaymentRepository')),
     __param(1, (0, tsyringe_1.inject)('IBookingRepository')),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, tsyringe_1.inject)('ICreateNotificationUseCase')),
+    __param(3, (0, tsyringe_1.inject)('ICustomerRepository')),
+    __param(4, (0, tsyringe_1.inject)('IVendorRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
 ], BalancePaymentSucceededUseCase);

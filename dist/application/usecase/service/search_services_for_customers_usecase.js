@@ -27,13 +27,13 @@ const search_services_for_customer_mapper_1 = require("../../mappers/service/sea
 const custom_error_1 = require("../../../domain/utils/custom.error");
 const constants_1 = require("../../../shared/constants");
 let SearchServicesForCustomersUseCase = class SearchServicesForCustomersUseCase {
-    constructor(_serviceRepository, _subServiceCategoryRepo) {
+    constructor(_serviceRepository, _subServiceCategoryRepo, _vendorRepository) {
         this._serviceRepository = _serviceRepository;
         this._subServiceCategoryRepo = _subServiceCategoryRepo;
+        this._vendorRepository = _vendorRepository;
     }
     execute(dto) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
             const filter = {
                 isActiveStatusByAdmin: true,
                 isActiveStatusByVendor: true,
@@ -45,7 +45,6 @@ let SearchServicesForCustomersUseCase = class SearchServicesForCustomersUseCase 
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.INVALID_CREDENTIALS, constants_1.HTTP_STATUS.BAD_REQUEST);
             }
             filter.subServiceCategoryRef = subCategory._id;
-            // PRICE FILTER
             if (dto.minPrice || dto.maxPrice) {
                 filter['pricing.pricePerSlot'] = {};
                 if (dto.minPrice)
@@ -53,29 +52,17 @@ let SearchServicesForCustomersUseCase = class SearchServicesForCustomersUseCase 
                 if (dto.maxPrice)
                     filter['pricing.pricePerSlot'].$lte = dto.maxPrice;
             }
-            // RECURRENCE FILTER
-            if (dto.recurrenceType) {
-                filter['schedule.recurrenceType'] = dto.recurrenceType;
-            }
-            // WEEKLY DAYS FILTER
-            if ((_a = dto.weeklyDays) === null || _a === void 0 ? void 0 : _a.length) {
-                filter['schedule.weeklyWorkingDays'] = { $in: dto.weeklyDays };
-            }
-            // AVAILABLE DATE FILTER (visibilityStartDate → visibilityEndDate)
             if (dto.availableFrom && dto.availableTo) {
                 filter['schedule.visibilityStartDate'] = { $lte: dto.availableFrom };
                 filter['schedule.visibilityEndDate'] = { $gte: dto.availableTo };
             }
-            // WORKING HOURS FILTER — MUST USE $elemMatch ❗❗
-            if (dto.workStartTime && dto.workEndTime) {
-                filter['schedule.dailyWorkingWindows'] = {
-                    $elemMatch: {
-                        startTime: { $lte: dto.workStartTime },
-                        endTime: { $gte: dto.workEndTime },
-                    },
-                };
+            // GEO-LOCATION FILTER
+            if (dto.latitude && dto.longitude) {
+                const radiusInKm = dto.radius ? Number(dto.radius) : 50; // configure radius or pass from dto
+                const nearestVendors = yield this._vendorRepository.findNearestVendors(Number(dto.latitude), Number(dto.longitude), radiusInKm);
+                const vendorIds = nearestVendors.map(v => v._id);
+                filter.vendorRef = { $in: vendorIds };
             }
-            //  SEARCH IS NOT ADDED HERE because repository handles it already.
             const response = yield this._serviceRepository.findAllDocumentsWithFilterationAndPopulate(dto.page, dto.limit, dto.search, filter, ['subServiceCategoryRef', 'vendorRef']);
             return search_services_for_customer_mapper_1.SearchServicesForCustomersResponseMapper.toDTO(response);
         });
@@ -86,5 +73,6 @@ exports.SearchServicesForCustomersUseCase = SearchServicesForCustomersUseCase = 
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)('IServiceRepository')),
     __param(1, (0, tsyringe_1.inject)('ISubServiceCategoryRepository')),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, tsyringe_1.inject)('IVendorRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], SearchServicesForCustomersUseCase);

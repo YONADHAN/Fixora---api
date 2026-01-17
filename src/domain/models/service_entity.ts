@@ -24,6 +24,9 @@ export interface IServiceEntity {
   isActiveStatusByVendor: boolean
   adminStatusNote?: string
 
+  avgRating?: number
+  totalRatings?: number
+
   schedule: {
     visibilityStartDate?: Date
     visibilityEndDate?: Date

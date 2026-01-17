@@ -23,6 +23,7 @@ import { NotificationRoutes } from './notification_route'
 import { ChatRoutes } from './chat_route'
 import { AddressRoutes } from './address_route'
 import { PaymentRoutes } from './payment_route'
+import { ReviewRoutes } from './review_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -30,7 +31,6 @@ export class CustomerRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-
     this.router.post(
       '/refresh-token',
       decodeToken,
@@ -60,6 +60,7 @@ export class CustomerRoutes extends BaseRoute {
       new SubServiceCategoryRoutes().router
     )
 
+    this.router.use('/review', new ReviewRoutes().router)
 
     this.router.use(
       verifyAuth as CustomRequestHandler,
@@ -69,16 +70,13 @@ export class CustomerRoutes extends BaseRoute {
 
     this.router.use('/address', new AddressRoutes().router)
 
-
     this.router.post('/logout', (req: Request, res: Response) => {
       customerController.logout(req, res)
     })
 
-
     this.router.get('/profile-info', (req: Request, res: Response) => {
       customerController.profileInfo(req, res)
     })
-
 
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
       customerController.profileUpdate(req, res)

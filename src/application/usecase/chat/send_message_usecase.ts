@@ -20,7 +20,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
     @inject('IMessageRepository')
     private readonly messageRepository: IMessageRepository
-  ) {}
+  ) { }
 
   async execute(input: SendMessageInput): Promise<SendMessageOutput> {
     const {
@@ -40,8 +40,9 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     }
 
     /*  Authorize sender */
-    const isCustomer = senderRole === 'customer' && chat.customerId === senderId
-    const isVendor = senderRole === 'vendor' && chat.vendorId === senderId
+    /*  Authorize sender */
+    const isCustomer = senderRole === 'customer' && chat.customer!.userId === senderId
+    const isVendor = senderRole === 'vendor' && chat.vendor!.userId === senderId
 
     if (!isCustomer && !isVendor) {
       throw new CustomError('You are not a participant of this chat', 403)
@@ -74,6 +75,22 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     await this.chatRepository.incrementUnread(chatId, receiverRole)
 
     /*  Return message */
-    return message
+    return {
+      message,
+      chat: {
+        ...chat,
+        lastMessage: {
+          messageId: message.messageId,
+          content: message.content,
+          senderId: message.senderId,
+          senderRole: message.senderRole,
+          createdAt: message.createdAt!,
+        },
+        unreadCount: {
+          customer: senderRole === 'vendor' ? chat.unreadCount.customer + 1 : chat.unreadCount.customer,
+          vendor: senderRole === 'customer' ? chat.unreadCount.vendor + 1 : chat.unreadCount.vendor,
+        }
+      } as any // Casting to avoid complex type matching if entity differs slightly from model
+    }
   }
 }

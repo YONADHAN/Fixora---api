@@ -136,6 +136,9 @@ const get_chat_messages_usecase_1 = require("../../application/usecase/chat/get_
 const mark_chat_read_usecase_1 = require("../../application/usecase/chat/mark_chat_read_usecase");
 const initiate_chat_usecase_1 = require("../../application/usecase/chat/initiate_chat_usecase");
 const get_user_chats_usecase_1 = require("../../application/usecase/chat/get_user_chats_usecase");
+const create_review_usecase_1 = require("../../application/usecase/review/create_review_usecase");
+const get_service_reviews_usecase_1 = require("../../application/usecase/review/get_service_reviews_usecase");
+const check_review_eligibility_usecase_1 = require("../../application/usecase/review/check_review_eligibility_usecase");
 class UseCaseRegistry {
     static registerUseCases() {
         tsyringe_1.container.register('IOtpService', {
@@ -348,6 +351,15 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IGetUserChatsUseCase', {
             useClass: get_user_chats_usecase_1.GetUserChatsUseCase,
+        });
+        tsyringe_1.container.register('ICreateReviewUseCase', {
+            useClass: create_review_usecase_1.CreateReviewUseCase,
+        });
+        tsyringe_1.container.register('IGetServiceReviewsUseCase', {
+            useClass: get_service_reviews_usecase_1.GetServiceReviewsUseCase,
+        });
+        tsyringe_1.container.register('ICheckReviewEligibilityUseCase', {
+            useClass: check_review_eligibility_usecase_1.CheckReviewEligibilityUseCase,
         });
         //service
         tsyringe_1.container.register('IUserExistenceService', {

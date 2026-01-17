@@ -31,13 +31,14 @@ let GetChatMessagesUseCase = class GetChatMessagesUseCase {
     }
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const { chatId, requesterId, requesterRole, page = 1, limit = 20 } = input;
             const chat = yield this._chatRepository.findByChatId(chatId);
             if (!chat) {
                 throw new custom_error_1.CustomError('Chat not found', 404);
             }
-            const isCustomer = requesterRole === 'customer' && chat.customerId === requesterId;
-            const isVendor = requesterRole === 'vendor' && chat.vendorId === requesterId;
+            const isCustomer = requesterRole === 'customer' && ((_a = chat.customer) === null || _a === void 0 ? void 0 : _a.userId) === requesterId;
+            const isVendor = requesterRole === 'vendor' && ((_b = chat.vendor) === null || _b === void 0 ? void 0 : _b.userId) === requesterId;
             if (!isCustomer && !isVendor) {
                 throw new custom_error_1.CustomError('You are not allowed to view this chat', 403);
             }

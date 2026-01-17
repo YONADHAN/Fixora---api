@@ -86,7 +86,7 @@ export const registerSocketEvents = (socket: Socket) => {
           return
         }
 
-        const message = await sendMessageUseCase.execute({
+        const { message, chat } = await sendMessageUseCase.execute({
           chatId: payload.chatId,
           senderId: user.userId,
           senderRole: user.role,
@@ -101,6 +101,17 @@ export const registerSocketEvents = (socket: Socket) => {
           .emit(SOCKET_EVENTS.CHAT_NEW, message)
 
         socket.emit(SOCKET_EVENTS.CHAT_NEW, message)
+
+        /* --------------------  REAL-TIME LIST UPDATE -------------------- */
+        const receiverId =
+          user.role === 'customer' ? chat.vendor?.userId : chat.customer?.userId
+
+        socket.to(`user:${receiverId}`).emit(SOCKET_EVENTS.CHAT_LIST_UPDATE, {
+          ...chat, // Send full chat details including customer/vendor populated data
+          chatId: chat.chatId,
+          lastMessage: chat.lastMessage,
+          unreadCount: chat.unreadCount,
+        })
 
         ack?.({
           success: true,
@@ -165,5 +176,21 @@ export const registerSocketEvents = (socket: Socket) => {
     socket.to(`chat:${chatId}`).emit(SOCKET_EVENTS.CHAT_TYPING_STOP, {
       userId: socket.data.user.userId,
     })
+  })
+
+  /* -------------------- DASHBOARD -------------------- */
+
+  socket.on(SOCKET_EVENTS.DASHBOARD_JOIN_ADMIN, () => {
+    const user = socket.data.user as SocketUser
+    if (user?.role === 'admin') {
+      socket.join('admin_dashboard')
+    }
+  })
+
+  socket.on(SOCKET_EVENTS.DASHBOARD_JOIN_VENDOR, () => {
+    const user = socket.data.user as SocketUser
+    if (user?.role === 'vendor') {
+      socket.join(`vendor_${user.userId}_dashboard`)
+    }
   })
 }

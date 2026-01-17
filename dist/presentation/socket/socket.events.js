@@ -44,6 +44,7 @@ const registerSocketEvents = (socket) => {
         socket.leave(`chat:${roomId}`);
     });
     socket.on(constants_1.SOCKET_EVENTS.CHAT_SEND, (payload, ack) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
         try {
             const user = socket.data.user;
             //  Role guard (fixes TS + security)
@@ -54,7 +55,7 @@ const registerSocketEvents = (socket) => {
                 });
                 return;
             }
-            const message = yield sendMessageUseCase.execute({
+            const { message, chat } = yield sendMessageUseCase.execute({
                 chatId: payload.chatId,
                 senderId: user.userId,
                 senderRole: user.role,
@@ -67,6 +68,9 @@ const registerSocketEvents = (socket) => {
                 .to(`chat:${payload.chatId}`)
                 .emit(constants_1.SOCKET_EVENTS.CHAT_NEW, message);
             socket.emit(constants_1.SOCKET_EVENTS.CHAT_NEW, message);
+            /* --------------------  REAL-TIME LIST UPDATE -------------------- */
+            const receiverId = user.role === 'customer' ? (_a = chat.vendor) === null || _a === void 0 ? void 0 : _a.userId : (_b = chat.customer) === null || _b === void 0 ? void 0 : _b.userId;
+            socket.to(`user:${receiverId}`).emit(constants_1.SOCKET_EVENTS.CHAT_LIST_UPDATE, Object.assign(Object.assign({}, chat), { chatId: chat.chatId, lastMessage: chat.lastMessage, unreadCount: chat.unreadCount }));
             ack === null || ack === void 0 ? void 0 : ack({
                 success: true,
                 data: message,

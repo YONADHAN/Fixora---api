@@ -33,8 +33,8 @@ export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
 
 
     const isCustomer =
-      requesterRole === 'customer' && chat.customerId === requesterId
-    const isVendor = requesterRole === 'vendor' && chat.vendorId === requesterId
+      requesterRole === 'customer' && chat.customer?.userId === requesterId
+    const isVendor = requesterRole === 'vendor' && chat.vendor?.userId === requesterId
 
     if (!isCustomer && !isVendor) {
       throw new CustomError('You are not allowed to view this chat', 403)

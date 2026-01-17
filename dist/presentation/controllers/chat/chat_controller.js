@@ -83,7 +83,7 @@ let ChatController = class ChatController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = req.user;
-                const chats = yield this.getUserChatsUseCase.execute(user.userId);
+                const chats = yield this.getUserChatsUseCase.execute(user.userId, user.role);
                 res.status(200).json({
                     success: true,
                     data: chats,

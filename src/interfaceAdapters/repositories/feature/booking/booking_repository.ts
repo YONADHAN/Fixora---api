@@ -254,11 +254,22 @@ export class BookingRepository
     }
   }
 
-  // async findBookingWithDetailsForVendor(filter: FilterQuery<IBookingModel>) {
-  //   return this.model
-  //     .findOne(filter)
-  //     .populate('customerRef', 'userId email name')
-  //     .populate('serviceRef', 'name bannerImage')
-  //     .lean()
-  // }
+  async findCompletedBookingsForReview(
+    customerRef: string,
+    serviceRef: string
+  ): Promise<IBookingEntity[]> {
+    this.validateObjectId(customerRef, 'customerRef')
+    this.validateObjectId(serviceRef, 'serviceRef')
+
+    const bookings = await this.model
+      .find({
+        customerRef: new Types.ObjectId(customerRef),
+        serviceRef: new Types.ObjectId(serviceRef),
+        serviceStatus: 'completed',
+      })
+      .lean<BookingMongoBase[]>()
+
+    return bookings.map((b) => this.toEntity(b))
+  }
+
 }

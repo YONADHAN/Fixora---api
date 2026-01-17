@@ -12,6 +12,7 @@ const booking_route_1 = require("./booking_route");
 const wallet_route_1 = require("./wallet_route");
 const chat_route_1 = require("./chat_route");
 const payment_route_1 = require("./payment_route");
+const notification_route_1 = require("./notification_route");
 class VendorRoutes extends base_route_1.BaseRoute {
     constructor() {
         super();
@@ -25,6 +26,7 @@ class VendorRoutes extends base_route_1.BaseRoute {
         this.router.use('/booking', new booking_route_1.BookingRoutes().router);
         this.router.use('/wallet', new wallet_route_1.WalletRoutes().router);
         this.router.use('/payment', new payment_route_1.PaymentRoutes().router);
+        this.router.use('/notification', new notification_route_1.NotificationRoutes().router);
         this.router.use(auth_middleware_1.verifyAuth, resolver_1.blockMyUserMiddleware.checkMyUserBlockStatus, (0, auth_middleware_1.authorizeRole)(['vendor']));
         this.router.use('/sub-service-category', new sub_service_category_route_1.SubServiceCategoryRoutes().router);
         this.router.post('/logout', (req, res) => {

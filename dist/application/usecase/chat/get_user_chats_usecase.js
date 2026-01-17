@@ -24,12 +24,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetUserChatsUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
 let GetUserChatsUseCase = class GetUserChatsUseCase {
-    constructor(chatRepository) {
+    constructor(chatRepository, customerRepository, vendorRepository) {
         this.chatRepository = chatRepository;
+        this.customerRepository = customerRepository;
+        this.vendorRepository = vendorRepository;
     }
-    execute(userId) {
+    execute(userId, role) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.chatRepository.getUserChats(userId);
+            let userObjectId = userId;
+            if (role === 'customer') {
+                const customer = yield this.customerRepository.findOne({ userId });
+                if (customer && customer._id) {
+                    userObjectId = customer._id.toString();
+                }
+            }
+            else if (role === 'vendor') {
+                const vendor = yield this.vendorRepository.findOne({ userId });
+                if (vendor && vendor._id) {
+                    userObjectId = vendor._id.toString();
+                }
+            }
+            return yield this.chatRepository.getUserChats(userObjectId);
         });
     }
 };
@@ -37,5 +52,7 @@ exports.GetUserChatsUseCase = GetUserChatsUseCase;
 exports.GetUserChatsUseCase = GetUserChatsUseCase = __decorate([
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)('IChatRepository')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, tsyringe_1.inject)('ICustomerRepository')),
+    __param(2, (0, tsyringe_1.inject)('IVendorRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], GetUserChatsUseCase);

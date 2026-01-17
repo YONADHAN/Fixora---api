@@ -13,6 +13,7 @@ import { IProfileInfoUpdateUseCase } from '../../../domain/useCaseInterfaces/com
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { IVendorStatusCheckUseCase } from '../../../domain/useCaseInterfaces/vendor/vendor_status_check_usecase.interface'
 import { IUploadVendorDocsUseCase } from '../../../domain/useCaseInterfaces/vendor/upload_vendor_docs_usecase.interface'
+import { IGetVendorDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/vendor/get_vendor_dashboard_stats.usecase.interface'
 import { IProfileImageUploadFactory } from '../../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
 import { config } from '../../../shared/config'
 
@@ -34,7 +35,9 @@ export class VendorController implements IVendorController {
     @inject('IUploadVendorDocsUseCase')
     private _uploadVendorDocsUsecase: IUploadVendorDocsUseCase,
     @inject('IProfileImageUploadFactory')
-    private _profileImageUploadFactory: IProfileImageUploadFactory
+    private _profileImageUploadFactory: IProfileImageUploadFactory,
+    @inject('IGetVendorDashboardStatsUseCase')
+    private getVendorDashboardStatsUseCase: IGetVendorDashboardStatsUseCase
   ) { }
 
   async uploadVerificationDocument(req: Request, res: Response): Promise<void> {
@@ -171,6 +174,21 @@ export class VendorController implements IVendorController {
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.OPERATION_SUCCESS,
         data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getDashboardStats(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as CustomRequest).user.userId
+      const stats = await this.getVendorDashboardStatsUseCase.execute(userId)
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Dashboard stats retrieved successfully',
+        data: stats,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

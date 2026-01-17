@@ -75,7 +75,7 @@ export class ChatController implements IChatController {
     try {
       const user = (req as CustomRequest).user
 
-      const chats = await this.getUserChatsUseCase.execute(user.userId)
+      const chats = await this.getUserChatsUseCase.execute(user.userId, user.role as string)
 
       res.status(200).json({
         success: true,

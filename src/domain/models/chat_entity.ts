@@ -3,9 +3,9 @@ export interface IChatEntity {
 
   chatId: string
 
-  customerId: string
-  vendorId: string
-  serviceId: string
+  customerRef: string
+  vendorRef: string
+  serviceRef: string
 
   lastMessage?: {
     messageId: string
@@ -24,4 +24,22 @@ export interface IChatEntity {
 
   createdAt?: Date
   updatedAt?: Date
+
+  //populated fields
+  customer?: {
+    name: string
+    profileImage?: string
+    email: string
+    userId: string
+  }
+  vendor?: {
+    name: string
+    profileImage?: string
+    email: string
+    userId: string
+  }
+  service?: {
+    name: string
+    mainImage?: string
+  }
 }

@@ -295,4 +295,44 @@ export class PaymentRepository
       totalCount,
     }
   }
+
+  async calculateTotalRevenue(filter: any = {}): Promise<number> {
+    const result = await this.model.aggregate([
+      { $match: filter },
+      {
+        $project: {
+          advanceAmount: {
+            $cond: [
+              { $eq: ['$advancePayment.status', 'paid'] },
+              '$advancePayment.amount',
+              0,
+            ],
+          },
+          slotsRevenue: {
+            $sum: {
+              $map: {
+                input: '$slots',
+                as: 'slot',
+                in: {
+                  $cond: [
+                    { $eq: ['$$slot.remainingPayment.status', 'paid'] },
+                    '$$slot.remainingPayment.amount',
+                    0,
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: { $add: ['$advanceAmount', '$slotsRevenue'] } },
+        },
+      },
+    ])
+
+    return result[0]?.totalRevenue || 0
+  }
 }

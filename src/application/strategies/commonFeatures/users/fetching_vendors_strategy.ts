@@ -17,17 +17,21 @@ export class FetchingVendorsStrategy implements IFetchingVendorsStrategy {
     page: number,
     limit: number,
     search: string
-  ): Promise<GetAllUsersDTO[]> {
-    const vendors = await this._vendorRepository.findAll(page, limit, search)
+  ): Promise<GetAllUsersDTO> {
+    const response = await this._vendorRepository.findAllDocuments(
+      page,
+      limit,
+      search
+    )
 
-    if (!vendors || vendors.length === 0) {
+    if (!response || response.data.length === 0) {
       throw new CustomError(
         ERROR_MESSAGES.USERS_NOT_FOUND,
         HTTP_STATUS.NOT_FOUND
       )
     }
 
-    const mappedVendors = UserMapper.toResponse(vendors)
+    const mappedVendors = UserMapper.toResponse(response)
     return mappedVendors
   }
 }

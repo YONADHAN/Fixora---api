@@ -2,8 +2,16 @@ import { GetAllUsersDTO } from '../../dtos/user_dto'
 import { ICustomerEntity } from '../../../domain/models/customer_entity'
 
 export class UserMapper {
-  static toResponse(users: ICustomerEntity[]): GetAllUsersDTO[] {
-    return users.map((user) => ({
+  static toResponse({
+    data,
+    totalPages,
+    currentPage,
+  }: {
+    data: ICustomerEntity[]
+    totalPages: number
+    currentPage: number
+  }): GetAllUsersDTO {
+    const datas = data.map((user) => ({
       userId: user.userId?.toString() ?? '',
       name: user.name ?? '',
       email: user.email ?? '',
@@ -13,5 +21,10 @@ export class UserMapper {
       createdAt: user.createdAt ?? new Date(),
       updatedAt: user.updatedAt,
     }))
+    return {
+      data: datas,
+      totalPages,
+      currentPage,
+    }
   }
 }

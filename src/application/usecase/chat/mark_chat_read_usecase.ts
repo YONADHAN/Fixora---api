@@ -31,8 +31,8 @@ export class MarkChatReadUseCase implements IMarkChatReadUseCase {
     }
 
 
-    const isCustomer = readerRole === 'customer' && chat.customerId === readerId
-    const isVendor = readerRole === 'vendor' && chat.vendorId === readerId
+    const isCustomer = readerRole === 'customer' && chat.customer?.userId === readerId
+    const isVendor = readerRole === 'vendor' && chat.vendor?.userId === readerId
 
     if (!isCustomer && !isVendor) {
       throw new CustomError('You are not allowed to read this chat', 403)

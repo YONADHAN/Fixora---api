@@ -54,6 +54,7 @@ let BookingRepository = class BookingRepository extends base_repository_1.BaseRe
                 ? new mongoose_1.Types.ObjectId(entity.customerRef)
                 : undefined,
             date: entity.date,
+            addressId: entity.addressId,
             slotStart: entity.slotStart,
             slotEnd: entity.slotEnd,
             paymentRef: entity.paymentRef
@@ -96,6 +97,7 @@ let BookingRepository = class BookingRepository extends base_repository_1.BaseRe
                     cancelledAt: model.cancelInfo.cancelledAt,
                 }
                 : undefined,
+            addressId: model.addressId,
             createdAt: model.createdAt,
             updatedAt: model.updatedAt,
         };

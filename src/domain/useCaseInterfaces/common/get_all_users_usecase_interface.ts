@@ -10,5 +10,5 @@ export interface IGetAllUsersUseCase {
     page: number
     limit: number
     search: string
-  }): Promise<GetAllUsersDTO[]>
+  }): Promise<GetAllUsersDTO>
 }

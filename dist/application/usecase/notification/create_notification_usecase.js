@@ -55,9 +55,7 @@ let CreateNotificationUseCase = class CreateNotificationUseCase {
             };
             try {
                 const io = (0, socket_server_1.getIO)();
-                io.to(`user:${data.recipientId}`).emit(constants_1.SOCKET_EVENTS.NOTIFICATION_NEW, 
-                //socketPayload
-                saved);
+                io.to(`user:${data.recipientId}`).emit(constants_1.SOCKET_EVENTS.NOTIFICATION_NEW, saved);
             }
             catch (err) {
                 console.error('Socket notification emit failed', err);

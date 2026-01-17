@@ -14,12 +14,17 @@ export interface IBookingRepository extends IBaseRepository<IBookingEntity> {
     page: number,
     limit: number,
     search: string,
-    filters: FilterQuery<IBookingModel>
+    filters: FilterQuery<IBookingEntity>
   ): Promise<{
     data: IBookingEntity[]
     currentPage: number
     totalPages: number
   }>
+
+  findCompletedBookingsForReview(
+    customerRef: string,
+    serviceRef: string
+  ): Promise<IBookingEntity[]>
 
   getBookingById(bookingId: string): Promise<IBookingEntity | null>
 

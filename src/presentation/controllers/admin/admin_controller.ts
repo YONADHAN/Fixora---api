@@ -16,6 +16,7 @@ import { IGetAllUsersUseCase } from '../../../domain/useCaseInterfaces/common/ge
 import { IChangeMyUserBlockStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_my_users_block_status_usecase_interface'
 import { IGetAllVendorRequestsUseCase } from '../../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
 import { IChangeVendorVerificationStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
+import { IGetAdminDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/admin/get_admin_dashboard_stats.usecase.interface'
 
 @injectable()
 export class AdminController implements IAdminController {
@@ -31,8 +32,10 @@ export class AdminController implements IAdminController {
     @inject('IGetAllVendorRequestsUseCase')
     private _getAllVendorRequests: IGetAllVendorRequestsUseCase,
     @inject('IChangeVendorVerificationStatusUseCase')
-    private _changeVendorVerificationStatusUseCase: IChangeVendorVerificationStatusUseCase
-  ) { }
+    private _changeVendorVerificationStatusUseCase: IChangeVendorVerificationStatusUseCase,
+    @inject('IGetAdminDashboardStatsUseCase')
+    private _getAdminDashboardStatsUseCase: IGetAdminDashboardStatsUseCase
+  ) {}
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
@@ -160,7 +163,6 @@ export class AdminController implements IAdminController {
     res: Response
   ): Promise<void> {
     try {
-
       const adminId = (req as CustomRequest).user.userId
       const { userId, verificationStatus, description } = req.body
 
@@ -183,6 +185,23 @@ export class AdminController implements IAdminController {
         success: true,
         message: SUCCESS_MESSAGES.VERIFICATION_STATUS_CHANGED,
         data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async getDashboardStats(req: Request, res: Response): Promise<void> {
+    try {
+      // const page = Number(req.query.page) || 1
+      // const limit = Number(req.query.limit) || 10
+      // const search = (req.query.search as string) || ''
+
+      const stats = await this._getAdminDashboardStatsUseCase.execute()
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Dashboard stats retrieved successfully',
+        data: stats,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

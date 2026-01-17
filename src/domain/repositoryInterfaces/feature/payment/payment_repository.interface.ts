@@ -51,4 +51,6 @@ export interface IPaymentRepository
     totalPages: number
     totalCount: number
   }>
+
+  calculateTotalRevenue(filter?: any): Promise<number>
 }

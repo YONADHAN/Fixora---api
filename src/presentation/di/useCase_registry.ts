@@ -191,8 +191,6 @@ import { GetCustomerPaymentHistoryStrategy } from '../../application/strategies/
 import { IGetVendorPaymentHistoryStrategy } from '../../application/strategies/payment/get_payment_history/get_payment_history_strategy.interface'
 import { GetVendorPaymentHistoryStrategy } from '../../application/strategies/payment/get_payment_history/get_vendor_payment_history_strategy'
 
-
-
 import { ICustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy.interface'
 import { CustomerProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy'
 import { IVendorProfileImageUploadStrategy } from '../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy.interface'
@@ -276,6 +274,17 @@ import { InitiateChatUseCase } from '../../application/usecase/chat/initiate_cha
 import { IGetUserChatsUseCase } from '../../domain/useCaseInterfaces/chat/get_user_chats_usecase.interface'
 import { GetUserChatsUseCase } from '../../application/usecase/chat/get_user_chats_usecase'
 
+import { ICreateReviewUseCase } from '../../domain/useCaseInterfaces/review/create_review_usecase.interface'
+import { CreateReviewUseCase } from '../../application/usecase/review/create_review_usecase'
+import { IGetServiceReviewsUseCase } from '../../domain/useCaseInterfaces/review/get_service_reviews_usecase.interface'
+import { GetServiceReviewsUseCase } from '../../application/usecase/review/get_service_reviews_usecase'
+import { ICheckReviewEligibilityUseCase } from '../../domain/useCaseInterfaces/review/check_review_eligibility_usecase.interface'
+import { CheckReviewEligibilityUseCase } from '../../application/usecase/review/check_review_eligibility_usecase'
+
+import { IGetVendorDashboardStatsUseCase } from '../../domain/useCaseInterfaces/vendor/get_vendor_dashboard_stats.usecase.interface'
+import { GetVendorDashboardStatsUseCase } from '../../application/usecase/vendor/get_vendor_dashboard_stats.usecase'
+import { IGetAdminDashboardStatsUseCase } from '../../domain/useCaseInterfaces/admin/get_admin_dashboard_stats.usecase.interface'
+import { GetAdminDashboardStatsUseCase } from '../../application/usecase/dashboard/admin/get_admin_dashboard_stats.usecase'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -629,6 +638,34 @@ export class UseCaseRegistry {
     container.register<IGetUserChatsUseCase>('IGetUserChatsUseCase', {
       useClass: GetUserChatsUseCase,
     })
+
+    container.register<ICreateReviewUseCase>('ICreateReviewUseCase', {
+      useClass: CreateReviewUseCase,
+    })
+    container.register<IGetServiceReviewsUseCase>('IGetServiceReviewsUseCase', {
+      useClass: GetServiceReviewsUseCase,
+    })
+    container.register<ICheckReviewEligibilityUseCase>(
+      'ICheckReviewEligibilityUseCase',
+      {
+        useClass: CheckReviewEligibilityUseCase,
+      }
+    )
+
+    container.register<IGetVendorDashboardStatsUseCase>(
+      'IGetVendorDashboardStatsUseCase',
+      {
+        useClass: GetVendorDashboardStatsUseCase,
+      }
+    )
+
+    container.register<IGetAdminDashboardStatsUseCase>(
+      'IGetAdminDashboardStatsUseCase',
+      {
+        useClass: GetAdminDashboardStatsUseCase,
+      }
+    )
+
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,

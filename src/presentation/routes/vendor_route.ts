@@ -75,6 +75,12 @@ export class VendorRoutes extends BaseRoute {
       }
     )
 
+    this.router.get(
+      '/dashboard-stats',
+      (req: Request, res: Response) => {
+        vendorController.getDashboardStats(req, res)
+      }
+    )
 
     this.router.get('/profile-info', (req: Request, res: Response) => {
       vendorController.profileInfo(req, res)

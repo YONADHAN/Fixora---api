@@ -60,6 +60,7 @@ exports.SOCKET_EVENTS = {
     CHAT_SEND: 'chat:message:send',
     CHAT_NEW: 'chat:message:new',
     CHAT_READ: 'chat:message:read',
+    CHAT_LIST_UPDATE: 'chat:list:update',
     CHAT_TYPING_START: 'chat:typing:start',
     CHAT_TYPING_STOP: 'chat:typing:stop',
     USER_ONLINE: 'presence:online',

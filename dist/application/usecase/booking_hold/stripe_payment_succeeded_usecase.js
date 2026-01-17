@@ -27,14 +27,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StripePaymentSucceededUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
 const crypto_1 = __importDefault(require("crypto"));
+const uuid_1 = require("uuid");
 let StripePaymentSucceededUseCase = class StripePaymentSucceededUseCase {
-    constructor(_bookingHoldRepository, _bookingRepository, _redisSlotLockRepository, _paymentRepository, _walletTransactionRepository, _walletRepository) {
+    constructor(_bookingHoldRepository, _bookingRepository, _redisSlotLockRepository, _paymentRepository, _walletTransactionRepository, _walletRepository, _createNotificationUseCase, _customerRepository, _vendorRepository, _chatRepository, _serviceRepository) {
         this._bookingHoldRepository = _bookingHoldRepository;
         this._bookingRepository = _bookingRepository;
         this._redisSlotLockRepository = _redisSlotLockRepository;
         this._paymentRepository = _paymentRepository;
         this._walletTransactionRepository = _walletTransactionRepository;
         this._walletRepository = _walletRepository;
+        this._createNotificationUseCase = _createNotificationUseCase;
+        this._customerRepository = _customerRepository;
+        this._vendorRepository = _vendorRepository;
+        this._chatRepository = _chatRepository;
+        this._serviceRepository = _serviceRepository;
     }
     execute(paymentIntent) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,6 +58,7 @@ let StripePaymentSucceededUseCase = class StripePaymentSucceededUseCase {
                     serviceRef: hold.serviceRef,
                     vendorRef: hold.vendorRef,
                     customerRef: hold.customerRef,
+                    addressId: hold.addressId,
                     date: slot.date,
                     slotStart: new Date(`${slot.date}T${slot.start}`),
                     slotEnd: new Date(`${slot.date}T${slot.end}`),
@@ -119,6 +126,55 @@ let StripePaymentSucceededUseCase = class StripePaymentSucceededUseCase {
             for (const slot of hold.slots) {
                 yield this._redisSlotLockRepository.releaseSlot(hold.serviceRef, slot.date, slot.start);
             }
+            const customer = yield this._customerRepository.findOne({
+                _id: hold.customerRef,
+            });
+            const vendor = yield this._vendorRepository.findOne({
+                _id: hold.vendorRef,
+            });
+            if (customer) {
+                yield this._createNotificationUseCase.execute({
+                    recipientId: customer.userId,
+                    recipientRole: 'customer',
+                    type: 'PAYMENT_SUCCESS',
+                    title: 'Payment Successful',
+                    message: `Advance payment successful for booking group ${hold.holdId}`,
+                    metadata: { bookingId: hold.holdId },
+                });
+            }
+            if (vendor) {
+                yield this._createNotificationUseCase.execute({
+                    recipientId: vendor.userId,
+                    recipientRole: 'vendor',
+                    type: 'PAYMENT_SUCCESS',
+                    title: 'New Payment Received',
+                    message: `New advance payment received for booking group ${hold.holdId}`,
+                    metadata: { bookingId: hold.holdId },
+                });
+            }
+            // Chat Creation Logic
+            if (customer && vendor && customer._id && vendor._id) {
+                const service = yield this._serviceRepository.findOne({
+                    _id: hold.serviceRef,
+                });
+                if (service && service._id) {
+                    const existingChat = yield this._chatRepository.findChatByParticipants(customer._id.toString(), vendor._id.toString(), service._id.toString());
+                    if (!existingChat) {
+                        yield this._chatRepository.createChat({
+                            chatId: (0, uuid_1.v4)(),
+                            customerRef: customer._id.toString(),
+                            vendorRef: vendor._id.toString(),
+                            serviceRef: service._id.toString(),
+                            unreadCount: {
+                                customer: 0,
+                                vendor: 0,
+                            },
+                            isActive: true,
+                            lastMessage: undefined,
+                        });
+                    }
+                }
+            }
         });
     }
 };
@@ -131,5 +187,10 @@ exports.StripePaymentSucceededUseCase = StripePaymentSucceededUseCase = __decora
     __param(3, (0, tsyringe_1.inject)('IPaymentRepository')),
     __param(4, (0, tsyringe_1.inject)('IWalletTransactionRepository')),
     __param(5, (0, tsyringe_1.inject)('IWalletRepository')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
+    __param(6, (0, tsyringe_1.inject)('ICreateNotificationUseCase')),
+    __param(7, (0, tsyringe_1.inject)('ICustomerRepository')),
+    __param(8, (0, tsyringe_1.inject)('IVendorRepository')),
+    __param(9, (0, tsyringe_1.inject)('IChatRepository')),
+    __param(10, (0, tsyringe_1.inject)('IServiceRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object])
 ], StripePaymentSucceededUseCase);

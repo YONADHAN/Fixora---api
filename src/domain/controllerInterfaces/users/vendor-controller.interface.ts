@@ -6,4 +6,5 @@ export interface IVendorController {
   profileUpdate(req: Request, res: Response): Promise<void>
   vendorVerificationDocStatusCheck(req: Request, res: Response): Promise<void>
   uploadProfileImage(req: Request, res: Response): Promise<void>
+  getDashboardStats(req: Request, res: Response): Promise<void>
 }
