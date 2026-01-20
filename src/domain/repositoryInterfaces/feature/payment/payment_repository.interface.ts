@@ -52,5 +52,9 @@ export interface IPaymentRepository
     totalCount: number
   }>
 
-  calculateTotalRevenue(filter?: any): Promise<number>
+  calculateTotalRevenue(params: {
+    from: Date
+    to: Date
+    vendorRef?: string
+  }): Promise<number>
 }

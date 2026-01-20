@@ -12,6 +12,11 @@ import { IBookingRepository } from '../../../../domain/repositoryInterfaces/feat
 import { IBookingEntity } from '../../../../domain/models/booking_entity'
 import { BookingMongoBase } from '../../../database/mongoDb/types/booking_mongo_base'
 import { CustomError } from '../../../../domain/utils/custom.error'
+import { BookingDashboardResponseDTO } from '../../../../application/dtos/dashboard_dto'
+import {
+  DATE_FORMAT_MAP,
+  timeGranularityType,
+} from '../../../../shared/constants'
 
 @injectable()
 export class BookingRepository
@@ -128,7 +133,7 @@ export class BookingRepository
   async findConfirmedBookedSlotsForService(
     serviceRef: string,
     month: number,
-    year: number
+    year: number,
   ): Promise<IBookingEntity[]> {
     this.validateObjectId(serviceRef, 'serviceRef')
 
@@ -160,7 +165,7 @@ export class BookingRepository
     page: number,
     limit: number,
     search: string = '',
-    filters: FilterQuery<IBookingModel> = {}
+    filters: FilterQuery<IBookingModel> = {},
   ): Promise<{
     data: IBookingEntity[]
     currentPage: number
@@ -256,7 +261,7 @@ export class BookingRepository
 
   async findCompletedBookingsForReview(
     customerRef: string,
-    serviceRef: string
+    serviceRef: string,
   ): Promise<IBookingEntity[]> {
     this.validateObjectId(customerRef, 'customerRef')
     this.validateObjectId(serviceRef, 'serviceRef')
@@ -272,4 +277,106 @@ export class BookingRepository
     return bookings.map((b) => this.toEntity(b))
   }
 
+  async getBookingDashboardAnalytics(params: {
+    from: Date
+    to: Date
+    interval: timeGranularityType
+    vendorRef?: string
+    customerRef?: string
+  }): Promise<BookingDashboardResponseDTO> {
+    const matchStage: any = {
+      createdAt: { $gte: params.from, $lte: params.to },
+    }
+
+    if (params.vendorRef) {
+      matchStage.vendorRef = new Types.ObjectId(params.vendorRef)
+    }
+
+    if (params.customerRef) {
+      matchStage.customerRef = new Types.ObjectId(params.customerRef)
+    }
+
+    const [result] = await this.model.aggregate([
+      { $match: matchStage },
+
+      {
+        $facet: {
+          bookingGrowth: [
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: DATE_FORMAT_MAP[params.interval],
+                    date: '$createdAt',
+                  },
+                },
+                totalBookings: { $sum: 1 },
+              },
+            },
+            { $sort: { _id: 1 } },
+            {
+              $project: {
+                _id: 0,
+                label: '$_id',
+                totalBookings: 1,
+              },
+            },
+          ],
+
+          bookingStatusBreakdown: [
+            {
+              $group: {
+                _id: '$serviceStatus',
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        },
+      },
+    ])
+
+    const statusMap = {
+      scheduled: 0,
+      inProgress: 0,
+      completed: 0,
+      cancelled: 0,
+    }
+
+    for (const item of result.bookingStatusBreakdown) {
+      if (item._id === 'in-progress') {
+        statusMap.inProgress = item.count
+      } else {
+        statusMap[item._id as keyof typeof statusMap] = item.count
+      }
+    }
+
+
+
+    return {
+      bookingGrowth: result.bookingGrowth,
+      bookingStatusBreakdown: statusMap,
+    }
+  }
+
+  async countUniqueCustomersForVendor(vendorRef: string): Promise<number> {
+    this.validateObjectId(vendorRef, 'vendorRef')
+
+    const result = await this.model.aggregate([
+      {
+        $match: {
+          vendorRef: new Types.ObjectId(vendorRef),
+        },
+      },
+      {
+        $group: {
+          _id: '$customerRef',
+        },
+      },
+      {
+        $count: 'totalUniqueCustomers',
+      },
+    ])
+
+    return result[0]?.totalUniqueCustomers || 0
+  }
 }

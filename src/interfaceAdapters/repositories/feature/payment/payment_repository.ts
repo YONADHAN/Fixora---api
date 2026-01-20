@@ -296,9 +296,22 @@ export class PaymentRepository
     }
   }
 
-  async calculateTotalRevenue(filter: any = {}): Promise<number> {
+  async calculateTotalRevenue(params: {
+    from: Date
+    to: Date
+    vendorRef?: string
+  }): Promise<number> {
+    const matchStage: any = {
+      createdAt: { $gte: params.from, $lte: params.to },
+      status: { $ne: 'failed' }, // Exclude entirely failed payments
+    }
+
+    if (params.vendorRef) {
+      matchStage.vendorRef = new Types.ObjectId(params.vendorRef)
+    }
+
     const result = await this.model.aggregate([
-      { $match: filter },
+      { $match: matchStage },
       {
         $project: {
           advanceAmount: {

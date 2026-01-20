@@ -1,4 +1,3 @@
-// vendorSchema.index({ geoLocation: '2dsphere' })
 import { Schema } from 'mongoose'
 import { IVendorModel } from '../models/vendor_model'
 
@@ -52,7 +51,7 @@ export const vendorSchema = new Schema<IVendorModel>(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 vendorSchema.index({ geoLocation: '2dsphere' })

@@ -1,5 +1,8 @@
-import { DashboardStatsInputDTO } from '../../../../application/dtos/dashboard_dto'
+import {
+  DashboardStatsInputDTO,
+  SummaryAnalyticsResponseDTO,
+} from '../../../../application/dtos/dashboard_dto'
 
-export interface ISummaryUseCase {
-  execute(input: DashboardStatsInputDTO): Promise<any>
+export interface ISummaryAnalyticsUseCase {
+  execute(input: DashboardStatsInputDTO): Promise<SummaryAnalyticsResponseDTO>
 }

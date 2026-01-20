@@ -1,5 +1,8 @@
-import { DashboardStatsInputDTO } from '../../../../application/dtos/dashboard_dto'
+import {
+  AdminDashboardResponseDTO,
+  DashboardStatsInputDTO,
+} from '../../../../application/dtos/dashboard_dto'
 
-export interface IGetAdminDashboardStatusUseCase {
-  execute(input: DashboardStatsInputDTO): Promise<any>
+export interface IGetAdminDashboardStatsUseCase {
+  execute(input: DashboardStatsInputDTO): Promise<AdminDashboardResponseDTO>
 }

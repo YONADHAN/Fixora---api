@@ -281,10 +281,46 @@ import { GetServiceReviewsUseCase } from '../../application/usecase/review/get_s
 import { ICheckReviewEligibilityUseCase } from '../../domain/useCaseInterfaces/review/check_review_eligibility_usecase.interface'
 import { CheckReviewEligibilityUseCase } from '../../application/usecase/review/check_review_eligibility_usecase'
 
-import { IGetVendorDashboardStatsUseCase } from '../../domain/useCaseInterfaces/vendor/get_vendor_dashboard_stats.usecase.interface'
-import { GetVendorDashboardStatsUseCase } from '../../application/usecase/vendor/get_vendor_dashboard_stats.usecase'
-import { IGetAdminDashboardStatsUseCase } from '../../domain/useCaseInterfaces/admin/get_admin_dashboard_stats.usecase.interface'
+import { IGetVendorDashboardStatsUseCase } from '../../domain/useCaseInterfaces/dashboard/vendor/get_vendor_dashboard_status_usecase.interface'
+import { GetVendorDashboardStatsUseCase } from '../../application/usecase/dashboard/vendor/get_vendor_dashboard_stats.usecase'
+import { IGetAdminDashboardStatsUseCase } from '../../domain/useCaseInterfaces/dashboard/admin/get_admin_dashboard_stats_usecase.interface'
 import { GetAdminDashboardStatsUseCase } from '../../application/usecase/dashboard/admin/get_admin_dashboard_stats.usecase'
+import { SummaryAnalyticsUseCase } from '../../application/usecase/dashboard/analytics_usecases/summary_analytics_usecase'
+import { ISummaryAnalyticsUseCase as ISummaryUseCase } from '../../domain/useCaseInterfaces/dashboard/analytics/summary_usecase.interface'
+
+import { BookingAnalyticsUseCase } from '../../application/usecase/dashboard/analytics_usecases/booking_analytics_usecase'
+import { IBookingAnalyticsUseCase } from '../../domain/useCaseInterfaces/dashboard/analytics/booking_analytics_usecase.interface'
+import { CustomerAnalyticsUseCase } from '../../application/usecase/dashboard/analytics_usecases/customer_analytics_usecase'
+import { ICustomerAnalyticsUseCase } from '../../domain/useCaseInterfaces/dashboard/analytics/customer_analytics_usecase.interface'
+import { ServiceAnalyticsUseCase } from '../../application/usecase/dashboard/analytics_usecases/service_analytics_usecase'
+import { IServiceAnalyticsUseCase } from '../../domain/useCaseInterfaces/dashboard/analytics/service_analytics_usecase.interface'
+import { VendorAnalyticsUseCase } from '../../application/usecase/dashboard/analytics_usecases/vendor_analytics_usecase'
+import { IVendorAnalyticsUseCase } from '../../domain/useCaseInterfaces/dashboard/analytics/vendor_analytics_usecase.interface'
+
+import { SummaryAnalyticsFactory } from '../../application/factories/dashboard/SummaryAnalyticsFactory'
+import { ISummaryAnalyticsFactory } from '../../application/factories/dashboard/ISummaryAnalyticsFactory'
+import { BookingAnalyticsFactory } from '../../application/factories/dashboard/BookingAnalyticsFactory'
+import { IBookingAnalyticsFactory } from '../../application/factories/dashboard/IBookingAnalyticsFactory'
+import { CustomerAnalyticsFactory } from '../../application/factories/dashboard/CustomerAnalyticsFactory'
+import { ICustomerAnalyticsFactory } from '../../application/factories/dashboard/ICustomerAnalyticsFactory'
+import { ServiceAnalyticsFactory } from '../../application/factories/dashboard/ServiceAnalyticsFactory'
+import { IServiceAnalyticsFactory } from '../../application/factories/dashboard/IServiceAnalyticsFactory'
+import { VendorAnalyticsFactory } from '../../application/factories/dashboard/VendorAnalyticsFactory'
+import { IVendorAnalyticsFactory } from '../../application/factories/dashboard/IVendorAnalyticsFactory'
+
+import { SummaryAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/summary/SummaryAnalyticsStrategyForAdmin'
+import { SummaryAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/summary/SummaryAnalyticsStrategyForVendor'
+import { ISummaryAnalyticsStrategy } from '../../application/strategies/dashboard/summary/ISummaryAnalyticsStrategy'
+import { BookingAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForAdmin'
+import { BookingAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForVendor'
+import { IBookingAnalyticsStrategy } from '../../application/strategies/dashboard/booking/IBookingAnalyticsStrategy'
+import { CustomerAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/customer/CustomerAnalyticsStrategyForAdmin'
+import { CustomerAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/customer/CustomerAnalyticsStrategyForVendor'
+import { ICustomerAnalyticsStrategy } from '../../application/strategies/dashboard/customer/ICustomerAnalyticsStrategy'
+import { ServiceAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/service/ServiceAnalyticsStrategyForAdmin'
+import { IServiceAnalyticsStrategy } from '../../application/strategies/dashboard/service/IServiceAnalyticsStrategy'
+import { VendorAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/vendor/VendorAnalyticsStrategyForAdmin'
+import { IVendorAnalyticsStrategy } from '../../application/strategies/dashboard/vendor/IVendorAnalyticsStrategy'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -325,7 +361,7 @@ export class UseCaseRegistry {
       'IRevokeRefreshTokenUseCase',
       {
         useClass: RevokeRefreshTokenUseCase,
-      }
+      },
     )
 
     container.register<IRefreshTokenUseCase>('IRefreshTokenUseCase', {
@@ -348,7 +384,7 @@ export class UseCaseRegistry {
       'IChangeMyUserBlockStatusUseCase',
       {
         useClass: ChangeMyUserBlockStatusUseCase,
-      }
+      },
     )
 
     container.register<IGoogleUseCase>('IGoogleUseCase', {
@@ -362,7 +398,7 @@ export class UseCaseRegistry {
       'IChangeVendorVerificationStatusUseCase',
       {
         useClass: ChangeVendorVerificationStatusUseCase,
-      }
+      },
     )
     container.register<IChangeMyPasswordUseCase>('IChangeMyPasswordUseCase', {
       useClass: ChangeMyPasswordUseCase,
@@ -372,41 +408,41 @@ export class UseCaseRegistry {
       'ICreateServiceCategoryUseCase',
       {
         useClass: CreateServiceCategoryUseCase,
-      }
+      },
     )
 
     container.register<IGetAllServiceCategoryUseCase>(
       'IGetAllServiceCategoryUseCase',
       {
         useClass: GetAllServiceCategoryUseCase,
-      }
+      },
     )
 
     container.register<IEditServiceCategoryUseCase>(
       'IEditServiceCategoryUseCase',
       {
         useClass: EditServiceCategoryUseCase,
-      }
+      },
     )
 
     container.register<IBlockServiceCategoryUseCase>(
       'IBlockServiceCategoryUseCase',
       {
         useClass: BlockServiceCategoryUseCase,
-      }
+      },
     )
 
     container.register<IGetSingleServiceCategoryUseCase>(
       'IGetSingleServiceCategoryUseCase',
       {
         useClass: GetSingleServiceCategoryUseCase,
-      }
+      },
     )
     container.register<IToggleVerificationStatusOfSubServiceCategoryUseCase>(
       'IToggleVerificationStatusOfSubServiceCategoryUseCase',
       {
         useClass: ToggleVerificationStatusOfSubServiceCategoryUseCase,
-      }
+      },
     )
 
     container.register<ICreateServiceUseCase>('ICreateServiceUseCase', {
@@ -426,19 +462,19 @@ export class UseCaseRegistry {
       'IToggleBlockServiceUseCase',
       {
         useClass: ToggleBlockServiceUseCase,
-      }
+      },
     )
     container.register<ISearchServicesForCustomersUseCase>(
       'ISearchServicesForCustomersUseCase',
       {
         useClass: SearchServicesForCustomersUseCase,
-      }
+      },
     )
     container.register<IGetAvailableSlotsForCustomerUseCase>(
       'IGetAvailableSlotsForCustomerUseCase',
       {
         useClass: GetAvailableSlotsForCustomerUseCase,
-      }
+      },
     )
 
     container.register<ICreateBookingHoldUseCase>('ICreateBookingHoldUseCase', {
@@ -449,7 +485,7 @@ export class UseCaseRegistry {
       'ICreateStripePaymentIntentUseCase',
       {
         useClass: CreateStripePaymentIntentUseCase,
-      }
+      },
     )
 
     container.register<IGetBookingsUseCase>('IGetBookingsUseCase', {
@@ -481,7 +517,7 @@ export class UseCaseRegistry {
       'IGoogleRegisterUserUseCase',
       {
         useClass: GoogleRegisterUserUseCase,
-      }
+      },
     )
 
     container.register<IUploadVendorDocsUseCase>('IUploadVendorDocsUseCase', {
@@ -492,78 +528,78 @@ export class UseCaseRegistry {
       'IGetAllVendorRequestsUseCase',
       {
         useClass: GetAllVendorRequestsUseCase,
-      }
+      },
     )
 
     container.register<IGetActiveServiceCategoriesUseCase>(
       'IGetActiveServiceCategoriesUseCase',
       {
         useClass: GetActiveServiceCategoriesUseCase,
-      }
+      },
     )
     container.register<ICreateSubServiceCategoryUseCase>(
       'ICreateSubServiceCategoryUseCase',
       {
         useClass: CreateSubServiceCategoryUseCase,
-      }
+      },
     )
     container.register<IEditSubServiceCategoryUseCase>(
       'IEditSubServiceCategoryUseCase',
       {
         useClass: EditSubServiceCategoryUseCase,
-      }
+      },
     )
     container.register<IGetAllSubServiceCategoryUseCase>(
       'IGetAllSubServiceCategoryUseCase',
       {
         useClass: GetAllSubServiceCategoryUseCase,
-      }
+      },
     )
     container.register<IGetSingleSubServiceCategoryUseCase>(
       'IGetSingleSubServiceCategoryUseCase',
       {
         useClass: GetSingleSubServiceCategoryUseCase,
-      }
+      },
     )
     container.register<IToggleBlockStatusOfSubServiceCategoryUseCase>(
       'IToggleBlockStatusOfSubServiceCategoryUseCase',
       {
         useClass: ToggleBlockStatusOfSubServiceCategoryUseCase,
-      }
+      },
     )
     container.register<IGetVendorSubServiceCategoriesUseCase>(
       'IGetVendorSubServiceCategoriesUseCase',
       {
         useClass: GetVendorSubServiceCategoriesUseCase,
-      }
+      },
     )
 
     container.register<IGetActiveSubServiceCategoriesUseCase>(
       'IGetActiveSubServiceCategoriesUseCase',
       {
         useClass: GetActiveSubServiceCategoriesUseCase,
-      }
+      },
     )
 
     container.register<IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase>(
       'IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase',
       {
         useClass: GetAllSubServiceCategoriesBasedOnServiceCategoryId,
-      }
+      },
     )
 
     container.register<IStripePaymentSucceedUseCase>(
       'IStripePaymentSucceedUseCase',
       {
         useClass: StripePaymentSucceededUseCase,
-      }
+      },
     )
 
     container.register<IStripePaymentFailedUseCase>(
       'IStripePaymentFailedUseCase',
       {
         useClass: StripePaymentFailedUseCase,
-      }
+      },
     )
 
     container.register<IGetAddressUseCase>('IGetAddressUseCase', {
@@ -593,25 +629,25 @@ export class UseCaseRegistry {
       'ICreateNotificationUseCase',
       {
         useClass: CreateNotificationUseCase,
-      }
+      },
     )
     container.register<IGetMyNotificationsUseCase>(
       'IGetMyNotificationsUseCase',
       {
         useClass: GetMyNotificationsUseCase,
-      }
+      },
     )
     container.register<IMarkAllNotificationsReadUseCase>(
       'IMarkAllNotificationsReadUseCase',
       {
         useClass: MarkAllNotificationsReadUseCase,
-      }
+      },
     )
     container.register<IMarkNotificationReadUseCase>(
       'IMarkNotificationReadUseCase',
       {
         useClass: MarkNotificationReadUseCase,
-      }
+      },
     )
 
     container.register<ISendMessageUseCase>('ISendMessageUseCase', {
@@ -622,7 +658,7 @@ export class UseCaseRegistry {
       'IGetBookingByPaymentIdUseCase',
       {
         useClass: GetBookingByPaymentIdUseCase,
-      }
+      },
     )
 
     container.register<IGetChatMessagesUseCase>('IGetChatMessagesUseCase', {
@@ -649,23 +685,27 @@ export class UseCaseRegistry {
       'ICheckReviewEligibilityUseCase',
       {
         useClass: CheckReviewEligibilityUseCase,
-      }
+      },
     )
 
     container.register<IGetVendorDashboardStatsUseCase>(
       'IGetVendorDashboardStatsUseCase',
       {
         useClass: GetVendorDashboardStatsUseCase,
-      }
+      },
     )
 
     container.register<IGetAdminDashboardStatsUseCase>(
       'IGetAdminDashboardStatsUseCase',
       {
         useClass: GetAdminDashboardStatsUseCase,
-      }
+      },
     )
 
+    //dashboard analytics usecases
+    container.register<ISummaryUseCase>('ISummaryAnalyticsUseCase', {
+      useClass: SummaryAnalyticsUseCase,
+    })
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,
@@ -686,14 +726,14 @@ export class UseCaseRegistry {
       'ICustomerGoogleRegistrationStrategy',
       {
         useClass: CustomerGoogleRegistrationStrategy,
-      }
+      },
     )
 
     container.register<IVendorGoogleRegistrationStrategy>(
       'IVendorGoogleRegistrationStrategy',
       {
         useClass: VendorGoogleRegistrationStrategy,
-      }
+      },
     )
     container.register<IBookingServices>('IBookingServices', {
       useClass: BookingServices,
@@ -703,7 +743,7 @@ export class UseCaseRegistry {
       'IRegistrationStrategyFactory',
       {
         useClass: RegistrationStrategyFactory,
-      }
+      },
     )
 
     container.register<ILoginStrategyFactory>('ILoginStrategyFactory', {
@@ -714,14 +754,14 @@ export class UseCaseRegistry {
       'IForgotPasswordStrategyFactory',
       {
         useClass: ForgotPasswordStrategyFactory,
-      }
+      },
     )
 
     container.register<IResetPasswordStrategyFactory>(
       'IResetPasswordStrategyFactory',
       {
         useClass: ResetPasswordStrategyFactory,
-      }
+      },
     )
 
     container.register<IProfileFactory>('IProfileFactory', {
@@ -739,14 +779,14 @@ export class UseCaseRegistry {
       'IChangeMyUserBlockStatusFactory',
       {
         useClass: ChangeMyUserBlockStatusFactory,
-      }
+      },
     )
 
     container.register<IGoogleRegistrationStrategyFactory>(
       'IGoogleRegistrationStrategyFactory',
       {
         useClass: GoogleRegistrationStrategyFactory,
-      }
+      },
     )
 
     container.register<IUserMapperFactory>('IUserMapperFactory', {
@@ -761,7 +801,7 @@ export class UseCaseRegistry {
       'IProfileImageUploadFactory',
       {
         useClass: ProfileImageUploadFactory,
-      }
+      },
     )
     container.register<IGetBookingsFactory>('IGetBookingsFactory', {
       useClass: GetBookingsFactory,
@@ -783,19 +823,19 @@ export class UseCaseRegistry {
       'ICustomerRegistrationStrategy',
       {
         useClass: CustomerRegistrationStrategy,
-      }
+      },
     )
     container.register<IAdminRegistrationStrategy>(
       'IAdminRegistrationStrategy',
       {
         useClass: AdminRegistrationStrategy,
-      }
+      },
     )
     container.register<IVendorRegistrationStrategy>(
       'IVendorRegistrationStrategy',
       {
         useClass: VendorRegistrationStrategy,
-      }
+      },
     )
 
     container.register<IAdminLoginStrategy>('IAdminLoginStrategy', {
@@ -814,40 +854,40 @@ export class UseCaseRegistry {
       'AdminForgotPasswordStrategy',
       {
         useClass: AdminForgotPasswordStrategy,
-      }
+      },
     )
 
     container.register<ICustomerForgotPasswordStrategy>(
       'CustomerForgotPasswordStrategy',
       {
         useClass: CustomerForgotPasswordStrategy,
-      }
+      },
     )
 
     container.register<IVendorForgotPasswordStrategy>(
       'VendorForgotPasswordStrategy',
       {
         useClass: VendorForgotPasswordStrategy,
-      }
+      },
     )
 
     container.register<ICustomerResetPasswordStrategy>(
       'ICustomerResetPasswordStrategy',
       {
         useClass: CustomerResetPasswordStrategy,
-      }
+      },
     )
     container.register<IVendorResetPasswordStrategy>(
       'IVendorResetPasswordStrategy',
       {
         useClass: VendorResetPasswordStrategy,
-      }
+      },
     )
     container.register<IAdminResetPasswordStrategy>(
       'IAdminResetPasswordStrategy',
       {
         useClass: AdminResetPasswordStrategy,
-      }
+      },
     )
 
     container.register<IVendorProfileStrategy>('IVendorProfileStrategy', {
@@ -862,21 +902,21 @@ export class UseCaseRegistry {
       'IVendorProfileUpdateStrategy',
       {
         useClass: VendorProfileUpdateStrategy,
-      }
+      },
     )
 
     container.register<ICustomerProfileUpdateStrategy>(
       'ICustomerProfileUpdateStrategy',
       {
         useClass: CustomerProfileUpdateStrategy,
-      }
+      },
     )
 
     container.register<IFetchingCustomersStrategy>(
       'IFetchingCustomersStrategy',
       {
         useClass: FetchingCustomersStrategy,
-      }
+      },
     )
 
     container.register<IFetchingVendorsStrategy>('IFetchingVendorsStrategy', {
@@ -887,113 +927,136 @@ export class UseCaseRegistry {
       'IChangeMyCustomersBlockStatusStrategy',
       {
         useClass: ChangeMyCustomersBlockStatusStrategy,
-      }
+      },
     )
 
     container.register<IChangeMyVendorsBlockStatusStrategy>(
       'IChangeMyVendorsBlockStatusStrategy',
       {
         useClass: ChangeMyVendorsBlockStatusStrategy,
-      }
+      },
     )
 
     container.register<IChangeAdminPasswordStrategy>(
       'IChangeAdminPasswordStrategy',
       {
         useClass: ChangeAdminPasswordStrategy,
-      }
+      },
     )
 
     container.register<IChangeCustomerPasswordStrategy>(
       'IChangeCustomerPasswordStrategy',
       {
         useClass: ChangeCustomerPasswordStrategy,
-      }
+      },
     )
 
     container.register<IChangeVendorPasswordStrategy>(
       'IChangeVendorPasswordStrategy',
       {
         useClass: ChangeVendorPasswordStrategy,
-      }
+      },
     )
 
     container.register<ICustomerProfileImageUploadStrategy>(
       'ICustomerProfileImageUploadStrategy',
       {
         useClass: CustomerProfileImageUploadStrategy,
-      }
+      },
     )
     container.register<IVendorProfileImageUploadStrategy>(
       'IVendorProfileImageUploadStrategy',
       {
         useClass: VendorProfileImageUploadStrategy,
-      }
+      },
     )
 
     container.register<IGetBookingForAdminStrategyInterface>(
       'IGetBookingForAdminStrategyInterface',
       {
         useClass: GetBookingForAdminStrategy,
-      }
+      },
     )
     container.register<IGetBookingForVendorStrategyInterface>(
       'IGetBookingForVendorStrategyInterface',
       {
         useClass: GetBookingForVendorStrategy,
-      }
+      },
     )
     container.register<IGetBookingForCustomerStrategyInterface>(
       'IGetBookingForCustomerStrategyInterface',
       {
         useClass: GetBookingForCustomerStrategy,
-      }
+      },
     )
 
     container.register<ICustomerCancelBookingStrategyInterface>(
       'ICustomerCancelBookingStrategyInterface',
       {
         useClass: CustomerCancelBookingStrategy,
-      }
+      },
     )
 
     container.register<IVendorCancelBookingStrategyInterface>(
       'IVendorCancelBookingStrategyInterface',
       {
         useClass: VendorCancelBookingStrategy,
-      }
+      },
     )
 
     container.register<IGetBookingDetailsForCustomerStrategy>(
       'IGetBookingDetailsForCustomerStrategy',
       {
         useClass: GetBookingDetailsForCustomerStrategy,
-      }
+      },
     )
 
     container.register<IGetBookingDetailsForVendorStrategy>(
       'IGetBookingDetailsForVendorStrategy',
       {
         useClass: GetBookingDetailsForVendorStrategy,
-      }
+      },
     )
 
     container.register<IGetCustomerPaymentHistoryStrategy>(
       'IGetCustomerPaymentHistoryStrategy',
       {
         useClass: GetCustomerPaymentHistoryStrategy,
-      }
+      },
     )
 
     container.register<IGetVendorPaymentHistoryStrategy>(
       'IGetVendorPaymentHistoryStrategy',
       {
         useClass: GetVendorPaymentHistoryStrategy,
-      }
+      },
     )
 
     //mappers
     container.register('ICustomerSafeMapper', { useClass: CustomerSafeMapper })
     container.register('IVendorSafeMapper', { useClass: VendorSafeMapper })
+
+    // Dashboard Factories
+    container.register<ISummaryAnalyticsFactory>('ISummaryAnalyticsFactory', { useClass: SummaryAnalyticsFactory })
+    container.register<IBookingAnalyticsFactory>('IBookingAnalyticsFactory', { useClass: BookingAnalyticsFactory })
+    container.register<ICustomerAnalyticsFactory>('ICustomerAnalyticsFactory', { useClass: CustomerAnalyticsFactory })
+    container.register<IServiceAnalyticsFactory>('IServiceAnalyticsFactory', { useClass: ServiceAnalyticsFactory })
+    container.register<IVendorAnalyticsFactory>('IVendorAnalyticsFactory', { useClass: VendorAnalyticsFactory })
+
+    // Dashboard Strategies
+    container.register<ISummaryAnalyticsStrategy>('SummaryAnalyticsStrategyForAdmin', { useClass: SummaryAnalyticsStrategyForAdmin })
+    container.register<ISummaryAnalyticsStrategy>('SummaryAnalyticsStrategyForVendor', { useClass: SummaryAnalyticsStrategyForVendor })
+    container.register<IBookingAnalyticsStrategy>('BookingAnalyticsStrategyForAdmin', { useClass: BookingAnalyticsStrategyForAdmin })
+    container.register<IBookingAnalyticsStrategy>('BookingAnalyticsStrategyForVendor', { useClass: BookingAnalyticsStrategyForVendor })
+    container.register<ICustomerAnalyticsStrategy>('CustomerAnalyticsStrategyForAdmin', { useClass: CustomerAnalyticsStrategyForAdmin })
+    container.register<ICustomerAnalyticsStrategy>('CustomerAnalyticsStrategyForVendor', { useClass: CustomerAnalyticsStrategyForVendor })
+    container.register<IServiceAnalyticsStrategy>('ServiceAnalyticsStrategyForAdmin', { useClass: ServiceAnalyticsStrategyForAdmin })
+    container.register<IVendorAnalyticsStrategy>('VendorAnalyticsStrategyForAdmin', { useClass: VendorAnalyticsStrategyForAdmin })
+
+    // Dashboard UseCases
+    container.register<IBookingAnalyticsUseCase>('IBookingAnalyticsUseCase', { useClass: BookingAnalyticsUseCase })
+    container.register<ICustomerAnalyticsUseCase>('ICustomerAnalyticsUseCase', { useClass: CustomerAnalyticsUseCase })
+    container.register<IServiceAnalyticsUseCase>('IServiceAnalyticsUseCase', { useClass: ServiceAnalyticsUseCase })
+    container.register<IVendorAnalyticsUseCase>('IVendorAnalyticsUseCase', { useClass: VendorAnalyticsUseCase })
   }
 }

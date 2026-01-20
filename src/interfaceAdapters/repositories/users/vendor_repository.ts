@@ -6,11 +6,22 @@ import {
 } from '../../database/mongoDb/models/vendor_model'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IVendorEntity } from '../../../domain/models/vendor_entity'
+import { Types } from 'mongoose'
+import { timeGranularityType } from '../../../shared/constants'
+import { VendorDashboardResponseDTO } from '../../../application/dtos/dashboard_dto'
+
+const DATE_FORMAT_MAP: Record<timeGranularityType, string> = {
+  daily: '%Y-%m-%d',
+  weekly: '%Y-%U',
+  monthly: '%Y-%m',
+  yearly: '%Y',
+}
 
 @injectable()
 export class VendorRepository
   extends BaseRepository<IVendorModel, IVendorEntity>
-  implements IVendorRepository {
+  implements IVendorRepository
+{
   constructor() {
     super(VendorModel)
   }
@@ -33,39 +44,39 @@ export class VendorRepository
 
       geoLocation: model.geoLocation
         ? {
-          type: model.geoLocation.type,
-          coordinates: model.geoLocation.coordinates,
-        }
+            type: model.geoLocation.type,
+            coordinates: model.geoLocation.coordinates,
+          }
         : undefined,
 
       location: model.location
         ? {
-          name: model.location.name,
-          displayName: model.location.displayName,
-          zipCode: model.location.zipCode,
-        }
+            name: model.location.name,
+            displayName: model.location.displayName,
+            zipCode: model.location.zipCode,
+          }
         : undefined,
 
       documents: model.documents
         ? model.documents.map((doc) => ({
-          name: doc.name,
-          url: doc.url,
-          verified: doc.verified,
-          uploadedAt: doc.uploadedAt,
-        }))
+            name: doc.name,
+            url: doc.url,
+            verified: doc.verified,
+            uploadedAt: doc.uploadedAt,
+          }))
         : undefined,
 
       isVerified: model.isVerified
         ? {
-          status: model.isVerified.status,
-          description: model.isVerified.description,
-          reviewedBy: model.isVerified.reviewedBy
-            ? {
-              adminId: model.isVerified.reviewedBy.adminId,
-              reviewedAt: model.isVerified.reviewedBy.reviewedAt,
-            }
-            : undefined,
-        }
+            status: model.isVerified.status,
+            description: model.isVerified.description,
+            reviewedBy: model.isVerified.reviewedBy
+              ? {
+                  adminId: model.isVerified.reviewedBy.adminId,
+                  reviewedAt: model.isVerified.reviewedBy.reviewedAt,
+                }
+              : undefined,
+          }
         : undefined,
     }
   }
@@ -85,46 +96,46 @@ export class VendorRepository
 
       geoLocation: entity.geoLocation
         ? {
-          type: entity.geoLocation.type,
-          coordinates: entity.geoLocation.coordinates,
-        }
+            type: entity.geoLocation.type,
+            coordinates: entity.geoLocation.coordinates,
+          }
         : undefined,
 
       location: entity.location
         ? {
-          name: entity.location.name,
-          displayName: entity.location.displayName,
-          zipCode: entity.location.zipCode,
-        }
+            name: entity.location.name,
+            displayName: entity.location.displayName,
+            zipCode: entity.location.zipCode,
+          }
         : undefined,
 
       documents: entity.documents
         ? entity.documents.map((doc) => ({
-          name: doc.name,
-          url: doc.url,
-          verified: doc.verified,
-          uploadedAt: doc.uploadedAt,
-        }))
+            name: doc.name,
+            url: doc.url,
+            verified: doc.verified,
+            uploadedAt: doc.uploadedAt,
+          }))
         : undefined,
 
       isVerified: entity.isVerified
         ? {
-          status: entity.isVerified.status,
-          description: entity.isVerified.description,
-          reviewedBy: entity.isVerified.reviewedBy
-            ? {
-              adminId: entity.isVerified.reviewedBy.adminId,
-              reviewedAt: entity.isVerified.reviewedBy.reviewedAt,
-            }
-            : undefined,
-        }
+            status: entity.isVerified.status,
+            description: entity.isVerified.description,
+            reviewedBy: entity.isVerified.reviewedBy
+              ? {
+                  adminId: entity.isVerified.reviewedBy.adminId,
+                  reviewedAt: entity.isVerified.reviewedBy.reviewedAt,
+                }
+              : undefined,
+          }
         : undefined,
     }
   }
   async findNearestVendors(
     lat: number,
     lng: number,
-    radiusInKm: number
+    radiusInKm: number,
   ): Promise<IVendorEntity[]> {
     const radiusInRadians = radiusInKm / 6378.1 // Earth's radius in km
 
@@ -134,9 +145,76 @@ export class VendorRepository
           $centerSphere: [[lng, lat], radiusInRadians],
         },
       },
-      status: 'active', // Ensure we only get active vendors
+      status: 'active',
     })
 
     return models.map((model) => this.toEntity(model))
+  }
+
+  async getVendorDashboardAnalytics(params: {
+    from: Date
+    to: Date
+    interval: timeGranularityType
+  }): Promise<VendorDashboardResponseDTO> {
+    const [result] = await this.model.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: params.from,
+            $lte: params.to,
+          },
+        },
+      },
+
+      {
+        $facet: {
+          vendorGrowth: [
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: DATE_FORMAT_MAP[params.interval],
+                    date: '$createdAt',
+                  },
+                },
+                totalVendors: { $sum: 1 },
+              },
+            },
+            { $sort: { _id: 1 } },
+            {
+              $project: {
+                _id: 0,
+                label: '$_id',
+                totalVendors: 1,
+              },
+            },
+          ],
+
+          vendorStatusBreakdown: [
+            {
+              $group: {
+                _id: '$status',
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        },
+      },
+    ])
+
+    const statusMap = {
+      pending: 0,
+      active: 0,
+      blocked: 0,
+    }
+
+    for (const item of result.vendorStatusBreakdown) {
+      statusMap[item._id as keyof typeof statusMap] = item.count
+    }
+
+    return {
+      vendorGrowth: result.vendorGrowth,
+      vendorStatusBreakdown: statusMap,
+    }
   }
 }

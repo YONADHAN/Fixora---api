@@ -5,7 +5,9 @@ import {
   SUCCESS_MESSAGES,
   ERROR_MESSAGES,
   statusTypes,
+  timeGranularityType,
 } from '../../../shared/constants'
+import { DashboardStatsInputDTO } from '../../../application/dtos/dashboard_dto'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { IBlacklistTokenUseCase } from '../../../domain/useCaseInterfaces/auth/blacklist_token_usecase_interface'
 import { IRevokeRefreshTokenUseCase } from '../../../domain/useCaseInterfaces/auth/revoke_refresh_token_usecase'
@@ -16,7 +18,7 @@ import { IGetAllUsersUseCase } from '../../../domain/useCaseInterfaces/common/ge
 import { IChangeMyUserBlockStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_my_users_block_status_usecase_interface'
 import { IGetAllVendorRequestsUseCase } from '../../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
 import { IChangeVendorVerificationStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
-import { IGetAdminDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/admin/get_admin_dashboard_stats.usecase.interface'
+import { IGetAdminDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/dashboard/admin/get_admin_dashboard_stats_usecase.interface'
 
 @injectable()
 export class AdminController implements IAdminController {
@@ -34,17 +36,17 @@ export class AdminController implements IAdminController {
     @inject('IChangeVendorVerificationStatusUseCase')
     private _changeVendorVerificationStatusUseCase: IChangeVendorVerificationStatusUseCase,
     @inject('IGetAdminDashboardStatsUseCase')
-    private _getAdminDashboardStatsUseCase: IGetAdminDashboardStatsUseCase
-  ) {}
+    private _getAdminDashboardStatsUseCase: IGetAdminDashboardStatsUseCase,
+  ) { }
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
       await this._blacklistTokenUseCase.execute(
-        (req as CustomRequest).user.access_token
+        (req as CustomRequest).user.access_token,
       )
 
       await this._revokeRefreshTokenUseCase.execute(
-        (req as CustomRequest).user.refresh_token
+        (req as CustomRequest).user.refresh_token,
       )
 
       const user = (req as CustomRequest).user
@@ -160,7 +162,7 @@ export class AdminController implements IAdminController {
 
   async changeMyVendorVerificationStatus(
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<void> {
     try {
       const adminId = (req as CustomRequest).user.userId
@@ -193,11 +195,23 @@ export class AdminController implements IAdminController {
 
   async getDashboardStats(req: Request, res: Response): Promise<void> {
     try {
-      // const page = Number(req.query.page) || 1
-      // const limit = Number(req.query.limit) || 10
-      // const search = (req.query.search as string) || ''
+      const { from, to, interval } = req.query
 
-      const stats = await this._getAdminDashboardStatsUseCase.execute()
+      const input: DashboardStatsInputDTO = {
+        dateRange: {
+          from: from
+            ? new Date(from as string)
+            : new Date(new Date().setDate(new Date().getDate() - 30)),
+          to: to ? new Date(to as string) : new Date(),
+        },
+        interval: (interval as timeGranularityType) || 'daily',
+        user: {
+          role: 'admin',
+          userId: (req as CustomRequest).user.userId,
+        },
+      }
+
+      const stats = await this._getAdminDashboardStatsUseCase.execute(input)
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Dashboard stats retrieved successfully',

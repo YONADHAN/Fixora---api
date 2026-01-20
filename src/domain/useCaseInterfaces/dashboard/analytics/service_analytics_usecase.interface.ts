@@ -1,5 +1,8 @@
-import { DashboardStatsInputDTO } from '../../../../application/dtos/dashboard_dto'
+import {
+  DashboardStatsInputDTO,
+  ServiceDashboardResponseDTO,
+} from '../../../../application/dtos/dashboard_dto'
 
 export interface IServiceAnalyticsUseCase {
-  execute(input: DashboardStatsInputDTO): Promise<any>
+  execute(input: DashboardStatsInputDTO): Promise<ServiceDashboardResponseDTO>
 }

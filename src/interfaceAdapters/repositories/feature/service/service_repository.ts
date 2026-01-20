@@ -11,6 +11,11 @@ import {
   ISubServiceCategoryPopulated,
   IVendorPopulated,
 } from '../../../../shared/types/populated_values'
+import {
+  DATE_FORMAT_MAP,
+  timeGranularityType,
+} from '../../../../shared/constants'
+import { BookingModel } from '../../../database/mongoDb/models/booking_model'
 
 function isVendorPopulated(ref: any): ref is IVendorPopulated {
   return (
@@ -35,8 +40,7 @@ function isSubCategoryPopulated(ref: any): ref is ISubServiceCategoryPopulated {
 @injectable()
 export class ServiceRepository
   extends BaseRepository<IServiceModel, IServiceEntity>
-  implements IServiceRepository
-{
+  implements IServiceRepository {
   constructor() {
     super(ServiceModel)
   }
@@ -57,17 +61,17 @@ export class ServiceRepository
 
       serviceVariants: entity.serviceVariants
         ? entity.serviceVariants.map((v) => ({
-            name: v.name,
-            description: v.description,
-            price: v.price,
-          }))
+          name: v.name,
+          description: v.description,
+          price: v.price,
+        }))
         : [],
 
       pricing: entity.pricing
         ? {
-            pricePerSlot: entity.pricing.pricePerSlot,
-            advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
-          }
+          pricePerSlot: entity.pricing.pricePerSlot,
+          advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
+        }
         : undefined,
 
       mainImage: entity.mainImage,
@@ -78,35 +82,35 @@ export class ServiceRepository
 
       schedule: entity.schedule
         ? {
-            visibilityStartDate: entity.schedule.visibilityStartDate,
-            visibilityEndDate: entity.schedule.visibilityEndDate,
+          visibilityStartDate: entity.schedule.visibilityStartDate,
+          visibilityEndDate: entity.schedule.visibilityEndDate,
 
-            dailyWorkingWindows: entity.schedule.dailyWorkingWindows?.map(
-              (w) => ({
-                startTime: w.startTime,
-                endTime: w.endTime,
-              })
-            ),
+          dailyWorkingWindows: entity.schedule.dailyWorkingWindows?.map(
+            (w) => ({
+              startTime: w.startTime,
+              endTime: w.endTime,
+            }),
+          ),
 
-            slotDurationMinutes: entity.schedule.slotDurationMinutes,
+          slotDurationMinutes: entity.schedule.slotDurationMinutes,
 
-            recurrenceType: entity.schedule.recurrenceType,
-            weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
-            monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
+          recurrenceType: entity.schedule.recurrenceType,
+          weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
+          monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
 
-            overrideBlock: entity.schedule.overrideBlock?.map((b) => ({
-              startDateTime: b.startDateTime,
-              endDateTime: b.endDateTime,
-              reason: b.reason,
-            })),
+          overrideBlock: entity.schedule.overrideBlock?.map((b) => ({
+            startDateTime: b.startDateTime,
+            endDateTime: b.endDateTime,
+            reason: b.reason,
+          })),
 
-            overrideCustom: entity.schedule.overrideCustom?.map((c) => ({
-              startDateTime: c.startDateTime,
-              endDateTime: c.endDateTime,
-              startTime: c.startTime,
-              endTime: c.endTime,
-            })),
-          }
+          overrideCustom: entity.schedule.overrideCustom?.map((c) => ({
+            startDateTime: c.startDateTime,
+            endDateTime: c.endDateTime,
+            startTime: c.startTime,
+            endTime: c.endTime,
+          })),
+        }
         : undefined,
     }
   }
@@ -196,5 +200,151 @@ export class ServiceRepository
     }
 
     return entity
+  }
+
+  async getServiceGrowth(params: {
+    from: Date
+    to: Date
+    interval: timeGranularityType
+  }) {
+    return ServiceModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: params.from, $lte: params.to },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: DATE_FORMAT_MAP[params.interval],
+              date: '$createdAt',
+            },
+          },
+          totalServices: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+      {
+        $project: {
+          _id: 0,
+          label: '$_id',
+          totalServices: 1,
+        },
+      },
+    ])
+  }
+
+  async getServiceStatusOverview() {
+    const [result] = await ServiceModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalServices: { $sum: 1 },
+          activeServices: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$isActiveStatusByAdmin', true] },
+                    { $eq: ['$isActiveStatusByVendor', true] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+          inactiveServices: {
+            $sum: {
+              $cond: [
+                {
+                  $or: [
+                    { $eq: ['$isActiveStatusByAdmin', false] },
+                    { $eq: ['$isActiveStatusByVendor', false] },
+                  ],
+                },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalServices: 1,
+          activeServices: 1,
+          inactiveServices: 1,
+        },
+      },
+    ])
+
+    return (
+      result ?? {
+        totalServices: 0,
+        activeServices: 0,
+        inactiveServices: 0,
+      }
+    )
+  }
+
+  async getTopServices(params: {
+    from: Date
+    to: Date
+    limit?: number
+  }) {
+    const limit = params.limit || 5
+    return BookingModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: params.from, $lte: params.to },
+        },
+      },
+      {
+        $group: {
+          _id: '$serviceRef',
+          totalBookings: { $sum: 1 },
+        },
+      },
+      { $sort: { totalBookings: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: ServiceModel.collection.name,
+          localField: '_id',
+          foreignField: '_id',
+          as: 'service',
+        },
+      },
+      { $unwind: '$service' },
+      {
+        $project: {
+          _id: 0,
+          serviceId: '$_id',
+          serviceName: '$service.name',
+          totalBookings: 1,
+        },
+      },
+    ])
+  }
+
+  async getServiceUsageOverview(params: { from: Date; to: Date }) {
+    // 1. Get IDs of services that have at least one booking in the date range
+    const bookedServiceIds = await BookingModel.distinct('serviceRef', {
+      createdAt: { $gte: params.from, $lte: params.to },
+    })
+
+    // 2. Count total services (simple count sufficient here, or could be status-based)
+    const totalServices = await ServiceModel.countDocuments()
+
+    return {
+      servicesWithBookings: bookedServiceIds.length,
+      servicesWithoutBookings: Math.max(
+        0,
+        totalServices - bookedServiceIds.length
+      ),
+    }
   }
 }

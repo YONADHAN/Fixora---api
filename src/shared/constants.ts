@@ -6,6 +6,9 @@ export const ROLES = {
   VENDOR: 'vendor',
 } as const
 export type recurrenceType = 'daily' | 'weekly' | 'monthly'
+//for dashboard inputs
+export type timeGranularityType = 'daily' | 'weekly' | 'monthly' | 'yearly'
+
 export type bookingStatus = 'available' | 'booked' | 'cancelled'
 export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
@@ -77,6 +80,12 @@ export const PAYMENT_STATUS = {
   PARTIALLY_PAID: 'partially-paid',
   FULLY_PAID: 'fully-paid',
 } as const
+export const DATE_FORMAT_MAP = {
+  daily: '%Y-%m-%d',
+  weekly: '%Y-%U',
+  monthly: '%Y-%m',
+  yearly: '%Y',
+}
 
 export type TPaymentStatus =
   (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
@@ -246,6 +255,9 @@ export const ERROR_MESSAGES = {
   CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
 
   NOTIFICATION_NOT_FOUND: 'Notification not found',
+
+  //dashboard
+  SUMMARY_NOT_FOUND: 'Summary not found',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {
