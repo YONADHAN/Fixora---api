@@ -19,8 +19,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     private readonly chatRepository: IChatRepository,
 
     @inject('IMessageRepository')
-    private readonly messageRepository: IMessageRepository
-  ) { }
+    private readonly messageRepository: IMessageRepository,
+  ) {}
 
   async execute(input: SendMessageInput): Promise<SendMessageOutput> {
     const {
@@ -39,16 +39,14 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       throw new CustomError('Chat not found', 404)
     }
 
-    /*  Authorize sender */
-    /*  Authorize sender */
-    const isCustomer = senderRole === 'customer' && chat.customer!.userId === senderId
+    const isCustomer =
+      senderRole === 'customer' && chat.customer!.userId === senderId
     const isVendor = senderRole === 'vendor' && chat.vendor!.userId === senderId
 
     if (!isCustomer && !isVendor) {
       throw new CustomError('You are not a participant of this chat', 403)
     }
 
-    /*  Create message */
     const message = await this.messageRepository.createMessage({
       messageId: uuid(),
       chatId,
@@ -61,7 +59,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       isRead: false,
     })
 
-    /*  Update chat last message */
     await this.chatRepository.updateLastMessage(chatId, {
       messageId: message.messageId,
       content: message.content,
@@ -70,11 +67,9 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       createdAt: message.createdAt!,
     })
 
-    /*  Increment unread count for receiver */
     const receiverRole = senderRole === 'customer' ? 'vendor' : 'customer'
     await this.chatRepository.incrementUnread(chatId, receiverRole)
 
-    /*  Return message */
     return {
       message,
       chat: {
@@ -87,10 +82,16 @@ export class SendMessageUseCase implements ISendMessageUseCase {
           createdAt: message.createdAt!,
         },
         unreadCount: {
-          customer: senderRole === 'vendor' ? chat.unreadCount.customer + 1 : chat.unreadCount.customer,
-          vendor: senderRole === 'customer' ? chat.unreadCount.vendor + 1 : chat.unreadCount.vendor,
-        }
-      } as any // Casting to avoid complex type matching if entity differs slightly from model
+          customer:
+            senderRole === 'vendor'
+              ? chat.unreadCount.customer + 1
+              : chat.unreadCount.customer,
+          vendor:
+            senderRole === 'customer'
+              ? chat.unreadCount.vendor + 1
+              : chat.unreadCount.vendor,
+        },
+      } as any,
     }
   }
 }

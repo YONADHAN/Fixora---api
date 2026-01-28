@@ -20,8 +20,6 @@ export class MessageRepository
     super(MessageModel)
   }
 
-  /* ----------------------------- MAPPERS ----------------------------- */
-
   protected toEntity(model: MessageMongoBase): IMessageEntity {
     return {
       _id: model._id.toString(),
@@ -63,14 +61,12 @@ export class MessageRepository
     }
   }
 
-  /* --------------------------- REPOSITORY API -------------------------- */
-
   async createMessage(data: IMessageEntity): Promise<IMessageEntity> {
     const created = await this.model.create(
       this.toModel({
         ...data,
         isRead: false,
-      })
+      }),
     )
 
     return this.toEntity(created.toObject() as MessageMongoBase)
@@ -79,7 +75,7 @@ export class MessageRepository
   async findMessagesByChatId(
     chatId: string,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<{
     data: IMessageEntity[]
     currentPage: number
@@ -114,7 +110,7 @@ export class MessageRepository
         senderId: { $ne: readerId },
         isRead: false,
       },
-      { $set: { isRead: true } }
+      { $set: { isRead: true } },
     )
   }
 }

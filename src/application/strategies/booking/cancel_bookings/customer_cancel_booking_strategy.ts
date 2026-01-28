@@ -13,8 +13,7 @@ import { IWalletTransactionRepository } from '../../../../domain/repositoryInter
 import { ICustomerCancelBookingStrategyInterface } from './customer_cancel_booking_strategy.interface'
 
 @injectable()
-export class CustomerCancelBookingStrategy
-  implements ICustomerCancelBookingStrategyInterface {
+export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStrategyInterface {
   constructor(
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository,
@@ -29,49 +28,48 @@ export class CustomerCancelBookingStrategy
     private _walletRepository: IWalletRepository,
 
     @inject('IWalletTransactionRepository')
-    private _walletTransactionRepository: IWalletTransactionRepository
-  ) { }
+    private _walletTransactionRepository: IWalletTransactionRepository,
+  ) {}
 
   async execute(payload: CancelBookingRequestDTO): Promise<void> {
     const { userId, bookingId, reason, role } = payload
-
 
     const initialBooking = await this._bookingRepository.findOne({ bookingId })
     if (!initialBooking) {
       throw new CustomError(
         ERROR_MESSAGES.NO_BOOKING_FOUND,
-        HTTP_STATUS.NOT_FOUND
+        HTTP_STATUS.NOT_FOUND,
       )
     }
 
+    const groupBookings =
+      await this._bookingRepository.findAllDocsWithoutPagination({
+        bookingGroupId: initialBooking.bookingGroupId,
+      })
 
-    const groupBookings = await this._bookingRepository.findAllDocsWithoutPagination({
-      bookingGroupId: initialBooking.bookingGroupId,
-    })
+    const bookings = await this._bookingRepository.countDocuments({})
 
     if (!groupBookings.length) {
       throw new CustomError(
         ERROR_MESSAGES.NO_BOOKING_FOUND,
-        HTTP_STATUS.NOT_FOUND
+        HTTP_STATUS.NOT_FOUND,
       )
     }
-
 
     const user = await this._customerRepository.findOne({ userId })
     if (!user || !user._id) {
       throw new CustomError(
         ERROR_MESSAGES.FILE_NOT_FOUND,
-        HTTP_STATUS.NOT_FOUND
+        HTTP_STATUS.NOT_FOUND,
       )
     }
 
     if (initialBooking.customerRef !== user._id.toString()) {
       throw new CustomError(
         ERROR_MESSAGES.CONFLICTING_INPUTS,
-        HTTP_STATUS.CONFLICT
+        HTTP_STATUS.CONFLICT,
       )
     }
-
 
     const payment = await this._paymentRepository.findOne({
       bookingGroupId: initialBooking.bookingGroupId,
@@ -80,10 +78,9 @@ export class CustomerCancelBookingStrategy
     if (!payment) {
       throw new CustomError(
         ERROR_MESSAGES.FILE_NOT_FOUND,
-        HTTP_STATUS.NOT_FOUND
+        HTTP_STATUS.NOT_FOUND,
       )
     }
-
 
     const wallet = await this._walletRepository.findOne({
       userRef: initialBooking.customerRef,
@@ -92,21 +89,22 @@ export class CustomerCancelBookingStrategy
     if (!wallet || !wallet._id) {
       throw new CustomError(
         ERROR_MESSAGES.FILE_NOT_FOUND,
-        HTTP_STATUS.NOT_FOUND
+        HTTP_STATUS.NOT_FOUND,
       )
     }
 
-
-    let totalRefundAmount = 0
-    const refundDetailsPerSlot: { bookingId: string, amount: number }[] = []
+    let totalRefundAmount = 20
+    const refundDetailsPerSlot: { bookingId: string; amount: number }[] = []
 
     for (const booking of groupBookings) {
-      if (booking.serviceStatus === 'cancelled') continue;
+      if (booking.serviceStatus === 'cancelled') continue
 
-      const paymentSlot = payment.slots.find(s => s.bookingId === booking.bookingId)
+      const paymentSlot = payment.slots.find(
+        (s) => s.bookingId === booking.bookingId,
+      )
       if (paymentSlot) {
         const amount = paymentSlot.pricing.advanceAmount
-        totalRefundAmount += amount
+        totalRefundAmount = 20
         refundDetailsPerSlot.push({ bookingId: booking.bookingId, amount })
       }
     }
@@ -128,7 +126,6 @@ export class CustomerCancelBookingStrategy
       })
     }
 
-
     for (const detail of refundDetailsPerSlot) {
       await this._paymentRepository.updateSlotAdvanceRefund(
         payment.paymentId,
@@ -141,7 +138,7 @@ export class CustomerCancelBookingStrategy
           initiatedByUserId: user._id.toString(),
           createdAt: new Date(),
           failures: [],
-        }
+        },
       )
 
       await this._bookingRepository.update(
@@ -154,10 +151,9 @@ export class CustomerCancelBookingStrategy
             cancelledAt: new Date(),
           },
           serviceStatus: 'cancelled',
-        }
+        },
       )
     }
-
 
     for (const booking of groupBookings) {
       if (booking.serviceStatus !== 'cancelled') {
@@ -171,7 +167,7 @@ export class CustomerCancelBookingStrategy
               cancelledAt: new Date(),
             },
             serviceStatus: 'cancelled',
-          }
+          },
         )
       }
     }

@@ -14,12 +14,12 @@ interface AccessTokenPayload {
 
 export const socketAuthMiddleware = (
   socket: Socket,
-  next: (err?: Error) => void
+  next: (err?: Error) => void,
 ) => {
   const transport = socket.conn.transport.name
   const isRecovered = socket.recovered === true
 
-  console.log('\n🔐 SOCKET AUTH MIDDLEWARE')
+  console.log('\n SOCKET AUTH MIDDLEWARE')
   console.log('• socket.id   :', socket.id)
   console.log('• transport   :', transport)
   console.log('• recovered   :', isRecovered)
@@ -28,9 +28,8 @@ export const socketAuthMiddleware = (
     const cookieHeader = socket.handshake.headers.cookie
     console.log('• cookies present:', Boolean(cookieHeader))
 
-
     if (!cookieHeader) {
-      console.log('⚠️  No cookies yet (initial handshake)')
+      console.log('  No cookies yet (initial handshake)')
       return next()
     }
 
@@ -49,16 +48,15 @@ export const socketAuthMiddleware = (
     console.log('• access token present :', Boolean(accessToken))
     console.log('• refresh token present:', Boolean(refreshToken))
 
-
     if (accessToken) {
       const decoded = tokenService.verifyAccessToken(accessToken)
 
       if (!decoded || typeof decoded === 'string') {
-        console.log('❌ Invalid access token')
+        console.log(' Invalid access token')
 
         if (refreshToken) {
           console.log(
-            '⚠️ Access token invalid, but Refresh token present. Allowing as guest.'
+            ' Access token invalid, but Refresh token present. Allowing as guest.',
           )
           socket.data.user = null
           return next()
@@ -69,7 +67,7 @@ export const socketAuthMiddleware = (
 
       const payload = decoded as AccessTokenPayload
 
-      console.log('✅ Authenticated socket user:', payload.userId)
+      console.log(' Authenticated socket user:', payload.userId)
 
       socket.data.user = payload
       socket.join(`user:${payload.userId}`)
@@ -77,20 +75,18 @@ export const socketAuthMiddleware = (
       return next()
     }
 
-
     if (refreshToken) {
-      console.log('⚠️  Refresh token present, waiting for re-auth')
+      console.log('  Refresh token present, waiting for re-auth')
       socket.data.user = null
       return next()
     }
 
-
-    console.log('⚠️  No tokens found, connecting as guest')
+    console.log('  No tokens found, connecting as guest')
     socket.data.user = null
     return next()
   } catch (error) {
-    console.log('❌ Socket auth middleware error:', error)
-    // Even on error, we might want to allow connection or fail safely
+    console.log(' Socket auth middleware error:', error)
+
     return next(new CustomError('Invalid socket token', 401))
   }
 }

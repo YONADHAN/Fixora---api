@@ -23,7 +23,7 @@ import { NotificationRoutes } from './notification_route'
 import { ChatRoutes } from './chat_route'
 import { AddressRoutes } from './address_route'
 import { PaymentRoutes } from './payment_route'
-import { ReviewRoutes } from './review_route'
+
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -59,8 +59,6 @@ export class CustomerRoutes extends BaseRoute {
       '/sub-service-category',
       new SubServiceCategoryRoutes().router
     )
-
-    this.router.use('/review', new ReviewRoutes().router)
 
     this.router.use(
       verifyAuth as CustomRequestHandler,

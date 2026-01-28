@@ -33,6 +33,7 @@ export const NotificationSchema = new Schema<INotificationModel>(
         'PAYMENT_FAILED',
         'ADMIN_MESSAGE',
         'VENDOR_DOCUMENTS_SUBMITTED',
+        'SUBSCRIPTION',
       ],
       required: true,
       index: true,
@@ -68,7 +69,7 @@ export const NotificationSchema = new Schema<INotificationModel>(
       index: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 NotificationSchema.index({ recipientId: 1, isRead: 1 })

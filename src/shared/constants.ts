@@ -137,6 +137,7 @@ export const HTTP_STATUS = {
   GONE: 410,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
+  PAYMENT_REQUIRED: 402,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   METHOD_NOT_ALLOWED: 405,
@@ -231,6 +232,7 @@ export const ERROR_MESSAGES = {
   PENDING_ADMIN_APPROVAL: 'Your request is not approved by admin',
   SERVER_ERROR: 'Something went wrong try again later',
   VALIDATION_ERROR: 'Check your inputs and try again',
+  UNAUTHORIZED: 'Unathorized',
   UNAUTHORIZED_ACCESS: 'Unathorized access', //-----------------
   BLOCKED: 'Your account has been blocked.', //----------------
   INVALID_CREDENTIALS: 'Wrong email or password',
@@ -258,6 +260,17 @@ export const ERROR_MESSAGES = {
 
   //dashboard
   SUMMARY_NOT_FOUND: 'Summary not found',
+
+  //subscription
+  SUBSCRIPTION_PRICE_IS_NOT_NEGATIVE:
+    'Subcription price should not be zero or negative.',
+  SUBSCRIPTION_PLAN_ALREADY_EXISTS: 'Subscription plan already exists.',
+  SUBSCRIPTION_NOT_FOUND: 'Subscription not found.',
+  SUBSCRIPTION_NOT_UPDATED: 'Subscription not updated.',
+  SUBSCRIPTION_PLAN_NOT_FOUND: 'Subscription plan not found.',
+  STRIPE_PRICE_NOT_CONFIGURED: 'Subscription price is not existing.',
+  SUBSCRIPTION_ALREADY_ACTIVE: 'Subscription is already active.',
+  STRIPE_CHECKOUT_FAILED: 'Stripe Subscription Checkout Failed.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

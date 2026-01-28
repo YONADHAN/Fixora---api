@@ -4,6 +4,7 @@ import { JwtPayload } from 'jsonwebtoken'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../shared/constants'
 import { redisClient } from '../../interfaceAdapters/repositories/redis/redis.client'
 import { clearAuthCookies } from '../../shared/utils/cookie_helper'
+import { IUserSubscriptionEntity } from '../../domain/models/user_subscription_entity'
 
 const tokenService = new JWTService()
 
@@ -17,6 +18,7 @@ export interface CustomJWTPayload extends JwtPayload {
 
 export interface CustomRequest extends Request {
   user: CustomJWTPayload
+  subscription?: IUserSubscriptionEntity
 }
 
 const roleMap: Record<string, string> = {
@@ -26,7 +28,7 @@ const roleMap: Record<string, string> = {
 }
 
 const extractToken = (
-  req: Request
+  req: Request,
 ): { access_token: string; refresh_token: string } | null => {
   const basePath = req.baseUrl.split('/')
 
@@ -51,7 +53,7 @@ const isBlacklisted = async (token: string): Promise<boolean> => {
 export const verifyAuth = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const token = extractToken(req)
@@ -71,7 +73,7 @@ export const verifyAuth = async (
     }
 
     const user = tokenService.verifyAccessToken(
-      token.access_token
+      token.access_token,
     ) as CustomJWTPayload
 
     if (!user || !user.userId) {
@@ -81,7 +83,7 @@ export const verifyAuth = async (
       return
     }
 
-    ; (req as CustomRequest).user = {
+    ;(req as CustomRequest).user = {
       ...user,
       access_token: token.access_token,
       refresh_token: token.refresh_token,
@@ -99,13 +101,11 @@ export const verifyAuth = async (
 export const decodeToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-
     const token = extractToken(req)
     if (!token?.refresh_token) {
-
       res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS })
@@ -113,7 +113,7 @@ export const decodeToken = async (
     }
 
     const user = tokenService.verifyRefreshToken(
-      token?.refresh_token
+      token?.refresh_token,
     ) as CustomJWTPayload
 
     const newAccessToken = tokenService.generateAccessToken({
@@ -122,17 +122,15 @@ export const decodeToken = async (
       role: user.role,
     })
 
-
-      ; (req as CustomRequest).user = {
-        userId: user?.userId,
-        email: user?.email,
-        role: user?.role,
-        access_token: newAccessToken,
-        refresh_token: token.refresh_token,
-      }
+    ;(req as CustomRequest).user = {
+      userId: user?.userId,
+      email: user?.email,
+      role: user?.role,
+      access_token: newAccessToken,
+      refresh_token: token.refresh_token,
+    }
     next()
   } catch (error) {
-
     const basePath = req.baseUrl.split('/')
     const role = basePath[3]
 

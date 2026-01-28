@@ -31,8 +31,8 @@ import { IChatController } from '../../domain/controllerInterfaces/features/chat
 import { ChatController } from '../controllers/chat/chat_controller'
 import { IPaymentController } from '../../domain/controllerInterfaces/features/payment/payment_controller.interface'
 import { PaymentController } from '../controllers/payment/payment_controller'
-import { IReviewController } from '../../domain/controllerInterfaces/features/review/review-controller.interface'
-import { ReviewController } from '../controllers/review/review_controller'
+import { SubscriptionController } from '../controllers/subscription/subscription_controller'
+import { ISubscriptionController } from '../../domain/controllerInterfaces/features/subscription/subscription-controller.interface'
 
 DependencyInjection.registerAll()
 
@@ -67,7 +67,9 @@ export const walletController =
 export const notificationController =
   container.resolve<INotificationController>(NotificationController)
 export const chatController = container.resolve<IChatController>(ChatController)
+export const paymentController =
+  container.resolve<IPaymentController>(PaymentController)
+export const subscriptionController =
+  container.resolve<ISubscriptionController>(SubscriptionController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)
-export const paymentController = container.resolve<IPaymentController>(PaymentController)
-export const reviewController = container.resolve<IReviewController>(ReviewController)

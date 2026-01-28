@@ -15,22 +15,22 @@ import { IMarkChatReadUseCase } from '../../domain/useCaseInterfaces/chat/mark_c
 
 export const registerSocketEvents = (socket: Socket) => {
   const markReadUseCase = container.resolve<IMarkNotificationReadUseCase>(
-    'IMarkNotificationReadUseCase'
+    'IMarkNotificationReadUseCase',
   )
   const sendMessageUseCase = container.resolve<ISendMessageUseCase>(
-    'ISendMessageUseCase'
+    'ISendMessageUseCase',
   )
 
   const markChatReadUseCase = container.resolve<IMarkChatReadUseCase>(
-    'IMarkChatReadUseCase'
+    'IMarkChatReadUseCase',
   )
 
   const markAllReadUseCase =
     container.resolve<IMarkAllNotificationsReadUseCase>(
-      'IMarkAllNotificationsReadUseCase'
+      'IMarkAllNotificationsReadUseCase',
     )
 
-  /* -------------------- NOTIFICATIONS -------------------- */
+  //Notifications
 
   socket.on(
     SOCKET_EVENTS.NOTIFICATION_READ,
@@ -42,7 +42,7 @@ export const registerSocketEvents = (socket: Socket) => {
       } catch (error) {
         ack?.({ success: false })
       }
-    }
+    },
   )
 
   socket.on(
@@ -55,10 +55,10 @@ export const registerSocketEvents = (socket: Socket) => {
       } catch (error) {
         ack?.({ success: false })
       }
-    }
+    },
   )
 
-  /* -------------------- CHAT  -------------------- */
+  //Chat
 
   socket.on(SOCKET_EVENTS.CHAT_JOIN, (roomId: string) => {
     socket.join(`chat:${roomId}`)
@@ -72,12 +72,11 @@ export const registerSocketEvents = (socket: Socket) => {
     SOCKET_EVENTS.CHAT_SEND,
     async (
       payload: ChatSendPayload,
-      ack?: (res: SocketAckResponse) => void
+      ack?: (res: SocketAckResponse) => void,
     ) => {
       try {
         const user = socket.data.user as SocketUser
 
-        //  Role guard (fixes TS + security)
         if (user.role !== 'customer' && user.role !== 'vendor') {
           ack?.({
             success: false,
@@ -102,12 +101,12 @@ export const registerSocketEvents = (socket: Socket) => {
 
         socket.emit(SOCKET_EVENTS.CHAT_NEW, message)
 
-        /* --------------------  REAL-TIME LIST UPDATE -------------------- */
+        //List Update
         const receiverId =
           user.role === 'customer' ? chat.vendor?.userId : chat.customer?.userId
 
         socket.to(`user:${receiverId}`).emit(SOCKET_EVENTS.CHAT_LIST_UPDATE, {
-          ...chat, // Send full chat details including customer/vendor populated data
+          ...chat,
           chatId: chat.chatId,
           lastMessage: chat.lastMessage,
           unreadCount: chat.unreadCount,
@@ -124,10 +123,10 @@ export const registerSocketEvents = (socket: Socket) => {
             error instanceof Error ? error.message : 'Failed to send message',
         })
       }
-    }
+    },
   )
 
-  /* -------------------- PRESENCE -------------------- */
+  //Presence
 
   socket.on(SOCKET_EVENTS.PRESENCE_PING, () => {
     socket.emit('presence:pong')
@@ -139,7 +138,6 @@ export const registerSocketEvents = (socket: Socket) => {
       try {
         const user = socket.data.user as SocketUser
 
-        //  Only chat participants can mark read
         if (user.role !== 'customer' && user.role !== 'vendor') {
           ack?.({ success: false })
           return
@@ -151,7 +149,6 @@ export const registerSocketEvents = (socket: Socket) => {
           readerRole: user.role,
         })
 
-        //  Optional: notify other participant
         socket.to(`chat:${chatId}`).emit('chat:read:update', {
           chatId,
           readerId: user.userId,
@@ -161,10 +158,10 @@ export const registerSocketEvents = (socket: Socket) => {
       } catch {
         ack?.({ success: false })
       }
-    }
+    },
   )
 
-  /*--------------------TYPING------------------*/
+  //Typing
 
   socket.on(SOCKET_EVENTS.CHAT_TYPING_START, ({ chatId }) => {
     socket.to(`chat:${chatId}`).emit(SOCKET_EVENTS.CHAT_TYPING_START, {
@@ -178,7 +175,7 @@ export const registerSocketEvents = (socket: Socket) => {
     })
   })
 
-  /* -------------------- DASHBOARD -------------------- */
+  //Dashboard
 
   socket.on(SOCKET_EVENTS.DASHBOARD_JOIN_ADMIN, () => {
     const user = socket.data.user as SocketUser

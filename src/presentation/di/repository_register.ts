@@ -34,8 +34,10 @@ import { ChatRepository } from '../../interfaceAdapters/repositories/feature/cha
 import { IMessageRepository } from '../../domain/repositoryInterfaces/feature/chat/message_repository.interface'
 import { MessageRepository } from '../../interfaceAdapters/repositories/feature/chat/message_repository'
 
-import { IReviewRepository } from '../../domain/repositoryInterfaces/feature/review/review_repository.interface'
-import { ReviewRepository } from '../../interfaceAdapters/repositories/feature/review/review_repository'
+import { ISubscriptionPlanRepository } from '../../domain/repositoryInterfaces/feature/subscription/subscription_plan.interface'
+import { SubscriptionPlanRepository } from '../../interfaceAdapters/repositories/feature/subscription/subscription_plan.repository'
+import { IUserSubscriptionRepository } from '../../domain/repositoryInterfaces/feature/subscription/user_subscription.interface'
+import { UserSubscriptionRepository } from '../../interfaceAdapters/repositories/feature/subscription/user_subscription.repository'
 
 export class RepositoryRegistry {
   static registerRepositories(): void {
@@ -67,13 +69,13 @@ export class RepositoryRegistry {
       'IServiceCategoryRepository',
       {
         useClass: ServiceCategoryRepository,
-      }
+      },
     )
     container.register<ISubServiceCategoryRepository>(
       'ISubServiceCategoryRepository',
       {
         useClass: SubServiceCategoryRepository,
-      }
+      },
     )
     container.register<IServiceRepository>('IServiceRepository', {
       useClass: ServiceRepository,
@@ -99,7 +101,7 @@ export class RepositoryRegistry {
       'IWalletTransactionRepository',
       {
         useClass: WalletTransactionRepository,
-      }
+      },
     )
 
     container.register<IAddressRepository>('IAddressRepository', {
@@ -122,8 +124,18 @@ export class RepositoryRegistry {
       useClass: MessageRepository,
     })
 
-    container.register<IReviewRepository>('IReviewRepository', {
-      useClass: ReviewRepository,
-    })
+    container.register<ISubscriptionPlanRepository>(
+      'ISubscriptionPlanRepository',
+      {
+        useClass: SubscriptionPlanRepository,
+      },
+    )
+
+    container.register<IUserSubscriptionRepository>(
+      'IUserSubscriptionRepository',
+      {
+        useClass: UserSubscriptionRepository,
+      },
+    )
   }
 }

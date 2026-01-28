@@ -8,13 +8,14 @@ export interface NotificationMongoBase {
   recipientRole: 'customer' | 'vendor' | 'admin'
 
   type:
-  | 'BOOKING_CREATED'
-  | 'BOOKING_CANCELLED'
-  | 'BOOKING_CONFIRMED'
-  | 'PAYMENT_SUCCESS'
-  | 'PAYMENT_FAILED'
-  | 'ADMIN_MESSAGE'
-  | 'VENDOR_DOCUMENTS_SUBMITTED'
+    | 'BOOKING_CREATED'
+    | 'BOOKING_CANCELLED'
+    | 'BOOKING_CONFIRMED'
+    | 'PAYMENT_SUCCESS'
+    | 'PAYMENT_FAILED'
+    | 'ADMIN_MESSAGE'
+    | 'VENDOR_DOCUMENTS_SUBMITTED'
+    | 'SUBSCRIPTION'
 
   title: string
   message: string

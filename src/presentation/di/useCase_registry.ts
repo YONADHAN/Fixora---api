@@ -26,6 +26,40 @@ import { IGenerateTokenUseCase } from '../../domain/useCaseInterfaces/auth/gener
 import { GenerateTokenUseCase } from '../../application/usecase/auth/generate_token_usecase'
 import { ILoginUserUseCase } from '../../domain/useCaseInterfaces/auth/login_usecase_interface'
 import { LoginUserUseCase } from '../../application/usecase/auth/login_user_usecase'
+
+import { ICreateSubscriptionPlanUseCase } from '../../domain/useCaseInterfaces/subscription/create_subscription_plan_usecase.interface'
+import { CreateSubscriptionPlanUseCase } from '../../application/usecase/subscription/create_subscription_plan_usecase'
+import { IGetAllSubscriptionPlansUseCase } from '../../domain/useCaseInterfaces/subscription/get_all_subscription_plans_usecase.interface'
+import { GetAllSubscriptionPlansUseCase } from '../../application/usecase/subscription/get_all_subscription_plans_usecase'
+import { IUpdateSubscriptionPlanUseCase } from '../../domain/useCaseInterfaces/subscription/update_subscription_plan_usecase.interface'
+import { UpdateSubscriptionPlanUseCase } from '../../application/usecase/subscription/update_subscription_plan_usecase'
+import { IToggleSubscriptionPlanStatusUseCase } from '../../domain/useCaseInterfaces/subscription/toggle_subscription_plan_status_usecase.interface'
+import { ToggleSubscriptionPlanStatusUseCase } from '../../application/usecase/subscription/toggle_subscription_plan_status_usecase'
+
+import { IGetActiveSubscriptionPlansUseCase } from '../../domain/useCaseInterfaces/subscription/get_active_subscription_plans_usecase.interface'
+import { GetActiveSubscriptionPlansUseCase } from '../../application/usecase/subscription/get_active_subscription_plans_usecase'
+import { ICreateSubscriptionCheckoutUseCase } from '../../domain/useCaseInterfaces/subscription/create_subscription_checkout_usecase.interface'
+import { CreateSubscriptionCheckoutUseCase } from '../../application/usecase/subscription/create_subscription_checkout_usecase'
+
+import { ISubscriptionCheckoutCompletedUseCase } from '../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_checkout_completed_usecase.interface'
+import { SubscriptionCheckoutCompletedUseCase } from '../../application/usecase/subscription/webhook_usecases_for_subscription/subscription_checkout_completed_usecase'
+import { ISubscriptionInvoiceFailedUseCase } from '../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_invoice_failed_usecase.interface'
+import { SubscriptionInvoiceFailedUseCase } from '../../application/usecase/subscription/webhook_usecases_for_subscription/subscription_invoice_failed_usecase'
+import { ISubscriptionInvoicePaidUseCase } from '../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_invoice_paid_usecase.interface'
+import { SubscriptionInvoicePaidUseCase } from '../../application/usecase/subscription/webhook_usecases_for_subscription/subscription_invoice_paid_usecase'
+import { ISubscriptionCancelledUseCase } from '../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_cancelled_usecase.interface'
+import { SubscriptionCancelledUseCase } from '../../application/usecase/subscription/webhook_usecases_for_subscription/subscription_cancelled_usecase'
+
+import { ICreateSubscriptionCheckoutFactory } from '../../application/factories/subscription/create_subscription_checkout_factory.interface'
+import { CreateSubscriptionCheckoutFactory } from '../../application/factories/subscription/create_subscription_checkout_factory'
+import { ISubscriptionAccessStrategyFactory } from '../../application/factories/subscription/subscription_access_strategy_factory.interface'
+import { SubscriptionAccessStrategyFactory } from '../../application/factories/subscription/subscription_access_strategy.factory'
+
+import { ICreateVendorSubscriptionCheckoutStrategy } from '../../application/strategies/subscription/create_subscription_checkout_strategy.ts/create_vendor_subscription_checkout_strategy.interface'
+import { CreateVendorSubscriptionCheckoutStrategy } from '../../application/strategies/subscription/create_subscription_checkout_strategy.ts/create_vendor_subscription_checkout_strategy'
+import { IVendorEnsureActiveSubscriptionStrategy } from '../../application/strategies/subscription/subscription_access_strategy/vendor_subscription_access_strategy.interface'
+import { VendorEnsureActiveSubscriptionStrategy } from '../../application/strategies/subscription/subscription_access_strategy/vendor_subscription_access_strategy'
+
 import { IForgotPasswordUseCase } from '../../domain/useCaseInterfaces/auth/forgot_password_usecase_interface'
 import { ForgotPasswordUseCase } from '../../application/usecase/auth/forgot_password_usecase'
 import { IResetPasswordUseCase } from '../../domain/useCaseInterfaces/auth/reset_password_usecase_interface'
@@ -273,13 +307,6 @@ import { IInitiateChatUseCase } from '../../domain/useCaseInterfaces/chat/initia
 import { InitiateChatUseCase } from '../../application/usecase/chat/initiate_chat_usecase'
 import { IGetUserChatsUseCase } from '../../domain/useCaseInterfaces/chat/get_user_chats_usecase.interface'
 import { GetUserChatsUseCase } from '../../application/usecase/chat/get_user_chats_usecase'
-
-import { ICreateReviewUseCase } from '../../domain/useCaseInterfaces/review/create_review_usecase.interface'
-import { CreateReviewUseCase } from '../../application/usecase/review/create_review_usecase'
-import { IGetServiceReviewsUseCase } from '../../domain/useCaseInterfaces/review/get_service_reviews_usecase.interface'
-import { GetServiceReviewsUseCase } from '../../application/usecase/review/get_service_reviews_usecase'
-import { ICheckReviewEligibilityUseCase } from '../../domain/useCaseInterfaces/review/check_review_eligibility_usecase.interface'
-import { CheckReviewEligibilityUseCase } from '../../application/usecase/review/check_review_eligibility_usecase'
 
 import { IGetVendorDashboardStatsUseCase } from '../../domain/useCaseInterfaces/dashboard/vendor/get_vendor_dashboard_status_usecase.interface'
 import { GetVendorDashboardStatsUseCase } from '../../application/usecase/dashboard/vendor/get_vendor_dashboard_stats.usecase'
@@ -675,19 +702,6 @@ export class UseCaseRegistry {
       useClass: GetUserChatsUseCase,
     })
 
-    container.register<ICreateReviewUseCase>('ICreateReviewUseCase', {
-      useClass: CreateReviewUseCase,
-    })
-    container.register<IGetServiceReviewsUseCase>('IGetServiceReviewsUseCase', {
-      useClass: GetServiceReviewsUseCase,
-    })
-    container.register<ICheckReviewEligibilityUseCase>(
-      'ICheckReviewEligibilityUseCase',
-      {
-        useClass: CheckReviewEligibilityUseCase,
-      },
-    )
-
     container.register<IGetVendorDashboardStatsUseCase>(
       'IGetVendorDashboardStatsUseCase',
       {
@@ -706,6 +720,76 @@ export class UseCaseRegistry {
     container.register<ISummaryUseCase>('ISummaryAnalyticsUseCase', {
       useClass: SummaryAnalyticsUseCase,
     })
+
+    container.register<ICreateSubscriptionPlanUseCase>(
+      'ICreateSubscriptionPlanUseCase',
+      {
+        useClass: CreateSubscriptionPlanUseCase,
+      },
+    )
+
+    container.register<IGetAllSubscriptionPlansUseCase>(
+      'IGetAllSubscriptionPlansUseCase',
+      {
+        useClass: GetAllSubscriptionPlansUseCase,
+      },
+    )
+
+    container.register<IUpdateSubscriptionPlanUseCase>(
+      'IUpdateSubscriptionPlanUseCase',
+      {
+        useClass: UpdateSubscriptionPlanUseCase,
+      },
+    )
+
+    container.register<IToggleSubscriptionPlanStatusUseCase>(
+      'IToggleSubscriptionPlanStatusUseCase',
+      {
+        useClass: ToggleSubscriptionPlanStatusUseCase,
+      },
+    )
+
+    container.register<IGetActiveSubscriptionPlansUseCase>(
+      'IGetActiveSubscriptionPlansUseCase',
+      {
+        useClass: GetActiveSubscriptionPlansUseCase,
+      },
+    )
+
+    container.register<ICreateSubscriptionCheckoutUseCase>(
+      'ICreateSubscriptionCheckoutUseCase',
+      {
+        useClass: CreateSubscriptionCheckoutUseCase,
+      },
+    )
+
+    container.register<ISubscriptionCheckoutCompletedUseCase>(
+      'ISubscriptionCheckoutCompletedUseCase',
+      {
+        useClass: SubscriptionCheckoutCompletedUseCase,
+      },
+    )
+
+    container.register<ISubscriptionInvoiceFailedUseCase>(
+      'ISubscriptionInvoiceFailedUseCase',
+      {
+        useClass: SubscriptionInvoiceFailedUseCase,
+      },
+    )
+
+    container.register<ISubscriptionInvoicePaidUseCase>(
+      'ISubscriptionInvoicePaidUseCase',
+      {
+        useClass: SubscriptionInvoicePaidUseCase,
+      },
+    )
+
+    container.register<ISubscriptionCancelledUseCase>(
+      'ISubscriptionCancelledUseCase',
+      {
+        useClass: SubscriptionCancelledUseCase,
+      },
+    )
     //service
     container.register<IUserExistenceService>('IUserExistenceService', {
       useClass: UserExistenceService,
@@ -818,6 +902,20 @@ export class UseCaseRegistry {
     container.register<IPaymentHistoryFactory>('IPaymentHistoryFactory', {
       useClass: PaymentHistoryFactory,
     })
+
+    container.register<ICreateSubscriptionCheckoutFactory>(
+      'ICreateSubscriptionCheckoutFactory',
+      {
+        useClass: CreateSubscriptionCheckoutFactory,
+      },
+    )
+
+    container.register<ISubscriptionAccessStrategyFactory>(
+      'ISubscriptionAccessStrategyFactory',
+      {
+        useClass: SubscriptionAccessStrategyFactory,
+      },
+    )
     //strategy
     container.register<ICustomerRegistrationStrategy>(
       'ICustomerRegistrationStrategy',
@@ -1032,31 +1130,87 @@ export class UseCaseRegistry {
       },
     )
 
+    container.register<ICreateVendorSubscriptionCheckoutStrategy>(
+      'ICreateVendorSubscriptionCheckoutStrategy',
+      {
+        useClass: CreateVendorSubscriptionCheckoutStrategy,
+      },
+    )
+
+    container.register<IVendorEnsureActiveSubscriptionStrategy>(
+      'IVendorEnsureActiveSubscriptionStrategy',
+      {
+        useClass: VendorEnsureActiveSubscriptionStrategy,
+      },
+    )
+
     //mappers
     container.register('ICustomerSafeMapper', { useClass: CustomerSafeMapper })
     container.register('IVendorSafeMapper', { useClass: VendorSafeMapper })
 
     // Dashboard Factories
-    container.register<ISummaryAnalyticsFactory>('ISummaryAnalyticsFactory', { useClass: SummaryAnalyticsFactory })
-    container.register<IBookingAnalyticsFactory>('IBookingAnalyticsFactory', { useClass: BookingAnalyticsFactory })
-    container.register<ICustomerAnalyticsFactory>('ICustomerAnalyticsFactory', { useClass: CustomerAnalyticsFactory })
-    container.register<IServiceAnalyticsFactory>('IServiceAnalyticsFactory', { useClass: ServiceAnalyticsFactory })
-    container.register<IVendorAnalyticsFactory>('IVendorAnalyticsFactory', { useClass: VendorAnalyticsFactory })
+    container.register<ISummaryAnalyticsFactory>('ISummaryAnalyticsFactory', {
+      useClass: SummaryAnalyticsFactory,
+    })
+    container.register<IBookingAnalyticsFactory>('IBookingAnalyticsFactory', {
+      useClass: BookingAnalyticsFactory,
+    })
+    container.register<ICustomerAnalyticsFactory>('ICustomerAnalyticsFactory', {
+      useClass: CustomerAnalyticsFactory,
+    })
+    container.register<IServiceAnalyticsFactory>('IServiceAnalyticsFactory', {
+      useClass: ServiceAnalyticsFactory,
+    })
+    container.register<IVendorAnalyticsFactory>('IVendorAnalyticsFactory', {
+      useClass: VendorAnalyticsFactory,
+    })
 
     // Dashboard Strategies
-    container.register<ISummaryAnalyticsStrategy>('SummaryAnalyticsStrategyForAdmin', { useClass: SummaryAnalyticsStrategyForAdmin })
-    container.register<ISummaryAnalyticsStrategy>('SummaryAnalyticsStrategyForVendor', { useClass: SummaryAnalyticsStrategyForVendor })
-    container.register<IBookingAnalyticsStrategy>('BookingAnalyticsStrategyForAdmin', { useClass: BookingAnalyticsStrategyForAdmin })
-    container.register<IBookingAnalyticsStrategy>('BookingAnalyticsStrategyForVendor', { useClass: BookingAnalyticsStrategyForVendor })
-    container.register<ICustomerAnalyticsStrategy>('CustomerAnalyticsStrategyForAdmin', { useClass: CustomerAnalyticsStrategyForAdmin })
-    container.register<ICustomerAnalyticsStrategy>('CustomerAnalyticsStrategyForVendor', { useClass: CustomerAnalyticsStrategyForVendor })
-    container.register<IServiceAnalyticsStrategy>('ServiceAnalyticsStrategyForAdmin', { useClass: ServiceAnalyticsStrategyForAdmin })
-    container.register<IVendorAnalyticsStrategy>('VendorAnalyticsStrategyForAdmin', { useClass: VendorAnalyticsStrategyForAdmin })
+    container.register<ISummaryAnalyticsStrategy>(
+      'SummaryAnalyticsStrategyForAdmin',
+      { useClass: SummaryAnalyticsStrategyForAdmin },
+    )
+    container.register<ISummaryAnalyticsStrategy>(
+      'SummaryAnalyticsStrategyForVendor',
+      { useClass: SummaryAnalyticsStrategyForVendor },
+    )
+    container.register<IBookingAnalyticsStrategy>(
+      'BookingAnalyticsStrategyForAdmin',
+      { useClass: BookingAnalyticsStrategyForAdmin },
+    )
+    container.register<IBookingAnalyticsStrategy>(
+      'BookingAnalyticsStrategyForVendor',
+      { useClass: BookingAnalyticsStrategyForVendor },
+    )
+    container.register<ICustomerAnalyticsStrategy>(
+      'CustomerAnalyticsStrategyForAdmin',
+      { useClass: CustomerAnalyticsStrategyForAdmin },
+    )
+    container.register<ICustomerAnalyticsStrategy>(
+      'CustomerAnalyticsStrategyForVendor',
+      { useClass: CustomerAnalyticsStrategyForVendor },
+    )
+    container.register<IServiceAnalyticsStrategy>(
+      'ServiceAnalyticsStrategyForAdmin',
+      { useClass: ServiceAnalyticsStrategyForAdmin },
+    )
+    container.register<IVendorAnalyticsStrategy>(
+      'VendorAnalyticsStrategyForAdmin',
+      { useClass: VendorAnalyticsStrategyForAdmin },
+    )
 
     // Dashboard UseCases
-    container.register<IBookingAnalyticsUseCase>('IBookingAnalyticsUseCase', { useClass: BookingAnalyticsUseCase })
-    container.register<ICustomerAnalyticsUseCase>('ICustomerAnalyticsUseCase', { useClass: CustomerAnalyticsUseCase })
-    container.register<IServiceAnalyticsUseCase>('IServiceAnalyticsUseCase', { useClass: ServiceAnalyticsUseCase })
-    container.register<IVendorAnalyticsUseCase>('IVendorAnalyticsUseCase', { useClass: VendorAnalyticsUseCase })
+    container.register<IBookingAnalyticsUseCase>('IBookingAnalyticsUseCase', {
+      useClass: BookingAnalyticsUseCase,
+    })
+    container.register<ICustomerAnalyticsUseCase>('ICustomerAnalyticsUseCase', {
+      useClass: CustomerAnalyticsUseCase,
+    })
+    container.register<IServiceAnalyticsUseCase>('IServiceAnalyticsUseCase', {
+      useClass: ServiceAnalyticsUseCase,
+    })
+    container.register<IVendorAnalyticsUseCase>('IVendorAnalyticsUseCase', {
+      useClass: VendorAnalyticsUseCase,
+    })
   }
 }
