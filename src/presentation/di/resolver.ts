@@ -33,6 +33,8 @@ import { IPaymentController } from '../../domain/controllerInterfaces/features/p
 import { PaymentController } from '../controllers/payment/payment_controller'
 import { SubscriptionController } from '../controllers/subscription/subscription_controller'
 import { ISubscriptionController } from '../../domain/controllerInterfaces/features/subscription/subscription-controller.interface'
+import { RatingReviewController } from '../controllers/rating_review/rating_review_controller'
+import { IRatingReviewController } from '../../domain/controllerInterfaces/features/rating_review/review-controller.interface'
 
 DependencyInjection.registerAll()
 
@@ -71,5 +73,9 @@ export const paymentController =
   container.resolve<IPaymentController>(PaymentController)
 export const subscriptionController =
   container.resolve<ISubscriptionController>(SubscriptionController)
+
+export const ratingsReviewController =
+  container.resolve<IRatingReviewController>(RatingReviewController)
+
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

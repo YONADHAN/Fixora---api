@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe'
-import { FilterQuery, Types } from 'mongoose'
+import { FilterQuery, PipelineStage, Types } from 'mongoose'
 
 import { BaseRepository } from '../../base_repository'
 import {
@@ -21,7 +21,8 @@ import {
 @injectable()
 export class BookingRepository
   extends BaseRepository<IBookingModel, IBookingEntity>
-  implements IBookingRepository {
+  implements IBookingRepository
+{
   constructor() {
     super(BookingModel)
   }
@@ -69,13 +70,13 @@ export class BookingRepository
 
       cancelInfo: entity.cancelInfo
         ? {
-          cancelledByRole: entity.cancelInfo.cancelledByRole,
-          cancelledByRef: entity.cancelInfo.cancelledByRef
-            ? new Types.ObjectId(entity.cancelInfo.cancelledByRef)
-            : undefined,
-          reason: entity.cancelInfo.reason,
-          cancelledAt: entity.cancelInfo.cancelledAt,
-        }
+            cancelledByRole: entity.cancelInfo.cancelledByRole,
+            cancelledByRef: entity.cancelInfo.cancelledByRef
+              ? new Types.ObjectId(entity.cancelInfo.cancelledByRef)
+              : undefined,
+            reason: entity.cancelInfo.reason,
+            cancelledAt: entity.cancelInfo.cancelledAt,
+          }
         : undefined,
     }
   }
@@ -102,11 +103,11 @@ export class BookingRepository
 
       cancelInfo: model.cancelInfo
         ? {
-          cancelledByRole: model.cancelInfo.cancelledByRole,
-          cancelledByRef: model.cancelInfo.cancelledByRef?.toString(),
-          reason: model.cancelInfo.reason,
-          cancelledAt: model.cancelInfo.cancelledAt,
-        }
+            cancelledByRole: model.cancelInfo.cancelledByRole,
+            cancelledByRef: model.cancelInfo.cancelledByRef?.toString(),
+            reason: model.cancelInfo.reason,
+            cancelledAt: model.cancelInfo.cancelledAt,
+          }
         : undefined,
 
       addressId: model.addressId,
@@ -177,13 +178,13 @@ export class BookingRepository
       ...filters,
       ...(search
         ? {
-          $or: [
-            { bookingId: { $regex: search, $options: 'i' } },
-            { bookingGroupId: { $regex: search, $options: 'i' } },
-            { paymentStatus: { $regex: search, $options: 'i' } },
-            { serviceStatus: { $regex: search, $options: 'i' } },
-          ],
-        }
+            $or: [
+              { bookingId: { $regex: search, $options: 'i' } },
+              { bookingGroupId: { $regex: search, $options: 'i' } },
+              { paymentStatus: { $regex: search, $options: 'i' } },
+              { serviceStatus: { $regex: search, $options: 'i' } },
+            ],
+          }
         : {}),
     }
 
@@ -350,8 +351,6 @@ export class BookingRepository
       }
     }
 
-
-
     return {
       bookingGrowth: result.bookingGrowth,
       bookingStatusBreakdown: statusMap,
@@ -378,5 +377,116 @@ export class BookingRepository
     ])
 
     return result[0]?.totalUniqueCustomers || 0
+  }
+
+  async getAllServicesWhichCompletedBookings(
+    customerRef: string,
+    page: number,
+    limit: number,
+    search?: string,
+    sortBy: 'createdAt' | 'serviceName' = 'createdAt',
+    sortOrder: 'asc' | 'desc' = 'desc',
+  ): Promise<{
+    data: IBookingEntity[]
+    totalPages: number
+    currentPage: number
+  }> {
+    this.validateObjectId(customerRef, 'customerRef')
+
+    const skip = (page - 1) * limit
+    const sortDirection = sortOrder === 'asc' ? 1 : -1
+
+    const pipeline: PipelineStage[] = [
+      {
+        $match: {
+          customerRef: new Types.ObjectId(customerRef),
+          serviceStatus: 'completed',
+          paymentStatus: { $in: ['paid', 'fully-paid'] },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+
+      {
+        $group: {
+          _id: '$serviceRef',
+          latestBooking: { $first: '$$ROOT' },
+        },
+      },
+      { $replaceRoot: { newRoot: '$latestBooking' } },
+
+      //  join service
+      {
+        $lookup: {
+          from: ServiceModel.collection.name,
+          localField: 'serviceRef',
+          foreignField: '_id',
+          as: 'service',
+        },
+      },
+      {
+        $unwind: {
+          path: '$service',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      //  search by service name
+      ...(search
+        ? [
+            {
+              $match: {
+                'service.name': { $regex: search, $options: 'i' },
+              },
+            },
+          ]
+        : []),
+
+      //  dynamic sorting
+      {
+        $sort:
+          sortBy === 'serviceName'
+            ? { 'service.name': sortDirection }
+            : { createdAt: sortDirection },
+      },
+
+      {
+        $facet: {
+          data: [
+            { $skip: skip },
+            { $limit: limit },
+            {
+              $addFields: {
+                serviceName: '$service.name',
+                serviceId: '$service.serviceId',
+                mainImage: '$service.mainImage',
+              },
+            },
+            {
+              $project: {
+                service: 0,
+              },
+            },
+          ],
+          metadata: [{ $count: 'total' }],
+        },
+      },
+    ]
+
+    const [result] = await this.model.aggregate(pipeline)
+
+    const data = result.data || []
+    const totalCount = result.metadata[0]?.total || 0
+
+    return {
+      data: data.map((doc: any) => {
+        const entity = this.toEntity(doc)
+        entity.serviceName = doc.serviceName
+        entity.serviceId = doc.serviceId
+        entity.mainImage = doc.mainImage
+        return entity
+      }),
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+    }
   }
 }

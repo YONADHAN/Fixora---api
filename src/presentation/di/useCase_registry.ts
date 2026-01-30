@@ -1,5 +1,22 @@
 import { container } from 'tsyringe'
 //service
+import { IGetRatingAndReviewForServiceUseCase } from '../../domain/useCaseInterfaces/rating_review/get_rating_and_review_for_service_usecase.interface'
+import { GetRatingAndReviewForServiceUseCase } from '../../application/usecase/rating_review/get_rating_and_review_for_service_usecase'
+import { ICreateRatingsAndReviewsUseCase } from '../../domain/useCaseInterfaces/rating_review/create_ratings_and_reviews_usecase.interface'
+import { CreateRatingsAndReviewsUseCase } from '../../application/usecase/rating_review/create_ratings_and_reviews_usecase'
+import { IEditRatingsAndReviewsUseCase } from '../../domain/useCaseInterfaces/rating_review/edit_ratings_and_reviews_usecase.interface'
+import { EditRatingsAndReviewsUseCase } from '../../application/usecase/rating_review/edit_ratings_and_reviews_usecase'
+import { ISoftDeleteRatingsAndReviews } from '../../domain/useCaseInterfaces/rating_review/soft_delete_ratings_and_reviews_usecase.interface'
+import { SoftDeleteRatingsAndReviewsUseCase } from '../../application/usecase/rating_review/soft_delete_ratings_and_reviews_usecase'
+import { IGetRatingsAndReviewsForAllBookedServicesUseCase } from '../../domain/useCaseInterfaces/rating_review/get_ratings_and_reviews_for_all_booked_service_usecase.interface'
+import { GetRatingsAndReviewsForAllBookedServicesUseCase } from '../../application/usecase/rating_review/get_ratings_and_reviews_for_all_booked_service_usecase'
+import { ISoftDeleteRatingsAndReviewsFactory } from '../../application/factories/rating_review/soft_delete_ratings_review_factory.interface'
+import { SoftDeleteRatingsAndReviewsFactory } from '../../application/factories/rating_review/soft_delete_ratings_review_factory'
+import { ISoftDeleteRatingsAndReviewsByCustomerStrategy } from '../../application/strategies/rating_review/soft_delete_rating_review_by_customer_strategy.interface'
+import { SoftDeleteRatingsAndReviewsByCustomerStrategy } from '../../application/strategies/rating_review/soft_delete_rating_review_by_customer_strategy'
+import { ISoftDeleteRatingsAndReviewsByAdminStrategy } from '../../application/strategies/rating_review/soft_delete_rating_review_by_admin_strategy.interface'
+import { SoftDeleteRatingsAndReviewsByAdminStrategy } from '../../application/strategies/rating_review/soft_delete_rating_review_by_admin_strategy'
+
 import { EmailService } from '../../interfaceAdapters/services/email_service'
 import { IEmailService } from '../../domain/serviceInterfaces/email_service_interface'
 import { UserExistenceService } from '../../interfaceAdapters/services/user_existence.service'
@@ -1212,5 +1229,43 @@ export class UseCaseRegistry {
     container.register<IVendorAnalyticsUseCase>('IVendorAnalyticsUseCase', {
       useClass: VendorAnalyticsUseCase,
     })
+
+    // Rating and Review
+    container.register<IGetRatingAndReviewForServiceUseCase>(
+      'IGetRatingAndReviewForServiceUseCase',
+      { useClass: GetRatingAndReviewForServiceUseCase },
+    )
+    container.register<ICreateRatingsAndReviewsUseCase>(
+      'ICreateRatingsAndReviewsUseCase',
+      { useClass: CreateRatingsAndReviewsUseCase },
+    )
+    container.register<IEditRatingsAndReviewsUseCase>(
+      'IEditRatingsAndReviewsUseCase',
+      { useClass: EditRatingsAndReviewsUseCase },
+    )
+    container.register<ISoftDeleteRatingsAndReviews>(
+      'ISoftDeleteRatingsAndReviews',
+      { useClass: SoftDeleteRatingsAndReviewsUseCase },
+    )
+    container.register<IGetRatingsAndReviewsForAllBookedServicesUseCase>(
+      'IGetRatingsAndReviewsForAllBookedServicesUseCase',
+      { useClass: GetRatingsAndReviewsForAllBookedServicesUseCase },
+    )
+
+    // Rating Review Factory
+    container.register<ISoftDeleteRatingsAndReviewsFactory>(
+      'ISoftDeleteRatingsAndReviewsFactory',
+      { useClass: SoftDeleteRatingsAndReviewsFactory },
+    )
+
+    // Rating Review Strategies
+    container.register<ISoftDeleteRatingsAndReviewsByCustomerStrategy>(
+      'ISoftDeleteRatingsAndReviewsByCustomerStrategy',
+      { useClass: SoftDeleteRatingsAndReviewsByCustomerStrategy },
+    )
+    container.register<ISoftDeleteRatingsAndReviewsByAdminStrategy>(
+      'ISoftDeleteRatingsAndReviewsByAdminStrategy',
+      { useClass: SoftDeleteRatingsAndReviewsByAdminStrategy },
+    )
   }
 }

@@ -23,7 +23,7 @@ import { NotificationRoutes } from './notification_route'
 import { ChatRoutes } from './chat_route'
 import { AddressRoutes } from './address_route'
 import { PaymentRoutes } from './payment_route'
-
+import { RatingsReviewRoutes } from './ratings_review_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -36,7 +36,7 @@ export class CustomerRoutes extends BaseRoute {
       decodeToken,
       (req: Request, res: Response) => {
         authController.handleTokenRefresh(req, res)
-      }
+      },
     )
 
     this.router.use('/chats', new ChatRoutes().router)
@@ -57,13 +57,15 @@ export class CustomerRoutes extends BaseRoute {
 
     this.router.use(
       '/sub-service-category',
-      new SubServiceCategoryRoutes().router
+      new SubServiceCategoryRoutes().router,
     )
+
+    this.router.use('/review', new RatingsReviewRoutes().router)
 
     this.router.use(
       verifyAuth as CustomRequestHandler,
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      authorizeRole(['customer'])
+      authorizeRole(['customer']),
     )
 
     this.router.use('/address', new AddressRoutes().router)
@@ -84,7 +86,7 @@ export class CustomerRoutes extends BaseRoute {
 
       (req: Request, res: Response) => {
         authController.changeMyPassword(req, res)
-      }
+      },
     )
 
     this.router.post(
@@ -92,7 +94,7 @@ export class CustomerRoutes extends BaseRoute {
       handleMulterError(upload.single('profileImage')),
       (req: Request, res: Response) => {
         customerController.uploadProfileImage(req, res)
-      }
+      },
     )
   }
 }

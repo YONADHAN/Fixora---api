@@ -37,6 +37,8 @@ import { MessageRepository } from '../../interfaceAdapters/repositories/feature/
 import { ISubscriptionPlanRepository } from '../../domain/repositoryInterfaces/feature/subscription/subscription_plan.interface'
 import { SubscriptionPlanRepository } from '../../interfaceAdapters/repositories/feature/subscription/subscription_plan.repository'
 import { IUserSubscriptionRepository } from '../../domain/repositoryInterfaces/feature/subscription/user_subscription.interface'
+import { IRatingsReviewRepository } from '../../domain/repositoryInterfaces/feature/ratings_review/ratings_review_repository.interface'
+import { RatingsReviewRepository } from '../../interfaceAdapters/repositories/feature/ratings_review/ratings_review_repository'
 import { UserSubscriptionRepository } from '../../interfaceAdapters/repositories/feature/subscription/user_subscription.repository'
 
 export class RepositoryRegistry {
@@ -137,5 +139,9 @@ export class RepositoryRegistry {
         useClass: UserSubscriptionRepository,
       },
     )
+
+    container.register<IRatingsReviewRepository>('IRatingsReviewRepository', {
+      useClass: RatingsReviewRepository,
+    })
   }
 }

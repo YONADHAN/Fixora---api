@@ -41,4 +41,17 @@ export interface IBookingRepository extends IBaseRepository<IBookingEntity> {
   }): Promise<BookingDashboardResponseDTO>
 
   countUniqueCustomersForVendor(vendorRef: string): Promise<number>
+
+  getAllServicesWhichCompletedBookings(
+    customerRef: string,
+    page: number,
+    limit: number,
+    search?: string,
+    sortBy?: 'createdAt' | 'serviceName',
+    sortOrder?: 'asc' | 'desc',
+  ): Promise<{
+    data: IBookingEntity[]
+    totalPages: number
+    currentPage: number
+  }>
 }

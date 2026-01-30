@@ -6,6 +6,8 @@ export interface IBookingEntity {
 
   serviceRef: string
   serviceName?: string
+  serviceId?: string
+  mainImage?: string
   vendorRef: string
   customerRef: string
 
@@ -17,13 +19,13 @@ export interface IBookingEntity {
   paymentRef?: string
 
   paymentStatus:
-  | 'pending'
-  | 'advance-paid'
-  | 'paid'
-  | 'fully-paid'
-  | 'pending-refund'
-  | 'refunded'
-  | 'failed'
+    | 'pending'
+    | 'advance-paid'
+    | 'paid'
+    | 'fully-paid'
+    | 'pending-refund'
+    | 'refunded'
+    | 'failed'
   serviceStatus: 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
   stripePaymentIntentId?: string
   stripeSlotPaymentRefundId?: string

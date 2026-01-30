@@ -40,7 +40,8 @@ function isSubCategoryPopulated(ref: any): ref is ISubServiceCategoryPopulated {
 @injectable()
 export class ServiceRepository
   extends BaseRepository<IServiceModel, IServiceEntity>
-  implements IServiceRepository {
+  implements IServiceRepository
+{
   constructor() {
     super(ServiceModel)
   }
@@ -61,17 +62,17 @@ export class ServiceRepository
 
       serviceVariants: entity.serviceVariants
         ? entity.serviceVariants.map((v) => ({
-          name: v.name,
-          description: v.description,
-          price: v.price,
-        }))
+            name: v.name,
+            description: v.description,
+            price: v.price,
+          }))
         : [],
 
       pricing: entity.pricing
         ? {
-          pricePerSlot: entity.pricing.pricePerSlot,
-          advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
-        }
+            pricePerSlot: entity.pricing.pricePerSlot,
+            advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
+          }
         : undefined,
 
       mainImage: entity.mainImage,
@@ -82,35 +83,35 @@ export class ServiceRepository
 
       schedule: entity.schedule
         ? {
-          visibilityStartDate: entity.schedule.visibilityStartDate,
-          visibilityEndDate: entity.schedule.visibilityEndDate,
+            visibilityStartDate: entity.schedule.visibilityStartDate,
+            visibilityEndDate: entity.schedule.visibilityEndDate,
 
-          dailyWorkingWindows: entity.schedule.dailyWorkingWindows?.map(
-            (w) => ({
-              startTime: w.startTime,
-              endTime: w.endTime,
-            }),
-          ),
+            dailyWorkingWindows: entity.schedule.dailyWorkingWindows?.map(
+              (w) => ({
+                startTime: w.startTime,
+                endTime: w.endTime,
+              }),
+            ),
 
-          slotDurationMinutes: entity.schedule.slotDurationMinutes,
+            slotDurationMinutes: entity.schedule.slotDurationMinutes,
 
-          recurrenceType: entity.schedule.recurrenceType,
-          weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
-          monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
+            recurrenceType: entity.schedule.recurrenceType,
+            weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
+            monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
 
-          overrideBlock: entity.schedule.overrideBlock?.map((b) => ({
-            startDateTime: b.startDateTime,
-            endDateTime: b.endDateTime,
-            reason: b.reason,
-          })),
+            overrideBlock: entity.schedule.overrideBlock?.map((b) => ({
+              startDateTime: b.startDateTime,
+              endDateTime: b.endDateTime,
+              reason: b.reason,
+            })),
 
-          overrideCustom: entity.schedule.overrideCustom?.map((c) => ({
-            startDateTime: c.startDateTime,
-            endDateTime: c.endDateTime,
-            startTime: c.startTime,
-            endTime: c.endTime,
-          })),
-        }
+            overrideCustom: entity.schedule.overrideCustom?.map((c) => ({
+              startDateTime: c.startDateTime,
+              endDateTime: c.endDateTime,
+              startTime: c.startTime,
+              endTime: c.endTime,
+            })),
+          }
         : undefined,
     }
   }
@@ -175,9 +176,6 @@ export class ServiceRepository
       updatedAt: model.updatedAt,
     }
 
-    // ----------------------------------------
-    //        POPULATED VALUES HANDLING
-    // ----------------------------------------
     entity.populatedValues = {}
 
     if (isVendorPopulated(model.vendorRef)) {
@@ -290,11 +288,7 @@ export class ServiceRepository
     )
   }
 
-  async getTopServices(params: {
-    from: Date
-    to: Date
-    limit?: number
-  }) {
+  async getTopServices(params: { from: Date; to: Date; limit?: number }) {
     const limit = params.limit || 5
     return BookingModel.aggregate([
       {
@@ -343,7 +337,7 @@ export class ServiceRepository
       servicesWithBookings: bookedServiceIds.length,
       servicesWithoutBookings: Math.max(
         0,
-        totalServices - bookedServiceIds.length
+        totalServices - bookedServiceIds.length,
       ),
     }
   }

@@ -12,6 +12,7 @@ import { randomUUID } from 'crypto'
 import { CustomError } from '../../../domain/utils/custom.error'
 import { CreateBookingHoldResponseMapper } from '../../mappers/booking_hold/create_booking_hold_mapper'
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
@@ -26,12 +27,12 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
     private _serviceRepository: IServiceRepository,
 
     @inject('ICustomerRepository')
-    private _customerRepository: ICustomerRepository
-  ) { }
+    private _customerRepository: ICustomerRepository,
+  ) {}
 
   async execute(
     validatedDTO: RequestCreateBookingHoldDTO,
-    customerId: string
+    customerId: string,
   ): Promise<ResponseCreateBookingHoldDTO> {
     const { serviceId, slots, paymentMethod, addressId } = validatedDTO
 
@@ -66,13 +67,13 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
         const locked = await this._redisSlotLockRepository.lockSlot(
           serviceId,
           slot.date,
-          slot.start
+          slot.start,
         )
 
         if (!locked) {
           throw new CustomError(
             `Slot ${slot.date} ${slot.start} is on hold`,
-            409
+            409,
           )
         }
 
@@ -105,7 +106,7 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
     } catch (error) {
       await this._redisSlotLockRepository.releaseMultipleSlots(
         serviceId,
-        lockedSlots
+        lockedSlots,
       )
       throw error
     }
