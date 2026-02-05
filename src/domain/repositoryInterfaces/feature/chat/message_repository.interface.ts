@@ -5,12 +5,12 @@ export interface IMessageRepository {
 
   findMessagesByChatId(
     chatId: string,
-    page: number,
-    limit: number
+    before?: Date,
+    limit?: number,
   ): Promise<{
-    data: IMessageEntity[]
-    currentPage: number
-    totalPages: number
+    messages: IMessageEntity[]
+    hasMore: boolean
+    nextCursor?: string
   }>
 
   markMessagesAsRead(chatId: string, readerId: string): Promise<void>

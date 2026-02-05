@@ -15,9 +15,50 @@ import { IWalletTransactionEntity } from '../../../../domain/models/wallet_trans
 @injectable()
 export class WalletTransactionRepository
   extends BaseRepository<IWalletTransactionModel, IWalletTransactionEntity>
-  implements IWalletTransactionRepository {
+  implements IWalletTransactionRepository
+{
   constructor() {
     super(WalletTransactionModel)
+  }
+
+  async findWithPagination(
+    filter: any,
+    options: {
+      page: number
+      limit: number
+      sortBy?: 'amount' | 'createdAt' | 'type'
+      order?: 'asc' | 'desc'
+      search?: string
+    },
+  ): Promise<{ data: IWalletTransactionEntity[]; totalCount: number }> {
+    const { page, limit, sortBy, order, search } = options
+
+    const skip = (page - 1) * limit
+
+    const sort: any = {}
+    if (sortBy) {
+      sort[sortBy] = order === 'asc' ? 1 : -1
+    } else {
+      sort.createdAt = -1
+    }
+
+    if (search) {
+      filter.$or = [
+        { description: { $regex: search, $options: 'i' } },
+        { type: { $regex: search, $options: 'i' } },
+        { source: { $regex: search, $options: 'i' } },
+      ]
+    }
+
+    const [data, totalCount] = await Promise.all([
+      this.model.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+      this.model.countDocuments(filter),
+    ])
+
+    return {
+      data: this.toEntityArray(data as any),
+      totalCount,
+    }
   }
 
   async findAllDocsWithoutPagination(
@@ -25,13 +66,13 @@ export class WalletTransactionRepository
     sortOptions?: {
       sortBy: 'amount' | 'createdAt' | 'type'
       order: 'asc' | 'desc'
-    }
+    },
   ): Promise<IWalletTransactionEntity[]> {
     const sort: any = {}
     if (sortOptions) {
       sort[sortOptions.sortBy] = sortOptions.order === 'asc' ? 1 : -1
     } else {
-      sort.createdAt = -1 // Default sort
+      sort.createdAt = -1
     }
 
     const result = await this.model.find(filter).sort(sort).lean()
@@ -39,7 +80,7 @@ export class WalletTransactionRepository
   }
 
   protected toModel(
-    entity: Partial<IWalletTransactionEntity>
+    entity: Partial<IWalletTransactionEntity>,
   ): Partial<IWalletTransactionModel> {
     return {
       transactionId: entity.transactionId,
@@ -75,7 +116,7 @@ export class WalletTransactionRepository
   }
 
   protected toEntity(
-    model: WalletTransactionMongoBase
+    model: WalletTransactionMongoBase,
   ): IWalletTransactionEntity {
     return {
       _id: model._id.toString(),

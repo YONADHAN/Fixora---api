@@ -35,8 +35,33 @@ export class WalletRepository
       userType: model.userType,
       currency: model.currency,
       isActive: model.isActive,
+      balance: model.balance,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
     }
+  }
+
+  async incrementBalance(
+    walletId: string,
+    amount: number,
+    session?: any,
+  ): Promise<void> {
+    await this.model.updateOne(
+      { _id: walletId },
+      { $inc: { balance: amount } },
+      { session },
+    )
+  }
+
+  async decrementBalance(
+    walletId: string,
+    amount: number,
+    session?: any,
+  ): Promise<void> {
+    await this.model.updateOne(
+      { _id: walletId },
+      { $inc: { balance: -amount } },
+      { session },
+    )
   }
 }

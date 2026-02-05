@@ -18,29 +18,47 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     private _customerRepository: ICustomerRepository,
 
     @inject('IVendorRepository')
-    private _vendorRepository: IVendorRepository
-  ) { }
-
+    private _vendorRepository: IVendorRepository,
+  ) {}
   async execute({
     userId,
     role,
+    page = 1,
+    limit = 10,
     sortBy,
     order,
+    search,
   }: {
     userId: string
     role: 'customer' | 'vendor'
+    page?: number
+    limit?: number
     sortBy?: 'amount' | 'createdAt' | 'type'
     order?: 'asc' | 'desc'
-  }) {
+    search?: string
+  }): Promise<{
+    wallet: {
+      walletId: string
+      balance: number
+      currency: string
+    } | null
+    data: any[]
+    totalPages: number
+    currentPage: number
+    totalCount: number
+  }> {
     const user =
       role === 'customer'
         ? await this._customerRepository.findOne({ userId })
         : await this._vendorRepository.findOne({ userId })
 
-    if (!user || !user._id) {
+    if (!user?._id) {
       return {
         wallet: null,
-        transactions: [],
+        data: [],
+        totalPages: 0,
+        currentPage: page,
+        totalCount: 0,
       }
     }
 
@@ -51,16 +69,23 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     if (!wallet) {
       return {
         wallet: null,
-        transactions: [],
+        data: [],
+        totalPages: 0,
+        currentPage: page,
+        totalCount: 0,
       }
     }
 
-    const transactions =
-      await this._walletTransactionRepository.findAllDocsWithoutPagination(
+    const { data, totalCount } =
+      await this._walletTransactionRepository.findWithPagination(
+        { walletRef: wallet._id },
         {
-          walletRef: wallet._id,
+          page,
+          limit,
+          sortBy,
+          order,
+          search,
         },
-        sortBy && order ? { sortBy, order } : undefined
       )
 
     return {
@@ -69,7 +94,10 @@ export class GetWalletUseCase implements IGetWalletUseCase {
         balance: wallet.balance ?? 0,
         currency: wallet.currency,
       },
-      transactions,
+      data,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
     }
   }
 }

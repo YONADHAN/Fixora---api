@@ -14,8 +14,7 @@ import { MessageMongoBase } from '../../../database/mongoDb/types/message_mongo_
 @injectable()
 export class MessageRepository
   extends BaseRepository<IMessageModel, IMessageEntity>
-  implements IMessageRepository
-{
+  implements IMessageRepository {
   constructor() {
     super(MessageModel)
   }
@@ -72,34 +71,72 @@ export class MessageRepository
     return this.toEntity(created.toObject() as MessageMongoBase)
   }
 
+  // async findMessagesByChatId(
+  //   chatId: string,
+  //   page: number,
+  //   limit: number,
+  // ): Promise<{
+  //   data: IMessageEntity[]
+  //   currentPage: number
+  //   totalPages: number
+  // }> {
+  //   const skip = (page - 1) * limit
+
+  //   const filter: FilterQuery<IMessageModel> = { chatId }
+
+  //   const [documents, totalCount] = await Promise.all([
+  //     this.model
+  //       .find(filter)
+  //       .sort({ createdAt: 1 })
+  //       .skip(skip)
+  //       .limit(limit)
+  //       .lean<MessageMongoBase[]>(),
+
+  //     this.model.countDocuments(filter),
+  //   ])
+
+  //   return {
+  //     data: documents.map((doc) => this.toEntity(doc)),
+  //     currentPage: page,
+  //     totalPages: Math.ceil(totalCount / limit),
+  //   }
+  // }
   async findMessagesByChatId(
     chatId: string,
-    page: number,
-    limit: number,
+    before?: Date,
+    limit = 20,
   ): Promise<{
-    data: IMessageEntity[]
-    currentPage: number
-    totalPages: number
+    messages: IMessageEntity[]
+    hasMore: boolean
+    nextCursor?: string
   }> {
-    const skip = (page - 1) * limit
-
     const filter: FilterQuery<IMessageModel> = { chatId }
 
-    const [documents, totalCount] = await Promise.all([
-      this.model
-        .find(filter)
-        .sort({ createdAt: 1 })
-        .skip(skip)
-        .limit(limit)
-        .lean<MessageMongoBase[]>(),
+    if (before) {
+      filter.createdAt = { $lt: before }
+    }
 
-      this.model.countDocuments(filter),
-    ])
+    const documents = await this.model
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .limit(limit + 1)
+      .lean<MessageMongoBase[]>()
+
+    const hasMore = documents.length > limit
+
+    const sliced = hasMore ? documents.slice(0, limit) : documents
+
+    const messages = sliced.map((doc) => this.toEntity(doc))
+
+    const nextCursor =
+      messages.length > 0
+        ? messages[messages.length - 1].createdAt?.toISOString()
+        : undefined
 
     return {
-      data: documents.map((doc) => this.toEntity(doc)),
-      currentPage: page,
-      totalPages: Math.ceil(totalCount / limit),
+      messages,
+      hasMore,
+      nextCursor,
     }
   }
 

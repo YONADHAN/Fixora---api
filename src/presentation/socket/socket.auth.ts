@@ -56,10 +56,10 @@ export const socketAuthMiddleware = (
 
         if (refreshToken) {
           console.log(
-            ' Access token invalid, but Refresh token present. Allowing as guest.',
+            ' Access token invalid, but Refresh token present. Rejecting to force re-auth.',
           )
-          socket.data.user = null
-          return next()
+
+          return next(new CustomError('Authentication error', 401))
         }
 
         return next(new CustomError('Invalid socket token', 401))

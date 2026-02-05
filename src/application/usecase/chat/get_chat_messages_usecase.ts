@@ -10,7 +10,6 @@ import {
 } from '../../../domain/repositoryInterfaces/feature/chat/get_chat_messages_usecase.interface'
 
 import { CustomError } from '../../../domain/utils/custom.error'
-
 @injectable()
 export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
   constructor(
@@ -18,12 +17,11 @@ export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
     private readonly _chatRepository: IChatRepository,
 
     @inject('IMessageRepository')
-    private readonly _messageRepository: IMessageRepository
-  ) { }
+    private readonly _messageRepository: IMessageRepository,
+  ) {}
 
   async execute(input: GetChatMessagesInput): Promise<GetChatMessagesOutput> {
-    const { chatId, requesterId, requesterRole, page = 1, limit = 20 } = input
-
+    const { chatId, requesterId, requesterRole, before, limit = 20 } = input
 
     const chat = await this._chatRepository.findByChatId(chatId)
 
@@ -31,26 +29,26 @@ export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
       throw new CustomError('Chat not found', 404)
     }
 
-
     const isCustomer =
       requesterRole === 'customer' && chat.customer?.userId === requesterId
-    const isVendor = requesterRole === 'vendor' && chat.vendor?.userId === requesterId
+
+    const isVendor =
+      requesterRole === 'vendor' && chat.vendor?.userId === requesterId
 
     if (!isCustomer && !isVendor) {
       throw new CustomError('You are not allowed to view this chat', 403)
     }
 
-
     const result = await this._messageRepository.findMessagesByChatId(
       chatId,
-      page,
-      limit
+      before ? new Date(before) : undefined,
+      limit,
     )
 
     return {
-      messages: result.data,
-      currentPage: result.currentPage,
-      totalPages: result.totalPages,
+      messages: result.messages,
+      hasMore: result.hasMore,
+      nextCursor: result.nextCursor,
     }
   }
 }

@@ -17,8 +17,7 @@ import { IServiceRepository } from '../../../domain/repositoryInterfaces/feature
 import { v4 as uuidv4 } from 'uuid'
 
 @injectable()
-export class StripePaymentSucceededUseCase
-  implements IStripePaymentSucceedUseCase {
+export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCase {
   constructor(
     @inject('IBookingHoldRepository')
     private _bookingHoldRepository: IBookingHoldRepository,
@@ -51,13 +50,13 @@ export class StripePaymentSucceededUseCase
     private _chatRepository: IChatRepository,
 
     @inject('IServiceRepository')
-    private _serviceRepository: IServiceRepository
-  ) { }
+    private _serviceRepository: IServiceRepository,
+  ) {}
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     const hold =
       (await this._bookingHoldRepository.findByStripePaymentIntentId(
-        paymentIntent.id
+        paymentIntent.id,
       )) ??
       (await this._bookingHoldRepository.findOne({
         holdId: paymentIntent.metadata?.holdId,
@@ -157,7 +156,7 @@ export class StripePaymentSucceededUseCase
       await this._redisSlotLockRepository.releaseSlot(
         hold.serviceRef,
         slot.date,
-        slot.start
+        slot.start,
       )
     }
 
@@ -195,14 +194,18 @@ export class StripePaymentSucceededUseCase
       const service = await this._serviceRepository.findOne({
         _id: hold.serviceRef,
       })
+      console.log('Chat creation check:', {
+        customer: customer._id.toString(),
+        vendor: vendor._id.toString(),
+        service: service?._id ? service._id.toString() : '',
+      })
 
       if (service && service._id) {
-        const existingChat =
-          await this._chatRepository.findChatByParticipants(
-            customer._id.toString(),
-            vendor._id.toString(),
-            service._id.toString()
-          )
+        const existingChat = await this._chatRepository.findChatByParticipants(
+          customer._id.toString(),
+          vendor._id.toString(),
+          service._id.toString(),
+        )
 
         if (!existingChat) {
           await this._chatRepository.createChat({

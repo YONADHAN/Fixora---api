@@ -10,6 +10,7 @@ export interface WalletMongoBase {
   userType: TRole
 
   currency: string
+  balance: number
   isActive: boolean
 
   createdAt: Date

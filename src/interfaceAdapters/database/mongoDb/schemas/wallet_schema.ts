@@ -26,10 +26,15 @@ export const WalletSchema = new Schema(
       default: 'INR',
     },
 
+    balance: {
+      type: Number,
+      default: 0,
+    },
+
     isActive: {
       type: Boolean,
       default: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )

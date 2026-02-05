@@ -7,6 +7,7 @@ import { IGetUserChatsUseCase } from '../../../domain/useCaseInterfaces/chat/get
 
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { IChatController } from '../../../domain/controllerInterfaces/features/chat/chat-controller.interface'
+import { handleErrorResponse } from '../../../shared/utils/error_handler'
 
 @injectable()
 export class ChatController implements IChatController {
@@ -16,14 +17,13 @@ export class ChatController implements IChatController {
     @inject('IInitiateChatUseCase')
     private readonly initiateChatUseCase: IInitiateChatUseCase,
     @inject('IGetUserChatsUseCase')
-    private readonly getUserChatsUseCase: IGetUserChatsUseCase
-  ) { }
+    private readonly getUserChatsUseCase: IGetUserChatsUseCase,
+  ) {}
 
   async getChatMessages(req: Request, res: Response): Promise<void> {
     try {
       const { chatId } = req.params
-
-      const { page = '1', limit = '20' } = req.query
+      const { before, limit = '20' } = req.query
 
       const user = (req as CustomRequest).user
 
@@ -31,7 +31,7 @@ export class ChatController implements IChatController {
         chatId,
         requesterId: user.userId,
         requesterRole: user.role as 'customer' | 'vendor',
-        page: Number(page),
+        before: before ? String(before) : undefined,
         limit: Number(limit),
       })
 
@@ -63,11 +63,12 @@ export class ChatController implements IChatController {
         message: 'Chat initiated successfully',
         data: { chatId },
       })
-    } catch (error: any) {
-      res.status(error.statusCode || 500).json({
-        success: false,
-        message: error.message || 'Internal Server Error',
-      })
+    } catch (error) {
+      // res.status(error.statusCode || 500).json({
+      //   success: false,
+      //   message: error.message || 'Internal Server Error',
+      // })
+      handleErrorResponse(req, res, error)
     }
   }
 
@@ -75,7 +76,10 @@ export class ChatController implements IChatController {
     try {
       const user = (req as CustomRequest).user
 
-      const chats = await this.getUserChatsUseCase.execute(user.userId, user.role as string)
+      const chats = await this.getUserChatsUseCase.execute(
+        user.userId,
+        user.role as string,
+      )
 
       res.status(200).json({
         success: true,

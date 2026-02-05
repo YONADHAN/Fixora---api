@@ -4,14 +4,14 @@ export interface GetChatMessagesInput {
   chatId: string
   requesterId: string
   requesterRole: 'customer' | 'vendor'
-  page?: number
+  before?: string
   limit?: number
 }
 
 export interface GetChatMessagesOutput {
   messages: IMessageEntity[]
-  currentPage: number
-  totalPages: number
+  hasMore: boolean
+  nextCursor?: string
 }
 
 export interface IGetChatMessagesUseCase {
