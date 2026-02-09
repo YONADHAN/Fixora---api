@@ -35,6 +35,8 @@ import { SubscriptionController } from '../controllers/subscription/subscription
 import { ISubscriptionController } from '../../domain/controllerInterfaces/features/subscription/subscription-controller.interface'
 import { RatingReviewController } from '../controllers/rating_review/rating_review_controller'
 import { IRatingReviewController } from '../../domain/controllerInterfaces/features/rating_review/review-controller.interface'
+import { IAiChatbotController } from '../../domain/controllerInterfaces/features/ai_chatbot/ai_chatbot_controller.interface'
+import { AiChatbotController } from '../controllers/ai_chatbot/ai_chatbot_controller'
 
 DependencyInjection.registerAll()
 
@@ -76,6 +78,7 @@ export const subscriptionController =
 
 export const ratingsReviewController =
   container.resolve<IRatingReviewController>(RatingReviewController)
-
+export const aiChatbotController =
+  container.resolve<IAiChatbotController>(AiChatbotController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

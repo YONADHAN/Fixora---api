@@ -95,7 +95,12 @@ export const CURRENCY = {
 } as const
 
 export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
-
+export enum AIIntent {
+  SERVICE_QUERY = 'SERVICE_QUERY',
+  BOOKING_QUERY = 'BOOKING_QUERY',
+  SUBSCRIPTION_QUERY = 'SUBSCRIPTION_QUERY',
+  GENERAL = 'GENERAL',
+}
 export const SOCKET_EVENTS = {
   NOTIFICATION_NEW: 'notifications:new',
   NOTIFICATION_READ: 'notifications:read',
@@ -213,6 +218,8 @@ export const SUCCESS_MESSAGES = {
     'Address set as default address successfully.',
   DELETED_SELECTED_ADDRESS_SUCCESSFULLY:
     'The selected address deleted successfully',
+
+  CHAT_BOT_ANSWERED_SUCCESSFULLY: 'Chat bot answered successfully.',
 }
 
 export const ERROR_MESSAGES = {

@@ -40,6 +40,8 @@ import { IUserSubscriptionRepository } from '../../domain/repositoryInterfaces/f
 import { IRatingsReviewRepository } from '../../domain/repositoryInterfaces/feature/ratings_review/ratings_review_repository.interface'
 import { RatingsReviewRepository } from '../../interfaceAdapters/repositories/feature/ratings_review/ratings_review_repository'
 import { UserSubscriptionRepository } from '../../interfaceAdapters/repositories/feature/subscription/user_subscription.repository'
+import { AiServiceRepository } from '../../interfaceAdapters/repositories/feature/ai_chatbot/ai_chatbot_service_repository'
+import { IAiServiceRepository } from '../../domain/repositoryInterfaces/feature/ai/ai_service_repository.interface'
 
 export class RepositoryRegistry {
   static registerRepositories(): void {
@@ -142,6 +144,10 @@ export class RepositoryRegistry {
 
     container.register<IRatingsReviewRepository>('IRatingsReviewRepository', {
       useClass: RatingsReviewRepository,
+    })
+
+    container.register<IAiServiceRepository>('IAiServiceRepository', {
+      useClass: AiServiceRepository,
     })
   }
 }

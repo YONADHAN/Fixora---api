@@ -24,6 +24,7 @@ import { ChatRoutes } from './chat_route'
 import { AddressRoutes } from './address_route'
 import { PaymentRoutes } from './payment_route'
 import { RatingsReviewRoutes } from './ratings_review_route'
+import { AiChatbotRoute } from './ai_chatbot_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -61,6 +62,8 @@ export class CustomerRoutes extends BaseRoute {
     )
 
     this.router.use('/review', new RatingsReviewRoutes().router)
+
+    this.router.use('/chatbot', new AiChatbotRoute().router)
 
     this.router.use(
       verifyAuth as CustomRequestHandler,

@@ -365,6 +365,14 @@ import { ServiceAnalyticsStrategyForAdmin } from '../../application/strategies/d
 import { IServiceAnalyticsStrategy } from '../../application/strategies/dashboard/service/IServiceAnalyticsStrategy'
 import { VendorAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/vendor/VendorAnalyticsStrategyForAdmin'
 import { IVendorAnalyticsStrategy } from '../../application/strategies/dashboard/vendor/IVendorAnalyticsStrategy'
+import { IAskAIChatbotUseCase } from '../../domain/useCaseInterfaces/ai_chatbot/ask_ai_usecase.interface'
+import { AskAIChatbotUseCase } from '../../application/usecase/ai_chatbot/ask_ai_chatbot_usecase'
+import { IAskAIChatbotFactory } from '../../application/factories/ai_chatbot/ask_ai_chatbot_factory.interface'
+import { AskAIChatbotFactory } from '../../application/factories/ai_chatbot/ask_ai_chatbot_factory'
+import { IAskAIChatbotCustomerStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_customer_strategy.interface'
+import { AskAIChatbotCustomerStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_customer_strategy'
+import { IAskAIChatbotVendorStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_vendor_strategy.interface'
+import { AskAIChatbotVendorStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_vendor_strategy'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -1266,6 +1274,29 @@ export class UseCaseRegistry {
     container.register<ISoftDeleteRatingsAndReviewsByAdminStrategy>(
       'ISoftDeleteRatingsAndReviewsByAdminStrategy',
       { useClass: SoftDeleteRatingsAndReviewsByAdminStrategy },
+    )
+
+    //ai chatbot
+    container.register<IAskAIChatbotUseCase>('IAskAIChatbotUseCase', {
+      useClass: AskAIChatbotUseCase,
+    })
+
+    container.register<IAskAIChatbotFactory>('IAskAIChatbotFactory', {
+      useClass: AskAIChatbotFactory,
+    })
+
+    container.register<IAskAIChatbotCustomerStrategy>(
+      'IAskAIChatbotCustomerStrategy',
+      {
+        useClass: AskAIChatbotCustomerStrategy,
+      },
+    )
+
+    container.register<IAskAIChatbotVendorStrategy>(
+      'IAskAIChatbotVendorStrategy',
+      {
+        useClass: AskAIChatbotVendorStrategy,
+      },
     )
   }
 }

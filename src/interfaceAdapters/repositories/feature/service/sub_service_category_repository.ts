@@ -12,9 +12,6 @@ import {
 } from '../../../../domain/models/sub_service_category_entity'
 import { Types } from 'mongoose'
 
-/* ------------------------------------------------------------------
-   TYPE GUARD FUNCTION — PLACE IT ABOVE CLASS (BEST PRACTICE)
--------------------------------------------------------------------*/
 function isPopulated(ref: any): ref is IServiceCategoryPopulated {
   return (
     ref &&
@@ -25,9 +22,6 @@ function isPopulated(ref: any): ref is IServiceCategoryPopulated {
   )
 }
 
-/* ------------------------------------------------------------------
-   REPOSITORY CLASS
--------------------------------------------------------------------*/
 @injectable()
 export class SubServiceCategoryRepository
   extends BaseRepository<ISubServiceCategoryModel, ISubServiceCategoryEntity>
@@ -38,7 +32,7 @@ export class SubServiceCategoryRepository
   }
 
   protected toEntity(
-    model: ISubServiceCategoryModel
+    model: ISubServiceCategoryModel,
   ): ISubServiceCategoryEntity {
     let serviceCategory = undefined
 
@@ -70,7 +64,7 @@ export class SubServiceCategoryRepository
   }
 
   protected toModel(
-    entity: Partial<ISubServiceCategoryEntity>
+    entity: Partial<ISubServiceCategoryEntity>,
   ): Partial<ISubServiceCategoryModel> {
     let serviceCategoryRef: any = undefined
 

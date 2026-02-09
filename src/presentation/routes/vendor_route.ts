@@ -21,6 +21,7 @@ import { ChatRoutes } from './chat_route'
 import { PaymentRoutes } from './payment_route'
 import { NotificationRoutes } from './notification_route'
 import { SubscriptionRoutes } from './subscription_route'
+import { AiChatbotRoute } from './ai_chatbot_route'
 
 export class VendorRoutes extends BaseRoute {
   constructor() {
@@ -49,6 +50,8 @@ export class VendorRoutes extends BaseRoute {
     this.router.use('/notification', new NotificationRoutes().router)
 
     this.router.use('/subscription', new SubscriptionRoutes().router)
+
+    this.router.use('/chatbot', new AiChatbotRoute().router)
 
     this.router.use(
       verifyAuth as CustomRequestHandler,

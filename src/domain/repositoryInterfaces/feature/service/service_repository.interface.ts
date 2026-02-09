@@ -15,10 +15,7 @@ export interface IServiceRepository extends IBaseRepository<IServiceEntity> {
     inactiveServices: number
   }>
 
-  getServiceUsageOverview(params: {
-    from: Date
-    to: Date
-  }): Promise<{
+  getServiceUsageOverview(params: { from: Date; to: Date }): Promise<{
     servicesWithBookings: number
     servicesWithoutBookings: number
   }>
@@ -29,5 +26,20 @@ export interface IServiceRepository extends IBaseRepository<IServiceEntity> {
     limit?: number
   }): Promise<
     { serviceId: string; serviceName: string; totalBookings: number }[]
+  >
+
+  getTopServicesForAI(): Promise<
+    {
+      name: string
+      categoryName: string
+      priceRange?: string
+    }[]
+  >
+
+  searchForAI(query: string): Promise<
+    {
+      name: string
+      shortDescription?: string
+    }[]
   >
 }

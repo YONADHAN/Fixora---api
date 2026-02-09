@@ -40,8 +40,7 @@ function isSubCategoryPopulated(ref: any): ref is ISubServiceCategoryPopulated {
 @injectable()
 export class ServiceRepository
   extends BaseRepository<IServiceModel, IServiceEntity>
-  implements IServiceRepository
-{
+  implements IServiceRepository {
   constructor() {
     super(ServiceModel)
   }
@@ -62,17 +61,17 @@ export class ServiceRepository
 
       serviceVariants: entity.serviceVariants
         ? entity.serviceVariants.map((v) => ({
-            name: v.name,
-            description: v.description,
-            price: v.price,
-          }))
+          name: v.name,
+          description: v.description,
+          price: v.price,
+        }))
         : [],
 
       pricing: entity.pricing
         ? {
-            pricePerSlot: entity.pricing.pricePerSlot,
-            advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
-          }
+          pricePerSlot: entity.pricing.pricePerSlot,
+          advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
+        }
         : undefined,
 
       mainImage: entity.mainImage,
@@ -83,35 +82,35 @@ export class ServiceRepository
 
       schedule: entity.schedule
         ? {
-            visibilityStartDate: entity.schedule.visibilityStartDate,
-            visibilityEndDate: entity.schedule.visibilityEndDate,
+          visibilityStartDate: entity.schedule.visibilityStartDate,
+          visibilityEndDate: entity.schedule.visibilityEndDate,
 
-            dailyWorkingWindows: entity.schedule.dailyWorkingWindows?.map(
-              (w) => ({
-                startTime: w.startTime,
-                endTime: w.endTime,
-              }),
-            ),
+          dailyWorkingWindows: entity.schedule.dailyWorkingWindows?.map(
+            (w) => ({
+              startTime: w.startTime,
+              endTime: w.endTime,
+            }),
+          ),
 
-            slotDurationMinutes: entity.schedule.slotDurationMinutes,
+          slotDurationMinutes: entity.schedule.slotDurationMinutes,
 
-            recurrenceType: entity.schedule.recurrenceType,
-            weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
-            monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
+          recurrenceType: entity.schedule.recurrenceType,
+          weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
+          monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
 
-            overrideBlock: entity.schedule.overrideBlock?.map((b) => ({
-              startDateTime: b.startDateTime,
-              endDateTime: b.endDateTime,
-              reason: b.reason,
-            })),
+          overrideBlock: entity.schedule.overrideBlock?.map((b) => ({
+            startDateTime: b.startDateTime,
+            endDateTime: b.endDateTime,
+            reason: b.reason,
+          })),
 
-            overrideCustom: entity.schedule.overrideCustom?.map((c) => ({
-              startDateTime: c.startDateTime,
-              endDateTime: c.endDateTime,
-              startTime: c.startTime,
-              endTime: c.endTime,
-            })),
-          }
+          overrideCustom: entity.schedule.overrideCustom?.map((c) => ({
+            startDateTime: c.startDateTime,
+            endDateTime: c.endDateTime,
+            startTime: c.startTime,
+            endTime: c.endTime,
+          })),
+        }
         : undefined,
     }
   }
@@ -325,12 +324,10 @@ export class ServiceRepository
   }
 
   async getServiceUsageOverview(params: { from: Date; to: Date }) {
-    // 1. Get IDs of services that have at least one booking in the date range
     const bookedServiceIds = await BookingModel.distinct('serviceRef', {
       createdAt: { $gte: params.from, $lte: params.to },
     })
 
-    // 2. Count total services (simple count sufficient here, or could be status-based)
     const totalServices = await ServiceModel.countDocuments()
 
     return {
@@ -340,5 +337,42 @@ export class ServiceRepository
         totalServices - bookedServiceIds.length,
       ),
     }
+  }
+
+  async getTopServicesForAI() {
+    return this.model
+      .find({
+        isActiveStatusByAdmin: true,
+        isActiveStatusByVendor: true,
+      })
+      .limit(10)
+      .select('name pricing.pricePerSlot')
+      .populate('subServiceCategoryRef', 'name')
+      .lean()
+      .then((services) =>
+        services.map((s: any) => ({
+          name: s.name,
+          categoryName: s.subServiceCategoryRef?.name,
+          priceRange: `₹${s.pricing?.pricePerSlot || 'N/A'}`,
+        })),
+      )
+  }
+
+  async searchForAI(query: string) {
+    return this.model
+      .find({
+        name: { $regex: query, $options: 'i' },
+        isActiveStatusByAdmin: true,
+        isActiveStatusByVendor: true,
+      })
+      .limit(5)
+      .select('name description')
+      .lean()
+      .then((services) =>
+        services.map((s: any) => ({
+          name: s.name,
+          shortDescription: s.description,
+        })),
+      )
   }
 }
