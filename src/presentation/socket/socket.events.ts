@@ -12,6 +12,14 @@ import {
   SocketAckResponse,
 } from '../../shared/types/socket/chat.socket.type'
 import { IMarkChatReadUseCase } from '../../domain/useCaseInterfaces/chat/mark_chat_read_usecase.interface'
+import {
+  activeCalls,
+  CallAcceptPayload,
+  CallEndPayload,
+  CallInitiatePayload,
+  CallRejectPayload,
+} from '../../shared/types/socket/video-chat.type'
+import { IChatRepository } from '../../domain/repositoryInterfaces/feature/chat/chat_repository.interface'
 
 export const registerSocketEvents = (socket: Socket) => {
   const markReadUseCase = container.resolve<IMarkNotificationReadUseCase>(
@@ -29,6 +37,8 @@ export const registerSocketEvents = (socket: Socket) => {
     container.resolve<IMarkAllNotificationsReadUseCase>(
       'IMarkAllNotificationsReadUseCase',
     )
+
+  const chatRepository = container.resolve<IChatRepository>('IChatRepository')
 
   //Notifications
 
@@ -190,4 +200,210 @@ export const registerSocketEvents = (socket: Socket) => {
       socket.join(`vendor_${user.userId}_dashboard`)
     }
   })
+
+  //Video call feature
+  socket.on(
+    SOCKET_EVENTS.CALL_INITIATE,
+    async ({ chatId }: { chatId: string }) => {
+      console.log(`${socket.data.user} initiated the call on chat ${chatId}`)
+      const caller = socket.data.user as SocketUser
+
+      const chat = await chatRepository.findByChatId(chatId)
+      if (!chat) return
+
+      const receiverId =
+        caller.userId === chat.customer?.userId
+          ? chat.vendor?.userId
+          : chat.customer?.userId
+      if (!receiverId) return
+
+      activeCalls.set(chatId, {
+        callerId: caller.userId,
+        receiverId,
+      })
+
+      socket.to(`user:${receiverId}`).emit(SOCKET_EVENTS.CALL_INCOMING, {
+        chatId,
+        from: caller.userId,
+        role: caller.role,
+      })
+    },
+  )
+
+  socket.on(
+    SOCKET_EVENTS.CALL_ACCEPT,
+    async ({ chatId }: { chatId: string }) => {
+      const call = activeCalls.get(chatId)
+      if (!call) return
+      socket.to(`user:${call.callerId}`).emit(SOCKET_EVENTS.CALL_ACCEPT, {
+        chatId,
+      })
+    },
+  )
+
+  socket.on(
+    SOCKET_EVENTS.CALL_REJECT,
+    async ({ chatId }: { chatId: string }) => {
+      const call = activeCalls.get(chatId)
+      if (!call) return
+
+      socket.to(`user:${call.callerId}`).emit(SOCKET_EVENTS.CALL_REJECT, {
+        chatId,
+      })
+      activeCalls.delete(chatId)
+    },
+  )
+
+  //webrtc signaling
+
+  socket.on(SOCKET_EVENTS.WEBRTC_OFFER, ({ chatId, offer }) => {
+    const call = activeCalls.get(chatId)
+    if (!call) return
+    socket
+      .to(`user:${call.receiverId}`)
+      .emit(SOCKET_EVENTS.WEBRTC_OFFER, { offer })
+  })
+
+  socket.on(SOCKET_EVENTS.WEBRTC_ANSWER, ({ chatId, answer }) => {
+    const call = activeCalls.get(chatId)
+    if (!call) return
+    socket
+      .to(`user:${call.callerId}`)
+      .emit(SOCKET_EVENTS.WEBRTC_ANSWER, { answer })
+  })
+
+  socket.on(SOCKET_EVENTS.WEBRTC_ICE, ({ chatId, candidate }) => {
+    const call = activeCalls.get(chatId)
+    if (!call) return
+    const sender = socket.data.user as SocketUser
+    if (sender.userId === call.callerId) {
+      socket
+        .to(`user:${call.receiverId}`)
+        .emit(SOCKET_EVENTS.WEBRTC_ICE, { candidate })
+    } else {
+      socket
+        .to(`user:${call.callerId}`)
+        .emit(SOCKET_EVENTS.WEBRTC_ICE, { candidate })
+    }
+  })
 }
+
+// socket.on(
+//   SOCKET_EVENTS.CALL_INITIATE,
+//async ({ chatId, callType }: CallInitiatePayload) => {
+//     console.log(
+//       '1. Call Initiated by pressing the camera button on the Chat page, received chatID and callType:',
+//       chatId,
+//       callType,
+//     )
+//     const caller = socket.data.user as SocketUser
+
+//     const chat = await chatRepository.findByChatId(chatId)
+//     if (!chat) return
+
+//     const receiverId =
+//       caller.role === 'customer' ? chat.vendor?.userId : chat.customer?.userId
+
+//     if (!receiverId) return
+
+//     activeCalls.set(chatId, {
+//       callerId: caller.userId,
+//       receiverId,
+//     })
+
+//     socket.to(`user:${receiverId}`).emit(SOCKET_EVENTS.CALL_INCOMING, {
+//       chatId,
+//       from: caller.userId,
+//       role: caller.role,
+//       callType,
+//     })
+//   },
+// )
+
+// socket.on(
+//   SOCKET_EVENTS.CALL_ACCEPT,
+//   async ({ chatId }: CallAcceptPayload) => {
+//     const call = activeCalls.get(chatId)
+//     if (!call) return
+
+//     socket.to(`user:${call.callerId}`).emit(SOCKET_EVENTS.CALL_ACCEPT, {
+//       chatId,
+//     })
+//   },
+// )
+
+// socket.on(
+//   SOCKET_EVENTS.CALL_REJECT,
+//   async ({ chatId }: CallRejectPayload) => {
+//     const call = activeCalls.get(chatId)
+//     if (!call) return
+
+//     socket.to(`user:${call.callerId}`).emit(SOCKET_EVENTS.CALL_REJECT, {
+//       chatId,
+//     })
+
+//     activeCalls.delete(chatId)
+//   },
+// )
+
+// socket.on(SOCKET_EVENTS.CALL_READY, ({ chatId }) => {
+//   console.log('call ready socket event triggered')
+//   const call = activeCalls.get(chatId)
+//   if (!call) return
+//   console.log('[SOCKET] CALL_READY forwarded to caller')
+//   socket.to(`user:${call.callerId}`).emit(SOCKET_EVENTS.CALL_READY)
+// })
+
+// socket.on(SOCKET_EVENTS.CALL_END, async ({ chatId }: CallEndPayload) => {
+//   const call = activeCalls.get(chatId)
+//   if (!call) return
+
+//   socket.to(`user:${call.callerId}`).emit(SOCKET_EVENTS.CALL_END, { chatId })
+//   socket
+//     .to(`user:${call.receiverId}`)
+//     .emit(SOCKET_EVENTS.CALL_END, { chatId })
+
+//   activeCalls.delete(chatId)
+// })
+
+// //webrtc signaling
+
+// // OFFER
+// socket.on(SOCKET_EVENTS.WEBRTC_OFFER, ({ chatId, offer }) => {
+//   const call = activeCalls.get(chatId)
+//   if (!call) return
+
+//   // send offer to receiver
+//   socket
+//     .to(`user:${call.receiverId}`)
+//     .emit(SOCKET_EVENTS.WEBRTC_OFFER, { offer })
+// })
+
+// // ANSWER
+// socket.on(SOCKET_EVENTS.WEBRTC_ANSWER, ({ chatId, answer }) => {
+//   const call = activeCalls.get(chatId)
+//   if (!call) return
+
+//   // send answer to caller
+//   socket
+//     .to(`user:${call.callerId}`)
+//     .emit(SOCKET_EVENTS.WEBRTC_ANSWER, { answer })
+// })
+
+// socket.on(SOCKET_EVENTS.WEBRTC_ICE, ({ chatId, candidate }) => {
+//   const call = activeCalls.get(chatId)
+//   if (!call) return
+
+//   const sender = socket.data.user as SocketUser
+
+//   // Send ICE to the OTHER peer only
+//   if (sender.userId === call.callerId) {
+//     socket
+//       .to(`user:${call.receiverId}`)
+//       .emit(SOCKET_EVENTS.WEBRTC_ICE, { candidate })
+//   } else {
+//     socket
+//       .to(`user:${call.callerId}`)
+//       .emit(SOCKET_EVENTS.WEBRTC_ICE, { candidate })
+//   }
+// })

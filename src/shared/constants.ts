@@ -126,6 +126,19 @@ export const SOCKET_EVENTS = {
   DASHBOARD_JOIN_ADMIN: 'dashboard:join:admin',
   DASHBOARD_JOIN_VENDOR: 'dashboard:join:vendor',
   DASHBOARD_STATS_UPDATE: 'dashboard:stats:update',
+
+  // call lifecycle
+  CALL_INITIATE: 'call:initiate',
+  CALL_INCOMING: 'call:incoming',
+  CALL_ACCEPT: 'call:accept',
+  CALL_REJECT: 'call:reject',
+  CALL_END: 'call:end',
+  CALL_READY: 'call:ready',
+
+  // webrtc
+  WEBRTC_OFFER: 'webrtc:offer',
+  WEBRTC_ANSWER: 'webrtc:answer',
+  WEBRTC_ICE: 'webrtc:ice',
 }
 
 export interface SocketUser {

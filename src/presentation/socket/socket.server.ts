@@ -81,55 +81,6 @@ export const initSocketServer = (httpServer: http.Server) => {
     })
   })
 
-  // io.on('connection', (socket) => {
-  //   const user = socket.data.user as SocketUser
-
-  //   if (user?.userId) {
-  //     socket.join(`user:${user.userId}`)
-
-  //     const count = onlineUsers.get(user.userId) || 0
-  //     onlineUsers.set(user.userId, count + 1)
-
-  //     if (count === 0) {
-  //       io.emit(SOCKET_EVENTS.USER_ONLINE, {
-  //         userId: user.userId,
-  //       })
-  //     }
-  //   }
-
-  //   registerRooms(socket)
-  //   registerSocketEvents(socket)
-
-  //   console.log(
-  //     chalk.cyanBright('🔌 Socket connected:'),
-  //     chalk.white(socket.id),
-  //     chalk.gray(`(user: ${user?.userId})`),
-  //   )
-
-  //   socket.on('disconnect', () => {
-  //     if (!user?.userId) return
-
-  //     const count = onlineUsers.get(user.userId) || 1
-  //     const newCount = count - 1
-
-  //     if (newCount <= 0) {
-  //       onlineUsers.delete(user.userId)
-
-  //       io.emit(SOCKET_EVENTS.USER_OFFLINE, {
-  //         userId: user.userId,
-  //       })
-  //     } else {
-  //       onlineUsers.set(user.userId, newCount)
-  //     }
-
-  //     console.log(
-  //       chalk.redBright('🔌 Socket disconnected:'),
-  //       chalk.white(socket.id),
-  //       chalk.gray(`(user: ${user.userId})`),
-  //     )
-  //   })
-  // })
-
   console.log(
     chalk.greenBright.bold('⚡ Socket.IO server initialized and ready'),
   )
