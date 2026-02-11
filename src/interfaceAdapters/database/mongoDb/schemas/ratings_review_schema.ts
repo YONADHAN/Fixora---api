@@ -6,10 +6,10 @@ export const RatingsReviewSchema = new Schema<IRatingsReviewModel>(
     ratingsReviewId: { type: String, required: true, unique: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     review: { type: String, required: true },
-    serviceRef: { type: Schema.Types.ObjectId, ref: 'service', required: true },
+    serviceRef: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
     customerRef: {
       type: Schema.Types.ObjectId,
-      ref: 'customer',
+      ref: 'Customer',
       required: true,
     },
     isActive: { type: Boolean, default: true },
