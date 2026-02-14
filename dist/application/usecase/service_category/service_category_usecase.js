@@ -23,13 +23,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllServiceCategoryUseCase = void 0;
 const tsyringe_1 = require("tsyringe");
+const service_category_mapper_1 = require("../../mappers/service_category/service_category_mapper");
 let GetAllServiceCategoryUseCase = class GetAllServiceCategoryUseCase {
     constructor(_serviceCategoryRepository) {
         this._serviceCategoryRepository = _serviceCategoryRepository;
     }
     execute(_a) {
         return __awaiter(this, arguments, void 0, function* ({ page, limit, search, }) {
-            return yield this._serviceCategoryRepository.findAll(page, limit, search);
+            const response = yield this._serviceCategoryRepository.findAllDocuments(page, limit, search);
+            const result = service_category_mapper_1.ServiceCategoryMapper.toDTO(response);
+            return result;
         });
     }
 };

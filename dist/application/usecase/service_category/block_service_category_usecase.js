@@ -31,6 +31,12 @@ let BlockServiceCategoryUseCase = class BlockServiceCategoryUseCase {
     }
     execute(categoryId, status) {
         return __awaiter(this, void 0, void 0, function* () {
+            // console.log(
+            //   'The data arrived on the backend usecase block service category usecase ,',
+            //   categoryId,
+            //   ' and the status is ',
+            //   status
+            // )
             const category = yield this._serviceCategoryRepository.findOne({
                 serviceCategoryId: categoryId,
             });

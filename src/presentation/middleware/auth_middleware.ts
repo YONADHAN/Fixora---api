@@ -4,6 +4,7 @@ import { JwtPayload } from 'jsonwebtoken'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../shared/constants'
 import { redisClient } from '../../interfaceAdapters/repositories/redis/redis.client'
 import { clearAuthCookies } from '../../shared/utils/cookie_helper'
+import { IUserSubscriptionEntity } from '../../domain/models/user_subscription_entity'
 
 const tokenService = new JWTService()
 
@@ -17,6 +18,7 @@ export interface CustomJWTPayload extends JwtPayload {
 
 export interface CustomRequest extends Request {
   user: CustomJWTPayload
+  subscription?: IUserSubscriptionEntity
 }
 
 const roleMap: Record<string, string> = {
@@ -26,7 +28,7 @@ const roleMap: Record<string, string> = {
 }
 
 const extractToken = (
-  req: Request
+  req: Request,
 ): { access_token: string; refresh_token: string } | null => {
   const basePath = req.baseUrl.split('/')
 
@@ -44,14 +46,14 @@ const extractToken = (
 
 const isBlacklisted = async (token: string): Promise<boolean> => {
   const result = await redisClient.get(token)
-  // console.log('is token blacklisted', result)
+
   return result !== null
 }
 
 export const verifyAuth = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const token = extractToken(req)
@@ -71,7 +73,7 @@ export const verifyAuth = async (
     }
 
     const user = tokenService.verifyAccessToken(
-      token.access_token
+      token.access_token,
     ) as CustomJWTPayload
 
     if (!user || !user.userId) {
@@ -99,39 +101,27 @@ export const verifyAuth = async (
 export const decodeToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    // console.log('entered the decode token')
     const token = extractToken(req)
     if (!token?.refresh_token) {
-      // console.log('no token for decode')
       res
         .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS })
       return
     }
-    // console.log('got the refresh token')
+
     const user = tokenService.verifyRefreshToken(
-      token?.refresh_token
+      token?.refresh_token,
     ) as CustomJWTPayload
-    // console.log('got user data from verifying the refresh token', user)
+
     const newAccessToken = tokenService.generateAccessToken({
       userId: user.userId,
       email: user.email,
       role: user.role,
     })
-    // console.log('create new access token from the data', newAccessToken)
-    // console.log(
-    //   'entering datas like this into customRequest',
-    //   JSON.stringify({
-    //     userId: user?.userId,
-    //     email: user?.email,
-    //     role: user?.role,
-    //     access_token: newAccessToken,
-    //     refresh_token: token.refresh_token,
-    //   })
-    // )
+
     ;(req as CustomRequest).user = {
       userId: user?.userId,
       email: user?.email,
@@ -141,7 +131,6 @@ export const decodeToken = async (
     }
     next()
   } catch (error) {
-    // console.log('failed to decode', error)
     const basePath = req.baseUrl.split('/')
     const role = basePath[3]
 

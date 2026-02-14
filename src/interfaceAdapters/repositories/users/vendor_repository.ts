@@ -6,6 +6,16 @@ import {
 } from '../../database/mongoDb/models/vendor_model'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IVendorEntity } from '../../../domain/models/vendor_entity'
+import { Types } from 'mongoose'
+import { timeGranularityType } from '../../../shared/constants'
+import { VendorDashboardResponseDTO } from '../../../application/dtos/dashboard_dto'
+
+const DATE_FORMAT_MAP: Record<timeGranularityType, string> = {
+  daily: '%Y-%m-%d',
+  weekly: '%Y-%U',
+  monthly: '%Y-%m',
+  yearly: '%Y',
+}
 
 @injectable()
 export class VendorRepository
@@ -120,6 +130,91 @@ export class VendorRepository
               : undefined,
           }
         : undefined,
+    }
+  }
+  async findNearestVendors(
+    lat: number,
+    lng: number,
+    radiusInKm: number,
+  ): Promise<IVendorEntity[]> {
+    const radiusInRadians = radiusInKm / 6378.1 // Earth's radius in km
+
+    const models = await this.model.find({
+      'geoLocation.coordinates': {
+        $geoWithin: {
+          $centerSphere: [[lng, lat], radiusInRadians],
+        },
+      },
+      status: 'active',
+    })
+
+    return models.map((model) => this.toEntity(model))
+  }
+
+  async getVendorDashboardAnalytics(params: {
+    from: Date
+    to: Date
+    interval: timeGranularityType
+  }): Promise<VendorDashboardResponseDTO> {
+    const [result] = await this.model.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: params.from,
+            $lte: params.to,
+          },
+        },
+      },
+
+      {
+        $facet: {
+          vendorGrowth: [
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: DATE_FORMAT_MAP[params.interval],
+                    date: '$createdAt',
+                  },
+                },
+                totalVendors: { $sum: 1 },
+              },
+            },
+            { $sort: { _id: 1 } },
+            {
+              $project: {
+                _id: 0,
+                label: '$_id',
+                totalVendors: 1,
+              },
+            },
+          ],
+
+          vendorStatusBreakdown: [
+            {
+              $group: {
+                _id: '$status',
+                count: { $sum: 1 },
+              },
+            },
+          ],
+        },
+      },
+    ])
+
+    const statusMap = {
+      pending: 0,
+      active: 0,
+      blocked: 0,
+    }
+
+    for (const item of result.vendorStatusBreakdown) {
+      statusMap[item._id as keyof typeof statusMap] = item.count
+    }
+
+    return {
+      vendorGrowth: result.vendorGrowth,
+      vendorStatusBreakdown: statusMap,
     }
   }
 }

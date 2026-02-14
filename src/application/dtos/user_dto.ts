@@ -60,6 +60,7 @@ export interface CustomerProfileInfoDTO {
   role: string
   phone: string
   status: string
+  profileImage?: string
   location: { name: string; displayName: string; zipCode: string }
 }
 
@@ -70,18 +71,23 @@ export interface VendorProfileInfoDTO {
   role: string
   phone: string
   status: string
+  profileImage?: string
   location: { name: string; displayName: string; zipCode: string }
 }
 
 export interface GetAllUsersDTO {
-  userId: string
-  name: string
-  email: string
-  role?: string
-  status: statusTypes | undefined
+  data: {
+    userId: string
+    name: string
+    email: string
+    role?: string
+    status: statusTypes | undefined
 
-  createdAt: Date
-  updatedAt?: Date
+    createdAt: Date
+    updatedAt?: Date
+  }[]
+  currentPage: number
+  totalPages: number
 }
 export interface SafeUserDTO {
   userId: string

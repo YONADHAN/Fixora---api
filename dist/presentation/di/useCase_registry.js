@@ -36,6 +36,18 @@ const create_service_category_usecase_1 = require("../../application/usecase/ser
 const edit_service_category_usecase_1 = require("../../application/usecase/service_category/edit_service_category_usecase");
 const block_service_category_usecase_1 = require("../../application/usecase/service_category/block_service_category_usecase");
 const single_service_category_usecase_1 = require("../../application/usecase/service_category/single_service_category_usecase");
+const active_service_categories_usecase_1 = require("../../application/usecase/service_category/active_service_categories_usecase");
+const create_sub_service_category_usecase_1 = require("../../application/usecase/sub_service_category/create_sub_service_category_usecase");
+const edit_sub_service_category_usecase_1 = require("../../application/usecase/sub_service_category/edit_sub_service_category_usecase");
+const get_all_sub_service_category_usecase_1 = require("../../application/usecase/sub_service_category/get_all_sub_service_category_usecase");
+const get_single_sub_service_category_usecase_1 = require("../../application/usecase/sub_service_category/get_single_sub_service_category_usecase");
+const toggle_block_status_of_sub_service_category_usecase_1 = require("../../application/usecase/sub_service_category/toggle_block_status_of_sub_service_category_usecase");
+const toggle_verification_status_of_sub_service_category_usecase_1 = require("../../application/usecase/sub_service_category/toggle_verification_status_of_sub_service_category_usecase");
+const search_services_for_customers_usecase_1 = require("../../application/usecase/service/search_services_for_customers_usecase");
+const get_available_slots_for_customer_usecase_1 = require("../../application/usecase/booking/get_available_slots_for_customer_usecase");
+const create_booking_hold_usecase_1 = require("../../application/usecase/booking_hold/create_booking_hold_usecase");
+const get_booking_usecase_1 = require("../../application/usecase/booking/get_booking_usecase");
+const cancel_booking_usecase_1 = require("../../application/usecase/booking/cancel_booking_usecase");
 //factory
 const registration_strategy_factory_1 = require("../../application/factories/auth/registration/registration_strategy_factory");
 const login_strategy_factory_1 = require("../../application/factories/auth/login/login_strategy_factory");
@@ -48,6 +60,9 @@ const change_my_user_block_status_factory_1 = require("../../application/factori
 const google_registration_strategy_factory_1 = require("../../application/factories/auth/registration/google/google_registration_strategy_factory");
 const change_password_strategy_factory_1 = require("../../application/factories/auth/change_password/change_password_strategy_factory");
 const profile_image_upload_factory_1 = require("../../application/factories/commonFeatures/profile/profile_image_upload_factory");
+const get_booking_factory_1 = require("../../application/factories/booking/get_booking_factory");
+const cancel_booking_factory_1 = require("../../application/factories/booking/cancel_booking_factory");
+const payment_history_factory_1 = require("../../application/factories/payment_history_factory/payment_history_factory");
 const user_mapper_factory_impl_1 = require("../../application/mappers/mapper_factories/user_mapper_factory.impl");
 //Mapper
 const customer_safe_user_mapper_1 = require("../../application/mappers/customer/customer_safe_user_mapper");
@@ -79,8 +94,51 @@ const vendor_status_check_usecase_1 = require("../../application/usecase/vendor/
 const change_admin_password_strategy_1 = require("../../application/strategies/auth/change_password/change_admin_password_strategy");
 const change_vendor_password_strategy_1 = require("../../application/strategies/auth/change_password/change_vendor_password_strategy");
 const change_customer_password_strategy_1 = require("../../application/strategies/auth/change_password/change_customer_password_strategy");
+const get_customer_payment_history_strategy_1 = require("../../application/strategies/payment/get_payment_history/get_customer_payment_history_strategy");
+const get_vendor_payment_history_strategy_1 = require("../../application/strategies/payment/get_payment_history/get_vendor_payment_history_strategy");
 const customer_profile_image_upload_strategy_1 = require("../../application/strategies/commonFeatures/profile/image/customer_profile_image_upload_strategy");
 const vendor_profile_image_upload_strategy_1 = require("../../application/strategies/commonFeatures/profile/image/vendor_profile_image_upload_strategy");
+const get_vendor_sub_service_categories_usecase_1 = require("../../application/usecase/sub_service_category/get_vendor_sub_service_categories_usecase");
+const get_all_sub_service_categories_based_on_service_category_id_usecase_1 = require("../../application/usecase/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase");
+const create_service_usecase_1 = require("../../application/usecase/service/create_service_usecase");
+const get_all_service_usecase_1 = require("../../application/usecase/service/get_all_service_usecase");
+const get_service_by_id_usecase_1 = require("../../application/usecase/service/get_service_by_id_usecase");
+const edit_service_usecase_1 = require("../../application/usecase/service/edit_service_usecase");
+const toggle_block_service_usecase_1 = require("../../application/usecase/service/toggle_block_service_usecase");
+const get_active_sub_service_categories_usecase_1 = require("../../application/usecase/sub_service_category/get_active_sub_service_categories_usecase");
+const booking_service_1 = require("../../interfaceAdapters/services/booking_service");
+const create_stripe_payment_intent_usecase_1 = require("../../application/usecase/booking_hold/create_stripe_payment_intent_usecase");
+const stripe_payment_succeeded_usecase_1 = require("../../application/usecase/booking_hold/stripe_payment_succeeded_usecase");
+const stripe_payment_failed_usecase_1 = require("../../application/usecase/booking_hold/stripe_payment_failed_usecase");
+const get_booking_for_admin_strategy_1 = require("../../application/strategies/booking/get_bookings/get_booking_for_admin_strategy");
+const get_booking_for_vendor_strategy_1 = require("../../application/strategies/booking/get_bookings/get_booking_for_vendor_strategy");
+const get_booking_for_customer_strategy_1 = require("../../application/strategies/booking/get_bookings/get_booking_for_customer_strategy");
+const customer_cancel_booking_strategy_1 = require("../../application/strategies/booking/cancel_bookings/customer_cancel_booking_strategy");
+const vendor_cancel_booking_strategy_1 = require("../../application/strategies/booking/cancel_bookings/vendor_cancel_booking_strategy");
+const get_address_usecase_1 = require("../../application/usecase/address/get_address_usecase");
+const edit_address_usecase_1 = require("../../application/usecase/address/edit_address_usecase");
+const add_address_usecase_1 = require("../../application/usecase/address/add_address_usecase");
+const set_default_address_usecase_1 = require("../../application/usecase/address/set_default_address_usecase");
+const delete_address_usecase_1 = require("../../application/usecase/address/delete_address_usecase");
+const get_single_address_usecase_1 = require("../../application/usecase/address/get_single_address_usecase");
+const get_booking_details_usecase_1 = require("../../application/usecase/booking/get_booking_details_usecase");
+const get_booking_details_for_customer_strategy_1 = require("../../application/strategies/booking/get_booking_details/get_booking_details_for_customer_strategy");
+const get_booking_details_for_vendor_strategy_1 = require("../../application/strategies/booking/get_booking_details/get_booking_details_for_vendor_strategy");
+const get_booking_details_factory_1 = require("../../application/factories/booking/get_booking_details_factory");
+const get_my_wallet_usecase_1 = require("../../application/usecase/wallet/get_my_wallet_usecase");
+const create_notification_usecase_1 = require("../../application/usecase/notification/create_notification_usecase");
+const get_my_notifications_usecase_1 = require("../../application/usecase/notification/get_my_notifications_usecase");
+const mark_all_notifications_read_usecase_1 = require("../../application/usecase/notification/mark_all_notifications_read_usecase");
+const mark_notification_read_usecase_1 = require("../../application/usecase/notification/mark_notification_read_usecase");
+const get_booking_by_payment_id_usecase_1 = require("../../application/usecase/booking/get_booking_by_payment_id_usecase");
+const send_message_usecase_1 = require("../../application/usecase/chat/send_message_usecase");
+const get_chat_messages_usecase_1 = require("../../application/usecase/chat/get_chat_messages_usecase");
+const mark_chat_read_usecase_1 = require("../../application/usecase/chat/mark_chat_read_usecase");
+const initiate_chat_usecase_1 = require("../../application/usecase/chat/initiate_chat_usecase");
+const get_user_chats_usecase_1 = require("../../application/usecase/chat/get_user_chats_usecase");
+const create_review_usecase_1 = require("../../application/usecase/review/create_review_usecase");
+const get_service_reviews_usecase_1 = require("../../application/usecase/review/get_service_reviews_usecase");
+const check_review_eligibility_usecase_1 = require("../../application/usecase/review/check_review_eligibility_usecase");
 class UseCaseRegistry {
     static registerUseCases() {
         tsyringe_1.container.register('IOtpService', {
@@ -155,6 +213,48 @@ class UseCaseRegistry {
         tsyringe_1.container.register('IGetSingleServiceCategoryUseCase', {
             useClass: single_service_category_usecase_1.GetSingleServiceCategoryUseCase,
         });
+        tsyringe_1.container.register('IToggleVerificationStatusOfSubServiceCategoryUseCase', {
+            useClass: toggle_verification_status_of_sub_service_category_usecase_1.ToggleVerificationStatusOfSubServiceCategoryUseCase,
+        });
+        tsyringe_1.container.register('ICreateServiceUseCase', {
+            useClass: create_service_usecase_1.CreateServiceUseCase,
+        });
+        tsyringe_1.container.register('IGetAllServicesUseCase', {
+            useClass: get_all_service_usecase_1.GetAllServicesUseCase,
+        });
+        tsyringe_1.container.register('IGetServiceByIdUseCase', {
+            useClass: get_service_by_id_usecase_1.GetServiceByIdUseCase,
+        });
+        tsyringe_1.container.register('IEditServiceUseCase', {
+            useClass: edit_service_usecase_1.EditServiceUseCase,
+        });
+        tsyringe_1.container.register('IToggleBlockServiceUseCase', {
+            useClass: toggle_block_service_usecase_1.ToggleBlockServiceUseCase,
+        });
+        tsyringe_1.container.register('ISearchServicesForCustomersUseCase', {
+            useClass: search_services_for_customers_usecase_1.SearchServicesForCustomersUseCase,
+        });
+        tsyringe_1.container.register('IGetAvailableSlotsForCustomerUseCase', {
+            useClass: get_available_slots_for_customer_usecase_1.GetAvailableSlotsForCustomerUseCase,
+        });
+        tsyringe_1.container.register('ICreateBookingHoldUseCase', {
+            useClass: create_booking_hold_usecase_1.CreateBookingHoldUseCase,
+        });
+        tsyringe_1.container.register('ICreateStripePaymentIntentUseCase', {
+            useClass: create_stripe_payment_intent_usecase_1.CreateStripePaymentIntentUseCase,
+        });
+        tsyringe_1.container.register('IGetBookingsUseCase', {
+            useClass: get_booking_usecase_1.GetBookingsUseCase,
+        });
+        tsyringe_1.container.register('ICancelBookingUseCase', {
+            useClass: cancel_booking_usecase_1.CancelBookingUseCase,
+        });
+        tsyringe_1.container.register('IGetBookingDetailsUseCase', {
+            useClass: get_booking_details_usecase_1.GetBookingDetailsUseCase,
+        });
+        tsyringe_1.container.register('IGetWalletUseCase', {
+            useClass: get_my_wallet_usecase_1.GetWalletUseCase,
+        });
         //security
         tsyringe_1.container.register('IPasswordBcrypt', {
             useClass: password_bcrypt_1.PasswordBcrypt,
@@ -170,6 +270,96 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IGetAllVendorRequestsUseCase', {
             useClass: get_all_vendor_requests_usecase_1.GetAllVendorRequestsUseCase,
+        });
+        tsyringe_1.container.register('IGetActiveServiceCategoriesUseCase', {
+            useClass: active_service_categories_usecase_1.GetActiveServiceCategoriesUseCase,
+        });
+        tsyringe_1.container.register('ICreateSubServiceCategoryUseCase', {
+            useClass: create_sub_service_category_usecase_1.CreateSubServiceCategoryUseCase,
+        });
+        tsyringe_1.container.register('IEditSubServiceCategoryUseCase', {
+            useClass: edit_sub_service_category_usecase_1.EditSubServiceCategoryUseCase,
+        });
+        tsyringe_1.container.register('IGetAllSubServiceCategoryUseCase', {
+            useClass: get_all_sub_service_category_usecase_1.GetAllSubServiceCategoryUseCase,
+        });
+        tsyringe_1.container.register('IGetSingleSubServiceCategoryUseCase', {
+            useClass: get_single_sub_service_category_usecase_1.GetSingleSubServiceCategoryUseCase,
+        });
+        tsyringe_1.container.register('IToggleBlockStatusOfSubServiceCategoryUseCase', {
+            useClass: toggle_block_status_of_sub_service_category_usecase_1.ToggleBlockStatusOfSubServiceCategoryUseCase,
+        });
+        tsyringe_1.container.register('IGetVendorSubServiceCategoriesUseCase', {
+            useClass: get_vendor_sub_service_categories_usecase_1.GetVendorSubServiceCategoriesUseCase,
+        });
+        tsyringe_1.container.register('IGetActiveSubServiceCategoriesUseCase', {
+            useClass: get_active_sub_service_categories_usecase_1.GetActiveSubServiceCategoriesUseCase,
+        });
+        tsyringe_1.container.register('IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase', {
+            useClass: get_all_sub_service_categories_based_on_service_category_id_usecase_1.GetAllSubServiceCategoriesBasedOnServiceCategoryId,
+        });
+        tsyringe_1.container.register('IStripePaymentSucceedUseCase', {
+            useClass: stripe_payment_succeeded_usecase_1.StripePaymentSucceededUseCase,
+        });
+        tsyringe_1.container.register('IStripePaymentFailedUseCase', {
+            useClass: stripe_payment_failed_usecase_1.StripePaymentFailedUseCase,
+        });
+        tsyringe_1.container.register('IGetAddressUseCase', {
+            useClass: get_address_usecase_1.GetAddressUseCase,
+        });
+        tsyringe_1.container.register('IEditAddressUseCase', {
+            useClass: edit_address_usecase_1.EditAddressUseCase,
+        });
+        tsyringe_1.container.register('IAddAddressUseCase', {
+            useClass: add_address_usecase_1.AddAddressUseCase,
+        });
+        tsyringe_1.container.register('ISetDefaultAddressUseCase', {
+            useClass: set_default_address_usecase_1.SetDefaultAddressUseCase,
+        });
+        tsyringe_1.container.register('IDeleteAddressUseCase', {
+            useClass: delete_address_usecase_1.DeleteAddressUseCase,
+        });
+        tsyringe_1.container.register('IGetSingleAddressUseCase', {
+            useClass: get_single_address_usecase_1.GetSingleAddressUseCase,
+        });
+        tsyringe_1.container.register('ICreateNotificationUseCase', {
+            useClass: create_notification_usecase_1.CreateNotificationUseCase,
+        });
+        tsyringe_1.container.register('IGetMyNotificationsUseCase', {
+            useClass: get_my_notifications_usecase_1.GetMyNotificationsUseCase,
+        });
+        tsyringe_1.container.register('IMarkAllNotificationsReadUseCase', {
+            useClass: mark_all_notifications_read_usecase_1.MarkAllNotificationsReadUseCase,
+        });
+        tsyringe_1.container.register('IMarkNotificationReadUseCase', {
+            useClass: mark_notification_read_usecase_1.MarkNotificationReadUseCase,
+        });
+        tsyringe_1.container.register('ISendMessageUseCase', {
+            useClass: send_message_usecase_1.SendMessageUseCase,
+        });
+        tsyringe_1.container.register('IGetBookingByPaymentIdUseCase', {
+            useClass: get_booking_by_payment_id_usecase_1.GetBookingByPaymentIdUseCase,
+        });
+        tsyringe_1.container.register('IGetChatMessagesUseCase', {
+            useClass: get_chat_messages_usecase_1.GetChatMessagesUseCase,
+        });
+        tsyringe_1.container.register('IMarkChatReadUseCase', {
+            useClass: mark_chat_read_usecase_1.MarkChatReadUseCase,
+        });
+        tsyringe_1.container.register('IInitiateChatUseCase', {
+            useClass: initiate_chat_usecase_1.InitiateChatUseCase,
+        });
+        tsyringe_1.container.register('IGetUserChatsUseCase', {
+            useClass: get_user_chats_usecase_1.GetUserChatsUseCase,
+        });
+        tsyringe_1.container.register('ICreateReviewUseCase', {
+            useClass: create_review_usecase_1.CreateReviewUseCase,
+        });
+        tsyringe_1.container.register('IGetServiceReviewsUseCase', {
+            useClass: get_service_reviews_usecase_1.GetServiceReviewsUseCase,
+        });
+        tsyringe_1.container.register('ICheckReviewEligibilityUseCase', {
+            useClass: check_review_eligibility_usecase_1.CheckReviewEligibilityUseCase,
         });
         //service
         tsyringe_1.container.register('IUserExistenceService', {
@@ -189,6 +379,9 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IVendorGoogleRegistrationStrategy', {
             useClass: vendor_google_registration_strategy_1.VendorGoogleRegistrationStrategy,
+        });
+        tsyringe_1.container.register('IBookingServices', {
+            useClass: booking_service_1.BookingServices,
         });
         //factory
         tsyringe_1.container.register('IRegistrationStrategyFactory', {
@@ -226,6 +419,18 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IProfileImageUploadFactory', {
             useClass: profile_image_upload_factory_1.ProfileImageUploadFactory,
+        });
+        tsyringe_1.container.register('IGetBookingsFactory', {
+            useClass: get_booking_factory_1.GetBookingsFactory,
+        });
+        tsyringe_1.container.register('ICancelBookingFactory', {
+            useClass: cancel_booking_factory_1.CancelBookingFactory,
+        });
+        tsyringe_1.container.register('IGetBookingDetailsFactory', {
+            useClass: get_booking_details_factory_1.GetBookingDetailsFactory,
+        });
+        tsyringe_1.container.register('IPaymentHistoryFactory', {
+            useClass: payment_history_factory_1.PaymentHistoryFactory,
         });
         //strategy
         tsyringe_1.container.register('ICustomerRegistrationStrategy', {
@@ -302,6 +507,33 @@ class UseCaseRegistry {
         });
         tsyringe_1.container.register('IVendorProfileImageUploadStrategy', {
             useClass: vendor_profile_image_upload_strategy_1.VendorProfileImageUploadStrategy,
+        });
+        tsyringe_1.container.register('IGetBookingForAdminStrategyInterface', {
+            useClass: get_booking_for_admin_strategy_1.GetBookingForAdminStrategy,
+        });
+        tsyringe_1.container.register('IGetBookingForVendorStrategyInterface', {
+            useClass: get_booking_for_vendor_strategy_1.GetBookingForVendorStrategy,
+        });
+        tsyringe_1.container.register('IGetBookingForCustomerStrategyInterface', {
+            useClass: get_booking_for_customer_strategy_1.GetBookingForCustomerStrategy,
+        });
+        tsyringe_1.container.register('ICustomerCancelBookingStrategyInterface', {
+            useClass: customer_cancel_booking_strategy_1.CustomerCancelBookingStrategy,
+        });
+        tsyringe_1.container.register('IVendorCancelBookingStrategyInterface', {
+            useClass: vendor_cancel_booking_strategy_1.VendorCancelBookingStrategy,
+        });
+        tsyringe_1.container.register('IGetBookingDetailsForCustomerStrategy', {
+            useClass: get_booking_details_for_customer_strategy_1.GetBookingDetailsForCustomerStrategy,
+        });
+        tsyringe_1.container.register('IGetBookingDetailsForVendorStrategy', {
+            useClass: get_booking_details_for_vendor_strategy_1.GetBookingDetailsForVendorStrategy,
+        });
+        tsyringe_1.container.register('IGetCustomerPaymentHistoryStrategy', {
+            useClass: get_customer_payment_history_strategy_1.GetCustomerPaymentHistoryStrategy,
+        });
+        tsyringe_1.container.register('IGetVendorPaymentHistoryStrategy', {
+            useClass: get_vendor_payment_history_strategy_1.GetVendorPaymentHistoryStrategy,
         });
         //mappers
         tsyringe_1.container.register('ICustomerSafeMapper', { useClass: customer_safe_user_mapper_1.CustomerSafeMapper });

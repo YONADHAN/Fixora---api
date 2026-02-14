@@ -19,7 +19,7 @@ export class GetAllUsersFactory implements IGetAllUsersFactory {
     page: number,
     limit: number,
     search: string
-  ): Promise<GetAllUsersDTO[]> {
+  ): Promise<GetAllUsersDTO> {
     switch (role.toLowerCase()) {
       case 'customer':
         return await this._customerStrategy.execute(page, limit, search)

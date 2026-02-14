@@ -15,9 +15,33 @@ import { ISubServiceCategoryController } from '../../domain/controllerInterfaces
 import { SubServiceCategoryController } from '../controllers/service/sub_service_category_controller'
 import { IServiceController } from '../../domain/controllerInterfaces/features/service/service-controller.interface'
 import { ServiceController } from '../controllers/service/service_controller'
+import { IBookingController } from '../../domain/controllerInterfaces/features/booking/booking-controller.interface'
+import { PayBalanceUseCase } from '../../application/usecase/booking/pay_balance_usecase'
+import { BalancePaymentSucceededUseCase } from '../../application/usecase/booking/balance_payment_succeeded_usecase'
+import { BookingController } from '../controllers/booking/booking_controller'
+import { StripeWebhookController } from '../controllers/webhook/stripe_webhook_controller'
+import { IStripeWebhookController } from '../../domain/controllerInterfaces/features/webhook/stripe-webhook-controller.interface'
+import { IAddressController } from '../../domain/controllerInterfaces/features/address/address-controller.interface'
+import { AddressController } from '../controllers/address/address_controller'
+import { IWalletController } from '../../domain/controllerInterfaces/features/wallet/wallet-controller.interface'
+import { WalletController } from '../controllers/wallet/wallet_controller'
+import { INotificationController } from '../../domain/controllerInterfaces/features/notification/notification-controller.interface'
+import { NotificationController } from '../controllers/notification/notification_controller'
+import { IChatController } from '../../domain/controllerInterfaces/features/chat/chat-controller.interface'
+import { ChatController } from '../controllers/chat/chat_controller'
+import { IPaymentController } from '../../domain/controllerInterfaces/features/payment/payment_controller.interface'
+import { PaymentController } from '../controllers/payment/payment_controller'
+import { SubscriptionController } from '../controllers/subscription/subscription_controller'
+import { ISubscriptionController } from '../../domain/controllerInterfaces/features/subscription/subscription-controller.interface'
+import { RatingReviewController } from '../controllers/rating_review/rating_review_controller'
+import { IRatingReviewController } from '../../domain/controllerInterfaces/features/rating_review/review-controller.interface'
+import { IAiChatbotController } from '../../domain/controllerInterfaces/features/ai_chatbot/ai_chatbot_controller.interface'
+import { AiChatbotController } from '../controllers/ai_chatbot/ai_chatbot_controller'
+
 DependencyInjection.registerAll()
 
 export const authController = container.resolve<IAuthController>(AuthController)
+
 export const vendorController =
   container.resolve<IVendorController>(VendorController)
 export const customerController =
@@ -30,5 +54,31 @@ export const subServiceCategoryController =
   container.resolve<ISubServiceCategoryController>(SubServiceCategoryController)
 export const serviceController =
   container.resolve<IServiceController>(ServiceController)
+container.register('IPayBalanceUseCase', {
+  useClass: PayBalanceUseCase,
+})
+container.register('IBalancePaymentSucceededUseCase', {
+  useClass: BalancePaymentSucceededUseCase,
+})
+export const bookingController =
+  container.resolve<IBookingController>(BookingController)
+export const stripeWebhookController =
+  container.resolve<IStripeWebhookController>(StripeWebhookController)
+export const addressController =
+  container.resolve<IAddressController>(AddressController)
+export const walletController =
+  container.resolve<IWalletController>(WalletController)
+export const notificationController =
+  container.resolve<INotificationController>(NotificationController)
+export const chatController = container.resolve<IChatController>(ChatController)
+export const paymentController =
+  container.resolve<IPaymentController>(PaymentController)
+export const subscriptionController =
+  container.resolve<ISubscriptionController>(SubscriptionController)
+
+export const ratingsReviewController =
+  container.resolve<IRatingReviewController>(RatingReviewController)
+export const aiChatbotController =
+  container.resolve<IAiChatbotController>(AiChatbotController)
 //middleware
 export const blockMyUserMiddleware = container.resolve(BlockMyUserMiddleware)

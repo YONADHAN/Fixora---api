@@ -19,11 +19,18 @@ export class GetServiceByIdUseCase implements IGetServiceByIdUseCase {
     dto: RequestGetServiceByIdDTO
   ): Promise<ResponseGetServiceByIdDTO> {
     const { serviceId } = dto
-    const serviceExists = await this._serviceRepo.findOne({ serviceId })
+    const serviceExists = await this._serviceRepo.findOneAndPopulate(
+      { serviceId },
+      [
+        { path: 'subServiceCategoryRef', select: 'name subServiceCategoryId' },
+        { path: 'vendorRef', select: 'userId profileImage name' },
+      ]
+    )
     if (!serviceExists) {
       throw new CustomError('Service is not found', HTTP_STATUS.NOT_FOUND)
     }
     const response = GetServiceByIdResponseMapper.toDTO(serviceExists)
+
     return response
   }
 }

@@ -18,17 +18,10 @@ export class ChangeVendorVerificationStatusUseCase
     private _storageService: IStorageService
   ) {}
 
-  /**
-   * Extract bucket and key from AWS S3 URL
-   * Example: https://fixora-storage-yonadhan.s3.ap-south-1.amazonaws.com/vendor-verification-docs/abc123.png
-   */
   private extractBucketAndKey(
     url: string
   ): { bucket: string; key: string } | null {
     try {
-      // Example URL parts:
-      //   domain = fixora-storage-yonadhan.s3.ap-south-1.amazonaws.com
-      //   bucket = fixora-storage-yonadhan
       const match = url.match(
         /^https?:\/\/([^.]+)\.s3[.-][^/]+\.amazonaws\.com\/(.+)$/
       )
@@ -111,7 +104,6 @@ export class ChangeVendorVerificationStatusUseCase
         }
       }
 
-      // 🧹 Clear MongoDB docs reference
       vendor.documents = []
     }
 

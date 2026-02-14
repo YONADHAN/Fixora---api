@@ -15,6 +15,8 @@ import { VendorRoutes } from '../routes/vendor_route'
 import { CustomerRoutes } from '../routes/customer_route'
 import { AdminRoutes } from '../routes/admin_route'
 
+import { stripeWebhookController } from '../di/resolver'
+
 export class ExpressServer {
   private _app: Application
 
@@ -39,6 +41,12 @@ export class ExpressServer {
         credentials: true,
       })
     )
+    this._app.post(
+      '/api/v1/webhooks/stripe',
+      express.raw({ type: 'application/json' }),
+      (req, res) => stripeWebhookController.handle(req, res)
+    )
+
     this._app.use(express.json())
     this._app.use(express.urlencoded({ extended: true }))
     this._app.use(cookieParser())

@@ -1,10 +1,10 @@
 import { IServiceCategoryEntity } from '../../../domain/models/service_category_entity'
-import { ResponseActiveServiceCategoryDTO } from '../../dtos/service_category_dto'
+import { ResponseActiveServiceCategoriesDTO } from '../../dtos/service_category_dto'
 
 export class ActiveServiceCategoryMapper {
   static toDTO(
     service_categories: IServiceCategoryEntity[]
-  ): ResponseActiveServiceCategoryDTO {
+  ): ResponseActiveServiceCategoriesDTO {
     const active_service_categories = []
     for (let i = 0; i < service_categories.length; i++) {
       if (service_categories[i].isActive === true) {

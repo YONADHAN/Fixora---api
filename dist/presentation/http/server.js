@@ -18,6 +18,8 @@ const auth_route_1 = require("../routes/auth_route");
 const vendor_route_1 = require("../routes/vendor_route");
 const customer_route_1 = require("../routes/customer_route");
 const admin_route_1 = require("../routes/admin_route");
+const review_route_1 = require("../routes/review_route");
+const resolver_1 = require("../di/resolver");
 class ExpressServer {
     constructor() {
         this._app = (0, express_1.default)();
@@ -35,6 +37,7 @@ class ExpressServer {
             methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
             credentials: true,
         }));
+        this._app.post('/api/v1/webhooks/stripe', express_1.default.raw({ type: 'application/json' }), (req, res) => resolver_1.stripeWebhookController.handle(req, res));
         this._app.use(express_1.default.json());
         this._app.use(express_1.default.urlencoded({ extended: true }));
         this._app.use((0, cookie_parser_1.default)());
@@ -53,6 +56,7 @@ class ExpressServer {
         this._app.use('/api/v1/admin', new admin_route_1.AdminRoutes().router);
         this._app.use('/api/v1/vendor', new vendor_route_1.VendorRoutes().router);
         this._app.use('/api/v1/customer', new customer_route_1.CustomerRoutes().router);
+        this._app.use('/api/v1', new review_route_1.ReviewRoutes().router);
     }
     getApp() {
         return this._app;

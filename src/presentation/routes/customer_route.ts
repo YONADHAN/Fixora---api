@@ -2,7 +2,6 @@ import {
   authController,
   customerController,
   blockMyUserMiddleware,
-  vendorController,
   serviceCategoryController,
 } from '../di/resolver'
 import {
@@ -17,6 +16,15 @@ import { handleMulterError } from '../middleware/multer_error_middleware'
 import { upload } from '../../interfaceAdapters/config/multer.config'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
 import { ServiceRoutes } from './service_route'
+import { BookingRoutes } from './booking_route'
+import { WalletRoutes } from './wallet_route'
+import { NotificationRoutes } from './notification_route'
+
+import { ChatRoutes } from './chat_route'
+import { AddressRoutes } from './address_route'
+import { PaymentRoutes } from './payment_route'
+import { RatingsReviewRoutes } from './ratings_review_route'
+import { AiChatbotRoute } from './ai_chatbot_route'
 
 export class CustomerRoutes extends BaseRoute {
   constructor() {
@@ -24,43 +32,55 @@ export class CustomerRoutes extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
-    //Post Refresh Token Route
     this.router.post(
       '/refresh-token',
       decodeToken,
       (req: Request, res: Response) => {
         authController.handleTokenRefresh(req, res)
-      }
+      },
     )
+
+    this.router.use('/chats', new ChatRoutes().router)
+
+    this.router.use('/booking', new BookingRoutes().router)
 
     this.router.use('/service', new ServiceRoutes().router)
 
     this.router.get('/service_category', (req: Request, res: Response) => {
       serviceCategoryController.getActiveServiceCategories(req, res)
     })
+
+    this.router.use('/wallet', new WalletRoutes().router)
+
+    this.router.use('/notification', new NotificationRoutes().router)
+
+    this.router.use('/payment', new PaymentRoutes().router)
+
     this.router.use(
       '/sub-service-category',
-      new SubServiceCategoryRoutes().router
+      new SubServiceCategoryRoutes().router,
     )
 
-    //  Global middlewares for all authenticated customer routes
+    this.router.use('/review', new RatingsReviewRoutes().router)
+
+    this.router.use('/chatbot', new AiChatbotRoute().router)
+
     this.router.use(
       verifyAuth as CustomRequestHandler,
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      authorizeRole(['customer'])
+      authorizeRole(['customer']),
     )
 
-    //  Logout
+    this.router.use('/address', new AddressRoutes().router)
+
     this.router.post('/logout', (req: Request, res: Response) => {
       customerController.logout(req, res)
     })
 
-    //  Get profile
     this.router.get('/profile-info', (req: Request, res: Response) => {
       customerController.profileInfo(req, res)
     })
 
-    //  Update profile
     this.router.patch('/update-profile-info', (req: Request, res: Response) => {
       customerController.profileUpdate(req, res)
     })
@@ -69,7 +89,7 @@ export class CustomerRoutes extends BaseRoute {
 
       (req: Request, res: Response) => {
         authController.changeMyPassword(req, res)
-      }
+      },
     )
 
     this.router.post(
@@ -77,7 +97,7 @@ export class CustomerRoutes extends BaseRoute {
       handleMulterError(upload.single('profileImage')),
       (req: Request, res: Response) => {
         customerController.uploadProfileImage(req, res)
-      }
+      },
     )
   }
 }

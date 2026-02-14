@@ -17,21 +17,21 @@ export class FetchingCustomersStrategy implements IFetchingCustomersStrategy {
     page: number,
     limit: number,
     search: string
-  ): Promise<GetAllUsersDTO[]> {
-    const customers = await this._customerRepository.findAll(
+  ): Promise<GetAllUsersDTO> {
+    const response = await this._customerRepository.findAllDocuments(
       page,
       limit,
       search
     )
 
-    if (!customers || customers.length === 0) {
+    if (!response || response.data.length === 0) {
       throw new CustomError(
         ERROR_MESSAGES.USERS_NOT_FOUND,
         HTTP_STATUS.NOT_FOUND
       )
     }
 
-    const mappedCustomers = UserMapper.toResponse(customers)
+    const mappedCustomers = UserMapper.toResponse(response)
 
     return mappedCustomers
   }

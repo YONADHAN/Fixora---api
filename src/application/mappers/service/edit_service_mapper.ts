@@ -1,78 +1,64 @@
+
 import { recurrenceType } from '../../../shared/constants'
+interface editServiceRequestMapperDTO {
+  vendorId: string
+  serviceId: string
+  subServiceCategoryId: string
+  name: string
+  description?: string
 
+  'pricing.pricePerSlot': string
+  'pricing.advanceAmountPerSlot': string
+
+  'schedule.visibilityStartDate': string
+  'schedule.visibilityEndDate': string
+  'schedule.dailyWorkingWindows[0].startTime': string
+  'schedule.dailyWorkingWindows[0].endTime': string
+  'schedule.slotDurationMinutes': string
+  'schedule.recurrenceType': string
+
+  files?: Express.Multer.File[]
+}
 export class EditServiceRequestMapper {
-  static toDTO({ rawData, files }: any) {
-    const dto: any = {}
+  static toDTO(payload: editServiceRequestMapperDTO) {
+    const mainImage = payload.files?.[0]
 
-    if (rawData.title !== undefined) dto.title = rawData.title
-    if (rawData.description !== undefined) dto.description = rawData.description
+    return {
+      serviceId: payload.serviceId,
+      vendorId: payload.vendorId,
+      subServiceCategoryId: payload.subServiceCategoryId,
 
-    if (rawData.pricing) {
-      dto.pricing = {
-        pricePerSlot: rawData.pricing.pricePerSlot
-          ? Number(rawData.pricing.pricePerSlot)
-          : undefined,
+      name: payload.name,
+      description: payload.description ?? '',
 
-        isAdvanceRequired:
-          rawData.pricing.isAdvanceRequired !== undefined
-            ? rawData.pricing.isAdvanceRequired === 'true'
-            : undefined,
+      pricing: {
+        pricePerSlot: Number(payload['pricing.pricePerSlot']),
+        advanceAmountPerSlot: Number(payload['pricing.advanceAmountPerSlot']),
+      },
 
-        advanceAmountPerSlot: rawData.pricing.advanceAmountPerSlot
-          ? Number(rawData.pricing.advanceAmountPerSlot)
-          : undefined,
+      mainImage,
 
-        currency: rawData.pricing.currency,
-      }
+      schedule: {
+        visibilityStartDate: new Date(payload['schedule.visibilityStartDate']),
+
+        visibilityEndDate: new Date(payload['schedule.visibilityEndDate']),
+
+        dailyWorkingWindows: [
+          {
+            startTime: payload['schedule.dailyWorkingWindows[0].startTime'],
+            endTime: payload['schedule.dailyWorkingWindows[0].endTime'],
+          },
+        ],
+
+        slotDurationMinutes: Number(payload['schedule.slotDurationMinutes']),
+
+        recurrenceType: payload['schedule.recurrenceType'] as recurrenceType,
+
+        weeklyWorkingDays: [],
+        monthlyWorkingDates: [],
+        overrideBlock: [],
+        overrideCustom: [],
+      },
     }
-
-    if (rawData.isActiveStatusByVendor !== undefined)
-      dto.isActiveStatusByVendor = rawData.isActiveStatusByVendor === 'true'
-
-    if (rawData.adminStatusNote !== undefined)
-      dto.adminStatusNote = rawData.adminStatusNote
-
-    if (rawData.schedule) {
-      dto.schedule = {
-        visibilityStartDate: rawData.schedule.visibilityStartDate
-          ? new Date(rawData.schedule.visibilityStartDate)
-          : undefined,
-
-        visibilityEndDate: rawData.schedule.visibilityEndDate
-          ? new Date(rawData.schedule.visibilityEndDate)
-          : undefined,
-
-        workStartTime: rawData.schedule.workStartTime,
-        workEndTime: rawData.schedule.workEndTime,
-
-        slotDurationMinutes: rawData.schedule.slotDurationMinutes
-          ? Number(rawData.schedule.slotDurationMinutes)
-          : undefined,
-
-        recurrenceType: rawData.schedule.recurrenceType
-          ? (rawData.schedule.recurrenceType as recurrenceType)
-          : undefined,
-
-        weeklyWorkingDays: rawData.schedule.weeklyWorkingDays
-          ? rawData.schedule.weeklyWorkingDays.split(',').map(Number)
-          : undefined,
-
-        monthlyWorkingDates: rawData.schedule.monthlyWorkingDates
-          ? rawData.schedule.monthlyWorkingDates.split(',').map(Number)
-          : undefined,
-
-        holidayDates: rawData.schedule.holidayDates
-          ? rawData.schedule.holidayDates
-              .split(',')
-              .map((d: string) => new Date(d))
-          : undefined,
-      }
-    }
-
-    if (files && files.length > 0) {
-      dto.images = files
-    }
-
-    return dto
   }
 }

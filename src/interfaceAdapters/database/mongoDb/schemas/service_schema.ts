@@ -7,6 +7,7 @@ export const ServiceSchema = new Schema<IServiceModel>(
       type: String,
       required: true,
     },
+
     vendorRef: {
       type: Schema.Types.ObjectId,
       ref: 'Vendor',
@@ -19,42 +20,72 @@ export const ServiceSchema = new Schema<IServiceModel>(
       required: true,
     },
 
-    title: { type: String, required: true },
+    name: { type: String, required: true },
+
+    serviceVariants: {
+      type: [
+        {
+          name: { type: String, required: true },
+          description: { type: String },
+          price: { type: Number },
+        },
+      ],
+      default: [],
+    },
+
     description: { type: String },
 
     pricing: {
       pricePerSlot: { type: Number, required: true },
-      isAdvanceRequired: { type: Boolean, default: false },
       advanceAmountPerSlot: { type: Number, default: 0 },
-      currency: { type: String, default: 'INR' },
     },
+    mainImage: { type: String, required: true },
 
-    images: [String],
-
+    /** STATUS */
     isActiveStatusByAdmin: { type: Boolean, default: true },
     isActiveStatusByVendor: { type: Boolean, default: true },
     adminStatusNote: { type: String },
 
+    /** MAIN SCHEDULING BLOCK */
     schedule: {
       visibilityStartDate: Date,
       visibilityEndDate: Date,
 
-      workStartTime: String,
-      workEndTime: String,
+      /** BASE WORKING WINDOWS (Supports breaks, split shifts) */
+      dailyWorkingWindows: [
+        {
+          startTime: { type: String, required: true },
+          endTime: { type: String, required: true },
+        },
+      ],
+
+      /** Default slot duration */
       slotDurationMinutes: Number,
 
       recurrenceType: String,
       weeklyWorkingDays: [Number],
       monthlyWorkingDates: [Number],
-      holidayDates: [Date],
-    },
 
-    serviceHistoryRefs: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'ServiceHistory',
-      },
-    ],
+      /** BLOCK OVERRIDES */
+      overrideBlock: [
+        {
+          startDateTime: { type: Date, required: true },
+          endDateTime: { type: Date, required: true },
+          reason: { type: String },
+        },
+      ],
+
+      /** CUSTOM SCHEDULE OVERRIDES */
+      overrideCustom: [
+        {
+          startDateTime: { type: Date, required: true },
+          endDateTime: { type: Date, required: true },
+
+          startTime: { type: String },
+          endTime: { type: String },
+        },
+      ],
+    },
   },
   { timestamps: true }
 )

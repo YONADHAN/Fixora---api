@@ -17,4 +17,5 @@ export interface ISubServiceCategoryController {
     req: Request,
     res: Response
   ): Promise<void>
+  getActiveSubServiceCategories(req: Request, res: Response): Promise<void>
 }

@@ -1,4 +1,5 @@
 import { IServiceEntity } from '../../../domain/models/service_entity'
+import { ResponseGetServiceByIdDTO } from '../../dtos/service_dto'
 
 export class GetServiceByIdRequestMapper {
   static toDTO(validated: { params: { serviceId: string } }) {
@@ -7,22 +8,27 @@ export class GetServiceByIdRequestMapper {
     }
   }
 }
-
 export class GetServiceByIdResponseMapper {
-  static toDTO(entity: IServiceEntity) {
+  static toDTO(entity: IServiceEntity): ResponseGetServiceByIdDTO {
     return {
-      vendorId: entity.vendorRef,
-      subServiceCategoryId: entity.subServiceCategoryRef,
+      serviceId: entity.serviceId,
 
-      title: entity.title,
+      vendorId: entity.populatedValues?.vendor?.userId ?? '',
+
+      subServiceCategoryId:
+        entity.populatedValues?.subServiceCategory?.subServiceCategoryId ?? '',
+
+      name: entity.name,
       description: entity.description,
+
+      serviceVariants: entity.serviceVariants ?? [],
 
       pricing: {
         pricePerSlot: entity.pricing.pricePerSlot,
-        isAdvanceRequired: entity.pricing.isAdvanceRequired,
         advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
-        currency: entity.pricing.currency,
       },
+
+      mainImage: entity.mainImage,
 
       isActiveStatusByVendor: entity.isActiveStatusByVendor,
       isActiveStatusByAdmin: entity.isActiveStatusByAdmin,
@@ -32,47 +38,36 @@ export class GetServiceByIdResponseMapper {
         visibilityStartDate: entity.schedule.visibilityStartDate,
         visibilityEndDate: entity.schedule.visibilityEndDate,
 
-        workStartTime: entity.schedule.workStartTime,
-        workEndTime: entity.schedule.workEndTime,
+        dailyWorkingWindows: entity.schedule.dailyWorkingWindows ?? [],
+
         slotDurationMinutes: entity.schedule.slotDurationMinutes,
-
         recurrenceType: entity.schedule.recurrenceType,
-        weeklyWorkingDays: entity.schedule.weeklyWorkingDays,
-        monthlyWorkingDates: entity.schedule.monthlyWorkingDates,
-        holidayDates: entity.schedule.holidayDates,
+
+        weeklyWorkingDays: entity.schedule.weeklyWorkingDays ?? [],
+        monthlyWorkingDates: entity.schedule.monthlyWorkingDates ?? [],
+
+        overrideBlock: entity.schedule.overrideBlock ?? [],
+        overrideCustom: entity.schedule.overrideCustom ?? [],
       },
 
-      images: entity.images,
-    }
-  }
-}
+      populatedValues: {
+        vendor: entity.populatedValues?.vendor
+          ? {
+              name: entity.populatedValues.vendor.name,
+              userId: entity.populatedValues.vendor.userId,
+              profileImage: entity.populatedValues.vendor.profileImage,
+            }
+          : undefined,
 
-import { ResponseEditServiceDTO } from '../../dtos/service_dto'
-
-export class EditServiceResponseMapper {
-  static toDTO(entity: any): ResponseEditServiceDTO {
-    return {
-      serviceId: entity.serviceId,
-
-      title: entity.title,
-      description: entity.description,
-
-      pricing: {
-        pricePerSlot: entity.pricing.pricePerSlot,
-        isAdvanceRequired: entity.pricing.isAdvanceRequired,
-        advanceAmountPerSlot: entity.pricing.advanceAmountPerSlot,
-        currency: entity.pricing.currency,
+        subServiceCategory: entity.populatedValues?.subServiceCategory
+          ? {
+              subServiceCategoryId:
+                entity.populatedValues.subServiceCategory.subServiceCategoryId,
+              name: entity.populatedValues.subServiceCategory.name,
+              isActive: entity.populatedValues.subServiceCategory.isActive,
+            }
+          : undefined,
       },
-
-      schedule: {
-        ...entity.schedule,
-      },
-
-      images: entity.images,
-
-      isActiveStatusByVendor: entity.isActiveStatusByVendor,
-      isActiveStatusByAdmin: entity.isActiveStatusByAdmin,
-      adminStatusNote: entity.adminStatusNote,
 
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,

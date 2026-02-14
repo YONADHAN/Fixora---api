@@ -1,11 +1,5 @@
-import {
-  RequestEditServiceDTO,
-  ResponseEditServiceDTO,
-} from '../../../application/dtos/service_dto'
+import { RequestEditServiceDTO } from '../../../application/dtos/service_dto'
 
 export interface IEditServiceUseCase {
-  execute(
-    serviceId: string,
-    payload: RequestEditServiceDTO
-  ): Promise<ResponseEditServiceDTO>
+  execute(payload: RequestEditServiceDTO): Promise<void>
 }

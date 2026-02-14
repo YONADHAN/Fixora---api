@@ -120,7 +120,7 @@ let VendorController = class VendorController {
     uploadProfileImage(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const vendorId = req.user.id;
+                const vendorId = req.user.userId;
                 const file = req.file;
                 if (!file) {
                     res.status(400).json({ message: 'No file uploaded' });
@@ -129,7 +129,6 @@ let VendorController = class VendorController {
                 const fileName = file.filename;
                 const bucketName = config_1.config.storageConfig.bucket;
                 const folder = 'profile-images';
-                // FIX: add await here
                 const uploadedProfileImageUrl = yield this.storageService.uploadFile(bucketName, file, folder);
                 yield this._profileImageUploadFactory.execute('vendor', vendorId, uploadedProfileImageUrl);
                 res.status(200).json({

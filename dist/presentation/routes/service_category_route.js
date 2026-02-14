@@ -21,15 +21,18 @@ class ServiceCategoryRoutes extends base_route_1.BaseRoute {
             .post((0, multer_error_middleware_1.handleMulterError)(multer_config_1.upload.single('ServiceCategoryBannerImage')), (req, res) => resolver_1.serviceCategoryController.createServiceCategory(req, res))
             .patch((0, multer_error_middleware_1.handleMulterError)(multer_config_1.upload.single('ServiceCategoryBannerImage')), (req, res) => resolver_1.serviceCategoryController.editServiceCategory(req, res));
         /* -----------------------------
+           BLOCK / UNBLOCK
+        ------------------------------ */
+        this.router.patch('/block', (req, res) => resolver_1.serviceCategoryController.blockServiceCategory(req, res));
+        /* -----------------------------
            GET SINGLE + EDIT (single ID)
         ------------------------------ */
         this.router
             .route('/:categoryId')
-            .get((req, res) => resolver_1.serviceCategoryController.getSingleServiceCategory(req, res));
-        /* -----------------------------
-           BLOCK / UNBLOCK
-        ------------------------------ */
-        this.router.patch('/block', (req, res) => resolver_1.serviceCategoryController.blockServiceCategory(req, res));
+            .get((req, res) => resolver_1.serviceCategoryController.getSingleServiceCategory(req, res))
+            .patch((0, multer_error_middleware_1.handleMulterError)(multer_config_1.upload.single('bannerImage')), (req, res) => {
+            resolver_1.serviceCategoryController.editServiceCategory(req, res);
+        });
     }
 }
 exports.ServiceCategoryRoutes = ServiceCategoryRoutes;

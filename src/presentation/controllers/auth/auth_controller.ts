@@ -62,9 +62,8 @@ export class AuthController implements IAuthController {
     private _googleLoginUseCase: IGoogleUseCase,
     @inject('IChangeMyPasswordUseCase')
     private _changeMyPasswordUsecase: IChangeMyPasswordUseCase
-  ) {}
-  // controller for sending otp to emails
-  // giving email as parameter
+  ) { }
+
   async sendOtpEmail(req: Request, res: Response): Promise<void> {
     try {
       const { email } = req.body
@@ -77,8 +76,7 @@ export class AuthController implements IAuthController {
       handleErrorResponse(req, res, error)
     }
   }
-  //controller for verifying otp
-  //giving email and otp as parameters
+
   async verifyOtp(req: Request, res: Response): Promise<void> {
     try {
       const { email, otp } = req.body
@@ -92,8 +90,7 @@ export class AuthController implements IAuthController {
       handleErrorResponse(req, res, error)
     }
   }
-  //controller for registering the users
-  //giving the user data + role in body
+
   async register(req: Request, res: Response): Promise<void> {
     try {
       const { role } = req.body as { role: keyof typeof userSchema }
@@ -107,7 +104,7 @@ export class AuthController implements IAuthController {
         })
         return
       }
-      //console.log('schema failed')
+
       const validatedData = schema.parse(req.body)
 
       await this._registerUserUseCase.execute(validatedData)
@@ -120,8 +117,7 @@ export class AuthController implements IAuthController {
       handleErrorResponse(req, res, error)
     }
   }
-  //controller for make the users login
-  //giving the email,password and role in body
+
   async login(req: Request, res: Response): Promise<void> {
     try {
       const data = req.body as LoginUserDTO
@@ -166,8 +162,7 @@ export class AuthController implements IAuthController {
       handleErrorResponse(req, res, error)
     }
   }
-  //controller for users to click the forgot password
-  //giving email and role in body
+
   async forgotPassword(req: Request, res: Response): Promise<void> {
     try {
       const validatedData = forgotPasswordValidationSchema.parse(req.body)
@@ -189,8 +184,7 @@ export class AuthController implements IAuthController {
       handleErrorResponse(req, res, error)
     }
   }
-  //controller for reseting the password
-  //giving token as parameter
+
   async resetPassword(req: Request, res: Response): Promise<void> {
     try {
       const validatedData = resetPasswordValidationSchema.parse(req.body)
@@ -297,10 +291,7 @@ export class AuthController implements IAuthController {
       const { currentPassword, newPassword } = req.body
       const userId = (req as CustomRequest).user.userId
       const role = (req as CustomRequest).user.role
-      // console.log('current', currentPassword)
-      // console.log('new', newPassword)
-      // console.log('userId', userId)
-      // console.log('role', role)
+
       if (currentPassword.trim() === newPassword.trim()) {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
@@ -315,7 +306,7 @@ export class AuthController implements IAuthController {
         userId,
         role
       )
-     // console.log('successfully changed')
+
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.PASSWORD_CHANGED_SUCCESSFULLY,

@@ -1,63 +1,17 @@
-// src/presentation/validations/service/create_service.schema.ts
 import { z } from 'zod'
 
 export const createServiceZodValidationSchema = z.object({
-  body: z.object({
-    subServiceCategoryId: z
-      .string()
-      .trim()
-      .min(1, 'Sub category ID is required'),
+  subServiceCategoryId: z.string().min(1, 'Category is required'),
 
-    title: z.string().trim().min(3, 'Title must be at least 3 characters'),
-    description: z
-      .string()
-      .trim()
-      .min(3, 'Description must be at least 3 characters'),
+  name: z.string().trim().min(3, 'Name is required'),
 
-    pricing: z.object({
-      pricePerSlot: z
-        .string()
-        .trim()
-        .refine((v) => !isNaN(Number(v)), {
-          message: 'Price per slot must be numeric',
-        }),
+  description: z.string().trim().optional(),
 
-      isAdvanceRequired: z.enum(['true', 'false']),
+  serviceVariants: z.string().optional(),
 
-      advanceAmountPerSlot: z
-        .string()
-        .trim()
-        .refine((v) => !isNaN(Number(v)), {
-          message: 'Advance amount per slot must be numeric',
-        }),
+  pricing: z.string().min(1, 'Pricing is required'),
 
-      currency: z.string().trim().optional(),
-    }),
-
-    isActiveStatusByVendor: z.enum(['true', 'false']),
-
-    isActiveStatusByAdmin: z.enum(['true', 'false']).optional(),
-    adminStatusNote: z.string().optional(),
-
-    schedule: z.object({
-      visibilityStartDate: z.string().trim(),
-      visibilityEndDate: z.string().trim(),
-
-      workStartTime: z.string().trim().min(1, 'Work start time is required'),
-      workEndTime: z.string().trim().min(1, 'Work end time is required'),
-
-      slotDurationMinutes: z
-        .string()
-        .trim()
-        .refine((v) => !isNaN(Number(v)), 'Slot duration must be numeric'),
-
-      recurrenceType: z.string().trim().min(1, 'Recurrence type is required'),
-
-      weeklyWorkingDays: z.string().optional(), // "1,2,3"
-      monthlyWorkingDates: z.string().optional(),
-      holidayDates: z.string().optional(), // "2025-01-01,2025-01-10"
-    }),
-  }),
+  schedule: z.string().min(1, 'Schedule is required'),
 
   files: z
     .array(
@@ -66,17 +20,72 @@ export const createServiceZodValidationSchema = z.object({
         size: z.number(),
       })
     )
-    .min(1, 'At least one image is required')
-    .max(1, 'maximum 1 image can be uploaded')
+    .min(1, 'At least 1 image is required')
+    .max(5, 'Maximum 5 images allowed')
     .refine(
       (files) =>
         files.every((f) =>
           ['image/jpeg', 'image/jpg', 'image/png'].includes(f.mimetype)
         ),
-      'Only JPG, JPEG, and PNG images are allowed'
+      'Only JPG, JPEG, or PNG allowed'
     )
     .refine(
       (files) => files.every((f) => f.size <= 2 * 1024 * 1024),
-      'Each image must be below 2MB'
+      'Each image must be < 2MB'
     ),
+})
+
+//Nested Schemas
+export const createServiceNestedZodSchemaForServiceVariants = z.array(
+  z.object({
+    name: z.string().min(1),
+    description: z.string().optional(),
+    price: z.number().optional(),
+  })
+)
+
+export const createServiceNestedZodSchemaForPricing = z.object({
+  pricePerSlot: z.number().min(1, 'Price required'),
+  advanceAmountPerSlot: z.number().min(0),
+})
+
+export const createServiceNestedZodSchemaForSchedule = z.object({
+  visibilityStartDate: z.string().min(1),
+  visibilityEndDate: z.string().min(1),
+
+  dailyWorkingWindows: z.array(
+    z.object({
+      startTime: z.string(),
+      endTime: z.string(),
+    })
+  ),
+
+  slotDurationMinutes: z.number().min(1),
+
+  recurrenceType: z.enum(['daily', 'weekly', 'monthly']),
+
+  weeklyWorkingDays: z.array(z.number()).optional(),
+  monthlyWorkingDates: z.array(z.number()).optional(),
+
+  overrideBlock: z
+    .array(
+      z.object({
+        startDateTime: z.string(),
+        endDateTime: z.string(),
+        reason: z.string().optional(),
+      })
+    )
+    .optional(),
+
+  overrideCustom: z
+    .array(
+      z.object({
+        startDateTime: z.string(),
+        endDateTime: z.string(),
+        startTime: z.string().optional(),
+        endTime: z.string().optional(),
+        customSlotDuration: z.number().optional(),
+      })
+    )
+    .optional(),
 })

@@ -2,6 +2,7 @@ import { FilterQuery } from 'mongoose'
 
 export interface IBaseRepository<TModel, TEntity = TModel> {
   findOne(filter: FilterQuery<TModel>): Promise<TEntity | null>
+  findAllDocsWithoutPagination(filter: FilterQuery<TModel>): Promise<TEntity[]>
 
   save(data: Partial<TEntity>): Promise<TEntity>
 
@@ -9,15 +10,20 @@ export interface IBaseRepository<TModel, TEntity = TModel> {
 
   update(
     filter: FilterQuery<TModel>,
-    updateData: Partial<TEntity>
+    updateData: Partial<TEntity>,
   ): Promise<TEntity | null>
+
+  updateMany(
+    filter: FilterQuery<TModel>,
+    updateData: Partial<TEntity>,
+  ): Promise<number>
 
   findAll(page: number, limit: number, search?: string): Promise<TEntity[]>
 
   findAllDocuments(
     page: number,
     limit: number,
-    search?: string
+    search?: string,
   ): Promise<{
     data: TEntity[]
     currentPage: number
@@ -28,7 +34,7 @@ export interface IBaseRepository<TModel, TEntity = TModel> {
     page: number,
     limit: number,
     search?: string,
-    extraFilters?: FilterQuery<TModel>
+    extraFilters?: FilterQuery<TModel>,
   ): Promise<{
     data: TEntity[]
     currentPage: number
@@ -37,14 +43,16 @@ export interface IBaseRepository<TModel, TEntity = TModel> {
 
   findOneAndPopulate(
     filter: FilterQuery<TModel>,
-    populateFields: string | string[] | object | object[]
+    populateFields: string | string[] | object | object[],
   ): Promise<TEntity | null>
+
+  countDocuments(filter: FilterQuery<TModel>): Promise<number>
 
   findAllDocumentsWithFilterationAndPopulate(
     page: number,
     limit: number,
     search: string,
     extraFilters: FilterQuery<TModel>,
-    populateFields?: string | string[] | object | object[]
+    populateFields?: string | string[] | object | object[],
   ): Promise<{ data: TEntity[]; currentPage: number; totalPages: number }>
 }

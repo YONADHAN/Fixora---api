@@ -6,4 +6,5 @@ export interface IServiceController {
   getServiceById(req: Request, res: Response): Promise<void>
   editService(req: Request, res: Response): Promise<void>
   toggleServiceBlock(req: Request, res: Response): Promise<void>
+  searchServicesForCustomer(req: Request, res: Response): Promise<void>
 }

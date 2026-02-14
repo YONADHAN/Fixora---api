@@ -25,14 +25,15 @@ export class CreateServiceUseCase implements ICreateServiceUseCase {
     const {
       vendorId,
       subServiceCategoryId,
-      title,
+      name,
       description,
+      serviceVariants,
       pricing,
+      mainImage,
+      schedule,
       isActiveStatusByVendor,
       isActiveStatusByAdmin,
       adminStatusNote,
-      schedule,
-      images,
     } = payload
 
     const vendor = await this.vendorRepo.findOne({ userId: vendorId })
@@ -62,31 +63,25 @@ export class CreateServiceUseCase implements ICreateServiceUseCase {
 
     const serviceId = randomUUID()
 
-    const uploadedImageUrls: string[] = []
-    for (const file of images) {
-      const url = await this.storageService.uploadFile(
-        config.storageConfig.bucket!,
-        file,
-        `${S3_BUCKET_IMAGE_FOLDERS.SERVICE_IMAGES}/${serviceId}`
-      )
-      uploadedImageUrls.push(url)
-    }
+    const url = await this.storageService.uploadFile(
+      config.storageConfig.bucket!,
+      mainImage,
+      `${S3_BUCKET_IMAGE_FOLDERS.SERVICE_IMAGES}/${serviceId}`
+    )
 
     const entity: IServiceEntity = {
       vendorRef: vendor._id.toString(),
       subServiceCategoryRef: category._id.toString(),
       serviceId,
-      title,
+      name,
       description,
-
+      serviceVariants: serviceVariants ?? [],
       pricing: {
         pricePerSlot: pricing.pricePerSlot,
-        isAdvanceRequired: pricing.isAdvanceRequired,
         advanceAmountPerSlot: pricing.advanceAmountPerSlot,
-        currency: pricing.currency ?? 'INR',
       },
 
-      images: uploadedImageUrls,
+      mainImage: url,
 
       isActiveStatusByAdmin: isActiveStatusByAdmin ?? true,
       isActiveStatusByVendor,
@@ -96,7 +91,6 @@ export class CreateServiceUseCase implements ICreateServiceUseCase {
         ...schedule,
       },
 
-      serviceHistoryRefs: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     }

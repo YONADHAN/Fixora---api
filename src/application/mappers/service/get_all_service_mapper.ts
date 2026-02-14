@@ -24,9 +24,9 @@ export class GetAllServicesResponseMapper {
       const Item = payload.data[i]
       const filteredItem = {
         serviceId: Item.serviceId,
-        title: Item.title,
+        name: Item.name,
         description: Item.description,
-        images: Item.images,
+        mainImage: Item.mainImage,
         isActiveStatusByVendor: Item.isActiveStatusByVendor,
       }
       filteredData.push(filteredItem)

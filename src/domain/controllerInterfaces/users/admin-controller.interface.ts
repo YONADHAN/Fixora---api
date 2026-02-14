@@ -7,4 +7,5 @@ export interface IAdminController {
   changeMyUserBlockStatus(req: Request, res: Response): Promise<void>
   getAllVendorRequests(req: Request, res: Response): Promise<void>
   changeMyVendorVerificationStatus(req: Request, res: Response): Promise<void>
+  getDashboardStats(req: Request, res: Response): Promise<void>
 }

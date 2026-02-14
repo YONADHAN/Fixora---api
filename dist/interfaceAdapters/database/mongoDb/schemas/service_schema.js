@@ -1,18 +1,75 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serviceSchema = void 0;
+exports.ServiceSchema = void 0;
 const mongoose_1 = require("mongoose");
-exports.serviceSchema = new mongoose_1.Schema({
-    serviceId: { type: String, required: true, unique: true },
-    name: { type: String, required: true, trim: true },
-    subtitle: { type: String, required: true, trim: true },
-    description: { type: String, required: true, trim: true },
-    imageUrls: [{ type: String, trim: true }],
-    categoryId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'ServiceCategory',
+exports.ServiceSchema = new mongoose_1.Schema({
+    serviceId: {
+        type: String,
         required: true,
     },
-    vendorId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
-    isActive: { type: Boolean, default: true },
+    vendorRef: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Vendor',
+        required: true,
+    },
+    subServiceCategoryRef: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'SubServiceCategory',
+        required: true,
+    },
+    name: { type: String, required: true },
+    serviceVariants: {
+        type: [
+            {
+                name: { type: String, required: true },
+                description: { type: String },
+                price: { type: Number },
+            },
+        ],
+        default: [],
+    },
+    description: { type: String },
+    pricing: {
+        pricePerSlot: { type: Number, required: true },
+        advanceAmountPerSlot: { type: Number, default: 0 },
+    },
+    mainImage: { type: String, required: true },
+    /** STATUS */
+    isActiveStatusByAdmin: { type: Boolean, default: true },
+    isActiveStatusByVendor: { type: Boolean, default: true },
+    adminStatusNote: { type: String },
+    /** MAIN SCHEDULING BLOCK */
+    schedule: {
+        visibilityStartDate: Date,
+        visibilityEndDate: Date,
+        /** BASE WORKING WINDOWS (Supports breaks, split shifts) */
+        dailyWorkingWindows: [
+            {
+                startTime: { type: String, required: true },
+                endTime: { type: String, required: true },
+            },
+        ],
+        /** Default slot duration */
+        slotDurationMinutes: Number,
+        recurrenceType: String,
+        weeklyWorkingDays: [Number],
+        monthlyWorkingDates: [Number],
+        /** BLOCK OVERRIDES */
+        overrideBlock: [
+            {
+                startDateTime: { type: Date, required: true },
+                endDateTime: { type: Date, required: true },
+                reason: { type: String },
+            },
+        ],
+        /** CUSTOM SCHEDULE OVERRIDES */
+        overrideCustom: [
+            {
+                startDateTime: { type: Date, required: true },
+                endDateTime: { type: Date, required: true },
+                startTime: { type: String },
+                endTime: { type: String },
+            },
+        ],
+    },
 }, { timestamps: true });

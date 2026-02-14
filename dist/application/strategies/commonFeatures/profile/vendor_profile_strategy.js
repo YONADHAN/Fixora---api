@@ -29,8 +29,9 @@ let VendorProfileStrategy = class VendorProfileStrategy {
     constructor(_VendorRepository) {
         this._VendorRepository = _VendorRepository;
     }
-    execute(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ userId }) {
+    execute(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { userId } = params;
             const data = yield this._VendorRepository.findOne({ userId });
             if (!data)
                 throw new Error(constants_1.ERROR_MESSAGES.USER_NOT_FOUND);

@@ -6,10 +6,147 @@ export const ROLES = {
   VENDOR: 'vendor',
 } as const
 export type recurrenceType = 'daily' | 'weekly' | 'monthly'
+//for dashboard inputs
+export type timeGranularityType = 'daily' | 'weekly' | 'monthly' | 'yearly'
+
 export type bookingStatus = 'available' | 'booked' | 'cancelled'
 export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
+
 export type TRole = 'customer' | 'admin' | 'vendor'
+
+export const WALLET_TRANSACTION_TYPES = ['credit', 'debit'] as const
+export type WalletTransactionType = (typeof WALLET_TRANSACTION_TYPES)[number]
+
+export const WALLET_TRANSACTION_SOURCES = [
+  'service-booking',
+  'wallet-topup',
+  'booking-refund',
+  'admin-adjustment',
+  'service-payout',
+  'opening-balance',
+  'balance-payment',
+] as const
+export type WalletTransactionSource =
+  (typeof WALLET_TRANSACTION_SOURCES)[number]
+
+export const PAYMENT_PHASE = {
+  ADVANCE: 'advance',
+  REMAINING: 'remaining',
+} as const
+
+export type TPaymentPhase = (typeof PAYMENT_PHASE)[keyof typeof PAYMENT_PHASE]
+
+export const ADVANCE_PAYMENT_STATUS = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  FAILED: 'failed',
+} as const
+
+export type TAdvancePaymentStatus =
+  (typeof ADVANCE_PAYMENT_STATUS)[keyof typeof ADVANCE_PAYMENT_STATUS]
+
+export const REMAINING_PAYMENT_STATUS = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  FAILED: 'failed',
+} as const
+
+export type TRemainingPaymentStatus =
+  (typeof REMAINING_PAYMENT_STATUS)[keyof typeof REMAINING_PAYMENT_STATUS]
+
+export const REFUND_STATUS = {
+  PENDING: 'pending',
+  SUCCEEDED: 'succeeded',
+  FAILED: 'failed',
+} as const
+
+export type TRefundStatus = (typeof REFUND_STATUS)[keyof typeof REFUND_STATUS]
+
+export const SLOT_PAYMENT_STATUS = {
+  ADVANCE_PAID: 'advance-paid',
+  ADVANCE_REFUNDED: 'advance-refunded',
+  REMAINING_PENDING: 'remaining-pending',
+  FULLY_PAID: 'fully-paid',
+  CANCELLED: 'cancelled',
+} as const
+
+export type TSlotPaymentStatus =
+  (typeof SLOT_PAYMENT_STATUS)[keyof typeof SLOT_PAYMENT_STATUS]
+
+export const PAYMENT_STATUS = {
+  ADVANCE_PAID: 'advance-paid',
+  PARTIALLY_REFUNDED: 'partially-refunded',
+  REFUNDED: 'refunded',
+  PARTIALLY_PAID: 'partially-paid',
+  FULLY_PAID: 'fully-paid',
+} as const
+export const DATE_FORMAT_MAP = {
+  daily: '%Y-%m-%d',
+  weekly: '%Y-%U',
+  monthly: '%Y-%m',
+  yearly: '%Y',
+}
+
+export type TPaymentStatus =
+  (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
+
+export const CURRENCY = {
+  INR: 'INR',
+} as const
+
+export type TCurrency = (typeof CURRENCY)[keyof typeof CURRENCY]
+export enum AIIntent {
+  SERVICE_QUERY = 'SERVICE_QUERY',
+  BOOKING_QUERY = 'BOOKING_QUERY',
+  SUBSCRIPTION_QUERY = 'SUBSCRIPTION_QUERY',
+  GENERAL = 'GENERAL',
+}
+export const SOCKET_EVENTS = {
+  NOTIFICATION_NEW: 'notifications:new',
+  NOTIFICATION_READ: 'notifications:read',
+  NOTIFICATION_READ_ALL: 'notifications:read-all',
+
+  CHAT_JOIN: 'chat:join',
+  CHAT_LEAVE: 'chat:leave',
+
+  CHAT_SEND: 'chat:message:send',
+  CHAT_NEW: 'chat:message:new',
+
+  CHAT_READ: 'chat:message:read',
+
+  CHAT_LIST_UPDATE: 'chat:list:update',
+
+  CHAT_TYPING_START: 'chat:typing:start',
+  CHAT_TYPING_STOP: 'chat:typing:stop',
+
+  USER_ONLINE: 'presence:online',
+  USER_OFFLINE: 'presence:offline',
+  PRESENCE_PING: 'presence:ping',
+
+  DASHBOARD_JOIN_ADMIN: 'dashboard:join:admin',
+  DASHBOARD_JOIN_VENDOR: 'dashboard:join:vendor',
+  DASHBOARD_STATS_UPDATE: 'dashboard:stats:update',
+
+  // call lifecycle
+  CALL_INITIATE: 'call:initiate',
+  CALL_INCOMING: 'call:incoming',
+  CALL_ACCEPT: 'call:accept',
+  CALL_REJECT: 'call:reject',
+  CALL_END: 'call:end',
+  CALL_READY: 'call:ready',
+
+  // webrtc
+  WEBRTC_OFFER: 'webrtc:offer',
+  WEBRTC_ANSWER: 'webrtc:answer',
+  WEBRTC_ICE: 'webrtc:ice',
+}
+
+export interface SocketUser {
+  userId: string
+  role: 'customer' | 'vendor' | 'admin'
+  email: string
+}
 
 export const HTTP_STATUS = {
   OK: 200,
@@ -19,6 +156,7 @@ export const HTTP_STATUS = {
   GONE: 410,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
+  PAYMENT_REQUIRED: 402,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   METHOD_NOT_ALLOWED: 405,
@@ -59,7 +197,6 @@ export const SUCCESS_MESSAGES = {
     'Verification status of the user changed successfully.',
   PASSWORD_CHANGED_SUCCESSFULLY: 'Password changed successfully',
 
-  //service category
   SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
     'Service categories found successfully.',
   SERVICE_CATGORIES_CREATED_SUCCESSFULLY:
@@ -70,7 +207,6 @@ export const SUCCESS_MESSAGES = {
   CREATED_SUB_SERVICE_CATEGORY:
     'Successfully created the sub service category.',
 
-  //Sub Services category
   SUB_SERVICE_CATEGORIES_FOUND_SUCCESSFULLY:
     'Sub Service Categories Found Succesfully.',
   EDITED_SUB_SERVICE_CATEGORY: 'Edited Sub Service Category Successfully.',
@@ -81,9 +217,23 @@ export const SUCCESS_MESSAGES = {
   SUB_SERVICE_CATEGORY_VERIFICATION_STATUS_CHANGED_SUCCESSFULLY:
     'Sub service category verification status changed successfully.',
 
-  //service
   SERVICE_CREATED_SUCCESSFULLY: 'Service created successfully.',
   SERVICE_FOUND_SUCCESSFULLY: 'Service found successfully.',
+
+  SLOTS_FETCHED: 'Slots fetched successfully.',
+  BOOKING_HOLD_CREATED: 'Booking hold setup has been created.',
+  CANCELLED_BOOKING_SUCCESSFULLY: 'Booking cancelled successfully.',
+  FOUND_BOOKING_DETAILS: 'Found booking details successfully.',
+
+  ADDRESS_FOUND_SUCCESSFULLY: 'Address found successfully.',
+  ADDRESS_ADDED_SUCCESSFULLY: 'Address added successfully.',
+  EDIT_ADDRESS_SUCCESSFULLY: 'Address edited successfully.',
+  ADDRESS_SET_AS_DEFAULT_ADDRESS_SUCCESSFULLY:
+    'Address set as default address successfully.',
+  DELETED_SELECTED_ADDRESS_SUCCESSFULLY:
+    'The selected address deleted successfully',
+
+  CHAT_BOT_ANSWERED_SUCCESSFULLY: 'Chat bot answered successfully.',
 }
 
 export const ERROR_MESSAGES = {
@@ -103,6 +253,7 @@ export const ERROR_MESSAGES = {
   PENDING_ADMIN_APPROVAL: 'Your request is not approved by admin',
   SERVER_ERROR: 'Something went wrong try again later',
   VALIDATION_ERROR: 'Check your inputs and try again',
+  UNAUTHORIZED: 'Unathorized',
   UNAUTHORIZED_ACCESS: 'Unathorized access', //-----------------
   BLOCKED: 'Your account has been blocked.', //----------------
   INVALID_CREDENTIALS: 'Wrong email or password',
@@ -117,6 +268,30 @@ export const ERROR_MESSAGES = {
   PASSWORD_REQUIRED: 'Password required',
   USERS_NOT_FOUND: 'Users not found',
   STATUS_ALREADY_EXISTS: 'Status already exists.',
+  SUB_SERVICES_NOT_FOUND: 'Sub services not found',
+  SERVICES_NOT_FOUND: 'Service not found.',
+  NO_BOOKING_FOUND: 'No booking found.',
+  CONFLICTING_INPUTS: 'Credentials are conflicting each other.',
+
+  ADDRESS_NOT_FOUND: 'Address not found.',
+
+  CANCELLATION_REASON_NEEDED: 'Cancellation reason is required',
+
+  NOTIFICATION_NOT_FOUND: 'Notification not found',
+
+  //dashboard
+  SUMMARY_NOT_FOUND: 'Summary not found',
+
+  //subscription
+  SUBSCRIPTION_PRICE_IS_NOT_NEGATIVE:
+    'Subcription price should not be zero or negative.',
+  SUBSCRIPTION_PLAN_ALREADY_EXISTS: 'Subscription plan already exists.',
+  SUBSCRIPTION_NOT_FOUND: 'Subscription not found.',
+  SUBSCRIPTION_NOT_UPDATED: 'Subscription not updated.',
+  SUBSCRIPTION_PLAN_NOT_FOUND: 'Subscription plan not found.',
+  STRIPE_PRICE_NOT_CONFIGURED: 'Subscription price is not existing.',
+  SUBSCRIPTION_ALREADY_ACTIVE: 'Subscription is already active.',
+  STRIPE_CHECKOUT_FAILED: 'Stripe Subscription Checkout Failed.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

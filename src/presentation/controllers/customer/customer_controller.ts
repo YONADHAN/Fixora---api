@@ -36,7 +36,7 @@ export class CustomerController implements ICustomerController {
     private _profileImageUploadFactory: IProfileImageUploadFactory,
     @inject('IGetAllServiceCategoryUseCase')
     private _getAllServiceCategoryUseCase: IGetAllServiceCategoryUseCase
-  ) {}
+  ) { }
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
@@ -91,7 +91,7 @@ export class CustomerController implements ICustomerController {
 
   async uploadProfileImage(req: Request, res: Response): Promise<void> {
     try {
-      const customerId = (req as CustomRequest).user.id
+      const customerId = (req as CustomRequest).user.userId
       const file = req.file as Express.Multer.File
 
       if (!file) {

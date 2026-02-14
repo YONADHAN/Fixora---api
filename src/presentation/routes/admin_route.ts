@@ -8,6 +8,9 @@ import {
 } from '../middleware/auth_middleware'
 import { ServiceCategoryRoutes } from './service_category_route'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
+import { NotificationRoutes } from './notification_route'
+import { SubscriptionRoutes } from './subscription_route'
+
 export class AdminRoutes extends BaseRoute {
   constructor() {
     super()
@@ -20,7 +23,7 @@ export class AdminRoutes extends BaseRoute {
       authorizeRole(['admin']),
       (req: Request, res: Response) => {
         adminController.logout(req, res)
-      }
+      },
     )
 
     this.router.post(
@@ -28,7 +31,7 @@ export class AdminRoutes extends BaseRoute {
       decodeToken,
       (req: Request, res: Response) => {
         authController.handleTokenRefresh(req, res)
-      }
+      },
     )
 
     this.router.post(
@@ -37,7 +40,7 @@ export class AdminRoutes extends BaseRoute {
       authorizeRole(['admin']),
       (req: Request, res: Response) => {
         adminController.getAllCustomers(req, res)
-      }
+      },
     )
 
     this.router.post(
@@ -46,13 +49,13 @@ export class AdminRoutes extends BaseRoute {
       authorizeRole(['admin']),
       (req: Request, res: Response) => {
         adminController.getAllVendors(req, res)
-      }
+      },
     )
     this.router.get(
       '/get_vendor_requests',
       verifyAuth,
       authorizeRole(['admin']),
-      (req, res) => adminController.getAllVendorRequests(req, res)
+      (req, res) => adminController.getAllVendorRequests(req, res),
     )
 
     this.router.post(
@@ -60,7 +63,15 @@ export class AdminRoutes extends BaseRoute {
       verifyAuth,
       authorizeRole(['admin']),
       (req: Request, res: Response) =>
-        adminController.changeMyVendorVerificationStatus(req, res)
+        adminController.changeMyVendorVerificationStatus(req, res),
+    )
+
+    this.router.get(
+      '/dashboard-stats',
+      verifyAuth,
+      authorizeRole(['admin']),
+      (req: Request, res: Response) =>
+        adminController.getDashboardStats(req, res),
     )
 
     this.router.post(
@@ -69,20 +80,23 @@ export class AdminRoutes extends BaseRoute {
       authorizeRole(['admin']),
       (req: Request, res: Response) => {
         adminController.changeMyUserBlockStatus(req, res)
-      }
+      },
     )
     this.router.post(
       '/change-password',
 
       (req: Request, res: Response) => {
         authController.changeMyPassword(req, res)
-      }
+      },
     )
-    //service-category route
+
     this.router.use('/category', new ServiceCategoryRoutes().router)
     this.router.use(
       '/sub-service-category',
-      new SubServiceCategoryRoutes().router
+      new SubServiceCategoryRoutes().router,
     )
+
+    this.router.use('/notification', new NotificationRoutes().router)
+    this.router.use('/subscription', new SubscriptionRoutes().router)
   }
 }

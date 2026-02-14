@@ -40,7 +40,8 @@ let ChangeMyCustomersBlockStatusStrategy = class ChangeMyCustomersBlockStatusStr
                 throw new custom_error_1.CustomError(constants_1.ERROR_MESSAGES.STATUS_ALREADY_EXISTS, constants_1.HTTP_STATUS.CONFLICT);
             }
             customer.status = status;
-            yield this._customerRepository.update(customer._id, customer);
+            //await this._customerRepository.update(customer._id, customer)
+            yield this._customerRepository.update({ _id: customer._id }, { status: customer.status });
             if (status == 'blocked') {
                 yield redis_client_1.redisClient.set(`user_block_status:customer:${userId}`, status, {
                     EX: 3600,

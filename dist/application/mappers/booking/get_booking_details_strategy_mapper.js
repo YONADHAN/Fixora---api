@@ -1,0 +1,97 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GetBookingDetailsForCustomerResponseMapper = exports.GetBookingDetailsForVendorResponseMapper = void 0;
+class GetBookingDetailsForVendorResponseMapper {
+    static toDTO(booking, service, customer, address) {
+        return {
+            booking: {
+                bookingId: booking.bookingId,
+                bookingGroupId: booking.bookingGroupId,
+                date: booking.date,
+                slotStart: booking.slotStart,
+                slotEnd: booking.slotEnd,
+                paymentStatus: booking.paymentStatus,
+                serviceStatus: booking.serviceStatus,
+                cancelInfo: booking.cancelInfo,
+            },
+            service: {
+                serviceId: service.serviceId,
+                name: service.name,
+                pricing: service.pricing,
+                variants: service.serviceVariants,
+                mainImage: service.mainImage,
+            },
+            customer: {
+                name: customer.name,
+                email: customer.email,
+                phone: customer.phone,
+                profileImage: customer.profileImage,
+                location: customer.location,
+                geoLocation: customer.geoLocation
+                    ? {
+                        coordinates: customer.geoLocation.coordinates || [],
+                    }
+                    : undefined,
+                bookingAddress: address
+                    ? {
+                        name: address.label,
+                        addressLine1: address.addressLine1,
+                        addressLine2: address.addressLine2,
+                        city: address.city,
+                        state: address.state,
+                        zipCode: address.zipCode,
+                        country: address.country,
+                        location: address.location,
+                        geoLocation: address.geoLocation
+                            ? {
+                                coordinates: address.geoLocation.coordinates || [],
+                            }
+                            : undefined,
+                    }
+                    : undefined,
+            },
+        };
+    }
+}
+exports.GetBookingDetailsForVendorResponseMapper = GetBookingDetailsForVendorResponseMapper;
+class GetBookingDetailsForCustomerResponseMapper {
+    static toDTO(booking, vendor, service) {
+        return {
+            booking: {
+                bookingId: booking.bookingId,
+                bookingGroupId: booking.bookingGroupId,
+                date: booking.date,
+                slotStart: booking.slotStart,
+                slotEnd: booking.slotEnd,
+                paymentStatus: booking.paymentStatus,
+                serviceStatus: booking.serviceStatus,
+                cancelInfo: booking.cancelInfo,
+            },
+            service: service
+                ? {
+                    serviceId: service.serviceId,
+                    name: service.name,
+                    description: service.description,
+                    pricing: service.pricing,
+                    variants: service.serviceVariants,
+                    mainImage: service.mainImage,
+                }
+                : null,
+            vendor: vendor
+                ? {
+                    name: vendor.name,
+                    email: vendor.email,
+                    phone: vendor.phone,
+                    profileImage: vendor.profileImage,
+                    location: vendor.location,
+                    geoLocation: vendor.geoLocation
+                        ? {
+                            coordinates: vendor.geoLocation.coordinates || [],
+                        }
+                        : undefined,
+                }
+                : null,
+        };
+    }
+}
+exports.GetBookingDetailsForCustomerResponseMapper = GetBookingDetailsForCustomerResponseMapper;

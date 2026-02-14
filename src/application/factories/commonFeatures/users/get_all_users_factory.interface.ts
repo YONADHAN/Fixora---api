@@ -6,5 +6,5 @@ export interface IGetAllUsersFactory {
     page: number,
     limit: number,
     search: string
-  ): Promise<GetAllUsersDTO[]>
+  ): Promise<GetAllUsersDTO>
 }
