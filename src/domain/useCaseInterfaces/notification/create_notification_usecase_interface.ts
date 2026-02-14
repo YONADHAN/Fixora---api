@@ -13,6 +13,7 @@ export interface CreateNotificationInput {
     | 'ADMIN_MESSAGE'
     | 'VENDOR_DOCUMENTS_SUBMITTED'
     | 'SUBSCRIPTION'
+    | 'SERVICE_COMPLETED'
   title: string
   message: string
 

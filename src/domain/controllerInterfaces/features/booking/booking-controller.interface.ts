@@ -9,4 +9,5 @@ export interface IBookingController {
   cancelBooking(req: Request, res: Response): Promise<void>
   getBookingDetails(req: Request, res: Response): Promise<void>
   getBookingByPaymentId(req: Request, res: Response): Promise<void>
+  changeServiceStatus(req: Request, res: Response): Promise<void>
 }

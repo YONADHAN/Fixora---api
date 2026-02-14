@@ -6,10 +6,11 @@ import { IBookingRepository } from '../../../domain/repositoryInterfaces/feature
 import { ICreateNotificationUseCase } from '../../../domain/useCaseInterfaces/notification/create_notification_usecase_interface'
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
+import { IWalletTransactionRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
+import { IWalletRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_repository.interface'
 
 @injectable()
-export class BalancePaymentSucceededUseCase
-  implements IBalancePaymentSucceededUseCase {
+export class BalancePaymentSucceededUseCase implements IBalancePaymentSucceededUseCase {
   constructor(
     @inject('IPaymentRepository')
     private readonly _paymentRepository: IPaymentRepository,
@@ -20,8 +21,12 @@ export class BalancePaymentSucceededUseCase
     @inject('ICustomerRepository')
     private readonly _customerRepository: ICustomerRepository,
     @inject('IVendorRepository')
-    private readonly _vendorRepository: IVendorRepository
-  ) { }
+    private readonly _vendorRepository: IVendorRepository,
+    @inject('IWalletTransactionRepository')
+    private readonly _walletTransactionRepository: IWalletTransactionRepository,
+    @inject('IWalletRepository')
+    private readonly _walletRepository: IWalletRepository,
+  ) {}
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     const bookingGroupId = paymentIntent.metadata?.bookingGroupId
@@ -45,16 +50,50 @@ export class BalancePaymentSucceededUseCase
         status: 'paid',
         paidAt: new Date(),
         failures: [],
-      }
+      },
     )
 
-    const bookings = await this._bookingRepository.findAllDocsWithoutPagination({
-      bookingGroupId,
+    let wallet = await this._walletRepository.findOne({
+      userRef: payment.customerRef,
     })
+
+    if (!wallet) {
+      wallet = await this._walletRepository.save({
+        walletId: `WAL_${crypto.randomUUID()}`,
+        userRef: payment.customerRef,
+        userType: 'customer',
+        currency: 'INR',
+        isActive: true,
+        balance: 0,
+      })
+    }
+    await this._walletTransactionRepository.save({
+      transactionId: `WTXN_${crypto.randomUUID()}`,
+      walletRef: wallet._id,
+      userRef: payment.customerRef,
+      type: 'debit',
+      source: 'balance-payment',
+      amount: paymentIntent.amount_received / 100,
+      currency: 'INR',
+      description: `Balance payment for ${bookingGroupId}`,
+      paymentRef: payment._id,
+      stripePaymentIntentId: paymentIntent.id,
+    })
+
+    // await this._walletRepository.update(
+    //   { walletId: wallet.walletId },
+    //   { balance: (wallet.balance ?? 0) + paymentIntent.amount / 100 },
+    // )
+
+    const bookings = await this._bookingRepository.findAllDocsWithoutPagination(
+      {
+        bookingGroupId,
+      },
+    )
     for (const booking of bookings) {
       await this._bookingRepository.update(
         { bookingId: booking.bookingId },
-        { paymentStatus: 'fully-paid' }
+        { paymentStatus: 'fully-paid' },
       )
     }
 

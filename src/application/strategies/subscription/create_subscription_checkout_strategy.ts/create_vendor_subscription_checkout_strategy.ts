@@ -46,6 +46,7 @@ export class CreateVendorSubscriptionCheckoutStrategy implements ICreateVendorSu
 
     const existingSubscription = await this.userSubscriptionRepo.findOne({
       userId,
+      planId,
       status: { $in: ['pending', 'active'] },
     })
 
@@ -56,10 +57,6 @@ export class CreateVendorSubscriptionCheckoutStrategy implements ICreateVendorSu
       )
     }
 
-    // for avoiding idempotency problem  or
-    // to avoid multiple subscription checkouts due to multiple checkout key press
-    // const idempotencyKey = `sub_checkout_${userId}_${plan.planId}`
-    // Stripe checkout section creation
     const session = await stripe.checkout.sessions.create(
       {
         mode: 'subscription',

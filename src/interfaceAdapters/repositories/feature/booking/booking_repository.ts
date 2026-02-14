@@ -430,7 +430,6 @@ export class BookingRepository
         },
       },
 
-      //  search by service name
       ...(search
         ? [
             {
@@ -441,7 +440,6 @@ export class BookingRepository
           ]
         : []),
 
-      //  dynamic sorting
       {
         $sort:
           sortBy === 'serviceName'

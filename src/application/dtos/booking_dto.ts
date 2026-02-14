@@ -174,3 +174,9 @@ export interface GetBookingByPaymentIdResponseDTO {
   bookingId: string
   bookingGroupId: string
 }
+
+export interface ChangeServiceStatusOfBookingRequestDTO {
+  bookingGroupId: string
+  userId: string
+  role: string
+}

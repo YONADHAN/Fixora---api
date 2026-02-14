@@ -373,6 +373,8 @@ import { IAskAIChatbotCustomerStrategy } from '../../application/strategies/ai_c
 import { AskAIChatbotCustomerStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_customer_strategy'
 import { IAskAIChatbotVendorStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_vendor_strategy.interface'
 import { AskAIChatbotVendorStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_vendor_strategy'
+import { ChangeServiceStatusOfBookingUseCase } from '../../application/usecase/booking/change_service_status_of_booking_usecase'
+import { IChangeServiceStatusOfBookingUseCase } from '../../domain/useCaseInterfaces/booking/change_service_status_of_booking_usecase_interface'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -1296,6 +1298,20 @@ export class UseCaseRegistry {
       'IAskAIChatbotVendorStrategy',
       {
         useClass: AskAIChatbotVendorStrategy,
+      },
+    )
+
+    container.register<IChangeServiceStatusOfBookingUseCase>(
+      'IChangeServiceStatusOfBookingUseCase',
+      {
+        useClass: ChangeServiceStatusOfBookingUseCase,
+      },
+    )
+
+    container.register<ICreateNotificationUseCase>(
+      'ICreateNotificationUseCase',
+      {
+        useClass: CreateNotificationUseCase,
       },
     )
   }

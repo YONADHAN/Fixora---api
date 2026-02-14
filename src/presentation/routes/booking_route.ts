@@ -21,18 +21,18 @@ export class BookingRoutes extends BaseRoute {
       verifyAuth,
       authorizeRole(['customer']),
       (req: Request, res: Response) =>
-        bookingController.getBookingByPaymentId(req, res)
+        bookingController.getBookingByPaymentId(req, res),
     )
 
     this.router.get('/slots/availability', (req: Request, res: Response) =>
-      bookingController.getAvailableSlotsForCustomer(req, res)
+      bookingController.getAvailableSlotsForCustomer(req, res),
     )
     this.router.post(
       '/booking-holds',
       verifyAuth,
       authorizeRole(['customer']),
       (req: Request, res: Response) =>
-        bookingController.createBookingHold(req, res)
+        bookingController.createBookingHold(req, res),
     )
 
     this.router.post(
@@ -40,7 +40,7 @@ export class BookingRoutes extends BaseRoute {
       verifyAuth,
       authorizeRole(['customer']),
       (req: Request, res: Response) =>
-        bookingController.createPaymentIntent(req, res)
+        bookingController.createPaymentIntent(req, res),
     )
 
     this.router.get(
@@ -49,7 +49,7 @@ export class BookingRoutes extends BaseRoute {
       decodeToken,
       authorizeRole(['customer', 'vendor', 'admin']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      (req, res) => bookingController.getMyBookings(req, res)
+      (req, res) => bookingController.getMyBookings(req, res),
     )
 
     this.router.get(
@@ -58,7 +58,7 @@ export class BookingRoutes extends BaseRoute {
       decodeToken,
       authorizeRole(['customer', 'vendor', 'admin']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      (req, res) => bookingController.getBookingDetails(req, res)
+      (req, res) => bookingController.getBookingDetails(req, res),
     )
 
     this.router.patch(
@@ -66,15 +66,23 @@ export class BookingRoutes extends BaseRoute {
       verifyAuth,
       authorizeRole(['customer', 'vendor', 'admin']),
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
-      (req: Request, res: Response) => bookingController.cancelBooking(req, res)
+      (req: Request, res: Response) =>
+        bookingController.cancelBooking(req, res),
     )
 
     this.router.post(
       '/:bookingId/pay-balance',
       verifyAuth,
       authorizeRole(['customer']),
-      (req: Request, res: Response) => bookingController.payBalance(req, res)
+      (req: Request, res: Response) => bookingController.payBalance(req, res),
     )
 
+    this.router.post(
+      '/:bookingGroupId/service-status',
+      verifyAuth,
+      authorizeRole(['vendor']),
+      (req: Request, res: Response) =>
+        bookingController.changeServiceStatus(req, res),
+    )
   }
 }

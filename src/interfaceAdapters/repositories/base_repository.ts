@@ -1,9 +1,10 @@
 import { Model, FilterQuery } from 'mongoose'
 import { IBaseRepository } from '../../domain/repositoryInterfaces/base_repository.interface'
 
-export abstract class BaseRepository<TModel, TEntity>
-  implements IBaseRepository<TModel, TEntity>
-{
+export abstract class BaseRepository<
+  TModel,
+  TEntity,
+> implements IBaseRepository<TModel, TEntity> {
   constructor(protected model: Model<TModel>) {}
 
   protected abstract toEntity(model: TModel): TEntity
@@ -18,7 +19,7 @@ export abstract class BaseRepository<TModel, TEntity>
     return result ? this.toEntity(result as TModel) : null
   }
   async findAllDocsWithoutPagination(
-    filter: FilterQuery<TModel>
+    filter: FilterQuery<TModel>,
   ): Promise<TEntity[]> {
     const result = await this.model.find(filter).lean()
 
@@ -38,7 +39,7 @@ export abstract class BaseRepository<TModel, TEntity>
 
   async update(
     filter: FilterQuery<TModel>,
-    updateData: Partial<TEntity>
+    updateData: Partial<TEntity>,
   ): Promise<TEntity | null> {
     const modelData = this.toModel(updateData)
 
@@ -49,10 +50,21 @@ export abstract class BaseRepository<TModel, TEntity>
     return result ? this.toEntity(result as TModel) : null
   }
 
+  async updateMany(
+    filter: FilterQuery<TModel>,
+    updateData: Partial<TEntity>,
+  ): Promise<number> {
+    const modelData = this.toModel(updateData)
+
+    const result = await this.model.updateMany(filter, { $set: modelData })
+
+    return result.modifiedCount ?? 0
+  }
+
   async findAll(
     page: number,
     limit: number,
-    search: string = ''
+    search: string = '',
   ): Promise<TEntity[]> {
     const filter = search
       ? ({ name: { $regex: search, $options: 'i' } } as FilterQuery<TModel>)
@@ -93,7 +105,7 @@ export abstract class BaseRepository<TModel, TEntity>
     page: number,
     limit: number,
     search: string = '',
-    extraFilters: FilterQuery<TModel> = {}
+    extraFilters: FilterQuery<TModel> = {},
   ) {
     const filter: FilterQuery<TModel> = {
       ...extraFilters,
@@ -125,7 +137,7 @@ export abstract class BaseRepository<TModel, TEntity>
 
   async findOneAndPopulate(
     filter: FilterQuery<TModel>,
-    populateFields: string | string[] | object | object[]
+    populateFields: string | string[] | object | object[],
   ): Promise<TEntity | null> {
     let query = this.model.findOne(filter)
 
@@ -151,7 +163,7 @@ export abstract class BaseRepository<TModel, TEntity>
     limit: number,
     search: string = '',
     extraFilters: FilterQuery<TModel> = {},
-    populateFields?: string | string[] | object | object[]
+    populateFields?: string | string[] | object | object[],
   ) {
     const filter: FilterQuery<TModel> = {
       ...extraFilters,

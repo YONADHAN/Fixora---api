@@ -31,6 +31,7 @@ import { IGetBookingDetailsUseCase } from '../../../domain/useCaseInterfaces/boo
 import { IGetBookingByPaymentIdUseCase } from '../../../domain/useCaseInterfaces/booking/get_booking_by_payment_id_usecase_interface'
 import { CustomError } from '../../../domain/utils/custom.error'
 import { IPayBalanceUseCase } from '../../../domain/useCaseInterfaces/booking/pay_balance_usecase_interface'
+import { IChangeServiceStatusOfBookingUseCase } from '../../../domain/useCaseInterfaces/booking/change_service_status_of_booking_usecase_interface'
 
 @injectable()
 export class BookingController implements IBookingController {
@@ -50,12 +51,14 @@ export class BookingController implements IBookingController {
     @inject('IGetBookingByPaymentIdUseCase')
     private readonly _getBookingByPaymentIdUseCase: IGetBookingByPaymentIdUseCase,
     @inject('IPayBalanceUseCase')
-    private readonly _payBalanceUseCase: IPayBalanceUseCase
-  ) { }
+    private readonly _payBalanceUseCase: IPayBalanceUseCase,
+    @inject('IChangeServiceStatusOfBookingUseCase')
+    private readonly _changeServiceStatusOfBookingUseCase: IChangeServiceStatusOfBookingUseCase,
+  ) {}
 
   async getAvailableSlotsForCustomer(
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<void> {
     try {
       const basic = GetAvailableSlotsForCustomerBasicSchema.parse(req.query)
@@ -64,9 +67,8 @@ export class BookingController implements IBookingController {
 
       const validatedDTO = GetAvailableSlotsForCustomerRequestSchema.parse(dto)
 
-      const response = await this._getAvailableSlotsForCustomerUseCase.execute(
-        validatedDTO
-      )
+      const response =
+        await this._getAvailableSlotsForCustomerUseCase.execute(validatedDTO)
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -86,7 +88,7 @@ export class BookingController implements IBookingController {
       const customerId = (req as CustomRequest).user.userId
       const response = await this._createBookingHoldUseCase.execute(
         validatedDTO,
-        customerId
+        customerId,
       )
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -102,9 +104,8 @@ export class BookingController implements IBookingController {
     try {
       const { holdId } = req.params
       const validatedDTO = createStripePaymentIntentSchema.parse(holdId)
-      const response = await this._createStripePaymentIntentUseCase.execute(
-        validatedDTO
-      )
+      const response =
+        await this._createStripePaymentIntentUseCase.execute(validatedDTO)
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -125,14 +126,12 @@ export class BookingController implements IBookingController {
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Balance payment session created',
-        checkoutUrl
+        checkoutUrl,
       })
-
     } catch (error) {
       handleErrorResponse(req, res, error)
     }
   }
-
 
   async getMyBookings(req: Request, res: Response): Promise<void> {
     try {
@@ -168,7 +167,7 @@ export class BookingController implements IBookingController {
       if (!reason || typeof reason !== 'string' || !reason.trim()) {
         throw new CustomError(
           ERROR_MESSAGES.CANCELLATION_REASON_NEEDED,
-          HTTP_STATUS.BAD_REQUEST
+          HTTP_STATUS.BAD_REQUEST,
         )
       }
       await this._cancelBookingUseCase.execute({
@@ -206,20 +205,19 @@ export class BookingController implements IBookingController {
     }
   }
 
-
-
   async getBookingByPaymentId(req: Request, res: Response): Promise<void> {
     try {
       const { paymentId } = req.params
       const userId = (req as CustomRequest).user.userId
       const role = (req as CustomRequest).user.role as TRole
 
-      const booking = await this._getBookingByPaymentIdUseCase.execute(paymentId)
+      const booking =
+        await this._getBookingByPaymentIdUseCase.execute(paymentId)
 
       if (!booking) {
         throw new CustomError(
           ERROR_MESSAGES.NO_BOOKING_FOUND,
-          HTTP_STATUS.NOT_FOUND
+          HTTP_STATUS.NOT_FOUND,
         )
       }
 
@@ -234,6 +232,28 @@ export class BookingController implements IBookingController {
         success: true,
         message: SUCCESS_MESSAGES.FOUND_BOOKING_DETAILS,
         data,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+  async changeServiceStatus(req: Request, res: Response): Promise<void> {
+    try {
+      console.log('The poarams', req.params)
+      console.log('The body ', req.body)
+      const { bookingGroupId } = req.params
+      const { userId, role } = (req as CustomRequest).user
+      const result = await this._changeServiceStatusOfBookingUseCase.execute({
+        bookingGroupId,
+        userId,
+        role,
+      })
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Service status updated successfully',
+        data: result,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)

@@ -25,6 +25,7 @@ export const WALLET_TRANSACTION_SOURCES = [
   'admin-adjustment',
   'service-payout',
   'opening-balance',
+  'balance-payment',
 ] as const
 export type WalletTransactionSource =
   (typeof WALLET_TRANSACTION_SOURCES)[number]

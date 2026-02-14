@@ -34,6 +34,7 @@ export const NotificationSchema = new Schema<INotificationModel>(
         'ADMIN_MESSAGE',
         'VENDOR_DOCUMENTS_SUBMITTED',
         'SUBSCRIPTION',
+        'SERVICE_COMPLETED',
       ],
       required: true,
       index: true,
