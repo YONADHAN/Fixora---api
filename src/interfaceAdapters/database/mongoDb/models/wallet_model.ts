@@ -1,4 +1,4 @@
-import { Document, model, Types } from 'mongoose'
+import { Document, model, models, Types } from 'mongoose'
 import { WalletSchema } from '../schemas/wallet_schema'
 import { WalletMongoBase } from '../types/wallet_mongo_base'
 
@@ -8,4 +8,4 @@ export interface IWalletModel extends WalletMongoBase, Document {
   updatedAt: Date
 }
 
-export const WalletModel = model<IWalletModel>('Wallet', WalletSchema)
+export const WalletModel = models.Wallet || model<IWalletModel>('Wallet', WalletSchema)

@@ -1,4 +1,4 @@
-import { Document, model, Types } from 'mongoose'
+import { Document, model,models, Types } from 'mongoose'
 import { NotificationSchema } from '../schemas/notification_schema'
 import { NotificationMongoBase } from '../types/notification_mongo_base'
 
@@ -8,7 +8,7 @@ export interface INotificationModel extends NotificationMongoBase, Document {
   updatedAt: Date
 }
 
-export const NotificationModel = model<INotificationModel>(
+export const NotificationModel = models.Notification ||  model<INotificationModel>(
   'Notification',
   NotificationSchema
 )

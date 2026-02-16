@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import { MongoConnect } from './interfaceAdapters/database/mongoDb/mongoConnect'
 import { startBookingHoldExpiryScheduler } from './interfaceAdapters/shedulers/booking_hold_expiry.sheduler'
 import { initSocketServer } from './presentation/socket/socket.server'
+import { seedAdmin } from './interfaceAdapters/database/seedAdmin'
 async function startApp() {
   const expressServer = new ExpressServer()
   const mongoConnect = new MongoConnect()
@@ -15,6 +16,7 @@ async function startApp() {
       chalk.greenBright('-------------------------------------------\n')
     )
     await mongoConnect.connectDB()
+    await seedAdmin()
     const httpServer = createServer(expressServer.getApp())
     initSocketServer(httpServer)
     httpServer.listen(config.server.PORT, () => {

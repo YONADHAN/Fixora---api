@@ -1,4 +1,4 @@
-import { model, Types } from 'mongoose'
+import { model, models, Types } from 'mongoose'
 import { RatingsReviewMongoBase } from '../types/ratings_review_mongo_base'
 import { RatingsReviewSchema } from '../schemas/ratings_review_schema'
 
@@ -10,7 +10,7 @@ export interface IRatingsReviewModel extends RatingsReviewMongoBase, Document {
   updatedAt: Date
 }
 
-export const RatingsReviewModel = model<IRatingsReviewModel>(
+export const RatingsReviewModel = models.RatingsReview || model<IRatingsReviewModel>(
   'RatingsReview',
   RatingsReviewSchema,
 )

@@ -1,4 +1,4 @@
-import { Document, model, Types } from 'mongoose'
+import { Document, model, models, Types } from 'mongoose'
 import { SubscriptionPlanSchema } from '../schemas/subscription_plan_schema'
 import { SubscriptionPlanMongoBase } from '../types/subscription_plan_mongo_base'
 
@@ -9,7 +9,7 @@ export interface ISubscriptionPlanModel
   updatedAt: Date
 }
 
-export const SubscriptionPlanModel = model<ISubscriptionPlanModel>(
+export const SubscriptionPlanModel = models.SubscriptionPlan || model<ISubscriptionPlanModel>(
   'SubscriptionPlan',
   SubscriptionPlanSchema,
 )

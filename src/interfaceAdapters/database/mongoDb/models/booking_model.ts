@@ -1,4 +1,4 @@
-import { Document, model, Types } from 'mongoose'
+import { Document, model,models, Types } from 'mongoose'
 import { BookingSchema } from '../schemas/booking_schema'
 import { BookingMongoBase } from '../types/booking_mongo_base'
 
@@ -8,4 +8,4 @@ export interface IBookingModel extends BookingMongoBase, Document {
   updatedAt: Date
 }
 
-export const BookingModel = model<IBookingModel>('Booking', BookingSchema)
+export const BookingModel = models.Booking || model<IBookingModel>('Booking', BookingSchema)

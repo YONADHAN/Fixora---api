@@ -7,13 +7,13 @@ export const AddressSchema = new Schema<IAddressModel>(
       type: String,
       required: true,
       unique: true,
-      index: true,
+     
     },
 
     customerId: {
       type: String,
       required: true,
-      index: true,
+      
     },
 
     label: {

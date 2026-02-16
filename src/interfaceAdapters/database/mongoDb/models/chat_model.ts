@@ -1,4 +1,4 @@
-import { Document, model, Types } from 'mongoose'
+import { Document, model, models, Types } from 'mongoose'
 import { ChatSchema } from '../schemas/chat_schema'
 import { ChatMongoBase } from '../types/chat_mongo_base'
 
@@ -8,4 +8,4 @@ export interface IChatModel extends ChatMongoBase, Document {
   updatedAt: Date
 }
 
-export const ChatModel = model<IChatModel>('Chat', ChatSchema)
+export const ChatModel = models.Chat || model<IChatModel>('Chat', ChatSchema)

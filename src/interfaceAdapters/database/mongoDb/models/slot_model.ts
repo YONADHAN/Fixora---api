@@ -1,14 +1,6 @@
-// import { Document, model, ObjectId } from 'mongoose'
-// import { ISlotEntity } from '../../../../domain/models/slot_entity'
-// import { slotSchema } from '../schemas/slot_schema'
 
-// export interface ISlotModel extends ISlotEntity, Document {
-//   _id: ObjectId
-// }
 
-// export const SlotModel = model<ISlotModel>('Slot', slotSchema)
-
-import { Document, model, ObjectId } from 'mongoose'
+import { Document, model, models, ObjectId } from 'mongoose'
 import { ISlotEntity } from '../../../../domain/models/slot_entity'
 import { SlotSchema } from '../schemas/slot_schema'
 
@@ -21,4 +13,4 @@ export interface ISlotModel
   bookingId: ObjectId
 }
 
-export const SlotModel = model<ISlotModel>('Slot', SlotSchema)
+export const SlotModel = models.Slot || model<ISlotModel>('Slot', SlotSchema)

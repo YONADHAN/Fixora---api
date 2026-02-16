@@ -1,4 +1,4 @@
-import { Document, model, ObjectId, Schema } from 'mongoose'
+import { Document, model, models, Schema } from 'mongoose'
 import {
   IServiceCategoryPopulated,
   ISubServiceCategoryEntity,
@@ -12,7 +12,7 @@ export interface ISubServiceCategoryModel
   serviceCategoryRef: Schema.Types.ObjectId | IServiceCategoryPopulated
 }
 
-export const SubServiceCategoryModel = model<ISubServiceCategoryModel>(
+export const SubServiceCategoryModel = models.SubServiceCategory || model<ISubServiceCategoryModel>(
   'SubServiceCategory',
   subServiceCategorySchema
 )

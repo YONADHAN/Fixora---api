@@ -1,4 +1,4 @@
-import { Document, model, Types } from 'mongoose'
+import { Document, model, models, Types } from 'mongoose'
 
 import { WalletTransactionSchema } from '../schemas/wallet_transaction_schema'
 import { WalletTransactionMongoBase } from '../types/wallet_transaction_mongo_base'
@@ -11,7 +11,7 @@ export interface IWalletTransactionModel
   updatedAt: Date
 }
 
-export const WalletTransactionModel = model<IWalletTransactionModel>(
+export const WalletTransactionModel = models.WalletTransaction || model<IWalletTransactionModel>(
   'WalletTransaction',
   WalletTransactionSchema
 )

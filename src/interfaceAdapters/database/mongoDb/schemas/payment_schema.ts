@@ -11,7 +11,7 @@ export const PaymentSchema = new Schema(
     bookingGroupId: {
       type: String,
       required: true,
-      index: true,
+      
     },
 
     customerRef: {
@@ -156,8 +156,10 @@ export const PaymentSchema = new Schema(
   { timestamps: true }
 )
 
-PaymentSchema.index({ paymentId: 1 })
+PaymentSchema.index({ vendorRef: 1, status: 1 })
+PaymentSchema.index({ customerRef: 1, status: 1 })
 PaymentSchema.index({ bookingGroupId: 1 })
 PaymentSchema.index({ 'advancePayment.stripePaymentIntentId': 1 })
 PaymentSchema.index({ 'slots.advanceRefund.refundId': 1 })
 PaymentSchema.index({ 'slots.remainingPayment.stripePaymentIntentId': 1 })
+

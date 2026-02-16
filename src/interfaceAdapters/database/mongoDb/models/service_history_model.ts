@@ -1,4 +1,4 @@
-import { Document, ObjectId, model } from 'mongoose'
+import { Document, ObjectId, model, models } from 'mongoose'
 import { IServiceHistoryEntity } from '../../../../domain/models/service_history_entity'
 import { ServiceHistorySchema } from '../schemas/service_history_schema'
 
@@ -9,7 +9,7 @@ export interface IServiceHistoryModel
   serviceRef: ObjectId
 }
 
-export const ServiceHistoryModel = model<IServiceHistoryModel>(
+export const ServiceHistoryModel = models.ServiceHistory || model<IServiceHistoryModel>(
   'ServiceHistory',
   ServiceHistorySchema
 )
