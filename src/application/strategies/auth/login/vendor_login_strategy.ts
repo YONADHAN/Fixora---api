@@ -50,6 +50,10 @@ export class VendorLoginStrategy implements IVendorLoginStrategy {
     if (vendor.status === 'blocked')
       throw new CustomError(ERROR_MESSAGES.BLOCKED, HTTP_STATUS.FORBIDDEN)
 
+    if(!vendor.isVerified){
+      vendor.isVerified = undefined;
+    }
+  
     return vendor
   }
 }

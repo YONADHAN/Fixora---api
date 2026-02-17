@@ -136,6 +136,8 @@ export class AuthController implements IAuthController {
         throw new Error('User ID, email, or role is missing')
       }
 
+
+
       const tokens = await this._generateTokenUseCase.execute(
         user.userId as string,
         user.email,
@@ -153,6 +155,7 @@ export class AuthController implements IAuthController {
         refreshTokenName
       )
       const { password, ...userWithoutPassword } = user
+    
       res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
