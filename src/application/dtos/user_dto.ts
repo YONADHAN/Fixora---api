@@ -1,4 +1,4 @@
-import { statusTypes, TRole } from '../../shared/constants'
+import { statusTypes, TRole, verificationTypes } from '../../shared/constants'
 
 export interface BaseUserDTO {
   userId?: string
@@ -35,6 +35,14 @@ export interface GoogleUserDTO {
   email: string
   googleId: string
   role: 'customer' | 'vendor'
+  isVerified? : {
+    status?: verificationTypes
+    description?: string
+    reviewedBy?: {
+      adminId?: string | null
+      reviewedAt?: Date
+    }
+  }
 }
 
 export interface VendorResponseDTO {
