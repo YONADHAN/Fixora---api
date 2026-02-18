@@ -10,6 +10,7 @@ import { ISummaryAnalyticsFactory } from './ISummaryAnalyticsFactory'
 import { ISummaryAnalyticsStrategy } from '../../strategies/dashboard/summary/ISummaryAnalyticsStrategy'
 import { SummaryAnalyticsStrategyForAdmin } from '../../strategies/dashboard/summary/SummaryAnalyticsStrategyForAdmin'
 import { SummaryAnalyticsStrategyForVendor } from '../../strategies/dashboard/summary/SummaryAnalyticsStrategyForVendor'
+import { SummaryAnalyticsStrategyForCustomer } from '../../strategies/dashboard/summary/SummaryAnalyticsStrategyForCustomer'
 
 @injectable()
 export class SummaryAnalyticsFactory implements ISummaryAnalyticsFactory {
@@ -18,6 +19,8 @@ export class SummaryAnalyticsFactory implements ISummaryAnalyticsFactory {
     private readonly _summaryStrategyForAdmin: SummaryAnalyticsStrategyForAdmin,
     @inject('SummaryAnalyticsStrategyForVendor')
     private readonly _summaryStrategyForVendor: SummaryAnalyticsStrategyForVendor,
+    @inject('SummaryAnalyticsStrategyForCustomer')
+    private readonly _summaryStrategyForCustomer: SummaryAnalyticsStrategyForCustomer,
   ) {}
 
   getStrategy(role: TRole): ISummaryAnalyticsStrategy {
@@ -27,6 +30,9 @@ export class SummaryAnalyticsFactory implements ISummaryAnalyticsFactory {
 
       case ROLES.VENDOR:
         return this._summaryStrategyForVendor
+
+      case ROLES.CUSTOMER:
+        return this._summaryStrategyForCustomer
 
       default:
         throw new CustomError(

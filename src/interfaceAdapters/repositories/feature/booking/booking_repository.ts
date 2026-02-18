@@ -379,6 +379,27 @@ export class BookingRepository
     return result[0]?.totalUniqueCustomers || 0
   }
 
+  async countUniqueServicesForCustomer(customerRef: string): Promise<number> {
+    this.validateObjectId(customerRef, 'customerRef')
+
+    const result  = await this.model.aggregate([
+      {
+        $match: {
+          customerRef: new Types.ObjectId(customerRef),
+        },
+      },
+      {
+        $group: {
+          _id: '$serviceRef',
+        },
+      },
+      {
+        $count: 'totalUniqueServices',
+      },
+    ])
+    return result[0]?.totalUniqueServices || 0
+  }
+  
   async getAllServicesWhichCompletedBookings(
     customerRef: string,
     page: number,

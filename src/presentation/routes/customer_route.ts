@@ -99,5 +99,10 @@ export class CustomerRoutes extends BaseRoute {
         customerController.uploadProfileImage(req, res)
       },
     )
+
+
+    this.router.get('/dashboard-stats', (req: Request, res: Response) => {
+      customerController.getDashboardStats(req, res)
+    })
   }
 }

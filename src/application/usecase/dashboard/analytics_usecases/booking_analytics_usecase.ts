@@ -15,7 +15,9 @@ export class BookingAnalyticsUseCase implements IBookingAnalyticsUseCase {
   async execute(
     input: DashboardStatsInputDTO,
   ): Promise<BookingDashboardResponseDTO> {
+   
     const strategy = this._bookingAnalyticsFactory.getStrategy(input.user.role)
+  
     return strategy.execute(input)
   }
 }

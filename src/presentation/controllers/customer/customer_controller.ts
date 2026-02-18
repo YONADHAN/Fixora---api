@@ -5,6 +5,7 @@ import {
   ERROR_MESSAGES,
   HTTP_STATUS,
   SUCCESS_MESSAGES,
+  timeGranularityType,
   TRole,
 } from '../../../shared/constants'
 import { ICustomerController } from '../../../domain/controllerInterfaces/users/customer-controller.interface'
@@ -19,6 +20,8 @@ import { config } from '../../../shared/config'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { IProfileImageUploadFactory } from '../../../application/factories/commonFeatures/profile/profile_image_upload_factory.interface'
 import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/service_category_usecase.interface'
+import { DashboardStatsInputDTO } from '../../../application/dtos/dashboard_dto'
+import { IGetCustomerDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/dashboard/customer/get_customer_dashboard_status_usecase.interface'
 @injectable()
 export class CustomerController implements ICustomerController {
   constructor(
@@ -35,7 +38,9 @@ export class CustomerController implements ICustomerController {
     @inject('IProfileImageUploadFactory')
     private _profileImageUploadFactory: IProfileImageUploadFactory,
     @inject('IGetAllServiceCategoryUseCase')
-    private _getAllServiceCategoryUseCase: IGetAllServiceCategoryUseCase
+    private _getAllServiceCategoryUseCase: IGetAllServiceCategoryUseCase,
+    @inject('IGetCustomerDashboardStatsUseCase')
+    private _getCustomerDashboardStatsUseCase: IGetCustomerDashboardStatsUseCase,
   ) { }
 
   async logout(req: Request, res: Response): Promise<void> {
@@ -141,6 +146,33 @@ export class CustomerController implements ICustomerController {
       res.status(HTTP_STATUS.OK).json({ success: true, response })
     } catch (error) {
       handleErrorResponse(req, res, error)
+    }
+  }
+
+
+  async getDashboardStats(req: Request, res: Response): Promise<void> {
+    try {
+      const {from , to,interval} = req.query
+      const userId = (req as CustomRequest).user.userId
+      const input: DashboardStatsInputDTO = {
+        dateRange: {
+          from : from? new Date(from as string): new Date(new Date().setDate(new Date().getDate()-30)),
+          to: to? new Date(to as string): new Date(),
+        },
+        interval: (interval as timeGranularityType) || 'daily',
+        user: {
+          role: 'customer',
+          userId: userId,
+        },
+      }
+      const stats = await this._getCustomerDashboardStatsUseCase.execute(input)
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Dashboard stats retrived successfully',
+        data: stats,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res,error)
     }
   }
 }
