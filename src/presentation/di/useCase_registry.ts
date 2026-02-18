@@ -329,6 +329,8 @@ import { IGetVendorDashboardStatsUseCase } from '../../domain/useCaseInterfaces/
 import { GetVendorDashboardStatsUseCase } from '../../application/usecase/dashboard/vendor/get_vendor_dashboard_stats.usecase'
 import { IGetAdminDashboardStatsUseCase } from '../../domain/useCaseInterfaces/dashboard/admin/get_admin_dashboard_stats_usecase.interface'
 import { GetAdminDashboardStatsUseCase } from '../../application/usecase/dashboard/admin/get_admin_dashboard_stats.usecase'
+import { IGetCustomerDashboardStatsUseCase } from '../../domain/useCaseInterfaces/dashboard/customer/get_customer_dashboard_status_usecase.interface'
+import { GetCustomerDashboardStatsUseCase } from '../../application/usecase/dashboard/customer/get_customer_dashboard_stats.usecase'
 import { SummaryAnalyticsUseCase } from '../../application/usecase/dashboard/analytics_usecases/summary_analytics_usecase'
 import { ISummaryAnalyticsUseCase as ISummaryUseCase } from '../../domain/useCaseInterfaces/dashboard/analytics/summary_usecase.interface'
 
@@ -358,6 +360,7 @@ import { SummaryAnalyticsStrategyForCustomer } from '../../application/strategie
 import { ISummaryAnalyticsStrategy } from '../../application/strategies/dashboard/summary/ISummaryAnalyticsStrategy'
 import { BookingAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForAdmin'
 import { BookingAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForVendor'
+import { BookingAnalytisStrategyForCustomer } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForCustomer'
 import { IBookingAnalyticsStrategy } from '../../application/strategies/dashboard/booking/IBookingAnalyticsStrategy'
 import { CustomerAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/customer/CustomerAnalyticsStrategyForAdmin'
 import { CustomerAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/customer/CustomerAnalyticsStrategyForVendor'
@@ -742,6 +745,13 @@ export class UseCaseRegistry {
       {
         useClass: GetAdminDashboardStatsUseCase,
       },
+    )
+
+    container.register<IGetCustomerDashboardStatsUseCase>(
+      'GetCustomerDashboardStatsUseCase',
+      {
+        useClass: GetCustomerDashboardStatsUseCase,
+      }
     )
 
     //dashboard analytics usecases
@@ -1215,6 +1225,10 @@ export class UseCaseRegistry {
     container.register<IBookingAnalyticsStrategy>(
       'BookingAnalyticsStrategyForVendor',
       { useClass: BookingAnalyticsStrategyForVendor },
+    )
+    container.register<IBookingAnalyticsStrategy>(
+      'BookingAnalytisStrategyForCustomer',
+      {useClass: BookingAnalytisStrategyForCustomer},
     )
     container.register<ICustomerAnalyticsStrategy>(
       'CustomerAnalyticsStrategyForAdmin',

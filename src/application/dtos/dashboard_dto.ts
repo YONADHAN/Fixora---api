@@ -100,3 +100,9 @@ export interface VendorDashboardStatsResponseDTO {
   booking: BookingDashboardResponseDTO
   customer: CustomerDashboardResponseDTO
 }
+
+
+export interface CustomerDashboardStatsResponseDTO {
+  summary: SummaryAnalyticsResponseDTO,
+  booking: BookingDashboardResponseDTO,
+}
