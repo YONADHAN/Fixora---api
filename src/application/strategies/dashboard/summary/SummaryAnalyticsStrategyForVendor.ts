@@ -62,7 +62,7 @@ export class SummaryAnalyticsStrategyForVendor implements ISummaryAnalyticsStrat
     ])
 
     return {
-      blockedCustomers: 0, // Vendors cannot see global blocked count, and can't block customers themselves on platform level yet
+      blockedCustomers: 0, 
       activeCustomers: activeCustomerCount,
       totalBookings: totalBookingCount,
       cancelledBookings: cancelledBookingCount,
