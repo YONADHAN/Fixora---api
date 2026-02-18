@@ -748,7 +748,7 @@ export class UseCaseRegistry {
     )
 
     container.register<IGetCustomerDashboardStatsUseCase>(
-      'GetCustomerDashboardStatsUseCase',
+      'IGetCustomerDashboardStatsUseCase',
       {
         useClass: GetCustomerDashboardStatsUseCase,
       }

@@ -31,7 +31,7 @@ export class SummaryAnalyticsStrategyForCustomer implements ISummaryAnalyticsStr
          throw new CustomError(ERROR_MESSAGES.USERS_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
       }
       const customerObjectId = customer._id!.toString()
-
+     
       const [
          totalBookings,
          cancelledBookings,

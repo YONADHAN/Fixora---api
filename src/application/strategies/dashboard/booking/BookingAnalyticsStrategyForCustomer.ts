@@ -19,12 +19,15 @@ export class BookingAnalytisStrategyForCustomer implements IBookingAnalyticsStra
         private readonly _customerRepository: ICustomerRepository,
     ){}
     async execute(input: DashboardStatsInputDTO): Promise<BookingDashboardResponseDTO>{
+      
         const {from,to} = input.dateRange
         const customerId = input.user.userId
         const customer = await this._customerRepository.findOne({userId: customerId})
         if(!customer){
+
             throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
         }
+      
         return this.bookingRepository.getBookingDashboardAnalytics({
             from,
             to,
@@ -32,5 +35,6 @@ export class BookingAnalytisStrategyForCustomer implements IBookingAnalyticsStra
             customerRef: customer?._id?.toString()
 
         })
+
     }
 }

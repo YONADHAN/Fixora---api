@@ -22,6 +22,7 @@ export class GetCustomerDashboardStatsUseCase implements IGetCustomerDashboardSt
     ){}
 
     async execute(input: DashboardStatsInputDTO): Promise<CustomerDashboardStatsResponseDTO> {
+       
         const [summary, booking] = await Promise.all([
             this._summaryStatsUseCase.execute(input),
             this._bookingAnalyticsUseCase.execute(input),

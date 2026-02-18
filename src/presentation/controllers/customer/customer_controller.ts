@@ -161,7 +161,7 @@ export class CustomerController implements ICustomerController {
         },
         interval: (interval as timeGranularityType) || 'daily',
         user: {
-          role: 'vendor',
+          role: 'customer',
           userId: userId,
         },
       }

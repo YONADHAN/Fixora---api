@@ -17,6 +17,7 @@ export class SummaryAnalyticsUseCase implements ISummaryAnalyticsUseCase {
     input: DashboardStatsInputDTO,
   ): Promise<SummaryAnalyticsResponseDTO> {
     const strategy = this._summaryFactory.getStrategy(input.user.role)
+ 
     return strategy.execute(input)
   }
 }
