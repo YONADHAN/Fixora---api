@@ -20,6 +20,8 @@ export interface SummaryAnalyticsResponseDTO {
   totalBookings?: number
   cancelledBookings?: number
   totalRevenue?: number
+  completedBookings?: number
+  bookedServices?: number
 }
 
 export interface BookingDashboardResponseDTO {

@@ -354,6 +354,7 @@ import { IVendorAnalyticsFactory } from '../../application/factories/dashboard/I
 
 import { SummaryAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/summary/SummaryAnalyticsStrategyForAdmin'
 import { SummaryAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/summary/SummaryAnalyticsStrategyForVendor'
+import { SummaryAnalyticsStrategyForCustomer } from '../../application/strategies/dashboard/summary/SummaryAnalyticsStrategyForCustomer'
 import { ISummaryAnalyticsStrategy } from '../../application/strategies/dashboard/summary/ISummaryAnalyticsStrategy'
 import { BookingAnalyticsStrategyForAdmin } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForAdmin'
 import { BookingAnalyticsStrategyForVendor } from '../../application/strategies/dashboard/booking/BookingAnalyticsStrategyForVendor'
@@ -1200,6 +1201,12 @@ export class UseCaseRegistry {
     container.register<ISummaryAnalyticsStrategy>(
       'SummaryAnalyticsStrategyForVendor',
       { useClass: SummaryAnalyticsStrategyForVendor },
+    )
+    container.register<ISummaryAnalyticsStrategy>(
+      'SummaryAnalyticsStrategyForCustomer',
+      {
+        useClass: SummaryAnalyticsStrategyForCustomer
+      }
     )
     container.register<IBookingAnalyticsStrategy>(
       'BookingAnalyticsStrategyForAdmin',

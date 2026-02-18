@@ -41,7 +41,7 @@ export interface IBookingRepository extends IBaseRepository<IBookingEntity> {
   }): Promise<BookingDashboardResponseDTO>
 
   countUniqueCustomersForVendor(vendorRef: string): Promise<number>
-
+  countUniqueServicesForCustomer(customerRef: string): Promise<number>
   getAllServicesWhichCompletedBookings(
     customerRef: string,
     page: number,
