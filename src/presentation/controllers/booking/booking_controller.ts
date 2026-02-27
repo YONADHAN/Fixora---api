@@ -221,7 +221,7 @@ export class BookingController implements IBookingController {
         )
       }
 
-      // Reuse the getBookingDetails usecase logic to get full details
+      
       const data = await this._getBookingDetailsUseCase.execute({
         bookingId: booking.bookingId,
         userId,

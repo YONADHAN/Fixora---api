@@ -37,10 +37,14 @@ export class StripeWebhookController implements IStripeWebhookController {
 
     @inject('ISubscriptionCancelledUseCase')
     private _subscriptionCancelledUseCase: ISubscriptionCancelledUseCase,
+
+    
   ) {}
 
   async handle(req: Request, res: Response): Promise<void> {
     try {
+      
+
       const sig = req.headers['stripe-signature']
 
       if (!sig) {
@@ -63,6 +67,7 @@ export class StripeWebhookController implements IStripeWebhookController {
 
       switch (event.type) {
         case 'payment_intent.succeeded':
+          console.log("Payment intent succeeded worked")
           await this._paymentSucceededUseCase.execute(
             event.data.object as Stripe.PaymentIntent,
           )

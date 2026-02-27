@@ -15,6 +15,9 @@ import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/ve
 import { IChatRepository } from '../../../domain/repositoryInterfaces/feature/chat/chat_repository.interface'
 import { IServiceRepository } from '../../../domain/repositoryInterfaces/feature/service/service_repository.interface'
 import { v4 as uuidv4 } from 'uuid'
+import { IAdminRepository } from '../../../domain/repositoryInterfaces/users/admin_repository.interface'
+import { CustomError } from '../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCase {
@@ -46,12 +49,16 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
     @inject('IVendorRepository')
     private _vendorRepository: IVendorRepository,
 
+
+    @inject('IAdminRepository')
+    private _adminRepostory: IAdminRepository,
+
     @inject('IChatRepository')
     private _chatRepository: IChatRepository,
 
     @inject('IServiceRepository')
     private _serviceRepository: IServiceRepository,
-  ) {}
+  ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     const hold =
@@ -63,6 +70,9 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
       }))
 
     if (!hold || hold.status !== 'active') return
+
+
+    
 
     const createdBookings = []
 
@@ -136,11 +146,54 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
       })
     }
 
+
+
+    // await this._walletTransactionRepository.save({
+    //   transactionId: `WTXN_${crypto.randomUUID()}`,
+    //   walletRef: wallet._id,
+    //   userRef: hold.customerRef,
+    //   type: 'debit',
+    //   source: 'service-booking',
+    //   amount: hold.pricing.advanceAmount,
+    //   currency: 'INR',
+    //   description: `Advance payment for ${hold.holdId}`,
+    //   bookingHoldRef: hold._id,
+    //   paymentRef: payment._id,
+    //   stripePaymentIntentId: paymentIntent.id,
+    // })
+
+    const admin = await this._adminRepostory.findOne({
+      email: process.env.SEED_ADMIN_EMAIL,
+    })
+
+    if (!admin || !admin._id) {
+      throw new CustomError("Admin not found", HTTP_STATUS.NOT_FOUND)
+    }
+
+    let adminWallet = await this._walletRepository.findOne({
+      userRef: admin._id.toString(),
+    })
+
+    if (!adminWallet) {
+      adminWallet = await this._walletRepository.save({
+        walletId: `WAL_${crypto.randomUUID()}`,
+        userRef: admin._id.toString(),
+        userType: 'admin',
+        currency: 'INR',
+        isActive: true,
+        balance: 0,
+      })
+    }
+
+    if (!adminWallet._id) {
+      throw new CustomError("Admin Wallet has error receiving amount", HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    }
+
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
-      walletRef: wallet._id,
-      userRef: hold.customerRef,
-      type: 'debit',
+      walletRef: adminWallet._id,
+      userRef: admin._id.toString(),
+      type: 'credit',
       source: 'service-booking',
       amount: hold.pricing.advanceAmount,
       currency: 'INR',
@@ -150,19 +203,34 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
       stripePaymentIntentId: paymentIntent.id,
     })
 
+    await this._walletRepository.incrementBalance(
+      adminWallet._id,
+      hold.pricing.advanceAmount
+    )
+
     await this._bookingHoldRepository.markHoldAsCompleted(hold.holdId)
+const customer = await this._customerRepository.findOne({
+      _id: hold.customerRef,
+    })
+
+    if(!customer ){
+      throw new CustomError('User not found', HTTP_STATUS.NOT_FOUND)
+    }
+
+    if(!customer.userId){
+      throw new CustomError("User not found",HTTP_STATUS.NOT_FOUND)
+    }
 
     for (const slot of hold.slots) {
       await this._redisSlotLockRepository.releaseSlot(
         hold.serviceRef,
         slot.date,
         slot.start,
+        customer?.userId
       )
     }
 
-    const customer = await this._customerRepository.findOne({
-      _id: hold.customerRef,
-    })
+    
     const vendor = await this._vendorRepository.findOne({
       _id: hold.vendorRef,
     })

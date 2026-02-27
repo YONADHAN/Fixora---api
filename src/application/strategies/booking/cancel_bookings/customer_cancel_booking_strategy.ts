@@ -171,6 +171,8 @@
 //   }
 // }
 
+
+
 import { inject, injectable } from 'tsyringe'
 import crypto from 'crypto'
 
@@ -184,6 +186,7 @@ import { IPaymentRepository } from '../../../../domain/repositoryInterfaces/feat
 import { IWalletRepository } from '../../../../domain/repositoryInterfaces/feature/payment/wallet_repository.interface'
 import { IWalletTransactionRepository } from '../../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { ICustomerCancelBookingStrategyInterface } from './customer_cancel_booking_strategy.interface'
+import { IAdminRepository } from '../../../../domain/repositoryInterfaces/users/admin_repository.interface'
 
 @injectable()
 export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStrategyInterface {
@@ -202,7 +205,10 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
 
     @inject('IWalletTransactionRepository')
     private _walletTransactionRepository: IWalletTransactionRepository,
-  ) {}
+
+    @inject('IAdminRepository')
+    private _adminRepository: IAdminRepository,
+  ) { }
 
   async execute(payload: CancelBookingRequestDTO): Promise<void> {
     const { userId, bookingId, reason, role } = payload
@@ -253,9 +259,22 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
       )
     }
 
-    const wallet = await this._walletRepository.findOne({
-      userRef: initialBooking.customerRef,
-    })
+  let wallet = await this._walletRepository.findOne({
+  userRef: initialBooking.customerRef,
+})
+
+if (!wallet) {
+  wallet = await this._walletRepository.save({
+    walletId: `WAL_${crypto.randomUUID()}`,
+    userRef: initialBooking.customerRef,
+    userType: 'customer',
+    currency: payment.advancePayment?.currency || 'INR',
+    balance: 0,
+    isActive: true,
+  })
+}
+
+
 
     if (!wallet || !wallet._id) {
       throw new CustomError(
@@ -264,7 +283,7 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
       )
     }
 
-    // ================= CONSTRAINT CHECKS =================
+     //CONSTRAINT CHECKS
 
     let nearestServiceSlotDate: Date | null = null
 
@@ -302,7 +321,7 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
 
     const considerRefundableAdvanceAmount = timeDiff >= TWO_DAYS_MS
 
-    // ================= REFUND CALCULATION =================
+    //REFUND CALCULATION 
 
     const refundDetailsPerSlot: { bookingId: string; amount: number }[] = []
     let refundableAdvanceAmount = 0
@@ -323,9 +342,41 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
       }
     }
 
-    // ================= WALLET REFUND =================
+    // WALLET REFUND 
 
     if (considerRefundableAdvanceAmount && refundableAdvanceAmount > 0) {
+      const admin = await this._adminRepository.findOne({
+        email: process.env.SEED_ADMIN_EMAIL,
+      })
+
+      if (!admin || !admin._id) {
+        throw new CustomError("Admin not found", HTTP_STATUS.NOT_FOUND)
+      }
+
+      const adminWallet = await this._walletRepository.findOne({
+        userRef: admin._id.toString(),
+      })
+
+      if (!adminWallet || !adminWallet._id) {
+        throw new CustomError("Admin wallet not found", HTTP_STATUS.NOT_FOUND)
+      }
+
+      await this._walletTransactionRepository.save({
+        transactionId: `WTXN_${crypto.randomUUID()}`,
+        walletRef: adminWallet._id,
+        userRef: admin._id.toString(),
+        type: 'debit',
+        source: 'booking-refund',
+        amount: refundableAdvanceAmount,
+        currency: payment.advancePayment?.currency || 'INR',
+        description: `Refund for booking group ${initialBooking.bookingGroupId}`,
+        paymentRef: payment._id,
+      })
+
+      await this._walletRepository.decrementBalance(
+        adminWallet._id,
+        refundableAdvanceAmount
+      )
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
         walletRef: wallet._id,
@@ -338,13 +389,92 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
         paymentRef: payment._id,
       })
 
-      await this._walletRepository.update(
-        { walletId: wallet.walletId },
-        { balance: (wallet.balance ?? 0) + refundableAdvanceAmount },
+     
+      await this._walletRepository.incrementBalance(
+        wallet._id,
+        refundableAdvanceAmount
       )
     }
 
-    // ================= CANCEL BOOKINGS =================
+
+
+    if (!considerRefundableAdvanceAmount && refundableAdvanceAmount > 0) {
+
+      const admin = await this._adminRepository.findOne({
+        email: process.env.SEED_ADMIN_EMAIL,
+      })
+
+      if (!admin || !admin._id) {
+        throw new CustomError("Admin not found", HTTP_STATUS.NOT_FOUND)
+      }
+
+      const adminWallet = await this._walletRepository.findOne({
+        userRef: admin._id.toString(),
+      })
+
+      if (!adminWallet || !adminWallet._id) {
+        throw new CustomError("Admin wallet not found", HTTP_STATUS.NOT_FOUND)
+      }
+
+   
+
+      let vendorWallet = await this._walletRepository.findOne({
+  userRef: initialBooking.vendorRef,
+})
+
+if (!vendorWallet) {
+  vendorWallet = await this._walletRepository.save({
+    walletId: `WAL_${crypto.randomUUID()}`,
+    userRef: initialBooking.vendorRef,
+    userType: 'vendor',
+    currency: payment.advancePayment?.currency || 'INR',
+    balance: 0,
+    isActive: true,
+  })
+}
+
+if(!vendorWallet._id){
+  throw new CustomError("Venoder wallet not found", HTTP_STATUS.NOT_FOUND)
+}
+
+      // Admin debit
+      await this._walletTransactionRepository.save({
+        transactionId: `WTXN_${crypto.randomUUID()}`,
+        walletRef: adminWallet._id,
+        userRef: admin._id.toString(),
+        type: 'debit',
+        source: 'service-payout',
+        amount: refundableAdvanceAmount,
+        currency: payment.advancePayment?.currency || 'INR',
+        description: `Late cancellation payout for ${initialBooking.bookingGroupId}`,
+        paymentRef: payment._id,
+      })
+
+      // Vendor credit
+      await this._walletTransactionRepository.save({
+        transactionId: `WTXN_${crypto.randomUUID()}`,
+        walletRef: vendorWallet._id,
+        userRef: initialBooking.vendorRef,
+        type: 'credit',
+        source: 'service-payout',
+        amount: refundableAdvanceAmount,
+        currency: payment.advancePayment?.currency || 'INR',
+        description: `Late cancellation payout`,
+        paymentRef: payment._id,
+      })
+
+      await this._walletRepository.decrementBalance(
+        adminWallet._id,
+        refundableAdvanceAmount
+      )
+
+      await this._walletRepository.incrementBalance(
+        vendorWallet._id,
+        refundableAdvanceAmount
+      )
+    }
+
+    //  CANCEL BOOKINGS 
 
     for (const detail of refundDetailsPerSlot) {
       if (considerRefundableAdvanceAmount) {

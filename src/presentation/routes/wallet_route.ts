@@ -12,7 +12,7 @@ export class WalletRoutes extends BaseRoute {
     this.router.get(
       '/',
       verifyAuth,
-      authorizeRole(['customer', 'vendor']),
+      authorizeRole(['customer', 'vendor','admin']),
       (req: Request, res: Response) => walletController.getMyWallet(req, res)
     )
   }

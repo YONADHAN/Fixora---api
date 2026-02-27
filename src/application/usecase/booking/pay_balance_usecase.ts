@@ -16,7 +16,7 @@ export class PayBalanceUseCase implements IPayBalanceUseCase {
   ) {}
 
   async execute(bookingId: string): Promise<string> {
-    // 1. Find payment using bookingId
+    // Find payment using bookingId
     const payment = await this._paymentRepository.findOne({
       'slots.bookingId': bookingId,
     })
@@ -30,7 +30,7 @@ export class PayBalanceUseCase implements IPayBalanceUseCase {
 
     const bookingGroupId = payment.bookingGroupId
 
-    // 2. Calculate total remaining across all slots in this group
+    // Calculate total remaining across all slots in this group
     const remainingAmount = payment.slots.reduce((sum, slot) => {
       if (slot.status === 'advance-paid') {
         return sum + slot.pricing.remainingAmount
@@ -45,7 +45,7 @@ export class PayBalanceUseCase implements IPayBalanceUseCase {
       )
     }
 
-    // 3. Create Stripe Checkout Session
+    //  Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [

@@ -162,6 +162,7 @@ export class BookingRepository
     return bookings.map((b) => this.toEntity(b))
   }
 
+
   async findBookingsForUser(
     page: number,
     limit: number,

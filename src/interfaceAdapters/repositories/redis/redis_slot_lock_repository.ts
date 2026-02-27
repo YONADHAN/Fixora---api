@@ -2,6 +2,11 @@ import { injectable } from 'tsyringe'
 import { IRedisSlotLockRepository } from '../../../domain/repositoryInterfaces/redis/redis_slot_lock_repository_interface'
 import { redisClient } from './redis.client'
 
+
+
+
+
+
 @injectable()
 export class RedisSlotLockRepository implements IRedisSlotLockRepository {
   private buildSlotKey(serviceId: string, date: string, start: string): string {
@@ -12,11 +17,12 @@ export class RedisSlotLockRepository implements IRedisSlotLockRepository {
     serviceId: string,
     date: string,
     start: string,
+    customerId: string,
     ttlSeconds = 300
   ): Promise<boolean> {
     const key = this.buildSlotKey(serviceId, date, start)
 
-    const result = await redisClient.set(key, 'locked', {
+    const result = await redisClient.set(key, customerId, {
       NX: true,
       EX: ttlSeconds,
     })
@@ -27,20 +33,81 @@ export class RedisSlotLockRepository implements IRedisSlotLockRepository {
   async releaseSlot(
     serviceId: string,
     date: string,
-    start: string
+    start: string,
+    customerId: string
   ): Promise<void> {
     const key = this.buildSlotKey(serviceId, date, start)
-    await redisClient.del(key)
+
+    const currentValue = await redisClient.get(key)
+
+    if (currentValue === customerId) {
+      await redisClient.del(key)
+    }
   }
 
   async releaseMultipleSlots(
     serviceId: string,
-    slots: { date: string; start: string }[]
+    slots: { date: string; start: string }[],
+    customerId: string
   ): Promise<void> {
-    if (!slots.length) return
+    for (const slot of slots) {
+      await this.releaseSlot(serviceId, slot.date, slot.start, customerId)
+    }
+  }
 
-    const keys = slots.map((s) => this.buildSlotKey(serviceId, s.date, s.start))
+  async isLockedByOtherUser(
+    serviceId: string,
+    date: string,
+    start: string,
+    customerId: string
+  ): Promise<boolean> {
+    const key = this.buildSlotKey(serviceId, date, start)
+    const currentValue = await redisClient.get(key)
 
-    await redisClient.del(keys)
+    if (!currentValue) return false
+    return currentValue !== customerId
   }
 }
+
+// @injectable()
+// export class RedisSlotLockRepository implements IRedisSlotLockRepository {
+//   private buildSlotKey(serviceId: string, date: string, start: string): string {
+//     return `slot:${serviceId}:${date}:${start}`
+//   }
+
+//   async lockSlot(
+//     serviceId: string,
+//     date: string,
+//     start: string,
+//     ttlSeconds = 300
+//   ): Promise<boolean> {
+//     const key = this.buildSlotKey(serviceId, date, start)
+
+//     const result = await redisClient.set(key, 'locked', {
+//       NX: true,
+//       EX: ttlSeconds,
+//     })
+
+//     return result === 'OK'
+//   }
+
+//   async releaseSlot(
+//     serviceId: string,
+//     date: string,
+//     start: string
+//   ): Promise<void> {
+//     const key = this.buildSlotKey(serviceId, date, start)
+//     await redisClient.del(key)
+//   }
+
+//   async releaseMultipleSlots(
+//     serviceId: string,
+//     slots: { date: string; start: string }[]
+//   ): Promise<void> {
+//     if (!slots.length) return
+
+//     const keys = slots.map((s) => this.buildSlotKey(serviceId, s.date, s.start))
+
+//     await redisClient.del(keys)
+//   }
+// }

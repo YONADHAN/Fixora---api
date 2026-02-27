@@ -40,7 +40,7 @@ export class AiChatbotController implements IAiChatbotController {
         data: response,
       })
     } catch (error) {
-      console.error('AI CHAT ERROR 👉', error)
+      console.error('AI CHAT ERROR ', error)
       handleErrorResponse(req, res, error)
     }
   }

@@ -28,7 +28,7 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
 
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository,
-  ) {}
+  ) { }
 
   async execute(
     validatedDTO: RequestCreateBookingHoldDTO,
@@ -63,23 +63,50 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
     const lockedSlots: { date: string; start: string }[] = []
 
     try {
+      // for (const slot of slots) {
+      //   const locked = await this._redisSlotLockRepository.lockSlot(
+      //     serviceId,
+      //     slot.date,
+      //     slot.start,
+      //     customerId,
+      //   )
+
+      //   if (!locked) {
+      //     throw new CustomError(
+      //       `Slot ${slot.date} ${slot.start} is on hold`,
+      //       HTTP_STATUS.CONFLICT,
+      //     )
+      //   }
+
+      //   lockedSlots.push({ date: slot.date, start: slot.start })
+      // }
       for (const slot of slots) {
         const locked = await this._redisSlotLockRepository.lockSlot(
           serviceId,
           slot.date,
           slot.start,
+          customerId,
         )
 
         if (!locked) {
-          throw new CustomError(
-            `Slot ${slot.date} ${slot.start} is on hold`,
-            409,
-          )
+          const isLockedByOther =
+            await this._redisSlotLockRepository.isLockedByOtherUser(
+              serviceId,
+              slot.date,
+              slot.start,
+              customerId
+            )
+
+          if (isLockedByOther) {
+            throw new CustomError(
+              `Slot ${slot.date} ${slot.start} is on hold by another user`,
+              HTTP_STATUS.CONFLICT
+            )
+          }
         }
 
         lockedSlots.push({ date: slot.date, start: slot.start })
       }
-
       const totalAmount = slots.reduce((s, x) => s + x.pricePerSlot, 0)
       const advanceAmount = slots.reduce((s, x) => s + x.advancePerSlot, 0)
 
@@ -107,6 +134,7 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
       await this._redisSlotLockRepository.releaseMultipleSlots(
         serviceId,
         lockedSlots,
+        customerId,
       )
       throw error
     }

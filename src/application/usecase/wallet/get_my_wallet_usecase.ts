@@ -4,6 +4,7 @@ import { IWalletRepository } from '../../../domain/repositoryInterfaces/feature/
 import { IWalletTransactionRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
+import { IAdminRepository } from '../../../domain/repositoryInterfaces/users/admin_repository.interface'
 
 @injectable()
 export class GetWalletUseCase implements IGetWalletUseCase {
@@ -19,7 +20,10 @@ export class GetWalletUseCase implements IGetWalletUseCase {
 
     @inject('IVendorRepository')
     private _vendorRepository: IVendorRepository,
-  ) {}
+
+    @inject('IAdminRepository')
+    private _adminRepository: IAdminRepository,
+  ) { }
   async execute({
     userId,
     role,
@@ -30,7 +34,7 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     search,
   }: {
     userId: string
-    role: 'customer' | 'vendor'
+    role: 'customer' | 'vendor' | 'admin'
     page?: number
     limit?: number
     sortBy?: 'amount' | 'createdAt' | 'type'
@@ -47,10 +51,15 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     currentPage: number
     totalCount: number
   }> {
-    const user =
-      role === 'customer'
-        ? await this._customerRepository.findOne({ userId })
-        : await this._vendorRepository.findOne({ userId })
+    let user = null
+
+    if (role === 'customer') {
+      user = await this._customerRepository.findOne({ userId })
+    } else if (role === 'vendor') {
+      user = await this._vendorRepository.findOne({ userId })
+    } else if (role === 'admin') {
+      user = await this._adminRepository.findOne({ userId })
+    }
 
     if (!user?._id) {
       return {

@@ -15,9 +15,7 @@ export class ServiceCategoryRoutes extends BaseRoute {
       authorizeRole(['admin'])
     )
 
-    /* -----------------------------
-       GET ALL + CREATE
-    ------------------------------ */
+   
     this.router
       .route('/')
       .get((req, res) =>
@@ -31,15 +29,11 @@ export class ServiceCategoryRoutes extends BaseRoute {
         handleMulterError(upload.single('ServiceCategoryBannerImage')),
         (req, res) => serviceCategoryController.editServiceCategory(req, res)
       )
-    /* -----------------------------
-       BLOCK / UNBLOCK
-    ------------------------------ */
+
     this.router.patch('/block', (req, res) =>
       serviceCategoryController.blockServiceCategory(req, res)
     )
-    /* -----------------------------
-       GET SINGLE + EDIT (single ID)
-    ------------------------------ */
+
     this.router
       .route('/:categoryId')
       .get((req, res) =>

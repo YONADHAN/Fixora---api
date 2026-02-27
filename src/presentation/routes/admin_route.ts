@@ -10,6 +10,7 @@ import { ServiceCategoryRoutes } from './service_category_route'
 import { SubServiceCategoryRoutes } from './sub_service_category_route'
 import { NotificationRoutes } from './notification_route'
 import { SubscriptionRoutes } from './subscription_route'
+import { WalletRoutes } from './wallet_route'
 
 export class AdminRoutes extends BaseRoute {
   constructor() {
@@ -98,5 +99,6 @@ export class AdminRoutes extends BaseRoute {
 
     this.router.use('/notification', new NotificationRoutes().router)
     this.router.use('/subscription', new SubscriptionRoutes().router)
+    this.router.use('/wallet', new WalletRoutes().router)
   }
 }
