@@ -4,7 +4,7 @@ import { IStorageService } from '../../../../domain/serviceInterfaces/s3_storage
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { CustomError } from '../../../../domain/utils/custom.error'
 import { IChangeVendorVerificationStatusUseCase } from '../../../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
-import { config } from '../../../../shared/config'
+
 
 @injectable()
 export class ChangeVendorVerificationStatusUseCase
@@ -26,7 +26,7 @@ export class ChangeVendorVerificationStatusUseCase
         /^https?:\/\/([^.]+)\.s3[.-][^/]+\.amazonaws\.com\/(.+)$/
       )
       if (!match) {
-        console.warn('⚠️ Invalid AWS S3 URL format:', url)
+        console.warn('Invalid AWS S3 URL format:', url)
         return null
       }
 

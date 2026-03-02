@@ -33,7 +33,7 @@ export class AuthRoutes extends BaseRoute {
       authController.logout(req, res)
     })
     this.router.post('/refresh-token', (req: Request, res: Response) => {
-      authController.handleTokenRefresh
+      authController.handleTokenRefresh(req, res)
     })
     this.router.post('/google-auth', (req: Request, res: Response) => {
       authController.authenticateWithGoogle(req, res)

@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe'
-import { FilterQuery, Types } from 'mongoose'
+import {Types } from 'mongoose'
 
 import { BaseRepository } from '../../base_repository'
 import {
@@ -15,8 +15,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 @injectable()
 export class ChatRepository
   extends BaseRepository<IChatModel, IChatEntity>
-  implements IChatRepository
-{
+  implements IChatRepository {
   constructor() {
     super(ChatModel)
   }

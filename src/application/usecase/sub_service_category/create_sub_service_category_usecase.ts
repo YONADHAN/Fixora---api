@@ -16,7 +16,7 @@ import { randomUUID } from 'crypto'
 import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { CreateSubServiceCategoryResponseMapper } from '../../mappers/sub_service_category/create_sub_service_category_mapper'
-import { Schema } from 'mongoose'
+
 @injectable()
 export class CreateSubServiceCategoryUseCase
   implements ICreateSubServiceCategoryUseCase

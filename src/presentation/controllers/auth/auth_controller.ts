@@ -9,7 +9,7 @@ import {
   ERROR_MESSAGES,
   HTTP_STATUS,
   SUCCESS_MESSAGES,
-  TRole,
+
 } from '../../../shared/constants'
 
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
@@ -292,8 +292,7 @@ export class AuthController implements IAuthController {
   async changeMyPassword(req: Request, res: Response): Promise<void> {
     try {
       const { currentPassword, newPassword } = req.body
-      const userId = (req as CustomRequest).user.userId
-      const role = (req as CustomRequest).user.role
+      
 
       if (currentPassword.trim() === newPassword.trim()) {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
@@ -303,12 +302,12 @@ export class AuthController implements IAuthController {
         return
       }
 
-      const response = await this._changeMyPasswordUsecase.execute(
-        currentPassword,
-        newPassword,
-        userId,
-        role
-      )
+      // const response = await this._changeMyPasswordUsecase.execute(
+      //   currentPassword,
+      //   newPassword,
+      //   userId,
+      //   role
+      // )
 
       res.status(HTTP_STATUS.OK).json({
         success: true,

@@ -3,7 +3,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { ICustomerRepository } from '../../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IBookingRepository } from '../../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
-import { IAddressRepository } from '../../../../domain/repositoryInterfaces/feature/address/address_repository.interface'
+
 import { IVendorRepository } from '../../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IServiceRepository } from '../../../../domain/repositoryInterfaces/feature/service/service_repository.interface'
 import {

@@ -11,8 +11,7 @@ import { generateUniqueId } from '../../../../shared/utils/unique_uuid.helper'
 import { ICustomerRegistrationStrategy } from './customer_registration_strategy.interface'
 import { strongEmailRegex } from '../../../../shared/validations/email_validation'
 import { passwordSchema } from '../../../../shared/validations/password_validation'
-import { ZodError } from 'zod'
-import { RegistrationSchema } from '../../../../shared/validations/features/registration_validation'
+
 
 @injectable()
 export class CustomerRegistrationStrategy

@@ -1,4 +1,4 @@
-import { GetAvailableSlotsForCustomerRequestDTO } from '../../dtos/booking_dto'
+
 
 export class RequestGetAvailableSlotsForCustomerRequestMapper {
   static toDTO(data: { month: string; year: string; serviceId: string }) {

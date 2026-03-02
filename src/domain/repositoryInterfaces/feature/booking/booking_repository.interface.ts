@@ -1,10 +1,10 @@
 import { FilterQuery } from 'mongoose'
-import { IBookingModel } from '../../../../interfaceAdapters/database/mongoDb/models/booking_model'
+
 import { IBookingEntity } from '../../../models/booking_entity'
 import { IBaseRepository } from '../../base_repository.interface'
 import {
   BookingDashboardResponseDTO,
-  DashboardStatsInputDTO,
+
 } from '../../../../application/dtos/dashboard_dto'
 import { timeGranularityType } from '../../../../shared/constants'
 

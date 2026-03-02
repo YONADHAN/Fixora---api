@@ -4,7 +4,7 @@ import { IChatRepository } from '../../../domain/repositoryInterfaces/feature/ch
 import { IChatEntity } from '../../../domain/models/chat_entity'
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
-import { CustomError } from '../../../domain/utils/custom.error'
+
 
 @injectable()
 export class GetUserChatsUseCase implements IGetUserChatsUseCase {

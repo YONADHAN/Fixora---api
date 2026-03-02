@@ -10,7 +10,7 @@ export class WalletController implements IWalletController {
   constructor(
     @inject('IGetWalletUseCase')
     private _getWalletUseCase: IGetWalletUseCase,
-  ) {}
+  ) { }
 
   async getMyWallet(req: Request, res: Response): Promise<void> {
     const { userId, role } = (req as CustomRequest).user

@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe'
-import { Schema, Types } from 'mongoose'
+import {  Types } from 'mongoose'
 import { BaseRepository } from '../../base_repository'
 import {
   RatingsReviewModel,
@@ -12,8 +12,7 @@ import { IRatingsReviewRepository } from '../../../../domain/repositoryInterface
 @injectable()
 export class RatingsReviewRepository
   extends BaseRepository<IRatingsReviewModel, IRatingsReviewEntity>
-  implements IRatingsReviewRepository
-{
+  implements IRatingsReviewRepository {
   constructor() {
     super(RatingsReviewModel)
   }

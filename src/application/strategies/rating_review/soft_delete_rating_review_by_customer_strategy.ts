@@ -17,7 +17,7 @@ export class SoftDeleteRatingsAndReviewsByCustomerStrategy implements ISoftDelet
   async execute(
     input: SoftDeleteRatingsAndReviewsRequestDTO,
   ): Promise<SoftDeleteRatingsAndReviewsResponseDTO> {
-    const { ratingsReviewId, userId, role } = input
+    const { ratingsReviewId} = input
     console.log('Data for deletion ', input)
     const isRatingReviewExists = await this._ratingReviewRepository.findOne({
       ratingsReviewId,

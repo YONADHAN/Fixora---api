@@ -18,7 +18,7 @@ import { EditServiceRequestMapper } from '../../../application/mappers/service/e
 import { IEditServiceUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_usecase.interface'
 import { toggleServiceBlockZodValidationSchema } from '../../validations/service/toggle_service_block_status'
 import { IToggleBlockServiceUseCase } from '../../../domain/useCaseInterfaces/service/toggle_block_service_usecase.interface'
-import { success } from 'zod'
+
 import { RequestSearchServicesForCustomerRequestMapper } from '../../../application/mappers/service/search_services_for_customer_mapper'
 import {
   SearchCustomerServicesBasicSchema,
@@ -41,7 +41,7 @@ export class ServiceController implements IServiceController {
     private _toggleBlockServiceUseCase: IToggleBlockServiceUseCase,
     @inject('ISearchServicesForCustomersUseCase')
     private _searchServicesForCustomersUseCase: ISearchServicesForCustomersUseCase
-  ) {}
+  ) { }
   async createService(req: Request, res: Response): Promise<void> {
     try {
       const validated = createServiceZodValidationSchema.parse({
@@ -123,7 +123,7 @@ export class ServiceController implements IServiceController {
         files: req.files,
       })
       console.log('Validated', validated)
-      const { serviceId } = validated
+     
       const vendorId = (req as CustomRequest).user.userId
       const dto = EditServiceRequestMapper.toDTO({
         ...validated,

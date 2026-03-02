@@ -4,7 +4,7 @@ import { CustomError } from '../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../shared/constants'
 import { IResetPasswordUseCase } from '../../../domain/useCaseInterfaces/auth/reset_password_usecase_interface'
 import { IResetPasswordStrategyFactory } from '../../factories/auth/reset_password/reset_password_strategy_factory.interface'
-import { TRole } from '../../../shared/constants'
+
 @injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(

@@ -23,7 +23,7 @@ export class GetCustomerPaymentHistoryStrategy
     async execute(
         payload: GetPaymentHistoryRequestDTO
     ): Promise<GetPaymentHistoryResponseDTO> {
-        const { userId, page, limit, search = "" } = payload
+        const { userId, page, limit} = payload
 
         const customer = await this._customerRepository.findOne({ userId })
         if (!customer) {

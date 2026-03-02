@@ -1,4 +1,4 @@
-import { GoogleUserDTO, VendorDTO } from '../../../../dtos/user_dto'
+import { GoogleUserDTO} from '../../../../dtos/user_dto'
 import { IVendorEntity } from '../../../../../domain/models/vendor_entity'
 
 export interface IVendorGoogleRegistrationStrategy {

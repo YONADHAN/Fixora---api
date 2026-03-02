@@ -8,7 +8,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { generateUniqueId } from '../../../../shared/utils/unique_uuid.helper'
 import { IVendorRegistrationStrategy } from './vendor_registration_strategy.interface'
-import { RegistrationSchema } from '../../../../shared/validations/features/registration_validation'
+
 import { passwordSchema } from '../../../../shared/validations/password_validation'
 import { strongEmailRegex } from '../../../../shared/validations/email_validation'
 

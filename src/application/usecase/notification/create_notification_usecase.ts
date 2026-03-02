@@ -33,14 +33,14 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 
     const saved = await this.notificationRepository.save(notification)
 
-    const socketPayload = {
-      notificationId: saved.notificationId,
-      title: saved.title,
-      message: saved.message,
-      type: saved.type,
-      metadata: saved.metadata,
-      createdAt: saved.createdAt,
-    }
+    // const socketPayload = {
+    //   notificationId: saved.notificationId,
+    //   title: saved.title,
+    //   message: saved.message,
+    //   type: saved.type,
+    //   metadata: saved.metadata,
+    //   createdAt: saved.createdAt,
+    // }
 
     try {
       const io = getIO()

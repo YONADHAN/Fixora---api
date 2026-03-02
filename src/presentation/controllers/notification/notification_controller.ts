@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
 
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
-import { HTTP_STATUS, SUCCESS_MESSAGES, TRole } from '../../../shared/constants'
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
 import { CustomRequest } from '../../middleware/auth_middleware'
 
 import { INotificationController } from '../../../domain/controllerInterfaces/features/notification/notification-controller.interface'

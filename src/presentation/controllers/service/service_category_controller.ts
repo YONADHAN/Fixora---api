@@ -10,7 +10,7 @@ import { IEditServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/s
 import { IBlockServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/block_service_category_usecase.interface'
 import { IGetSingleServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/single_service_category_usecase.interface'
 
-import { ServiceCategoryResponseDTO } from '../../../application/dtos/admin/service_category_dto'
+
 import { IGetActiveServiceCategoriesUseCase } from '../../../domain/useCaseInterfaces/service_category/active_service_category_usecase.interface'
 
 @injectable()

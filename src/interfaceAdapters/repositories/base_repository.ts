@@ -5,7 +5,7 @@ export abstract class BaseRepository<
   TModel,
   TEntity,
 > implements IBaseRepository<TModel, TEntity> {
-  constructor(protected model: Model<TModel>) {}
+  constructor(protected model: Model<TModel>) { }
 
   protected abstract toEntity(model: TModel): TEntity
   protected abstract toModel(entity: Partial<TEntity>): Partial<TModel>
@@ -111,11 +111,11 @@ export abstract class BaseRepository<
       ...extraFilters,
       ...(search
         ? {
-            $or: [
-              { name: { $regex: search, $options: 'i' } },
-              { title: { $regex: search, $options: 'i' } },
-            ],
-          }
+          $or: [
+            { name: { $regex: search, $options: 'i' } },
+            { title: { $regex: search, $options: 'i' } },
+          ],
+        }
         : {}),
     }
 
@@ -169,11 +169,11 @@ export abstract class BaseRepository<
       ...extraFilters,
       ...(search
         ? {
-            $or: [
-              { name: { $regex: search, $options: 'i' } },
-              { title: { $regex: search, $options: 'i' } },
-            ],
-          }
+          $or: [
+            { name: { $regex: search, $options: 'i' } },
+            { title: { $regex: search, $options: 'i' } },
+          ],
+        }
         : {}),
     }
 

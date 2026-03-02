@@ -5,12 +5,11 @@ import { IVendorProfileUpdateStrategy } from './vendor_profile_update_strategy.i
 
 @injectable()
 export class VendorProfileUpdateStrategy
-  implements IVendorProfileUpdateStrategy
-{
+  implements IVendorProfileUpdateStrategy {
   constructor(
     @inject('IVendorRepository')
     private _vendorRepository: IVendorRepository
-  ) {}
+  ) { }
 
   async execute({ data, userId }: { data: any; userId: string }) {
     const res = await this._vendorRepository.update({ userId }, data)

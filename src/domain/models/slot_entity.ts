@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+
 import { bookingStatus } from '../../shared/constants'
 export interface ISlotEntity {
   _id?: string

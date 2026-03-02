@@ -10,7 +10,7 @@ export class ProfileUpdateFactory implements IProfileUpdateFactory {
     private _customerStrategy: ICustomerProfileUpdateStrategy,
     @inject('IVendorProfileUpdateStrategy')
     private _vendorStrategy: IVendorProfileUpdateStrategy
-  ) {}
+  ) { }
   getStrategy(role: string, data: any, userId: string) {
     switch (role.toLowerCase()) {
       case 'customer':

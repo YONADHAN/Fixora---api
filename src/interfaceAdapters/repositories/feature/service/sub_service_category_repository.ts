@@ -25,8 +25,7 @@ function isPopulated(ref: any): ref is IServiceCategoryPopulated {
 @injectable()
 export class SubServiceCategoryRepository
   extends BaseRepository<ISubServiceCategoryModel, ISubServiceCategoryEntity>
-  implements ISubServiceCategoryRepository
-{
+  implements ISubServiceCategoryRepository {
   constructor() {
     super(SubServiceCategoryModel)
   }

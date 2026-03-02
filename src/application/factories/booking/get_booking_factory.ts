@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { CustomError } from '../../../domain/utils/custom.error'
-import { ERROR_MESSAGES, HTTP_STATUS, TRole } from '../../../shared/constants'
+import { ERROR_MESSAGES, HTTP_STATUS} from '../../../shared/constants'
 import { IGetBookingsFactory } from './get_booking_factory.interface'
 import {
   GetBookingRequestDTO,

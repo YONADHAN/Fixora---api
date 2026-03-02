@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { IVendorGoogleRegistrationStrategy } from './vendor_google_registration_strategy.interface'
-import { GoogleUserDTO, VendorDTO } from '../../../../dtos/user_dto'
+import { GoogleUserDTO} from '../../../../dtos/user_dto'
 import { IVendorEntity } from '../../../../../domain/models/vendor_entity'
 import { IVendorRepository } from '../../../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { generateUniqueId } from '../../../../../shared/utils/unique_uuid.helper'

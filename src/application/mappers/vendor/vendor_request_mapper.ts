@@ -8,9 +8,9 @@ export class VendorRequestMapper {
       email: vendor.email,
       documents: Array.isArray(vendor.documents)
         ? vendor.documents.map((doc: any) => ({
-            name: doc.name,
-            url: doc.url,
-          }))
+          name: doc.name,
+          url: doc.url,
+        }))
         : [],
       isVerified: {
         status: vendor.isVerified?.status ?? 'pending',

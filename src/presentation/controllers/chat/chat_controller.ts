@@ -18,7 +18,7 @@ export class ChatController implements IChatController {
     private readonly initiateChatUseCase: IInitiateChatUseCase,
     @inject('IGetUserChatsUseCase')
     private readonly getUserChatsUseCase: IGetUserChatsUseCase,
-  ) {}
+  ) { }
 
   async getChatMessages(req: Request, res: Response): Promise<void> {
     try {

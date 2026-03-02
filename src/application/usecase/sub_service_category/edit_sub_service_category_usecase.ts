@@ -10,7 +10,7 @@ import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_se
 import { config } from '../../../shared/config'
 import { ISubServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/sub_service_catgory_repository.interface'
 import { EditSubServiceCategoryResponseMapper } from '../../mappers/sub_service_category/edit_sub_service_category_mapper'
-import { Schema } from 'mongoose'
+
 import { IServiceCategoryRepository } from '../../../domain/repositoryInterfaces/feature/service/service_category_repository.interface'
 
 @injectable()

@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { ICustomerGoogleRegistrationStrategy } from './customer_google_registration_strategy.interface'
-import { CustomerDTO, GoogleUserDTO } from '../../../../dtos/user_dto'
+import {  GoogleUserDTO } from '../../../../dtos/user_dto'
 import { ICustomerEntity } from '../../../../../domain/models/customer_entity'
 import { ICustomerRepository } from '../../../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { generateUniqueId } from '../../../../../shared/utils/unique_uuid.helper'

@@ -6,7 +6,7 @@ import {
 } from '../../database/mongoDb/models/vendor_model'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IVendorEntity } from '../../../domain/models/vendor_entity'
-import { Types } from 'mongoose'
+
 import { timeGranularityType } from '../../../shared/constants'
 import { VendorDashboardResponseDTO } from '../../../application/dtos/dashboard_dto'
 

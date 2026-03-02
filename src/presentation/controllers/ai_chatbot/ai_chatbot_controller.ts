@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'tsyringe'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
-import { CustomRequest } from '../../middleware/auth_middleware'
+
 import {
   ERROR_MESSAGES,
   HTTP_STATUS,

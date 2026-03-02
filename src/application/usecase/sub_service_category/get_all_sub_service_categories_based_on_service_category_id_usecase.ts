@@ -9,7 +9,7 @@ import {
   ResponseGetAllSubServiceCategoriesBasedOnServiceCategoryDTO,
 } from '../../dtos/sub_service_category_dto'
 import { IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase } from '../../../domain/useCaseInterfaces/sub_service_category/get_all_sub_service_categories_based_on_service_category_id_usecase.interface'
-import { Schema, Types } from 'mongoose'
+import { Types } from 'mongoose'
 @injectable()
 export class GetAllSubServiceCategoriesBasedOnServiceCategoryId
   implements IGetAllSubServiceCategoriesBasedOnServiceCategoryIdUseCase

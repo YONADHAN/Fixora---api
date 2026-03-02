@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { GetBookingByPaymentIdResponseDTO } from '../../dtos/booking_dto'
-import { IBookingEntity } from '../../../domain/models/booking_entity'
+
 import { IBookingRepository } from '../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
 import { IPaymentRepository } from '../../../domain/repositoryInterfaces/feature/payment/payment_repository.interface'
 import { IGetBookingByPaymentIdUseCase } from '../../../domain/useCaseInterfaces/booking/get_booking_by_payment_id_usecase_interface'

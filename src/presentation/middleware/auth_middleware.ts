@@ -83,7 +83,7 @@ export const verifyAuth = async (
       return
     }
 
-    ;(req as CustomRequest).user = {
+    ; (req as CustomRequest).user = {
       ...user,
       access_token: token.access_token,
       refresh_token: token.refresh_token,
@@ -122,13 +122,13 @@ export const decodeToken = async (
       role: user.role,
     })
 
-    ;(req as CustomRequest).user = {
-      userId: user?.userId,
-      email: user?.email,
-      role: user?.role,
-      access_token: newAccessToken,
-      refresh_token: token.refresh_token,
-    }
+      ; (req as CustomRequest).user = {
+        userId: user?.userId,
+        email: user?.email,
+        role: user?.role,
+        access_token: newAccessToken,
+        refresh_token: token.refresh_token,
+      }
     next()
   } catch (error) {
     const basePath = req.baseUrl.split('/')

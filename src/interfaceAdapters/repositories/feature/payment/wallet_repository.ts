@@ -11,8 +11,7 @@ import { IWalletRepository } from '../../../../domain/repositoryInterfaces/featu
 @injectable()
 export class WalletRepository
   extends BaseRepository<IWalletModel, IWalletEntity>
-  implements IWalletRepository
-{
+  implements IWalletRepository {
   constructor() {
     super(WalletModel)
   }

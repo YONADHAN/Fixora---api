@@ -20,8 +20,8 @@ export class SoftDeleteRatingsAndReviewsByAdminStrategy implements ISoftDeleteRa
   async execute(
     input: SoftDeleteRatingsAndReviewsRequestDTO,
   ): Promise<SoftDeleteRatingsAndReviewsResponseDTO> {
-    const { ratingsReviewId, userId, role } = input
-    const vendor = await this._vendorRepository.findOne({ userId })
+    const { ratingsReviewId } = input
+    
     const isRatingReviewExists = await this._ratingReviewRepository.findOne({
       ratingsReviewId,
     })

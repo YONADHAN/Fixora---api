@@ -6,7 +6,7 @@ import { HTTP_STATUS, S3_BUCKET_IMAGE_FOLDERS } from '../../../shared/constants'
 import { config } from '../../../shared/config'
 import {
   RequestEditServiceDTO,
-  ResponseEditServiceDTO,
+
 } from '../../dtos/service_dto'
 
 import { IEditServiceUseCase } from '../../../domain/useCaseInterfaces/service/edit_service_usecase.interface'

@@ -5,12 +5,11 @@ import { ICustomerProfileUpdateStrategy } from './customer_profile_update_strate
 
 @injectable()
 export class CustomerProfileUpdateStrategy
-  implements ICustomerProfileUpdateStrategy
-{
+  implements ICustomerProfileUpdateStrategy {
   constructor(
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository
-  ) {}
+  ) { }
 
   async execute({ data, userId }: { data: any; userId: string }) {
     const res = await this._customerRepository.update({ userId }, data)

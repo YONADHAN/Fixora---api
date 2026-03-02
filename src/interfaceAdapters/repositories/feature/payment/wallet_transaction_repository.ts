@@ -15,8 +15,7 @@ import { IWalletTransactionEntity } from '../../../../domain/models/wallet_trans
 @injectable()
 export class WalletTransactionRepository
   extends BaseRepository<IWalletTransactionModel, IWalletTransactionEntity>
-  implements IWalletTransactionRepository
-{
+  implements IWalletTransactionRepository {
   constructor() {
     super(WalletTransactionModel)
   }

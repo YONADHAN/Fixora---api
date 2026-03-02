@@ -136,7 +136,7 @@ export class VendorController implements IVendorController {
         return
       }
 
-      const fileName = file.filename
+      
       const bucketName = config.storageConfig.bucket!
       const folder = 'profile-images'
 

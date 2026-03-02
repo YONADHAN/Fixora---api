@@ -27,7 +27,7 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
     private _revokeRefreshTokenUsecase: IRevokeRefreshTokenUseCase,
     @inject('IBlacklistTokenUseCase')
     private _blacklistTokenUsecase: IBlacklistTokenUseCase
-  ) {}
+  ) { }
 
   checkMyUserBlockStatus = async (
     req: CustomRequest,

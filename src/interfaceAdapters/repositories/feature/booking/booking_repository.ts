@@ -21,8 +21,7 @@ import {
 @injectable()
 export class BookingRepository
   extends BaseRepository<IBookingModel, IBookingEntity>
-  implements IBookingRepository
-{
+  implements IBookingRepository {
   constructor() {
     super(BookingModel)
   }
@@ -70,13 +69,13 @@ export class BookingRepository
 
       cancelInfo: entity.cancelInfo
         ? {
-            cancelledByRole: entity.cancelInfo.cancelledByRole,
-            cancelledByRef: entity.cancelInfo.cancelledByRef
-              ? new Types.ObjectId(entity.cancelInfo.cancelledByRef)
-              : undefined,
-            reason: entity.cancelInfo.reason,
-            cancelledAt: entity.cancelInfo.cancelledAt,
-          }
+          cancelledByRole: entity.cancelInfo.cancelledByRole,
+          cancelledByRef: entity.cancelInfo.cancelledByRef
+            ? new Types.ObjectId(entity.cancelInfo.cancelledByRef)
+            : undefined,
+          reason: entity.cancelInfo.reason,
+          cancelledAt: entity.cancelInfo.cancelledAt,
+        }
         : undefined,
     }
   }
@@ -103,11 +102,11 @@ export class BookingRepository
 
       cancelInfo: model.cancelInfo
         ? {
-            cancelledByRole: model.cancelInfo.cancelledByRole,
-            cancelledByRef: model.cancelInfo.cancelledByRef?.toString(),
-            reason: model.cancelInfo.reason,
-            cancelledAt: model.cancelInfo.cancelledAt,
-          }
+          cancelledByRole: model.cancelInfo.cancelledByRole,
+          cancelledByRef: model.cancelInfo.cancelledByRef?.toString(),
+          reason: model.cancelInfo.reason,
+          cancelledAt: model.cancelInfo.cancelledAt,
+        }
         : undefined,
 
       addressId: model.addressId,
@@ -179,13 +178,13 @@ export class BookingRepository
       ...filters,
       ...(search
         ? {
-            $or: [
-              { bookingId: { $regex: search, $options: 'i' } },
-              { bookingGroupId: { $regex: search, $options: 'i' } },
-              { paymentStatus: { $regex: search, $options: 'i' } },
-              { serviceStatus: { $regex: search, $options: 'i' } },
-            ],
-          }
+          $or: [
+            { bookingId: { $regex: search, $options: 'i' } },
+            { bookingGroupId: { $regex: search, $options: 'i' } },
+            { paymentStatus: { $regex: search, $options: 'i' } },
+            { serviceStatus: { $regex: search, $options: 'i' } },
+          ],
+        }
         : {}),
     }
 
@@ -383,7 +382,7 @@ export class BookingRepository
   async countUniqueServicesForCustomer(customerRef: string): Promise<number> {
     this.validateObjectId(customerRef, 'customerRef')
 
-    const result  = await this.model.aggregate([
+    const result = await this.model.aggregate([
       {
         $match: {
           customerRef: new Types.ObjectId(customerRef),
@@ -400,7 +399,7 @@ export class BookingRepository
     ])
     return result[0]?.totalUniqueServices || 0
   }
-  
+
   async getAllServicesWhichCompletedBookings(
     customerRef: string,
     page: number,
@@ -454,12 +453,12 @@ export class BookingRepository
 
       ...(search
         ? [
-            {
-              $match: {
-                'service.name': { $regex: search, $options: 'i' },
-              },
+          {
+            $match: {
+              'service.name': { $regex: search, $options: 'i' },
             },
-          ]
+          },
+        ]
         : []),
 
       {

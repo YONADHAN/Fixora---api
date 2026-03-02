@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe'
-import { v4 as uuidv4 } from 'uuid'
+
 import {
   IInitiateChatUseCase,
   InitiateChatDto,
@@ -27,7 +27,7 @@ export class InitiateChatUseCase implements IInitiateChatUseCase {
   ) {}
 
   async execute(data: InitiateChatDto): Promise<string> {
-    const { bookingId, requesterId, requesterRole } = data
+    const { bookingId, requesterId} = data
 
     const booking = await this.bookingRepository.getBookingById(bookingId)
     if (!booking) {

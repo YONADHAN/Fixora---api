@@ -2,11 +2,11 @@ import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
 import 'reflect-metadata'
 import {
-  ERROR_MESSAGES,
+
   HTTP_STATUS,
   SUCCESS_MESSAGES,
   timeGranularityType,
-  TRole,
+
 } from '../../../shared/constants'
 import { ICustomerController } from '../../../domain/controllerInterfaces/users/customer-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'

@@ -1,4 +1,4 @@
-import { CustomerDTO, GoogleUserDTO } from '../../../../dtos/user_dto'
+import {  GoogleUserDTO } from '../../../../dtos/user_dto'
 import { ICustomerEntity } from '../../../../../domain/models/customer_entity'
 
 export interface ICustomerGoogleRegistrationStrategy {

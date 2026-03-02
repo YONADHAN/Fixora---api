@@ -12,15 +12,15 @@ import {
 } from '../../validations/address/get_addresses_schema'
 import { GetAddressRequestMapper } from '../../../application/mappers/address/get_addresses_mapper'
 import {
-  AddAddressBasicSchema,
+ 
   AddAddressRequestSchema,
 } from '../../validations/address/add_address_schema'
-import { AddAddressMapper } from '../../../application/mappers/address/add_address_mapper'
+
 import {
-  EditAddressBasicSchema,
+ 
   EditAddressRequestSchema,
 } from '../../validations/address/edit_address_schema'
-import { EditAddressMapper } from '../../../application/mappers/address/edit_address_mapper'
+
 import {
   SetDefaultAddressBasicSchema,
   SetDefaultAddressRequestSchema,

@@ -20,7 +20,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
     @inject('IMessageRepository')
     private readonly messageRepository: IMessageRepository,
-  ) {}
+  ) { }
 
   async execute(input: SendMessageInput): Promise<SendMessageOutput> {
     const {
