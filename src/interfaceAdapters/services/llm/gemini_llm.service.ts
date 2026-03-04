@@ -19,7 +19,7 @@ export class GeminiLLMService implements ILLMService {
       toolMap = {},
     } = params
 
-    // 🔒 Adapter-level type narrowing
+    //  Adapter-level type narrowing
     const geminiTools = tools as Tool[]
     const geminiHistory = history as Content[]
 

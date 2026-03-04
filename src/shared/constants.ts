@@ -105,6 +105,10 @@ export enum AIIntent {
   SUBSCRIPTION_QUERY = 'SUBSCRIPTION_QUERY',
   GENERAL = 'GENERAL',
 }
+export enum LLMProvider {
+  GEMINI = 'GEMINI',
+  OPENAI = 'OPENAI',
+}
 export const SOCKET_EVENTS = {
   NOTIFICATION_NEW: 'notifications:new',
   NOTIFICATION_READ: 'notifications:read',
