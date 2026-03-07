@@ -43,6 +43,11 @@ import { UserSubscriptionRepository } from '../../interfaceAdapters/repositories
 import { AiServiceRepository } from '../../interfaceAdapters/repositories/feature/ai_chatbot/ai_chatbot_service_repository'
 import { IAiServiceRepository } from '../../domain/repositoryInterfaces/feature/ai/ai_service_repository.interface'
 
+
+import { IAdminRevenueRepository } from '../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
+import { AdminRevenueRepository } from '../../interfaceAdapters/repositories/feature/payment/admin_revenue_repository'
+
+
 export class RepositoryRegistry {
   static registerRepositories(): void {
     container.register('IOtpRepository', {
@@ -148,6 +153,10 @@ export class RepositoryRegistry {
 
     container.register<IAiServiceRepository>('IAiServiceRepository', {
       useClass: AiServiceRepository,
+    })
+
+    container.register<IAdminRevenueRepository>('IAdminRevenueRepository',{
+      useClass: AdminRevenueRepository,
     })
   }
 }

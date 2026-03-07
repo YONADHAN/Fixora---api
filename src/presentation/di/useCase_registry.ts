@@ -67,6 +67,13 @@ import { SubscriptionInvoicePaidUseCase } from '../../application/usecase/subscr
 import { ISubscriptionCancelledUseCase } from '../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_cancelled_usecase.interface'
 import { SubscriptionCancelledUseCase } from '../../application/usecase/subscription/webhook_usecases_for_subscription/subscription_cancelled_usecase'
 
+import { ICheckSubscriptionForAllowUsingBenefitUseCase } from '../../domain/useCaseInterfaces/subscription/check_subscription_for_allow_using_benefit_usecase.interface'
+import { CheckSubscriptionForAllowUsingBenefitUseCase } from '../../application/usecase/subscription/check_subscription_for_allow_using_benefit_usecase'
+import { ICheckSubscriptionForAllowUsingBenefitFactory } from '../../application/factories/subscription/check_subscription_for_allow_using_benefit_factory.interface'
+import { CheckSubscriptionForAllowUsingBenefitFactory } from '../../application/factories/subscription/check_subscription_for_allow_using_benefit_factory'
+import { ICheckSubscriptionForAllowUsingBenefitForVendorStrategy } from '../../application/strategies/subscription/check_subscription_for_allow_using_benefit_strategy.ts/check_subsciption_for_allow_using_benefit_for_vendor_strategy.interface'
+import { CheckSubscriptionForAllowUsingBenefitForVendor } from '../../application/strategies/subscription/check_subscription_for_allow_using_benefit_strategy.ts/check_subscription_for_allow_using_benefit_for_vendor_strategy'
+
 import { ICreateSubscriptionCheckoutFactory } from '../../application/factories/subscription/create_subscription_checkout_factory.interface'
 import { CreateSubscriptionCheckoutFactory } from '../../application/factories/subscription/create_subscription_checkout_factory'
 import { ISubscriptionAccessStrategyFactory } from '../../application/factories/subscription/subscription_access_strategy_factory.interface'
@@ -1228,7 +1235,7 @@ export class UseCaseRegistry {
     )
     container.register<IBookingAnalyticsStrategy>(
       'BookingAnalytisStrategyForCustomer',
-      {useClass: BookingAnalytisStrategyForCustomer},
+      { useClass: BookingAnalytisStrategyForCustomer },
     )
     container.register<ICustomerAnalyticsStrategy>(
       'CustomerAnalyticsStrategyForAdmin',
@@ -1335,5 +1342,22 @@ export class UseCaseRegistry {
         useClass: CreateNotificationUseCase,
       },
     )
+
+
+
+
+    container.register<ICheckSubscriptionForAllowUsingBenefitUseCase>('ICheckSubscriptionForAllowUsingBenefitUseCase',
+      {
+        useClass: CheckSubscriptionForAllowUsingBenefitUseCase,
+      }
+    )
+
+    container.register<ICheckSubscriptionForAllowUsingBenefitFactory>('ICheckSubscriptionForAllowUsingBenefitFactory', {
+      useClass: CheckSubscriptionForAllowUsingBenefitFactory,
+    })
+
+    container.register<ICheckSubscriptionForAllowUsingBenefitForVendorStrategy>('ICheckSubscriptionForAllowUsingBenefitForVendorStrategy', {
+      useClass: CheckSubscriptionForAllowUsingBenefitForVendor,
+    })
   }
 }

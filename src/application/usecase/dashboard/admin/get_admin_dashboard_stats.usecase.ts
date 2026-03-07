@@ -16,8 +16,7 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
     @inject('ISummaryAnalyticsUseCase')
     private readonly _summaryStatsUseCase: ISummaryAnalyticsUseCase,
 
-    // @inject('IPaymentAnalyticsUseCase')
-    // private readonly _paymentAnalyticsUseCase: IPaymentAnalyticsUseCase,
+  
 
     @inject('IBookingAnalyticsUseCase')
     private readonly _bookingAnalyticsUseCase: IBookingAnalyticsUseCase,
@@ -31,23 +30,13 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
     @inject('IServiceAnalyticsUseCase')
     private readonly _serviceAnalyticsUseCase: IServiceAnalyticsUseCase,
 
-    // @inject('IReviewAnalyticsUseCase')
-    // private readonly _reviewAnalyticsUseCase: IReviewAnalyticsUseCase,
+
   ) {}
 
   async execute(
     input: DashboardStatsInputDTO,
   ): Promise<AdminDashboardResponseDTO> {
-    // const [summary, payment, booking, vendor, customer, service, review] =
-    //   await Promise.all([
-    //     this._summaryStatsUseCase.execute(input),
-    //     this._paymentAnalyticsUseCase.execute(input),
-    //     this._bookingAnalyticsUseCase.execute(input),
-    //     this._vendorAnalyticsUseCase.execute(input),
-    //     this._customerAnalyticsUseCase.execute(input),
-    //     this._serviceAnalyticsUseCase.execute(input),
-    //     this._reviewAnalyticsUseCase.execute(input),
-    //   ])
+  
     const [summary, booking, vendor, customer, service] = await Promise.all([
       this._summaryStatsUseCase.execute(input),
       this._bookingAnalyticsUseCase.execute(input),

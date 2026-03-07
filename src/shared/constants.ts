@@ -298,7 +298,11 @@ export const ERROR_MESSAGES = {
   SUBSCRIPTION_PLAN_NOT_FOUND: 'Subscription plan not found.',
   STRIPE_PRICE_NOT_CONFIGURED: 'Subscription price is not existing.',
   SUBSCRIPTION_ALREADY_ACTIVE: 'Subscription is already active.',
+  SUBSCRIPTION_IS_NOT_ACTIVE_NOW: 'Subscription plan is not active now',
   STRIPE_CHECKOUT_FAILED: 'Stripe Subscription Checkout Failed.',
+  
+
+  USER_SUBSCRIPTION_NOT_FOUND: 'User subscription not found.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {

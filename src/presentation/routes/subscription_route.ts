@@ -52,5 +52,12 @@ export class SubscriptionRoutes extends BaseRoute {
       authorizeRole([ROLES.VENDOR]),
       (req, res) => subscriptionController.createSubscriptionCheckout(req, res),
     )
+
+    this.router.get(
+      '/eligibility/:benefit',
+      authorizeRole([ROLES.VENDOR, ROLES.CUSTOMER]),
+      (req, res) =>
+        subscriptionController.checkSubscriptionForAllowUsingBenefits(req, res),
+    )
   }
 }

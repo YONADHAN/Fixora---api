@@ -127,3 +127,12 @@ export interface CreateSubscriptionCheckoutDTO {
 export interface CreateSubscriptionCheckoutStrategyDTO {
   url: string
 }
+
+
+export interface CheckSubscriptionForAllowUsingBenefitRequestDTO {
+  role:string, userId:string, benefit:string
+}
+
+export interface CheckSubscriptionForAllowUsingBenefitResponseDTO {
+  data: boolean
+}

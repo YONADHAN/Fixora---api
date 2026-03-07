@@ -152,6 +152,7 @@ import { CustomError } from '../../../domain/utils/custom.error'
 import { HTTP_STATUS } from '../../../shared/constants'
 import { IAdminRepository } from '../../../domain/repositoryInterfaces/users/admin_repository.interface'
 import crypto from 'crypto'
+import { IAdminRevenueRepository } from '../../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
 @injectable()
 export class BalancePaymentSucceededUseCase
   implements IBalancePaymentSucceededUseCase {
@@ -179,6 +180,9 @@ export class BalancePaymentSucceededUseCase
 
     @inject('IWalletRepository')
     private readonly _walletRepository: IWalletRepository,
+
+    @inject("IAdminRevenueRepository")
+    private readonly _adminRevenueRepository: IAdminRevenueRepository,
   ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -349,6 +353,15 @@ export class BalancePaymentSucceededUseCase
       vendorShare,
     )
 
+
+  
+    await this._adminRevenueRepository.save({
+      revenueId: `REV_${crypto.randomUUID()}`,
+      source:'service_commission',
+      currency:'INR',
+      referenceId:bookingGroupId,
+      amount:commissionAmount,
+    })
 
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,

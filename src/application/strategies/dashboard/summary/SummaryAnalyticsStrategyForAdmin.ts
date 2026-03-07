@@ -8,6 +8,7 @@ import { ICustomerRepository } from '../../../../domain/repositoryInterfaces/use
 import { IVendorRepository } from '../../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IBookingRepository } from '../../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
 import { IPaymentRepository } from '../../../../domain/repositoryInterfaces/feature/payment/payment_repository.interface'
+import { IAdminRevenueRepository } from '../../../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
 @injectable()
 export class SummaryAnalyticsStrategyForAdmin implements ISummaryAnalyticsStrategy {
   constructor(
@@ -20,8 +21,11 @@ export class SummaryAnalyticsStrategyForAdmin implements ISummaryAnalyticsStrate
     @inject('IBookingRepository')
     private readonly bookingRepository: IBookingRepository,
 
-    @inject('IPaymentRepository')
-    private readonly paymentRepository: IPaymentRepository,
+    // @inject('IPaymentRepository')
+    // private readonly paymentRepository: IPaymentRepository,
+
+    @inject("IAdminRevenueRepository")
+    private readonly adminRevenueRepository: IAdminRevenueRepository,
   ) { }
 
   async execute(
@@ -44,7 +48,8 @@ export class SummaryAnalyticsStrategyForAdmin implements ISummaryAnalyticsStrate
       this.vendorRepository.countDocuments({ status: 'active' }),
       this.bookingRepository.countDocuments({}),
       this.bookingRepository.countDocuments({ serviceStatus: 'cancelled' }),
-      this.paymentRepository.calculateTotalRevenue({ from, to }),
+      //this.paymentRepository.calculateTotalRevenue({ from, to }),//------------------------------
+      this.adminRevenueRepository.getTotalRevenue(),
     ])
 
     const totalActiveUsersCount = activeCustomerCount + activeVendorCount

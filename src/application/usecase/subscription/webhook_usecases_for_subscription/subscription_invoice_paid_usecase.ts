@@ -1,9 +1,11 @@
 import { inject, injectable } from 'tsyringe'
 import Stripe from 'stripe'
+import crypto from 'crypto'
 import { IUserSubscriptionRepository } from '../../../../domain/repositoryInterfaces/feature/subscription/user_subscription.interface'
 import { HTTP_STATUS } from '../../../../shared/constants'
 import { CustomError } from '../../../../domain/utils/custom.error'
 import { ISubscriptionInvoicePaidUseCase } from '../../../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_invoice_paid_usecase.interface'
+import { IAdminRevenueRepository } from '../../../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
 
 type StripeInvoiceWithSubscription = Stripe.Invoice & {
   subscription: string | Stripe.Subscription | null
@@ -13,6 +15,9 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
   constructor(
     @inject('IUserSubscriptionRepository')
     private readonly userSubscriptionRepository: IUserSubscriptionRepository,
+
+    @inject('IAdminRevenueRepository')
+    private readonly _adminRevenueRepository: IAdminRevenueRepository,
   ) {}
 
   async execute(invoice: Stripe.Invoice): Promise<void> {
@@ -45,6 +50,17 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
         status: 'active',
         paymentStatus: 'success',
       },
+    )
+    const amount = invoice.amount_paid/100;
+
+    await this._adminRevenueRepository.save(
+      {
+        revenueId: `REV_${crypto.randomUUID()}`,
+        amount,
+        referenceId: userSubscription.subscriptionId,
+        source:'subscription',
+        currency:'INR',
+      }
     )
   }
 }

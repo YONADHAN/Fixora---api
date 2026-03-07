@@ -11,6 +11,7 @@ import { ISubscriptionController } from '../../../domain/controllerInterfaces/fe
 import { IGetActiveSubscriptionPlansUseCase } from '../../../domain/useCaseInterfaces/subscription/get_active_subscription_plans_usecase.interface'
 import { ICreateSubscriptionCheckoutUseCase } from '../../../domain/useCaseInterfaces/subscription/create_subscription_checkout_usecase.interface'
 import { TRole } from '../../../shared/constants'
+import { ICheckSubscriptionForAllowUsingBenefitUseCase } from '../../../domain/useCaseInterfaces/subscription/check_subscription_for_allow_using_benefit_usecase.interface'
 
 @injectable()
 export class SubscriptionController implements ISubscriptionController {
@@ -32,6 +33,9 @@ export class SubscriptionController implements ISubscriptionController {
 
     @inject('ICreateSubscriptionCheckoutUseCase')
     private readonly createSubscriptionCheckoutUseCase: ICreateSubscriptionCheckoutUseCase,
+
+    @inject('ICheckSubscriptionForAllowUsingBenefitUseCase')
+    private readonly _checkSubscriptionForAllowUsingBenefitUseCase: ICheckSubscriptionForAllowUsingBenefitUseCase,
   ) {}
 
   async createSubscriptionPlan(
@@ -166,7 +170,22 @@ export class SubscriptionController implements ISubscriptionController {
         data: checkout,
       })
     } catch (error) {
-      console.error('SUBSCRIPTION CHECKOUT ERROR 👉', error)
+      console.error('SUBSCRIPTION CHECKOUT ERROR ', error)
+      handleErrorResponse(req, res, error)
+    }
+  }
+
+
+  async checkSubscriptionForAllowUsingBenefits(req:Request, res:Response): Promise<void> {
+    try {
+      const {userId, role} = (req as CustomRequest).user;
+      const benefit = req.params.benefit;
+      const response = await this._checkSubscriptionForAllowUsingBenefitUseCase.execute({role, userId, benefit});
+      res.status(200).json({
+        message: 'Subscripion eligibility checked successfully',
+        data: response,
+      })
+    } catch (error) {
       handleErrorResponse(req, res, error)
     }
   }
