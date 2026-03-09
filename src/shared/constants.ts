@@ -28,7 +28,9 @@ export const WALLET_TRANSACTION_SOURCES = [
   'balance-payment',
 
   'stripe-balance-payment',
-  'vendor-settlement'
+  'vendor-settlement',
+
+  'subscription',
 ] as const
 export type WalletTransactionSource =
   (typeof WALLET_TRANSACTION_SOURCES)[number]
@@ -303,6 +305,8 @@ export const ERROR_MESSAGES = {
   
 
   USER_SUBSCRIPTION_NOT_FOUND: 'User subscription not found.',
+
+  WALLET_NOT_FOUND: 'Wallet not found.',
 }
 
 export const S3_BUCKET_IMAGE_FOLDERS = {
