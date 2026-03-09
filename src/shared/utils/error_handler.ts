@@ -9,11 +9,21 @@ export const handleErrorResponse = (
   res: Response,
   error: unknown
 ) => {
-  logger.error(`[${req.method}] ${req.url} - ${(error as Error).message}`, {
-    ip: req.ip,
-    userAgent: req.headers['user-agent'],
-    stack: (error as Error).stack,
-  })
+
+  // logger.error(`[${req.method}] ${req.url} - ${(error as Error).message}`, {
+  //   ip: req.ip,
+  //   userAgent: req.headers['user-agent'],
+  //   stack: (error as Error).stack,
+  // })
+const err = error as Error
+
+logger.error({
+  route: `${req.method} ${req.originalUrl}`,
+  message: err.message,
+  stack: err.stack,
+  ip: req.ip,
+  userAgent: req.headers['user-agent'],
+})
 
   if (error instanceof ZodError) {
     return res.status(HTTP_STATUS.BAD_REQUEST).json({

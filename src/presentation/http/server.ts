@@ -51,7 +51,8 @@ export class ExpressServer {
     this._app.use(express.urlencoded({ extended: true }))
     this._app.use(cookieParser())
 
-    const logsDir = path.join(__dirname, '../../../shared/utils/logs')
+    //const logsDir = path.join(__dirname, '../../../shared/utils/logs')
+    const logsDir = path.join(process.cwd(), 'logs')
     if (!fs.existsSync(logsDir)) {
       fs.mkdirSync(logsDir, { recursive: true })
     }
@@ -67,6 +68,7 @@ export class ExpressServer {
     this._app.use('/api/v1/vendor', new VendorRoutes().router)
     this._app.use('/api/v1/customer', new CustomerRoutes().router)
   }
+  
   public getApp(): Application {
     return this._app
   }
