@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import fs from 'fs'
 import path from 'path'
-
+import { accessLogStream } from '../../shared/utils/access_logger'
 //routes
 import { AuthRoutes } from '../routes/auth_route'
 import { VendorRoutes } from '../routes/vendor_route'
@@ -51,16 +51,24 @@ export class ExpressServer {
     this._app.use(express.urlencoded({ extended: true }))
     this._app.use(cookieParser())
 
-    //const logsDir = path.join(__dirname, '../../../shared/utils/logs')
-    const logsDir = path.join(process.cwd(), 'logs')
-    if (!fs.existsSync(logsDir)) {
-      fs.mkdirSync(logsDir, { recursive: true })
-    }
-    const logStream = fs.createWriteStream(path.join(logsDir, 'access.log'), {
-      flags: 'a',
-    })
-    this._app.use(morgan('dev'))
-    this._app.use(morgan('combined', { stream: logStream }))
+
+    // const logsDir = path.join(process.cwd(), 'logs')
+    // if (!fs.existsSync(logsDir)) {
+    //   fs.mkdirSync(logsDir, { recursive: true })
+    // }
+    // const logStream = fs.createWriteStream(path.join(logsDir, 'access.log'), {
+    //   flags: 'a',
+    // })
+    // this._app.use(morgan('dev'))
+    // this._app.use(morgan('combined', { stream: logStream }))
+
+    
+    this._app.use(morgan("dev"))
+    this._app.use(
+      morgan("combined", {
+        stream: accessLogStream,
+      })
+    )
   }
   private configureRoutes(): void {
     this._app.use('/api/v1/auth', new AuthRoutes().router)
@@ -68,7 +76,7 @@ export class ExpressServer {
     this._app.use('/api/v1/vendor', new VendorRoutes().router)
     this._app.use('/api/v1/customer', new CustomerRoutes().router)
   }
-  
+
   public getApp(): Application {
     return this._app
   }

@@ -2,7 +2,7 @@ import { ZodError } from 'zod'
 import { Request, Response } from 'express'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../constants'
 import { CustomError } from '../../domain/utils/custom.error'
-import logger from './error.logger'
+import logger from './error_logger'
 
 export const handleErrorResponse = (
   req: Request,
