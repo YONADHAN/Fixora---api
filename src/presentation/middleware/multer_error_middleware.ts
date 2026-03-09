@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express'
 
 
 export const handleMulterError =
-  (uploadFn: (req: Request, res: Response, cb: (err?: Error) => void) => void) =>
+  (uploadFn: (req: Request, res: Response, cb: (err?: any) => void) => void) =>
     (req: Request, res: Response, next: NextFunction): void => {
       uploadFn(req, res, (err) => {
         if (err instanceof multer.MulterError) {
