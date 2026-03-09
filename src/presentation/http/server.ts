@@ -6,8 +6,7 @@ import { config } from '../../shared/config'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
-import fs from 'fs'
-import path from 'path'
+
 import { accessLogStream } from '../../shared/utils/access_logger'
 //routes
 import { AuthRoutes } from '../routes/auth_route'
@@ -52,15 +51,7 @@ export class ExpressServer {
     this._app.use(cookieParser())
 
 
-    // const logsDir = path.join(process.cwd(), 'logs')
-    // if (!fs.existsSync(logsDir)) {
-    //   fs.mkdirSync(logsDir, { recursive: true })
-    // }
-    // const logStream = fs.createWriteStream(path.join(logsDir, 'access.log'), {
-    //   flags: 'a',
-    // })
-    // this._app.use(morgan('dev'))
-    // this._app.use(morgan('combined', { stream: logStream }))
+  
 
     
     this._app.use(morgan("dev"))

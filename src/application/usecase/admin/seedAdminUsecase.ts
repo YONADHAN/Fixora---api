@@ -32,7 +32,7 @@ export class SeedAdminUseCase {
       throw new CustomError("Seed admin phone number is not given", HTTP_STATUS.BAD_REQUEST)
     }
     await this.adminRepository.save({
-      userId: uuidv4(),
+      userId: uuidv4(), 
       name,
       email:email.trim().toLowerCase(),
       phone,
