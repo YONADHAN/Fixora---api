@@ -32,7 +32,7 @@ export class NotificationController implements INotificationController {
 
   async getMyNotifications(req: Request, res: Response): Promise<void> {
     try {
-      const { cursor, limit = 10, filter = 'all', search } = req.query as any
+      const { cursor, limit = 10, filter = 'all', search } = req.query
       const user = (req as CustomRequest).user
 
       const result = await this.getMyNotificationsUseCase.execute({

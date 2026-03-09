@@ -83,7 +83,7 @@ export const verifyAuth = async (
       return
     }
 
-    ; (req as CustomRequest).user = {
+    (req as CustomRequest).user = {
       ...user,
       access_token: token.access_token,
       refresh_token: token.refresh_token,

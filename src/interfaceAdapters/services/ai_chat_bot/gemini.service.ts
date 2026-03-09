@@ -23,7 +23,7 @@ export class GeminiService implements IGeminiService {
     message: string
     history?: any[]
     tools: any[]
-    toolMap: Record<string, Function>
+   toolMap: Record<string, (args: unknown) => Promise<unknown>>
   }): Promise<string> {
     const { systemPrompt, message, history = [], tools, toolMap } = params
 

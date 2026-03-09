@@ -346,7 +346,7 @@ export class BookingServices implements IBookingServices {
 
   removeHeldSlots = async (
     timeline: Timeline,
-    service: IServiceEntity
+    // service: IServiceEntity
   ): Promise<Timeline> => {
     // Redis
     return timeline

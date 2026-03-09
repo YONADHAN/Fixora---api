@@ -6,7 +6,8 @@ import { CustomError } from '../../../../domain/utils/custom.error';
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants';
 import { ICheckSubscriptionForAllowUsingBenefitForVendorStrategy } from './check_subsciption_for_allow_using_benefit_for_vendor_strategy.interface';
 import { CheckSubscriptionForAllowUsingBenefitRequestDTO, CheckSubscriptionForAllowUsingBenefitResponseDTO } from '../../../dtos/subscription_dto';
-type BenefitKey = 'videoCallAccess' | 'aiChatbotAccess' 
+type BenefitKey = 'videoCallAccess' | 'aiChatbotAccess'
+const allowedBenefits: BenefitKey[] = ['videoCallAccess','aiChatbotAccess']
 @injectable()
 export class CheckSubscriptionForAllowUsingBenefitForVendor implements ICheckSubscriptionForAllowUsingBenefitForVendorStrategy {
     constructor(
@@ -19,7 +20,7 @@ export class CheckSubscriptionForAllowUsingBenefitForVendor implements ICheckSub
         @inject('ISubscriptionPlanRepository')
         private readonly _subscriptionPlanRepository: ISubscriptionPlanRepository,
     ) { }
-    async execute(input:CheckSubscriptionForAllowUsingBenefitRequestDTO):Promise<CheckSubscriptionForAllowUsingBenefitResponseDTO> {
+    async execute(input: CheckSubscriptionForAllowUsingBenefitRequestDTO): Promise<CheckSubscriptionForAllowUsingBenefitResponseDTO> {
         const vendor = await this._vendorRepository.findOne({ userId: input.userId })
         if (!vendor) {
             throw new CustomError(ERROR_MESSAGES.USERS_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
@@ -38,10 +39,10 @@ export class CheckSubscriptionForAllowUsingBenefitForVendor implements ICheckSub
         if (!subscription) {
             throw new CustomError(ERROR_MESSAGES.SUBSCRIPTION_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
         }
-        if(input.benefit !='videoCallAccess' || 'aiChatbotAccess' ){
-            throw new CustomError("Benefit not found", HTTP_STATUS.METHOD_NOT_ALLOWED)
-        }
-        if(subscription.isActive==false){
+       if(!allowedBenefits.includes(input.benefit as BenefitKey)) {
+        throw new CustomError("Benefit not found", HTTP_STATUS.METHOD_NOT_ALLOWED)
+       }
+        if (!subscription.isActive) {
             throw new CustomError(ERROR_MESSAGES.SUBSCRIPTION_IS_NOT_ACTIVE_NOW, HTTP_STATUS.NOT_FOUND)
         }
         // subscription.status === ACTIVE
@@ -56,6 +57,6 @@ export class CheckSubscriptionForAllowUsingBenefitForVendor implements ICheckSub
             )
         }
 
-        return {data: true};
+        return { data: true };
     }
 }

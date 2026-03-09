@@ -75,7 +75,7 @@ export class ServiceController implements IServiceController {
   async getAllServices(req: Request, res: Response): Promise<void> {
     try {
       const vendorId = (req as CustomRequest).user?.userId
-      let validated = getAllServicesZodValidationSchema.parse({
+      const validated = getAllServicesZodValidationSchema.parse({
         query: { ...req.query, vendorId },
       })
 

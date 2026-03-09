@@ -5,7 +5,8 @@ import { IReviewAnalyticsStrategy } from './IReviewAnalyticsStrategy'
 @injectable()
 export class ReviewAnalyticsStrategyForVendor implements IReviewAnalyticsStrategy {
     constructor() { }
-    async execute(input: DashboardStatsInputDTO): Promise<any> {
+    async execute(
+        input: DashboardStatsInputDTO): Promise<any> {
         return {}
     }
 }

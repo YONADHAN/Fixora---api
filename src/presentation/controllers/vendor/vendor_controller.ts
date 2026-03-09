@@ -67,11 +67,15 @@ export class VendorController implements IVendorController {
         message: 'Documents uploaded and saved successfully',
         urls,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(' Upload failed:', error)
-      res
-        .status(500)
-        .json({ message: error.message || 'Failed to upload files' })
+      if (error instanceof Error) {
+
+        res
+          .status(500)
+          .json({ message: error.message || 'Failed to upload files' })
+      }
+
     }
   }
 
@@ -136,7 +140,7 @@ export class VendorController implements IVendorController {
         return
       }
 
-      
+
       const bucketName = config.storageConfig.bucket!
       const folder = 'profile-images'
 

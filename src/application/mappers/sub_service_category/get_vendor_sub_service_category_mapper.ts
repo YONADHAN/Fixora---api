@@ -26,9 +26,9 @@ export class GetVendorSubServiceCategoriesResponseMapper {
     currentPage: number
     totalPages: number
   }) {
-    let filteredServiceData = []
+    const filteredServiceData = []
     for (let i = 0; i < response.data.length; i++) {
-      let document = response.data[i]
+      const document = response.data[i]
       const filteredDoc = {
         subServiceCategoryId: document.subServiceCategoryId,
         serviceCategoryId: document.serviceCategory?.serviceCategoryId || '',

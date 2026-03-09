@@ -4,6 +4,6 @@ export interface IGeminiService {
     message: string
     history?: any[]
     tools: any[]
-    toolMap: Record<string, Function>
+    toolMap: Record<string, (args: unknown) => Promise<unknown>>
   }): Promise<string>
 }

@@ -7,7 +7,7 @@ import { ISummaryAnalyticsStrategy } from './ISummaryAnalyticsStrategy'
 import { ICustomerRepository } from '../../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IVendorRepository } from '../../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IBookingRepository } from '../../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
-import { IPaymentRepository } from '../../../../domain/repositoryInterfaces/feature/payment/payment_repository.interface'
+
 import { IAdminRevenueRepository } from '../../../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
 @injectable()
 export class SummaryAnalyticsStrategyForAdmin implements ISummaryAnalyticsStrategy {
@@ -31,7 +31,7 @@ export class SummaryAnalyticsStrategyForAdmin implements ISummaryAnalyticsStrate
   async execute(
     input: DashboardStatsInputDTO,
   ): Promise<SummaryAnalyticsResponseDTO> {
-    const { from, to } = input.dateRange
+    // const { from, to } = input.dateRange
 
     const [
       blockedCustomerCount,
