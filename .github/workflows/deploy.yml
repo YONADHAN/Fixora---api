@@ -1,4 +1,4 @@
-name: Fixora Backend CI/CD
+name: Deploy Fixora API
 
 on:
   push:
@@ -6,23 +6,28 @@ on:
       - master
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Node
-        uses: actions/setup-node@v4
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          node-version: 22
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/Fixora---api
+            git pull origin master
 
-      - name: Install dependencies
-        run: npm install
+            docker stop fixora-api || true
+            docker rm fixora-api || true
 
-      - name: Build project
-        run: npm run build
+            docker build -t fixora-api .
 
-      - name: Build Docker image
-        run: docker build -t fixora-api .
+            docker run -d \
+              -p 4000:4000 \
+              --name fixora-api \
+              --restart always \
+              --env-file .env \
+              fixora-api
