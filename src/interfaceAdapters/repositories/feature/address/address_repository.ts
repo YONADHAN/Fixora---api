@@ -11,6 +11,7 @@ import { IAddressEntity } from '../../../../domain/models/address_entity'
 import { AddressMongoBase } from '../../../database/mongoDb/types/address_mongo_base'
 import { CustomError } from '../../../../domain/utils/custom.error'
 import { FilterQuery } from 'mongoose'
+import { HTTP_STATUS } from '../../../../shared/constants'
 
 @injectable()
 export class AddressRepository
@@ -96,7 +97,7 @@ export class AddressRepository
       !Array.isArray(geoLocation.coordinates) ||
       geoLocation.coordinates.length !== 2
     ) {
-      throw new CustomError('Invalid geoLocation format', 400)
+      throw new CustomError('Invalid geoLocation format', HTTP_STATUS.BAD_REQUEST)
     }
   }
 
@@ -169,7 +170,7 @@ export class AddressRepository
     )
 
     if (result.matchedCount === 0) {
-      throw new CustomError('Address not found', 404)
+      throw new CustomError('Address not found', HTTP_STATUS.NOT_FOUND)
     }
   }
 }

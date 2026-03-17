@@ -5,6 +5,7 @@ import Stripe from 'stripe'
 import { config } from '../../../shared/config'
 import { CreatePaymentIntentResponseDTO } from '../../dtos/booking_hold_dto'
 import { ICreateStripePaymentIntentUseCase } from '../../../domain/useCaseInterfaces/booking_hold/create_stripe_payment_intent_usecase_interface'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 export const stripe = new Stripe(config.stripe.STRIPE_SECRET_KEY)
 
@@ -21,10 +22,10 @@ export class CreateStripePaymentIntentUseCase
     const holdId = validatedDTO
     const hold = await this.bookingHoldRepository.findActiveHoldById(holdId)
     if (!hold) {
-      throw new CustomError('Booking hold not found or expired', 404)
+      throw new CustomError('Booking hold not found or expired', HTTP_STATUS.NOT_FOUND)
     }
     if (hold.expiresAt < new Date()) {
-      throw new CustomError('Booking hold expired', 410)
+      throw new CustomError('Booking hold expired', HTTP_STATUS.GONE)
     }
 
     if (hold.stripePaymentIntentId) {

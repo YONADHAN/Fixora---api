@@ -11,6 +11,7 @@ import { IBookingHoldRepository } from '../../../../domain/repositoryInterfaces/
 import { IBookingHoldEntity } from '../../../../domain/models/booking_hold_entity'
 import { BookingHoldMongoBase } from '../../../database/mongoDb/types/booking_hold_base'
 import { CustomError } from '../../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../../shared/constants'
 
 @injectable()
 export class BookingHoldRepository
@@ -24,7 +25,7 @@ export class BookingHoldRepository
 
   private validateObjectId(id: string | undefined, fieldName: string): void {
     if (id && !Types.ObjectId.isValid(id)) {
-      throw new CustomError(`Invalid ${fieldName}`, 400)
+      throw new CustomError(`Invalid ${fieldName}`, HTTP_STATUS.BAD_REQUEST)
     }
   }
 

@@ -10,6 +10,7 @@ import {
 } from '../../../domain/repositoryInterfaces/feature/chat/get_chat_messages_usecase.interface'
 
 import { CustomError } from '../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../shared/constants'
 @injectable()
 export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
   constructor(
@@ -26,7 +27,7 @@ export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
     const chat = await this._chatRepository.findByChatId(chatId)
 
     if (!chat) {
-      throw new CustomError('Chat not found', 404)
+      throw new CustomError('Chat not found', HTTP_STATUS.NOT_FOUND)
     }
 
     const isCustomer =
@@ -36,7 +37,7 @@ export class GetChatMessagesUseCase implements IGetChatMessagesUseCase {
       requesterRole === 'vendor' && chat.vendor?.userId === requesterId
 
     if (!isCustomer && !isVendor) {
-      throw new CustomError('You are not allowed to view this chat', 403)
+      throw new CustomError('You are not allowed to view this chat', HTTP_STATUS.FORBIDDEN)
     }
 
     const result = await this._messageRepository.findMessagesByChatId(

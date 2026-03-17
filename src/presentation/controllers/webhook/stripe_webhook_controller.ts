@@ -12,6 +12,7 @@ import { ISubscriptionCheckoutCompletedUseCase } from '../../../domain/useCaseIn
 import { ISubscriptionInvoicePaidUseCase } from '../../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_invoice_paid_usecase.interface'
 import { ISubscriptionInvoiceFailedUseCase } from '../../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_invoice_failed_usecase.interface'
 import { ISubscriptionCancelledUseCase } from '../../../domain/useCaseInterfaces/subscription/webhook_usecase_interfaces_for_subscription/subscription_cancelled_usecase.interface'
+import { HTTP_STATUS } from '../../../shared/constants'
 const stripe = new Stripe(config.stripe.STRIPE_SECRET_KEY)
 
 @injectable()
@@ -48,7 +49,7 @@ export class StripeWebhookController implements IStripeWebhookController {
       const sig = req.headers['stripe-signature']
 
       if (!sig) {
-        res.status(400).send('Missing stripe signature')
+        res.status(HTTP_STATUS.BAD_REQUEST).send('Missing stripe signature')
         return
       }
 
@@ -61,7 +62,7 @@ export class StripeWebhookController implements IStripeWebhookController {
           config.stripe.STRIPE_WEBHOOK_SECRET,
         )
       } catch (err) {
-        res.status(400).send('Webhook signature verification failed')
+        res.status(HTTP_STATUS.BAD_REQUEST).send('Webhook signature verification failed')
         return
       }
 

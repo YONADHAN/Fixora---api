@@ -4,6 +4,7 @@ import { injectable } from 'tsyringe'
 import { IBookingServices } from '../../domain/serviceInterfaces/booking_service_interface'
 import { IBookingEntity } from '../../domain/models/booking_entity'
 import { GetAvailableSlotsForCustomerResponseDTO } from '../../application/dtos/booking_dto'
+import { HTTP_STATUS } from '../../shared/constants'
 
 type TimeWindow = {
   start: Date
@@ -39,22 +40,22 @@ export class BookingServices implements IBookingServices {
 
   validationChecker = (service: IServiceEntity | null) => {
     if (!service) {
-      throw new CustomError('Service not found', 404)
+      throw new CustomError('Service not found', HTTP_STATUS.NOT_FOUND)
     }
 
     if (!service.isActiveStatusByAdmin || !service.isActiveStatusByVendor) {
-      throw new CustomError('Service is not active', 403)
+      throw new CustomError('Service is not active', HTTP_STATUS.FORBIDDEN)
     }
 
     if (!service.schedule.slotDurationMinutes) {
-      throw new CustomError('Slot duration not configured', 400)
+      throw new CustomError('Slot duration not configured', HTTP_STATUS.BAD_REQUEST)
     }
 
     if (
       !service.schedule.dailyWorkingWindows ||
       service.schedule.dailyWorkingWindows.length === 0
     ) {
-      throw new CustomError('Daily working windows not configured', 400)
+      throw new CustomError('Daily working windows not configured', HTTP_STATUS.BAD_REQUEST)
     }
   }
 

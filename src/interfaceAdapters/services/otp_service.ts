@@ -28,11 +28,11 @@ export class OtpService implements IOtpService {
     const otpEntry = await this._otpRepository.findLatestOtp(email)
 
     if (!otpEntry) {
-      throw new CustomError('Invalid OTP', 400)
+      throw new CustomError('Invalid OTP', HTTP_STATUS.BAD_REQUEST)
     }
 
     if (new Date() > otpEntry.expiresAt) {
-      throw new CustomError('OTP Expired, Please retry.', 410)
+      throw new CustomError('OTP Expired, Please retry.', HTTP_STATUS.GONE)
     }
 
     if (!(await this._otpBcrypt.compare(otp, otpEntry.otp))) {

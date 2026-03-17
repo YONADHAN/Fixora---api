@@ -11,6 +11,7 @@ import { IChatRepository } from '../../../../domain/repositoryInterfaces/feature
 import { IChatEntity } from '../../../../domain/models/chat_entity'
 import { ChatMongoBase } from '../../../database/mongoDb/types/chat_mongo_base'
 import { CustomError } from '../../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../../shared/constants'
 
 @injectable()
 export class ChatRepository
@@ -95,7 +96,7 @@ export class ChatRepository
       return this.toEntity(created.toObject() as ChatMongoBase)
     } catch (error: any) {
       if (error.code === 11000) {
-        throw new CustomError('Chat already exists', 409)
+        throw new CustomError('Chat already exists', HTTP_STATUS.CONFLICT)
       }
       throw error
     }

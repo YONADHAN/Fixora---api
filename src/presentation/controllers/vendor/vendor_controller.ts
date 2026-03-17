@@ -47,7 +47,7 @@ export class VendorController implements IVendorController {
       const files = req.files as Express.Multer.File[]
 
       if (!files || files.length === 0) {
-        res.status(400).json({ message: 'No files uploaded' })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No files uploaded' })
         return
       }
 
@@ -62,7 +62,7 @@ export class VendorController implements IVendorController {
 
       await this._uploadVendorDocsUsecase.execute(userId, files, urls)
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Documents uploaded and saved successfully',
         urls,
@@ -72,7 +72,7 @@ export class VendorController implements IVendorController {
       if (error instanceof Error) {
 
         res
-          .status(500)
+          .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
           .json({ message: error.message || 'Failed to upload files' })
       }
 
@@ -91,7 +91,7 @@ export class VendorController implements IVendorController {
       const accessTokenName = `${user.role}_access_token`
       const refreshTokenName = `${user.role}_refresh_token`
       clearAuthCookies(res, accessTokenName, refreshTokenName)
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Logged out successfully',
       })
@@ -136,7 +136,7 @@ export class VendorController implements IVendorController {
       const file = req.file as Express.Multer.File
 
       if (!file) {
-        res.status(400).json({ message: 'No file uploaded' })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No file uploaded' })
         return
       }
 
@@ -157,7 +157,7 @@ export class VendorController implements IVendorController {
         uploadedProfileImageUrl
       )
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Profile image updated successfully',
         imageUrl: uploadedProfileImageUrl,

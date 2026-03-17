@@ -37,27 +37,27 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
     const { serviceId, slots, paymentMethod, addressId } = validatedDTO
 
     if (!slots.length) {
-      throw new CustomError('At least one slot is required', 400)
+      throw new CustomError('At least one slot is required', HTTP_STATUS.BAD_REQUEST)
     }
 
     const service = await this._serviceRepository.findOne({ serviceId })
     if (!service) {
-      throw new CustomError('Service not found', 404)
+      throw new CustomError('Service not found', HTTP_STATUS.NOT_FOUND)
     }
 
     if (!service.isActiveStatusByAdmin || !service.isActiveStatusByVendor) {
-      throw new CustomError('Service is not active', 400)
+      throw new CustomError('Service is not active', HTTP_STATUS.BAD_REQUEST)
     }
 
     const customer = await this._customerRepository.findOne({
       userId: customerId,
     })
     if (!customer || !customer._id) {
-      throw new CustomError('Customer not found', 404)
+      throw new CustomError('Customer not found', HTTP_STATUS.NOT_FOUND)
     }
 
     if (!customer.status) {
-      throw new CustomError('Customer is blocked', 403)
+      throw new CustomError('Customer is blocked', HTTP_STATUS.FORBIDDEN)
     }
 
     const lockedSlots: { date: string; start: string }[] = []

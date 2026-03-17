@@ -3,6 +3,7 @@ import * as cookie from 'cookie'
 
 import { JWTService } from '../../interfaceAdapters/services/jwt_service'
 import { CustomError } from '../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../shared/constants'
 
 const tokenService = new JWTService()
 
@@ -59,10 +60,10 @@ export const socketAuthMiddleware = (
             ' Access token invalid, but Refresh token present. Rejecting to force re-auth.',
           )
 
-          return next(new CustomError('Authentication error', 401))
+          return next(new CustomError('Authentication error', HTTP_STATUS.UNAUTHORIZED))
         }
 
-        return next(new CustomError('Invalid socket token', 401))
+        return next(new CustomError('Invalid socket token', HTTP_STATUS.UNAUTHORIZED))
       }
 
       const payload = decoded as AccessTokenPayload
@@ -87,6 +88,6 @@ export const socketAuthMiddleware = (
   } catch (error) {
     console.log(' Socket auth middleware error:', error)
 
-    return next(new CustomError('Invalid socket token', 401))
+    return next(new CustomError('Invalid socket token', HTTP_STATUS.UNAUTHORIZED))
   }
 }

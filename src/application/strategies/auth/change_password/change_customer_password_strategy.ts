@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe'
 import bcrypt from 'bcryptjs'
 import { ICustomerRepository } from '../../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { CustomError } from '../../../../domain/utils/custom.error'
-import { ERROR_MESSAGES } from '../../../../shared/constants'
+import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { IChangeCustomerPasswordStrategy } from './change_customer_password_strategy.interface'
 
 @injectable()
@@ -18,7 +18,7 @@ export class ChangeCustomerPasswordStrategy
     const customer = await this._customerRepository.findOne({ userId })
 
     if (!customer) {
-      throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, 404)
+      throw new CustomError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -26,7 +26,7 @@ export class ChangeCustomerPasswordStrategy
       customer.password
     )
     if (!isPasswordValid) {
-      throw new CustomError('Current password is invalid', 400)
+      throw new CustomError('Current password is invalid', HTTP_STATUS.BAD_REQUEST)
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)

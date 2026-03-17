@@ -10,7 +10,7 @@ import { CustomRequest } from '../../middleware/auth_middleware'
 import { ISubscriptionController } from '../../../domain/controllerInterfaces/features/subscription/subscription-controller.interface'
 import { IGetActiveSubscriptionPlansUseCase } from '../../../domain/useCaseInterfaces/subscription/get_active_subscription_plans_usecase.interface'
 import { ICreateSubscriptionCheckoutUseCase } from '../../../domain/useCaseInterfaces/subscription/create_subscription_checkout_usecase.interface'
-import { TRole } from '../../../shared/constants'
+import { HTTP_STATUS, TRole } from '../../../shared/constants'
 import { ICheckSubscriptionForAllowUsingBenefitUseCase } from '../../../domain/useCaseInterfaces/subscription/check_subscription_for_allow_using_benefit_usecase.interface'
 
 @injectable()
@@ -45,7 +45,7 @@ export class SubscriptionController implements ISubscriptionController {
     try {
       const adminId = (req as CustomRequest).user.userId
       if (!adminId) {
-        res.status(401).json({ message: 'Unauthorized' })
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: 'Unauthorized' })
         return
       }
 
@@ -54,7 +54,7 @@ export class SubscriptionController implements ISubscriptionController {
         createdByAdminId: adminId,
       })
 
-      res.status(201).json({
+      res.status(HTTP_STATUS.CREATED).json({
         message: 'Subscription plan created successfully',
         data: result,
       })
@@ -76,7 +76,7 @@ export class SubscriptionController implements ISubscriptionController {
         search,
       })
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         message: 'Subscription plans fetched successfully',
         data: plans,
       })
@@ -97,7 +97,7 @@ export class SubscriptionController implements ISubscriptionController {
         ...req.body,
       })
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         message: 'Subscription plan updated successfully',
         data: updatedPlan,
       })
@@ -116,7 +116,7 @@ export class SubscriptionController implements ISubscriptionController {
       const updatedPlan =
         await this.toggleSubscriptionPlanStatusUseCase.execute({ planId })
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         message: 'Subscription plan status updated successfully',
         data: updatedPlan,
       })
@@ -138,7 +138,7 @@ export class SubscriptionController implements ISubscriptionController {
         search,
       })
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         message: 'Active subscription plans fetched successfully',
         data: plans,
       })
@@ -153,7 +153,7 @@ export class SubscriptionController implements ISubscriptionController {
       const role = (req as CustomRequest).user?.role as TRole
 
       if (!userId || !role) {
-        res.status(401).json({ message: 'Unauthorized' })
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: 'Unauthorized' })
         return
       }
 
@@ -165,7 +165,7 @@ export class SubscriptionController implements ISubscriptionController {
         planId,
       })
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         message: 'Subscription checkout created successfully',
         data: checkout,
       })
@@ -181,7 +181,7 @@ export class SubscriptionController implements ISubscriptionController {
       const {userId, role} = (req as CustomRequest).user;
       const benefit = req.params.benefit;
       const response = await this._checkSubscriptionForAllowUsingBenefitUseCase.execute({role, userId, benefit});
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         message: 'Subscripion eligibility checked successfully',
         data: response,
       })

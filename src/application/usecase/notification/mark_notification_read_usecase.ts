@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe'
 import { IMarkNotificationReadUseCase } from '../../../domain/useCaseInterfaces/notification/mark_notification_read_usecase.interface'
 import { INotificationRepository } from '../../../domain/repositoryInterfaces/feature/notification/notification_repository.interface'
 import { CustomError } from '../../../domain/utils/custom.error'
-import { ERROR_MESSAGES } from '../../../shared/constants'
+import { ERROR_MESSAGES, HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class MarkNotificationReadUseCase
@@ -21,7 +21,7 @@ export class MarkNotificationReadUseCase
     })
 
     if (!notification) {
-      throw new CustomError(ERROR_MESSAGES.NOTIFICATION_NOT_FOUND, 404)
+      throw new CustomError(ERROR_MESSAGES.NOTIFICATION_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
     await this.notificationRepository.markAsRead(notificationId)

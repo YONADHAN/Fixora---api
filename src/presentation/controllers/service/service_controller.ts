@@ -150,7 +150,7 @@ export class ServiceController implements IServiceController {
       const result = await this._toggleBlockServiceUseCase.execute(
         validated.params
       )
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: `Service ${result.isActiveStatusByVendor ? 'unblocked' : 'blocked'} successfully`,
         data: result,
@@ -171,7 +171,7 @@ export class ServiceController implements IServiceController {
       const response =
         await this._searchServicesForCustomersUseCase.execute(validatedDTO)
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Service found successfully',
         data: response,

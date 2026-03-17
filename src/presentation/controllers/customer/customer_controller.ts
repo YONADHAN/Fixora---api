@@ -55,7 +55,7 @@ export class CustomerController implements ICustomerController {
       const accessTokenName = `${user.role}_access_token`
       const refreshTokenName = `${user.role}_refresh_token`
       clearAuthCookies(res, accessTokenName, refreshTokenName)
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Logged out successfully',
       })
@@ -100,7 +100,7 @@ export class CustomerController implements ICustomerController {
       const file = req.file as Express.Multer.File
 
       if (!file) {
-        res.status(400).json({ message: 'No file uploaded' })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No file uploaded' })
         return
       }
 
@@ -119,7 +119,7 @@ export class CustomerController implements ICustomerController {
         uploadedProfileImageUrl
       )
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Profile image updated successfully',
         imageUrl: uploadedProfileImageUrl,

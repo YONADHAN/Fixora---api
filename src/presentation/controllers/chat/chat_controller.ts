@@ -8,6 +8,7 @@ import { IGetUserChatsUseCase } from '../../../domain/useCaseInterfaces/chat/get
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { IChatController } from '../../../domain/controllerInterfaces/features/chat/chat-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class ChatController implements IChatController {
@@ -35,12 +36,12 @@ export class ChatController implements IChatController {
         limit: Number(limit),
       })
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         data: result,
       })
     } catch (error: any) {
-      res.status(error.statusCode || 500).json({
+      res.status(error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: error.message || 'Internal Server Error',
       })
@@ -58,16 +59,13 @@ export class ChatController implements IChatController {
         requesterRole: user.role as 'customer' | 'vendor',
       })
 
-      res.status(201).json({
+      res.status(HTTP_STATUS.CREATED).json({
         success: true,
         message: 'Chat initiated successfully',
         data: { chatId },
       })
     } catch (error) {
-      // res.status(error.statusCode || 500).json({
-      //   success: false,
-      //   message: error.message || 'Internal Server Error',
-      // })
+    
       handleErrorResponse(req, res, error)
     }
   }
@@ -81,12 +79,12 @@ export class ChatController implements IChatController {
         user.role as string,
       )
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         data: chats,
       })
     } catch (error: any) {
-      res.status(error.statusCode || 500).json({
+      res.status(error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: error.message || 'Internal Server Error',
       })

@@ -10,6 +10,7 @@ import { INotificationRepository } from '../../../../domain/repositoryInterfaces
 import { INotificationEntity } from '../../../../domain/models/notification_entity'
 import { NotificationMongoBase } from '../../../database/mongoDb/types/notification_mongo_base'
 import { CustomError } from '../../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../../shared/constants'
 
 @injectable()
 export class NotificationRepository
@@ -126,7 +127,7 @@ export class NotificationRepository
     )
 
     if (result.matchedCount === 0) {
-      throw new CustomError('Notification not found', 404)
+      throw new CustomError('Notification not found', HTTP_STATUS.NOT_FOUND)
     }
   }
 

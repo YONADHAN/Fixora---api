@@ -4,6 +4,7 @@ import { IChangeAdminPasswordStrategy } from '../../../strategies/auth/change_pa
 import { IChangeVendorPasswordStrategy } from '../../../strategies/auth/change_password/change_vendor_password_strategy.interface'
 import { IChangeCustomerPasswordStrategy } from '../../../strategies/auth/change_password/change_customer_password_strategy.interface'
 import { CustomError } from '../../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../../shared/constants'
 @injectable()
 export class ChangePasswordFactory implements IChangePasswordFactory {
   constructor(
@@ -41,7 +42,7 @@ export class ChangePasswordFactory implements IChangePasswordFactory {
           userId
         )
       default:
-        throw new CustomError('Invalid role provided', 400)
+        throw new CustomError('Invalid role provided', HTTP_STATUS.BAD_REQUEST)
     }
   }
 }

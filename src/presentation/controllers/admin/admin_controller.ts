@@ -53,7 +53,7 @@ export class AdminController implements IAdminController {
       const accessTokenName = `${user.role}_access_token`
       const refreshTokenName = `${user.role}_refresh_token`
       clearAuthCookies(res, accessTokenName, refreshTokenName)
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: 'Logged out successfully',
       })

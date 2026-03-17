@@ -11,6 +11,7 @@ import {
 } from '../../../domain/useCaseInterfaces/chat/send_message_usecase.interface'
 
 import { CustomError } from '../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -36,7 +37,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     const chat = await this.chatRepository.findByChatId(chatId)
 
     if (!chat) {
-      throw new CustomError('Chat not found', 404)
+      throw new CustomError('Chat not found', HTTP_STATUS.NOT_FOUND)
     }
 
     const isCustomer =
@@ -44,7 +45,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     const isVendor = senderRole === 'vendor' && chat.vendor!.userId === senderId
 
     if (!isCustomer && !isVendor) {
-      throw new CustomError('You are not a participant of this chat', 403)
+      throw new CustomError('You are not a participant of this chat', HTTP_STATUS.FORBIDDEN)
     }
 
     const message = await this.messageRepository.createMessage({

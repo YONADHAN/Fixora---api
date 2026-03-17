@@ -9,6 +9,7 @@ import {
 } from '../../../domain/useCaseInterfaces/chat/mark_chat_read_usecase.interface'
 
 import { CustomError } from '../../../domain/utils/custom.error'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class MarkChatReadUseCase implements IMarkChatReadUseCase {
@@ -27,7 +28,7 @@ export class MarkChatReadUseCase implements IMarkChatReadUseCase {
     const chat = await this.chatRepository.findByChatId(chatId)
 
     if (!chat) {
-      throw new CustomError('Chat not found', 404)
+      throw new CustomError('Chat not found', HTTP_STATUS.NOT_FOUND)
     }
 
 
@@ -35,7 +36,7 @@ export class MarkChatReadUseCase implements IMarkChatReadUseCase {
     const isVendor = readerRole === 'vendor' && chat.vendor?.userId === readerId
 
     if (!isCustomer && !isVendor) {
-      throw new CustomError('You are not allowed to read this chat', 403)
+      throw new CustomError('You are not allowed to read this chat', HTTP_STATUS.FORBIDDEN)
     }
 
 

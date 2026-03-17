@@ -15,6 +15,7 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 import { BookingDashboardResponseDTO } from '../../../../application/dtos/dashboard_dto'
 import {
   DATE_FORMAT_MAP,
+  HTTP_STATUS,
   timeGranularityType,
 } from '../../../../shared/constants'
 
@@ -28,7 +29,7 @@ export class BookingRepository
 
   private validateObjectId(id: string | undefined, fieldName: string): void {
     if (id && !Types.ObjectId.isValid(id)) {
-      throw new CustomError(`Invalid ${fieldName}`, 400)
+      throw new CustomError(`Invalid ${fieldName}`, HTTP_STATUS.BAD_REQUEST)
     }
   }
 

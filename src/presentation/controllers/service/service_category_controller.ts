@@ -80,7 +80,7 @@ export class ServiceCategoryController implements IServiceCategoryController {
         bannerImage
       )
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.SERVICE_CATEGORIES_EDITED_SUCCESSFULLY,
       })

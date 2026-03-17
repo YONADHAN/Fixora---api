@@ -4,6 +4,7 @@ import { inject, injectable } from 'tsyringe'
 import { IGetWalletUseCase } from '../../../domain/useCaseInterfaces/wallet/get_my_wallet_usecase_interface'
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { IWalletController } from '../../../domain/controllerInterfaces/features/wallet/wallet-controller.interface'
+import { HTTP_STATUS } from '../../../shared/constants'
 
 @injectable()
 export class WalletController implements IWalletController {
@@ -33,7 +34,7 @@ export class WalletController implements IWalletController {
       search,
     })
 
-    res.status(200).json({
+    res.status(HTTP_STATUS.OK).json({
       success: true,
       ...data,
     })
