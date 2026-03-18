@@ -106,3 +106,14 @@ export interface CustomerDashboardStatsResponseDTO {
   summary: SummaryAnalyticsResponseDTO,
   booking: BookingDashboardResponseDTO,
 }
+
+export interface PaymentAnalyticsDTO {
+  totalRevenue: number
+  totalTransactions: number
+  successRate: number
+}
+
+
+export interface ReviewAnalyticsDTO {
+  totalComments: 0
+}
