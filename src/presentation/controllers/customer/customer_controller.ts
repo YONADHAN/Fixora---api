@@ -84,7 +84,7 @@ export class CustomerController implements ICustomerController {
       const data = req.body
       const userId = (req as CustomRequest).user.userId
       const role = (req as CustomRequest).user.role
-
+console.log("Profile update controller, ", data)
       await this._profileInfoUpdateUseCase.execute(role, data, userId)
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.PROFILE_UPDATED_SUCCESSFULLY,

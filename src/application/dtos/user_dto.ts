@@ -109,3 +109,7 @@ export interface SafeUserDTO {
     zipCode?: string
   }
 }
+
+
+
+

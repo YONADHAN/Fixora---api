@@ -2,6 +2,7 @@ import { inject, injectable } from 'tsyringe'
 import { IProfileUpdateFactory } from './profile_update_factory.interface'
 import { ICustomerProfileUpdateStrategy } from '../../../strategies/commonFeatures/profile/customer_profile_update_strategy.interface'
 import { IVendorProfileUpdateStrategy } from '../../../strategies/commonFeatures/profile/vendor_profile_update_strategy.interface'
+import { ProfileUpdateDTO } from '../../../dtos/profile_update_dto'
 
 @injectable()
 export class ProfileUpdateFactory implements IProfileUpdateFactory {
@@ -11,7 +12,7 @@ export class ProfileUpdateFactory implements IProfileUpdateFactory {
     @inject('IVendorProfileUpdateStrategy')
     private _vendorStrategy: IVendorProfileUpdateStrategy
   ) { }
-  getStrategy(role: string, data: any, userId: string) {
+  getStrategy(role: string, data: ProfileUpdateDTO, userId: string) {
     switch (role.toLowerCase()) {
       case 'customer':
         return this._customerStrategy.execute({ data, userId })
