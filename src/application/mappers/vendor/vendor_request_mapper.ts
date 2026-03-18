@@ -20,7 +20,7 @@ export class VendorRequestMapper {
     }
   }
 
-  static toDTOList(vendors: any[]): VendorRequestDTO[] {
+  static toDTOList(vendors: IVendorEntity[]): VendorRequestDTO[] {
     return vendors.map((vendor) => this.toDTO(vendor))
   }
 }
