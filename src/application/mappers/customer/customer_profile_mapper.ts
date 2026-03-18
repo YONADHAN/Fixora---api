@@ -1,16 +1,21 @@
+import { ICustomerEntity } from '../../../domain/models/customer_entity'
 import { CustomerProfileInfoDTO } from '../../dtos/user_dto'
 
 export class CustomerProfileMapper {
-  static toDTO(customer: any): CustomerProfileInfoDTO {
+  static toDTO(customer: ICustomerEntity): CustomerProfileInfoDTO {
     return {
-      userId: customer.userId,
+      userId: customer.userId!,
       name: customer.name,
       email: customer.email,
-      role: customer.role,
+      role: customer.role!,
       phone: customer.phone || '',
-      status: customer.status,
+      status: customer.status!,
       profileImage: customer.profileImage,
-      location: customer.location,
+      location: {
+        name: customer.location?.name || '',
+        displayName: customer.location?.displayName || '',
+        zipCode: customer.location?.zipCode || '',
+      },
     }
   }
 }

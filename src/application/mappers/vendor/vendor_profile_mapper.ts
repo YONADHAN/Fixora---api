@@ -1,16 +1,21 @@
+import { IVendorEntity } from '../../../domain/models/vendor_entity'
 import { VendorProfileInfoDTO } from '../../dtos/user_dto'
 
 export class VendorProfileMapper {
-  static toDTO(customer: any): VendorProfileInfoDTO {
+  static toDTO(vendor: IVendorEntity): VendorProfileInfoDTO {
     return {
-      userId: customer.userId,
-      name: customer.name,
-      email: customer.email,
-      role: customer.role,
-      phone: customer.phone || '',
-      status: customer.status,
-      profileImage: customer.profileImage,
-      location: customer.location,
+      userId: vendor.userId!,
+      name: vendor.name,
+      email: vendor.email,
+      role: vendor.role!,
+      phone: vendor.phone || '',
+      status: vendor.status!,
+      profileImage: vendor.profileImage,
+      location: {
+        name: vendor.location?.name|| '',
+        displayName: vendor.location?.displayName|| '',
+        zipCode: vendor.location?.zipCode|| ''
+      },
     }
   }
 }

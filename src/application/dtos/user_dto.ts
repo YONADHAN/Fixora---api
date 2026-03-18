@@ -83,6 +83,8 @@ export interface VendorProfileInfoDTO {
   location: { name: string; displayName: string; zipCode: string }
 }
 
+
+
 export interface GetAllUsersDTO {
   data: {
     userId: string
