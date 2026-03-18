@@ -8,17 +8,17 @@ import {
 } from '../../../../../shared/constants'
 import { IChangeMyCustomersBlockStatusStrategy } from './change_my_customers_block_status_strategy.interface'
 import { redisClient } from '../../../../../interfaceAdapters/repositories/redis/redis.client'
+import { ChangeUserBlockStatusResponseDTO } from '../../../../dtos/admin/change_my_user_block_status_dto'
 
 @injectable()
 export class ChangeMyCustomersBlockStatusStrategy
-  implements IChangeMyCustomersBlockStatusStrategy
-{
+  implements IChangeMyCustomersBlockStatusStrategy {
   constructor(
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository
-  ) {}
+  ) { }
 
-  async execute(userId: string, status: string) {
+  async execute(userId: string, status: string):Promise<ChangeUserBlockStatusResponseDTO>{
     const customer = await this._customerRepository.findOne({ userId })
 
     if (!customer) {
@@ -48,6 +48,13 @@ export class ChangeMyCustomersBlockStatusStrategy
     } else if (status == 'active') {
       await redisClient.del(`user_block_status:customer:${userId}`)
     }
-    return { message: `Customer ${status} successfully`, customer }
+    // return { message: `Customer ${status} successfully`, customer }
+    return {
+      message: `Customer ${status} successfully`,
+      user: {
+        userId: customer.userId||"",
+        status: customer.status,
+      },
+    }
   }
 }

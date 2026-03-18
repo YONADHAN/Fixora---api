@@ -5,6 +5,7 @@ import { IChangeMyUserBlockStatusFactory } from './change_my_user_block_status_f
 import { TRole, statusTypes } from '../../../../shared/constants'
 import { IChangeMyCustomersBlockStatusStrategy } from '../../../strategies/commonFeatures/users/block_status/change_my_customers_block_status_strategy.interface'
 import { IChangeMyVendorsBlockStatusStrategy } from '../../../strategies/commonFeatures/users/block_status/change_my_vendors_block_status_strategy.interface'
+import { ChangeUserBlockStatusResponseDTO } from '../../../dtos/admin/change_my_user_block_status_dto'
 
 @injectable()
 export class ChangeMyUserBlockStatusFactory
@@ -26,7 +27,7 @@ export class ChangeMyUserBlockStatusFactory
     role: TRole
     userId: string
     status: statusTypes
-  }) {
+  }):Promise<ChangeUserBlockStatusResponseDTO> {
     // console.log('arived factory')
     switch (role) {
       case 'customer':

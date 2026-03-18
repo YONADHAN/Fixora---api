@@ -13,7 +13,7 @@ export class ProfileImageUploadFactory implements IProfileImageUploadFactory {
     private customerStrategy: ICustomerProfileImageUploadStrategy
   ) {}
 
-  async execute(role: string, userId: string, imageUrl: string) {
+  async execute(role: string, userId: string, imageUrl: string):Promise<void> {
     switch (role.toLowerCase()) {
       case 'vendor':
         return this.vendorStrategy.execute({ userId, imageUrl })

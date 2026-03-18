@@ -8,17 +8,17 @@ import {
 } from '../../../../../shared/constants'
 import { IChangeMyVendorsBlockStatusStrategy } from './change_my_vendors_block_status_strategy.interface'
 import { redisClient } from '../../../../../interfaceAdapters/repositories/redis/redis.client'
+import { ChangeUserBlockStatusResponseDTO } from '../../../../dtos/admin/change_my_user_block_status_dto'
 
 @injectable()
 export class ChangeMyVendorsBlockStatusStrategy
-  implements IChangeMyVendorsBlockStatusStrategy
-{
+  implements IChangeMyVendorsBlockStatusStrategy {
   constructor(
     @inject('IVendorRepository')
     private _vendorRepository: IVendorRepository
-  ) {}
+  ) { }
 
-  async execute(userId: string, status: statusTypes) {
+  async execute(userId: string, status: statusTypes):Promise<ChangeUserBlockStatusResponseDTO> {
     const vendor = await this._vendorRepository.findOne({ userId })
 
     if (!vendor) {
@@ -48,6 +48,13 @@ export class ChangeMyVendorsBlockStatusStrategy
     } else if (status == 'active') {
       await redisClient.del(`user_block_status:vendor:${userId}`)
     }
-    return { message: `Vendor ${status} successfully`, vendor }
+    //return { message: `Vendor ${status} successfully`, vendor }
+    return {
+      message: `Vendor ${status} successfully`,
+      user: {
+        userId: vendor.userId||"",
+        status: vendor.status,
+      },
+    }
   }
 }

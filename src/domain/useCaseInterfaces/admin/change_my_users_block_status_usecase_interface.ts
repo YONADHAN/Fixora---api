@@ -1,3 +1,4 @@
+import { ChangeUserBlockStatusResponseDTO } from '../../../application/dtos/admin/change_my_user_block_status_dto'
 import { statusTypes, TRole } from '../../../shared/constants'
 
 export interface IChangeMyUserBlockStatusUseCase {
@@ -9,5 +10,5 @@ export interface IChangeMyUserBlockStatusUseCase {
     role: TRole
     userId: string
     status: statusTypes
-  }): Promise<void>
+  }): Promise<ChangeUserBlockStatusResponseDTO>
 }
