@@ -5,29 +5,70 @@ import {
 } from '../../../presentation/validations/service/create_service.schema'
 
 import { recurrenceType } from '../../../shared/constants'
+import { z } from 'zod'
+
+type ServiceVariantsType = z.infer<
+  typeof createServiceNestedZodSchemaForServiceVariants
+>
+
+type PricingType = z.infer<
+  typeof createServiceNestedZodSchemaForPricing
+>
+
+type ScheduleType = z.infer<
+  typeof createServiceNestedZodSchemaForSchedule
+>
+
+interface CreateServiceMapperInput {
+  rawData: {
+    vendorId: string
+    subServiceCategoryId: string
+    name: string
+    description?: string
+    serviceVariants?: string
+    pricing: string
+    schedule: string
+  }
+  files: Express.Multer.File[]
+}
+
 
 export class CreateServiceRequestMapper {
-  static toDTO({ rawData, files }: any) {
+  static toDTO({ rawData, files }: CreateServiceMapperInput) {
     // ------------------------------
-    // 1. Parse JSON
+    //  Parse JSON
     // ------------------------------
-    const parsedServiceVariants = rawData.serviceVariants
-      ? JSON.parse(rawData.serviceVariants)
-      : []
+    // const parsedServiceVariants = rawData.serviceVariants
+    //   ? JSON.parse(rawData.serviceVariants)
+    //   : []
 
-    const parsedPricing = rawData.pricing ? JSON.parse(rawData.pricing) : {}
 
-    const parsedSchedule = rawData.schedule ? JSON.parse(rawData.schedule) : {}
+    const parsedServiceVariants: ServiceVariantsType =
+      rawData.serviceVariants
+        ? createServiceNestedZodSchemaForServiceVariants.parse(
+          JSON.parse(rawData.serviceVariants)
+        )
+        : []
+    // const parsedPricing = rawData.pricing ? JSON.parse(rawData.pricing) : {}
+    const parsedPricing: PricingType =
+      createServiceNestedZodSchemaForPricing.parse(
+        JSON.parse(rawData.pricing)
+      )
 
+    //const parsedSchedule = rawData.schedule ? JSON.parse(rawData.schedule) : {}
+    const parsedSchedule: ScheduleType =
+      createServiceNestedZodSchemaForSchedule.parse(
+        JSON.parse(rawData.schedule)
+      )
     // ------------------------------
-    // 2. VALIDATE NESTED STRUCTURES
+    // VALIDATE NESTED STRUCTURES
     // ------------------------------
     createServiceNestedZodSchemaForServiceVariants.parse(parsedServiceVariants)
     createServiceNestedZodSchemaForPricing.parse(parsedPricing)
     createServiceNestedZodSchemaForSchedule.parse(parsedSchedule)
 
     // ------------------------------
-    // 3. Convert fields
+    // Convert fields
     // ------------------------------
     const dailyWorkingWindows = parsedSchedule.dailyWorkingWindows || []
     const weeklyWorkingDays =
@@ -36,14 +77,14 @@ export class CreateServiceRequestMapper {
       parsedSchedule.monthlyWorkingDates?.map(Number) || []
 
     const overrideBlock =
-      parsedSchedule.overrideBlock?.map((b: any) => ({
+      parsedSchedule.overrideBlock?.map((b) => ({
         startDateTime: new Date(b.startDateTime),
         endDateTime: new Date(b.endDateTime),
         reason: b.reason ?? '',
       })) || []
 
     const overrideCustom =
-      parsedSchedule.overrideCustom?.map((c: any) => ({
+      parsedSchedule.overrideCustom?.map((c) => ({
         startDateTime: new Date(c.startDateTime),
         endDateTime: new Date(c.endDateTime),
         startTime: c.startTime,
@@ -51,12 +92,12 @@ export class CreateServiceRequestMapper {
       })) || []
 
     // ------------------------------
-    // 4. Main Image
+    // Main Image
     // ------------------------------
     const mainImage = files?.[0] || null
 
     // ------------------------------
-    // 5. Final DTO
+    //  Final DTO
     // ------------------------------
     return {
       vendorId: rawData.vendorId,
