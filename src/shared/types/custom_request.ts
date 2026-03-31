@@ -1,10 +1,12 @@
 import { RequestHandler } from 'express'
+import { ParamsDictionary } from 'express-serve-static-core'
+import { ParsedQs } from 'qs'
 import { CustomRequest } from '../../presentation/middleware/auth_middleware'
 
 export type CustomRequestHandler = RequestHandler<
-  any,
-  any,
-  any,
-  any,
-  Record<string, any> & { user?: CustomRequest['user'] }
+  ParamsDictionary,
+  unknown,
+  unknown,
+  ParsedQs,
+  { user?: CustomRequest['user'] }
 >

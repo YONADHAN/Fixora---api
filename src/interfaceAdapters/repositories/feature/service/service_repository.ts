@@ -16,21 +16,24 @@ import {
   timeGranularityType,
 } from '../../../../shared/constants'
 import { BookingModel } from '../../../database/mongoDb/models/booking_model'
-
-function isVendorPopulated(ref: any): ref is IVendorPopulated {
+type AISearchService = {
+  name: string
+  description?: string
+}
+function isVendorPopulated(ref: unknown): ref is IVendorPopulated {
   return (
-    ref &&
-    typeof ref === 'object' &&
+
+    typeof ref === 'object' && ref !== null &&
     '_id' in ref &&
     'name' in ref &&
     'userId' in ref
   )
 }
 
-function isSubCategoryPopulated(ref: any): ref is ISubServiceCategoryPopulated {
+function isSubCategoryPopulated(ref: unknown): ref is ISubServiceCategoryPopulated {
   return (
-    ref &&
-    typeof ref === 'object' &&
+
+    typeof ref === 'object' && ref !== null &&
     '_id' in ref &&
     'name' in ref &&
     'subServiceCategoryId' in ref
@@ -339,7 +342,13 @@ export class ServiceRepository
     }
   }
 
-  async getTopServicesForAI() {
+  async getTopServicesForAI(): Promise<
+    {
+      name: string
+      categoryName: string
+      priceRange?: string
+    }[]
+  > {
     return this.model
       .find({
         isActiveStatusByAdmin: true,
@@ -350,29 +359,45 @@ export class ServiceRepository
       .populate('subServiceCategoryRef', 'name')
       .lean()
       .then((services) =>
-        services.map((s: any) => ({
-          name: s.name,
-          categoryName: s.subServiceCategoryRef?.name,
-          priceRange: `₹${s.pricing?.pricePerSlot || 'N/A'}`,
-        })),
+        services.map((s) => {
+          const service = s as {
+            name: string
+            pricing?: { pricePerSlot?: number }
+            subServiceCategoryRef?: { name?: string }
+          }
+
+          return {
+            name: service.name,
+            categoryName:
+              service.subServiceCategoryRef?.name || 'Unknown',
+            priceRange: service.pricing?.pricePerSlot
+              ? `₹${service.pricing.pricePerSlot}`
+              : undefined,
+          }
+        }),
       )
   }
 
-  async searchForAI(query: string) {
-    return this.model
-      .find({
-        name: { $regex: query, $options: 'i' },
-        isActiveStatusByAdmin: true,
-        isActiveStatusByVendor: true,
-      })
-      .limit(5)
-      .select('name description')
-      .lean()
-      .then((services) =>
-        services.map((s: any) => ({
-          name: s.name,
-          shortDescription: s.description,
-        })),
-      )
-  }
+async searchForAI(query: string): Promise<
+  {
+    name: string
+    shortDescription?: string
+  }[]
+> {
+  return this.model
+    .find({
+      name: { $regex: query, $options: 'i' },
+      isActiveStatusByAdmin: true,
+      isActiveStatusByVendor: true,
+    })
+    .limit(5)
+    .select('name description')
+    .lean()
+    .then((services) =>
+      (services as AISearchService[]).map((s) => ({
+        name: s.name,
+        shortDescription: s.description,
+      })),
+    )
+}
 }

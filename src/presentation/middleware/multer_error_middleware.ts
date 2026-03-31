@@ -1,10 +1,10 @@
 import multer from 'multer'
 import { Request, Response, NextFunction } from 'express'
 import { HTTP_STATUS } from '../../shared/constants'
-
+type MulterCallback = (err?: Error|multer.MulterError|null) => void
 
 export const handleMulterError =
-  (uploadFn: (req: Request, res: Response, cb: (err?: any) => void) => void) =>
+  (uploadFn: (req: Request, res: Response, cb:MulterCallback)=>void) =>
     (req: Request, res: Response, next: NextFunction): void => {
       uploadFn(req, res, (err) => {
         if (err instanceof multer.MulterError) {

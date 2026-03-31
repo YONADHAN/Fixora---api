@@ -14,7 +14,7 @@ export interface IBlockMyUserMiddleware {
     req: CustomRequest,
     res: Response,
     next: NextFunction
-  ): Promise<any>
+  ): Promise<void>
 }
 @injectable()
 export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
@@ -33,7 +33,7 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
     req: CustomRequest,
     res: Response,
     next: NextFunction
-  ): Promise<any> => {
+  ): Promise<void> => {
     try {
       const user = req.user
 
@@ -98,18 +98,20 @@ export class BlockMyUserMiddleware implements IBlockMyUserMiddleware {
 
         clearAuthCookies(res, accessTokenName, refreshTokenName)
 
-        return res.status(HTTP_STATUS.FORBIDDEN).json({
+        res.status(HTTP_STATUS.FORBIDDEN).json({
           success: false,
           message: ERROR_MESSAGES.BLOCKED,
         })
+        return 
       }
 
       next()
     } catch (error) {
-      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: ERROR_MESSAGES.SERVER_ERROR,
       })
+      return 
     }
   }
 }

@@ -189,7 +189,7 @@ export class BookingRepository
         : {}),
     }
 
-    const pipeline: any[] = [
+    const pipeline: PipelineStage[] = [
       { $match: matchStage },
       { $sort: { createdAt: -1 } },
       {

@@ -44,7 +44,7 @@ export const registerSocketEvents = (socket: Socket) => {
 
   socket.on(
     SOCKET_EVENTS.NOTIFICATION_READ,
-    async (notificationId: string, ack?: (res: any) => void) => {
+    async (notificationId: string, ack?: (res: SocketAckResponse) => void) => {
       try {
         await markReadUseCase.execute(notificationId, socket.data.user.userId)
 
@@ -57,7 +57,7 @@ export const registerSocketEvents = (socket: Socket) => {
 
   socket.on(
     SOCKET_EVENTS.NOTIFICATION_READ_ALL,
-    async (ack?: (res: any) => void) => {
+    async (ack?: (res: SocketAckResponse) => void) => {
       try {
         await markAllReadUseCase.execute(socket.data.user.userId)
 

@@ -40,11 +40,8 @@ export class ChatController implements IChatController {
         success: true,
         data: result,
       })
-    } catch (error: any) {
-      res.status(error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: error.message || 'Internal Server Error',
-      })
+    } catch (error: unknown) {
+      handleErrorResponse(req,res,error)
     }
   }
 
@@ -83,11 +80,8 @@ export class ChatController implements IChatController {
         success: true,
         data: chats,
       })
-    } catch (error: any) {
-      res.status(error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: error.message || 'Internal Server Error',
-      })
+    } catch (error: unknown) {
+      handleErrorResponse(req,res,error)
     }
   }
 }

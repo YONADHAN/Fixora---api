@@ -12,10 +12,9 @@ import {
 } from '../../../../domain/models/sub_service_category_entity'
 import { Types } from 'mongoose'
 
-function isPopulated(ref: any): ref is IServiceCategoryPopulated {
+function isPopulated(ref: unknown): ref is IServiceCategoryPopulated {
   return (
-    ref &&
-    typeof ref === 'object' &&
+    typeof ref === 'object' && ref!==null &&
     '_id' in ref &&
     'name' in ref &&
     'serviceCategoryId' in ref

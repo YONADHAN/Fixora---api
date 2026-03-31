@@ -1,7 +1,8 @@
+import { Types } from 'mongoose'
 import { statusTypes } from '../constants'
 
 export interface IVendorPopulated {
-  _id: any
+  _id: Types.ObjectId
   name: string
   userId: string
   profileImage?: string
@@ -11,7 +12,7 @@ export interface IVendorPopulated {
 }
 
 export interface ISubServiceCategoryPopulated {
-  _id: any
+  _id: Types.ObjectId
   subServiceCategoryId: string
   name: string
   isActive: statusTypes
