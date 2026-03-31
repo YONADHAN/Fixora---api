@@ -1,0 +1,18 @@
+
+> api@1.0.0 lint
+> eslint . --ext .js,.ts
+
+
+/media/yonadhan/storage/02_Workspace/01_Projects/01_Major_Projects/Fixora/Fixora---api/src/domain/serviceInterfaces/llm_service.interface.ts
+  6:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/media/yonadhan/storage/02_Workspace/01_Projects/01_Major_Projects/Fixora/Fixora---api/src/interfaceAdapters/services/ai_chat_bot/gemini.service.ts
+  13:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/media/yonadhan/storage/02_Workspace/01_Projects/01_Major_Projects/Fixora/Fixora---api/src/shared/types/ai/ai.types.ts
+  10:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  10:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 5 problems (0 errors, 5 warnings)
+

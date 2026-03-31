@@ -7,7 +7,7 @@ export type AIDomain =
   | 'SUBSCRIPTION_PLAN'
   | 'GENERAL'
 
-export type AIToolFunction<TArgs = any, TResult = any> = (
+export type AIToolFunction<TArgs = unknown, TResult = unknown> = (
   args?: TArgs,
 ) => Promise<TResult>
 

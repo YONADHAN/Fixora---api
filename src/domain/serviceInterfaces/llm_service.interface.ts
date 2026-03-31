@@ -3,7 +3,7 @@ export interface LLMChatParams {
   message: string
   history?: unknown[]
   tools?: unknown[]
-  toolMap?: Record<string, (args?: any) => Promise<any>>
+  toolMap?: Record<string, (args?: unknown) => Promise<unknown>>
 }
 
 export interface ILLMService {

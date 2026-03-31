@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI ,Content} from '@google/generative-ai'
+import { GoogleGenerativeAI, Content, Tool } from '@google/generative-ai'
 import { injectable } from 'tsyringe'
 import { IGeminiService } from '../../../domain/serviceInterfaces/gemini_service_interface'
 
@@ -10,7 +10,7 @@ export class GeminiService implements IGeminiService {
     this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
   }
 
-  private createModel(systemPrompt: string, tools: any[]) {
+  private createModel(systemPrompt: string, tools: Tool[]) {
     return this.genAI.getGenerativeModel({
       model: 'gemini-flash-latest',
       systemInstruction: systemPrompt,
@@ -22,8 +22,8 @@ export class GeminiService implements IGeminiService {
     systemPrompt: string
     message: string
     history?: Content[]
-    tools: unknown[]
-   toolMap: Record<string, (args: unknown) => Promise<unknown>>
+    tools: Tool[]
+    toolMap: Record<string, (args: unknown) => Promise<unknown>>
   }): Promise<string> {
     const { systemPrompt, message, history = [], tools, toolMap } = params
 
