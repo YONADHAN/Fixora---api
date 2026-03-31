@@ -16,7 +16,11 @@ import {
 } from '../../../../domain/models/payment_entity'
 import { PaymentMongoBase } from '../../../database/mongoDb/types/payment_mongo_base'
 import { TRefundStatus, TRole } from '../../../../shared/constants'
-
+type PaymentLeanPopulated = PaymentMongoBase & {
+  serviceRef?: { name: string }
+  vendorRef?: { name: string }
+  customerRef?: { name: string }
+}
 @injectable()
 export class PaymentRepository
   extends BaseRepository<IPaymentModel, IPaymentEntity>
@@ -281,7 +285,7 @@ export class PaymentRepository
       .populate('serviceRef', 'name')
       .populate('vendorRef', 'name')
       .populate('customerRef', 'name')
-      .lean<any[]>()
+      .lean<PaymentLeanPopulated[]>()
 
     return {
       data: data.map((d) => ({
@@ -289,7 +293,7 @@ export class PaymentRepository
         serviceName: d.serviceRef?.name,
         vendorName: d.vendorRef?.name,
         customerName: d.customerRef?.name
-      } as any)),
+      } )),
       currentPage: page,
       totalPages: Math.ceil(totalCount / limit),
       totalCount,
@@ -301,9 +305,9 @@ export class PaymentRepository
     to: Date
     vendorRef?: string
   }): Promise<number> {
-    const matchStage: any = {
+    const matchStage: FilterQuery<IPaymentModel> = {
       createdAt: { $gte: params.from, $lte: params.to },
-      status: { $ne: 'failed' }, // Exclude entirely failed payments
+      status: { $ne: 'failed' }, 
     }
 
     if (params.vendorRef) {

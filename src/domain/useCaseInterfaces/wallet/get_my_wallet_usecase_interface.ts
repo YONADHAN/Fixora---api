@@ -1,3 +1,5 @@
+import { IWalletTransactionEntity } from "../../models/wallet_transaction_entity"
+
 export interface IGetWalletUseCase {
   execute(payload: {
     userId: string
@@ -13,7 +15,7 @@ export interface IGetWalletUseCase {
       balance: number
       currency: string
     } | null
-    data: any[]
+    data: IWalletTransactionEntity[]
     totalPages: number
     currentPage: number
     totalCount: number

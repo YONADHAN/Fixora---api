@@ -12,6 +12,7 @@ import {
 
 import { CustomError } from '../../../domain/utils/custom.error'
 import { HTTP_STATUS } from '../../../shared/constants'
+import { IChatEntity } from '../../../domain/models/chat_entity'
 
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -70,29 +71,29 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
     const receiverRole = senderRole === 'customer' ? 'vendor' : 'customer'
     await this.chatRepository.incrementUnread(chatId, receiverRole)
-
+    const updatedChat: IChatEntity = {
+      ...chat,
+      lastMessage: {
+        messageId: message.messageId,
+        content: message.content,
+        senderId: message.senderId,
+        senderRole: message.senderRole,
+        createdAt: message.createdAt!,
+      },
+      unreadCount: {
+        customer:
+          senderRole === 'vendor'
+            ? chat.unreadCount.customer + 1
+            : chat.unreadCount.customer,
+        vendor:
+          senderRole === 'customer'
+            ? chat.unreadCount.vendor + 1
+            : chat.unreadCount.vendor,
+      },
+    }
     return {
       message,
-      chat: {
-        ...chat,
-        lastMessage: {
-          messageId: message.messageId,
-          content: message.content,
-          senderId: message.senderId,
-          senderRole: message.senderRole,
-          createdAt: message.createdAt!,
-        },
-        unreadCount: {
-          customer:
-            senderRole === 'vendor'
-              ? chat.unreadCount.customer + 1
-              : chat.unreadCount.customer,
-          vendor:
-            senderRole === 'customer'
-              ? chat.unreadCount.vendor + 1
-              : chat.unreadCount.vendor,
-        },
-      } as any,
+      chat: updatedChat,
     }
   }
 }

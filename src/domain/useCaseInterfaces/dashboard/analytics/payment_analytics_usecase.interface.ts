@@ -1,5 +1,5 @@
-import { DashboardStatsInputDTO } from '../../../../application/dtos/dashboard_dto'
+import { DashboardStatsInputDTO, PaymentAnalyticsDTO } from '../../../../application/dtos/dashboard_dto'
 
 export interface IPaymentAnalyticsUseCase {
-  execute(input: DashboardStatsInputDTO): Promise<any>
+  execute(input: DashboardStatsInputDTO): Promise<PaymentAnalyticsDTO>
 }

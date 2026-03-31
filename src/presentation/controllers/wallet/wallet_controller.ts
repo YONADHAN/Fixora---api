@@ -29,8 +29,8 @@ export class WalletController implements IWalletController {
       role: role as 'customer' | 'vendor',
       page: Number(page),
       limit: Number(limit),
-      sortBy: sortBy as any,
-      order: order as any,
+      sortBy: sortBy as 'amount' | 'createdAt' | 'type' ,
+      order: order as 'asc' | 'desc',
       search,
     })
 

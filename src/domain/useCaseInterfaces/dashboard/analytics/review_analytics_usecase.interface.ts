@@ -1,5 +1,5 @@
-import { DashboardStatsInputDTO } from '../../../../application/dtos/dashboard_dto'
+import { DashboardStatsInputDTO, ReviewAnalyticsDTO } from '../../../../application/dtos/dashboard_dto'
 
 export interface IReviewAnalyticsUseCase {
-  execute(input: DashboardStatsInputDTO): Promise<any>
+  execute(input: DashboardStatsInputDTO): Promise<ReviewAnalyticsDTO>
 }

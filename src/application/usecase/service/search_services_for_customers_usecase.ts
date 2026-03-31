@@ -11,6 +11,33 @@ import {
 } from '../../dtos/service_dto'
 import { ISearchServicesForCustomersUseCase } from '../../../domain/useCaseInterfaces/service/search_services_for_customers_usecase.interface'
 
+type PriceFilter = {
+  $gte?: number
+  $lte?: number
+}
+
+type DateFilter = {
+  $lte?: Date
+  $gte?: Date
+}
+
+type VendorFilter = {
+  $in: string[]
+}
+
+export interface ServiceFilter {
+  isActiveStatusByAdmin: boolean
+  isActiveStatusByVendor: boolean
+
+  subServiceCategoryRef?: string
+
+  'pricing.pricePerSlot'?: PriceFilter
+
+  'schedule.visibilityStartDate'?: DateFilter
+  'schedule.visibilityEndDate'?: DateFilter
+
+  vendorRef?: VendorFilter
+}
 @injectable()
 export class SearchServicesForCustomersUseCase
   implements ISearchServicesForCustomersUseCase {
@@ -26,7 +53,7 @@ export class SearchServicesForCustomersUseCase
   async execute(
     dto: RequestSearchServicesForCustomerDTO
   ): Promise<ResponseSearchServicesForCustomerDTO> {
-    const filter: any = {
+    const filter: ServiceFilter = {
       isActiveStatusByAdmin: true,
       isActiveStatusByVendor: true,
     }
@@ -42,7 +69,7 @@ export class SearchServicesForCustomersUseCase
       )
     }
 
-    filter.subServiceCategoryRef = subCategory._id
+    filter.subServiceCategoryRef = subCategory._id?.toString()
 
     if (dto.minPrice || dto.maxPrice) {
       filter['pricing.pricePerSlot'] = {}
@@ -56,7 +83,7 @@ export class SearchServicesForCustomersUseCase
     }
     // GEO-LOCATION FILTER
     if (dto.latitude && dto.longitude) {
-      const radiusInKm = dto.radius ? Number(dto.radius) : 50 // configure radius or pass from dto
+      const radiusInKm = dto.radius ? Number(dto.radius) : 50
 
       const nearestVendors = await this._vendorRepository.findNearestVendors(
         Number(dto.latitude),
@@ -64,7 +91,9 @@ export class SearchServicesForCustomersUseCase
         radiusInKm
       )
 
-      const vendorIds = nearestVendors.map(v => v._id)
+      const vendorIds = nearestVendors
+        .map(v => v._id?.toString())
+        .filter((id): id is string => Boolean(id))
 
       filter.vendorRef = { $in: vendorIds }
     }

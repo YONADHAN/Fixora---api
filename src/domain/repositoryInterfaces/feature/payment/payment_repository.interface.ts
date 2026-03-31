@@ -1,3 +1,4 @@
+import { FilterQuery } from 'mongoose'
 import { IPaymentModel } from '../../../../interfaceAdapters/database/mongoDb/models/payment_model'
 import { TRefundStatus, TRole } from '../../../../shared/constants'
 import { IBaseFailure, IPaymentEntity } from '../../../models/payment_entity'
@@ -44,7 +45,7 @@ export interface IPaymentRepository
   findAllPayments(
     page: number,
     limit: number,
-    filter: any
+    filter: FilterQuery<IPaymentModel>
   ): Promise<{
     data: IPaymentEntity[]
     currentPage: number

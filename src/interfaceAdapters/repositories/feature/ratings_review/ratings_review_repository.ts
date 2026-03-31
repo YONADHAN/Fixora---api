@@ -8,7 +8,16 @@ import {
 import { IRatingsReviewEntity } from '../../../../domain/models/ratings_review_entity'
 import { RatingsReviewMongoBase } from '../../../database/mongoDb/types/ratings_review_mongo_base'
 import { IRatingsReviewRepository } from '../../../../domain/repositoryInterfaces/feature/ratings_review/ratings_review_repository.interface'
-
+import { FilterQuery } from 'mongoose'
+type RatingsReviewLeanPopulated = Omit<
+  RatingsReviewMongoBase,
+  'customerRef'
+> & {
+  customerRef: {
+    name: string
+    profileImage?: string
+  }
+}
 @injectable()
 export class RatingsReviewRepository
   extends BaseRepository<IRatingsReviewModel, IRatingsReviewEntity>
@@ -66,7 +75,7 @@ export class RatingsReviewRepository
     limit: number,
     cursor?: string,
   ) {
-    const query: any = {
+    const query: FilterQuery<IRatingsReviewModel> = {
       serviceRef: new Types.ObjectId(serviceRef),
       isActive: true,
     }
@@ -82,9 +91,9 @@ export class RatingsReviewRepository
         path: 'customerRef',
         select: 'name profileImage',
       })
-      .lean()
+     .lean<RatingsReviewLeanPopulated[]>()
 
-    return docs.map((doc: any) => ({
+    return docs.map((doc) => ({
       _id: doc._id.toString(),
       ratingsReviewId: doc.ratingsReviewId,
       rating: doc.rating,

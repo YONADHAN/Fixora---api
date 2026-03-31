@@ -5,6 +5,7 @@ import { IWalletTransactionRepository } from '../../../domain/repositoryInterfac
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { IVendorRepository } from '../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { IAdminRepository } from '../../../domain/repositoryInterfaces/users/admin_repository.interface'
+import { IWalletTransactionEntity } from '../../../domain/models/wallet_transaction_entity'
 
 @injectable()
 export class GetWalletUseCase implements IGetWalletUseCase {
@@ -46,7 +47,7 @@ export class GetWalletUseCase implements IGetWalletUseCase {
       balance: number
       currency: string
     } | null
-    data: any[]
+    data: IWalletTransactionEntity[]
     totalPages: number
     currentPage: number
     totalCount: number

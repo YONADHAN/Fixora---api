@@ -71,36 +71,7 @@ export class MessageRepository
     return this.toEntity(created.toObject() as MessageMongoBase)
   }
 
-  // async findMessagesByChatId(
-  //   chatId: string,
-  //   page: number,
-  //   limit: number,
-  // ): Promise<{
-  //   data: IMessageEntity[]
-  //   currentPage: number
-  //   totalPages: number
-  // }> {
-  //   const skip = (page - 1) * limit
-
-  //   const filter: FilterQuery<IMessageModel> = { chatId }
-
-  //   const [documents, totalCount] = await Promise.all([
-  //     this.model
-  //       .find(filter)
-  //       .sort({ createdAt: 1 })
-  //       .skip(skip)
-  //       .limit(limit)
-  //       .lean<MessageMongoBase[]>(),
-
-  //     this.model.countDocuments(filter),
-  //   ])
-
-  //   return {
-  //     data: documents.map((doc) => this.toEntity(doc)),
-  //     currentPage: page,
-  //     totalPages: Math.ceil(totalCount / limit),
-  //   }
-  // }
+ 
   async findMessagesByChatId(
     chatId: string,
     before?: Date,

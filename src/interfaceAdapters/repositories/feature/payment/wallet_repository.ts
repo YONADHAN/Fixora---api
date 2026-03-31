@@ -43,24 +43,24 @@ export class WalletRepository
   async incrementBalance(
     walletId: string,
     amount: number,
-    session?: any,
+    
   ): Promise<void> {
     await this.model.updateOne(
       { _id: walletId },
       { $inc: { balance: amount } },
-      { session },
+      
     )
   }
 
   async decrementBalance(
     walletId: string,
     amount: number,
-    session?: any,
+    
   ): Promise<void> {
     await this.model.updateOne(
       { _id: walletId },
       { $inc: { balance: -amount } },
-      { session },
+      
     )
   }
 }

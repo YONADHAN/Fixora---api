@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe'
-import { Types } from 'mongoose'
+import { FilterQuery, SortOrder, Types } from 'mongoose'
 
 import { BaseRepository } from '../../base_repository'
 import {
@@ -21,7 +21,7 @@ export class WalletTransactionRepository
   }
 
   async findWithPagination(
-    filter: any,
+    filter: FilterQuery<IWalletTransactionModel>,
     options: {
       page: number
       limit: number
@@ -34,7 +34,7 @@ export class WalletTransactionRepository
 
     const skip = (page - 1) * limit
 
-    const sort: any = {}
+    const sort: Record<string, SortOrder> = {}
     if (sortBy) {
       sort[sortBy] = order === 'asc' ? 1 : -1
     } else {
@@ -50,32 +50,32 @@ export class WalletTransactionRepository
     }
 
     const [data, totalCount] = await Promise.all([
-      this.model.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+      this.model.find(filter).sort(sort).skip(skip).limit(limit).lean<IWalletTransactionModel[]>(),
       this.model.countDocuments(filter),
     ])
-
+console.log("The data first : => ",data)
     return {
-      data: this.toEntityArray(data as any),
+      data: this.toEntityArray(data),
       totalCount,
     }
   }
 
   async findAllDocsWithoutPagination(
-    filter: any,
+    filter: FilterQuery<IWalletTransactionModel>,
     sortOptions?: {
       sortBy: 'amount' | 'createdAt' | 'type'
       order: 'asc' | 'desc'
     },
   ): Promise<IWalletTransactionEntity[]> {
-    const sort: any = {}
+    const sort: Record<string, SortOrder> = {}
     if (sortOptions) {
       sort[sortOptions.sortBy] = sortOptions.order === 'asc' ? 1 : -1
     } else {
       sort.createdAt = -1
     }
 
-    const result = await this.model.find(filter).sort(sort).lean()
-    return this.toEntityArray(result as any)
+    const result = await this.model.find(filter).sort(sort).lean<IWalletTransactionModel[]>()
+    return this.toEntityArray(result)
   }
 
   protected toModel(

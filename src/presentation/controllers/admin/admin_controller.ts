@@ -126,22 +126,24 @@ export class AdminController implements IAdminController {
     }
   }
 
-  async changeMyUserBlockStatus(req: Request, res: Response): Promise<any> {
+  async changeMyUserBlockStatus(req: Request, res: Response): Promise<void> {
     try {
       const { role, userId, status } = req.body
       if (!role || !userId || !status) {
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
           message: 'role, userId, and status are required',
         })
+        return;
       }
 
       const validStatuses: statusTypes[] = ['active', 'blocked']
       if (!validStatuses.includes(status)) {
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
           message: `Invalid status value. Allowed: ${validStatuses.join(', ')}`,
         })
+        return;
       }
 
       const response = await this._changeMyUserBlockStatusUseCase.execute({
@@ -150,11 +152,12 @@ export class AdminController implements IAdminController {
         status,
       })
 
-      return res.status(HTTP_STATUS.OK).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
         message: SUCCESS_MESSAGES.BLOCK_STATUS_OF_USER_CHANGED_SUCCESSFULLY,
         data: response,
       })
+      return;
     } catch (error) {
       handleErrorResponse(req, res, error)
     }

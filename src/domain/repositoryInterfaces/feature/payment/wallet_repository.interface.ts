@@ -9,12 +9,12 @@ export interface IWalletRepository extends IBaseRepository<
   incrementBalance(
     walletId: string,
     amount: number,
-    session?: any,
+    
   ): Promise<void>
 
   decrementBalance(
     walletId: string,
     amount: number,
-    session?: any,
+   
   ): Promise<void>
 }
