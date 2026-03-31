@@ -18,7 +18,12 @@ import {
   HTTP_STATUS,
   timeGranularityType,
 } from '../../../../shared/constants'
-
+type BookingAggregateResult = BookingMongoBase & {
+  serviceName?: string
+  serviceId?: string
+  mainImage?: string
+  slots?: BookingMongoBase[]
+}
 @injectable()
 export class BookingRepository
   extends BaseRepository<IBookingModel, IBookingEntity>
@@ -244,15 +249,15 @@ export class BookingRepository
 
     const [result] = await this.model.aggregate(pipeline)
 
-    const data = result.data || []
+    const data: BookingAggregateResult[] = result.data || []
     const totalCount = result.metadata[0]?.total || 0
 
     return {
-      data: data.map((doc: any) => {
+      data: data.map((doc) => {
         const entity = this.toEntity(doc)
         entity.serviceName = doc.serviceName
         if (doc.slots && Array.isArray(doc.slots)) {
-          entity.slots = doc.slots.map((slot: any) => this.toEntity(slot))
+          entity.slots = doc.slots.map((slot: BookingMongoBase) => this.toEntity(slot))
         }
         return entity
       }),
@@ -286,7 +291,7 @@ export class BookingRepository
     vendorRef?: string
     customerRef?: string
   }): Promise<BookingDashboardResponseDTO> {
-    const matchStage: any = {
+    const matchStage: FilterQuery<IBookingModel> = {
       createdAt: { $gte: params.from, $lte: params.to },
     }
 
@@ -494,11 +499,11 @@ export class BookingRepository
 
     const [result] = await this.model.aggregate(pipeline)
 
-    const data = result.data || []
+   const data: BookingAggregateResult[] = result.data || []
     const totalCount = result.metadata[0]?.total || 0
 
     return {
-      data: data.map((doc: any) => {
+      data: data.map((doc) => {
         const entity = this.toEntity(doc)
         entity.serviceName = doc.serviceName
         entity.serviceId = doc.serviceId

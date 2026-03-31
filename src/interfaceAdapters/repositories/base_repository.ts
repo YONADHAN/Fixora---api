@@ -1,4 +1,4 @@
-import { Model, FilterQuery } from 'mongoose'
+import { Model, FilterQuery, PopulateOptions } from 'mongoose'
 import { IBaseRepository } from '../../domain/repositoryInterfaces/base_repository.interface'
 
 export abstract class BaseRepository<
@@ -137,16 +137,32 @@ export abstract class BaseRepository<
 
   async findOneAndPopulate(
     filter: FilterQuery<TModel>,
-    populateFields: string | string[] | object | object[],
+    populateFields: string | PopulateOptions | (string | PopulateOptions)[],
   ): Promise<TEntity | null> {
     let query = this.model.findOne(filter)
 
+    // if (Array.isArray(populateFields)) {
+    //   for (const field of populateFields) {
+    //     query = query.populate(field)
+    //   }
+    // } else {
+    //   query = query.populate(populateFields)
+    // }
+
     if (Array.isArray(populateFields)) {
       for (const field of populateFields) {
-        query = query.populate(field as any)
+        if (typeof field === 'string') {
+          query = query.populate(field)
+        } else {
+          query = query.populate(field)
+        }
       }
     } else {
-      query = query.populate(populateFields as any)
+      if (typeof populateFields === 'string') {
+        query = query.populate(populateFields)
+      } else {
+        query = query.populate(populateFields)
+      }
     }
 
     const result = await query.lean()
@@ -163,7 +179,7 @@ export abstract class BaseRepository<
     limit: number,
     search: string = '',
     extraFilters: FilterQuery<TModel> = {},
-    populateFields?: string | string[] | object | object[],
+    populateFields?: string | PopulateOptions | (string | PopulateOptions)[],
   ) {
     const filter: FilterQuery<TModel> = {
       ...extraFilters,
@@ -185,13 +201,30 @@ export abstract class BaseRepository<
       .limit(limit)
       .sort({ createdAt: -1 })
 
+    // if (populateFields) {
+    //   if (Array.isArray(populateFields)) {
+    //     populateFields.forEach((field) => {
+    //       query = query.populate(field)
+    //     })
+    //   } else {
+    //     query = query.populate(populateFields)
+    //   }
+    // }
     if (populateFields) {
       if (Array.isArray(populateFields)) {
-        populateFields.forEach((field) => {
-          query = query.populate(field as any)
-        })
+        for (const field of populateFields) {
+          if (typeof field === 'string') {
+            query = query.populate(field)
+          } else {
+            query = query.populate(field)
+          }
+        }
       } else {
-        query = query.populate(populateFields as any)
+        if (typeof populateFields === 'string') {
+          query = query.populate(populateFields)
+        } else {
+          query = query.populate(populateFields)
+        }
       }
     }
 

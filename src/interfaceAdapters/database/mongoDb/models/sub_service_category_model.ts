@@ -1,4 +1,4 @@
-import { Document, model, models, Schema } from 'mongoose'
+import { Document, model, models, Types } from 'mongoose'
 import {
   IServiceCategoryPopulated,
   ISubServiceCategoryEntity,
@@ -8,8 +8,8 @@ import { subServiceCategorySchema } from '../schemas/sub_service_category_schema
 export interface ISubServiceCategoryModel
   extends Omit<ISubServiceCategoryEntity, '_id' | 'serviceCategoryRef'>,
     Document {
-  _id: Schema.Types.ObjectId
-  serviceCategoryRef: Schema.Types.ObjectId | IServiceCategoryPopulated
+  _id: Types.ObjectId
+  serviceCategoryRef: Types.ObjectId | IServiceCategoryPopulated
 }
 
 export const SubServiceCategoryModel = models.SubServiceCategory || model<ISubServiceCategoryModel>(

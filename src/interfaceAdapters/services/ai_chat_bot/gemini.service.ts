@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI ,Content} from '@google/generative-ai'
 import { injectable } from 'tsyringe'
 import { IGeminiService } from '../../../domain/serviceInterfaces/gemini_service_interface'
 
@@ -21,8 +21,8 @@ export class GeminiService implements IGeminiService {
   async chat(params: {
     systemPrompt: string
     message: string
-    history?: any[]
-    tools: any[]
+    history?: Content[]
+    tools: unknown[]
    toolMap: Record<string, (args: unknown) => Promise<unknown>>
   }): Promise<string> {
     const { systemPrompt, message, history = [], tools, toolMap } = params

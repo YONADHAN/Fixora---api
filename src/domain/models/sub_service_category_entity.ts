@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongoose'
+import { ObjectId, Types } from 'mongoose'
 import { statusTypes, verificationTypes } from '../../shared/constants'
 
 export interface IServiceCategoryPopulated {
@@ -8,7 +8,7 @@ export interface IServiceCategoryPopulated {
 }
 
 export interface ISubServiceCategoryEntity {
-  _id?: ObjectId
+  _id?: Types.ObjectId
   subServiceCategoryId: string
   serviceCategoryRef: string
   serviceCategory?: IServiceCategoryPopulated

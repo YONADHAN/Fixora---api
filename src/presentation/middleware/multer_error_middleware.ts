@@ -1,19 +1,67 @@
+// import multer from 'multer'
+// import { Request, Response, NextFunction } from 'express'
+// import { HTTP_STATUS } from '../../shared/constants'
+
+// export const handleMulterError =
+//   (uploadFn: (req: Request, res: Response, cb: (err?: any) => void) => void) =>
+//     (req: Request, res: Response, next: NextFunction): void => {
+//       uploadFn(req, res, (err) => {
+//         if (err instanceof multer.MulterError) {
+         
+//           return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message })
+//         } else if (err) {
+         
+//           return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message })
+//         }
+//         next()
+//       })
+//     }
+
+
 import multer from 'multer'
 import { Request, Response, NextFunction } from 'express'
 import { HTTP_STATUS } from '../../shared/constants'
-type MulterCallback = (err?: Error|multer.MulterError|null) => void
 
 export const handleMulterError =
-  (uploadFn: (req: Request, res: Response, cb:MulterCallback)=>void) =>
-    (req: Request, res: Response, next: NextFunction): void => {
-      uploadFn(req, res, (err) => {
-        if (err instanceof multer.MulterError) {
+  (uploadFn: (req: Request, res: Response, cb: (err?: unknown) => void) => void) =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    uploadFn(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          message: err.message,
+        })
+      } 
+
+      if (err instanceof Error) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          message: err.message,
+        })
+      }
+
+      next()
+    })
+  }
+
+
+
+// import multer from 'multer'
+// import { Request, Response, NextFunction } from 'express'
+// import { HTTP_STATUS } from '../../shared/constants'
+// type MulterCallback = (err?: Error|multer.MulterError|null) => void
+
+// export const handleMulterError =
+//   (uploadFn: (req: Request, res: Response, cb:MulterCallback)=>void) =>
+//     (req: Request, res: Response, next: NextFunction): void => {
+//       uploadFn(req, res, (err) => {
+//         if (err instanceof multer.MulterError) {
          
-          return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message })
-        } else if (err) {
+//           return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message })
+//         } else if (err) {
          
-          return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message })
-        }
-        next()
-      })
-    }
+//           return res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: err.message })
+//         }
+//         next()
+//       })
+//     }

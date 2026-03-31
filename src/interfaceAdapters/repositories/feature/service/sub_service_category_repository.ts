@@ -64,7 +64,7 @@ export class SubServiceCategoryRepository
   protected toModel(
     entity: Partial<ISubServiceCategoryEntity>,
   ): Partial<ISubServiceCategoryModel> {
-    let serviceCategoryRef: any = undefined
+    let serviceCategoryRef: Types.ObjectId | IServiceCategoryPopulated | undefined = undefined
 
     if (entity.serviceCategoryRef) {
       if (typeof entity.serviceCategoryRef === 'string') {
