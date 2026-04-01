@@ -11,7 +11,7 @@ export type AIToolFunction<TArgs = unknown, TResult = unknown> = (
   args?: TArgs,
 ) => Promise<TResult>
 
-export type AIToolMap = Record<string, AIToolFunction>
+export type AIToolMap = Record<string, AIToolFunction<any, any>>
 
 export interface AIToolBundle {
   tools: unknown[]
