@@ -7,8 +7,8 @@ import {
 
 import { PromptBuilder } from '../../../../interfaceAdapters/services/ai_chat_bot/prompt_builder'
 import { ToolPermissionGuard } from '../../../security/tool_permission.guard'
-import { getServiceTools } from '../../../../interfaceAdapters/services/ai_chat_bot/tools/service.tools'
-import { ROLES } from '../../../../shared/constants'
+import { DomainService } from '../../../ai/domain_service'
+import { ToolRegistry } from '../../../ai/tool_registry'
 import { LLMFactory } from '../../../ai/llm_factory'
 
 @injectable()
@@ -16,37 +16,33 @@ export class AskAIChatbotVendorStrategy implements IAskAIChatbotVendorStrategy {
   async execute(
     input: AskAIChatbotRequestDTO,
   ): Promise<AskAIChatbotResponseDTO> {
-
     ToolPermissionGuard.validateMessage(input.message)
 
+    const finalDomains = DomainService.resolveAllowedDomains(input.message, input.role)
+
+    if (!finalDomains.length) {
+      return { reply: 'You are not allowed to access this information.' }
+    }
+
+    const primaryDomain = DomainService.getPrimaryDomain(finalDomains)
+    const { tools, toolMap } = ToolRegistry.getToolsForDomains(finalDomains, { role: input.role, userId: input.userId })
 
     const systemPrompt = PromptBuilder.buildSystemPrompt({
-      role: ROLES.VENDOR,
+      role: input.role,
       userId: input.userId,
-      domain: 'SERVICE',
+      domain: primaryDomain,
     })
 
-
-
-    const { tools, toolMap } = getServiceTools()
-
-    const allowedTools = Object.keys(toolMap)
-
+    const securedToolMap = ToolPermissionGuard.createSecuredToolMap(toolMap)
 
     const llmService = LLMFactory.get()
-
 
     const answer = await llmService.chat({
       systemPrompt,
       message: input.message,
       history: input.history,
       tools,
-      toolMap: new Proxy(toolMap, {
-        get(target, prop: string) {
-          ToolPermissionGuard.validateToolCall(prop, allowedTools)
-          return target[prop]
-        },
-      }),
+      toolMap: securedToolMap,
     })
 
     return {

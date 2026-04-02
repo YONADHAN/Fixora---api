@@ -6,10 +6,11 @@ import {
   ERROR_MESSAGES,
   HTTP_STATUS,
   SUCCESS_MESSAGES,
-  TRole,
 } from '../../../shared/constants'
+import { AIRole } from '../../../shared/types/ai/ai.types'
 import { IAiChatbotController } from '../../../domain/controllerInterfaces/features/ai_chatbot/ai_chatbot_controller.interface'
 import { IAskAIChatbotUseCase } from '../../../domain/useCaseInterfaces/ai_chatbot/ask_ai_usecase.interface'
+import { CustomRequest } from '../../middleware/auth_middleware'
 
 @injectable()
 export class AiChatbotController implements IAiChatbotController {
@@ -26,13 +27,13 @@ export class AiChatbotController implements IAiChatbotController {
           .status(HTTP_STATUS.BAD_REQUEST)
           .json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS })
       }
-      //const { userId, role } = (req as CustomRequest).user
-      const userId = '059-418f-b038-ec8c4899b0ce'
-      const role = 'customer'
+      const user = (req as CustomRequest).user
+      const userId = user?.userId || null
+      const role = user?.role || 'public'
 
       const response = await this._askAIChatbotUseCase.execute({
         userId,
-        role: role as TRole,
+        role: role as AIRole,
         message,
       })
       res.status(HTTP_STATUS.OK).json({

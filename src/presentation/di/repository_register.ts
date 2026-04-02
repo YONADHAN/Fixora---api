@@ -42,7 +42,12 @@ import { RatingsReviewRepository } from '../../interfaceAdapters/repositories/fe
 import { UserSubscriptionRepository } from '../../interfaceAdapters/repositories/feature/subscription/user_subscription.repository'
 import { AiServiceRepository } from '../../interfaceAdapters/repositories/feature/ai_chatbot/ai_chatbot_service_repository'
 import { IAiServiceRepository } from '../../domain/repositoryInterfaces/feature/ai/ai_service_repository.interface'
-
+import { AiBookingRepository } from '../../interfaceAdapters/repositories/feature/ai_chatbot/ai_booking_repository'
+import { IAiBookingRepository } from '../../domain/repositoryInterfaces/feature/ai/ai_booking_repository.interface'
+import { AISubscriptionRepository } from '../../interfaceAdapters/repositories/feature/ai_chatbot/ai_subscription_repository'
+import { IAISubscriptionRepository } from '../../domain/repositoryInterfaces/feature/ai/ai_subscription_plan_repository.interface'
+import { AIMainServiceCategoryRepository } from '../../interfaceAdapters/repositories/feature/ai_chatbot/ai_main_service_category_repository'
+import { IAIMainServiceCategoryRepository } from '../../domain/repositoryInterfaces/feature/ai/ai_service_category_repository.interface'
 
 import { IAdminRevenueRepository } from '../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
 import { AdminRevenueRepository } from '../../interfaceAdapters/repositories/feature/payment/admin_revenue_repository'
@@ -155,8 +160,20 @@ export class RepositoryRegistry {
       useClass: AiServiceRepository,
     })
 
+    container.register<IAiBookingRepository>('IAiBookingRepository', {
+      useClass: AiBookingRepository,
+    })
+
     container.register<IAdminRevenueRepository>('IAdminRevenueRepository',{
       useClass: AdminRevenueRepository,
+    })
+
+    container.register<IAISubscriptionRepository>('IAISubscriptionRepository', {
+      useClass: AISubscriptionRepository,
+    })
+
+    container.register<IAIMainServiceCategoryRepository>('IAIMainServiceCategoryRepository', {
+      useClass: AIMainServiceCategoryRepository,
     })
   }
 }

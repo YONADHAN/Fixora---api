@@ -1,4 +1,5 @@
 import { AIRole, AIDomain } from '../../../shared/types/ai/ai.types'
+import { DomainRegistry } from '../../../application/ai/domain_registry'
 
 export interface PromptContext {
   role: AIRole
@@ -28,7 +29,8 @@ General Rules:
     if (role === 'customer') {
       return `
 Role: Customer
-- Access only public data and your own records.
+- You have secure tool access to the user's personal records and data. 
+- You MUST use the provided tools to fetch the user's private/personal data when they ask for it. Do NOT claim you don't have access.
 `
     }
 
@@ -53,22 +55,18 @@ Role: Public
   }
 
   private static domainRules(domain: AIDomain): string {
-    switch (domain) {
-      case 'SERVICE':
-        return `
-Domain: Services
-- Answer only service-related questions.
-`
-      case 'BOOKING':
-        return `
-Domain: Booking
-- Answer only booking-related questions.
-`
-      default:
-        return `
-Domain: General
-- Answer only general Fixora questions.
+    const config = DomainRegistry.getConfiguration(domain)
+    if (config) {
+      return `
+Domain: ${config.description}
+${config.rules}
 `
     }
+
+    const fallback = DomainRegistry.getConfiguration('GENERAL')
+    return `
+Domain: ${fallback?.description || 'General'}
+${fallback?.rules || '- Answer only general Fixora questions.'}
+`
   }
 }

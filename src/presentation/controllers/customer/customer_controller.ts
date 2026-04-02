@@ -84,7 +84,7 @@ export class CustomerController implements ICustomerController {
       const data = req.body
       const userId = (req as CustomRequest).user.userId
       const role = (req as CustomRequest).user.role
-console.log("Profile update controller, ", data)
+      console.log("Profile update controller, ", data)
       await this._profileInfoUpdateUseCase.execute(role, data, userId)
       res.status(HTTP_STATUS.OK).json({
         message: SUCCESS_MESSAGES.PROFILE_UPDATED_SUCCESSFULLY,
@@ -152,12 +152,12 @@ console.log("Profile update controller, ", data)
 
   async getDashboardStats(req: Request, res: Response): Promise<void> {
     try {
-      const {from , to,interval} = req.query
+      const { from, to, interval } = req.query
       const userId = (req as CustomRequest).user.userId
       const input: DashboardStatsInputDTO = {
         dateRange: {
-          from : from? new Date(from as string): new Date(new Date().setDate(new Date().getDate()-30)),
-          to: to? new Date(to as string): new Date(),
+          from: from ? new Date(from as string) : new Date(new Date().setDate(new Date().getDate() - 30)),
+          to: to ? new Date(to as string) : new Date(),
         },
         interval: (interval as timeGranularityType) || 'daily',
         user: {
@@ -172,7 +172,7 @@ console.log("Profile update controller, ", data)
         data: stats,
       })
     } catch (error) {
-      handleErrorResponse(req, res,error)
+      handleErrorResponse(req, res, error)
     }
   }
 }

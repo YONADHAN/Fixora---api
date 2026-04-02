@@ -17,3 +17,10 @@ export interface AIToolBundle {
   tools: unknown[]
   toolMap: AIToolMap
 }
+
+export interface AIToolContext {
+  role: AIRole
+  userId: string | null
+}
+
+export type AIToolProvider = (context: AIToolContext) => AIToolBundle

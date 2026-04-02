@@ -1,8 +1,8 @@
 import { container } from 'tsyringe'
 import { IAiServiceRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_service_repository.interface'
-import { AIToolBundle } from '../../../../shared/types/ai/ai.types'
+import { AIToolBundle, AIToolContext } from '../../../../shared/types/ai/ai.types'
 
-export function getServiceTools(): AIToolBundle {
+export function getServiceTools(context: AIToolContext): AIToolBundle {
   const repo = container.resolve<IAiServiceRepository>('IAiServiceRepository')
 
   return {

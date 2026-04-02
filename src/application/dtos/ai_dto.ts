@@ -1,8 +1,8 @@
-import { TRole } from '../../shared/constants'
+import { AIRole } from '../../shared/types/ai/ai.types'
 import type { Content } from '@google/generative-ai'
 export interface AskAIChatbotRequestDTO {
   userId: string | null
-  role: TRole
+  role: AIRole
   message: string
   history?: Content[]
 }

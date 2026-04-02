@@ -1,28 +1,23 @@
 import { AIDomain } from '../../shared/types/ai/ai.types'
+import { DomainRegistry } from './domain_registry'
 
-export function detectDomains(message: string): AIDomain[] {
-  const text = message.toLowerCase()
-  const domains: AIDomain[] = []
+export class DomainDetector {
+  static detectDomains(message: string): AIDomain[] {
+    const text = message.toLowerCase()
+    const domains: AIDomain[] = []
 
-  if (/(service|facial|hair|makeup|spa)/.test(text)) {
-    domains.push('SERVICE')
+    const config = DomainRegistry.getAllConfigurations()
+    for (const [domainStr, settings] of Object.entries(config)) {
+      const domain = domainStr as AIDomain
+      if (settings?.triggerRegex.test(text) && domain !== 'GENERAL') {
+        domains.push(domain)
+      }
+    }
+
+    if (domains.length === 0) {
+      domains.push('GENERAL')
+    }
+
+    return domains
   }
-
-  if (/(booking|appointment|schedule|reschedule)/.test(text)) {
-    domains.push('BOOKING')
-  }
-
-  if (/(category|type|kind)/.test(text)) {
-    domains.push('CATEGORY')
-  }
-
-  if (/(subscription|plan|subscribe)/.test(text)) {
-    domains.push('SUBSCRIPTION_PLAN')
-  }
-
-  if (domains.length === 0) {
-    domains.push('GENERAL')
-  }
-
-  return domains
 }

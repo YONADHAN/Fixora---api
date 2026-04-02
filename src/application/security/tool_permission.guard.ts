@@ -1,17 +1,9 @@
-const BLOCKED_KEYWORDS = [
-  'delete',
-  'remove',
-  'drop',
-  'update',
-  'insert',
-  'patch',
-]
+import { AIToolMap } from '../../shared/types/ai/ai.types'
 
 export class ToolPermissionGuard {
   static validateMessage(message: string) {
-    const lower = message.toLowerCase()
-
-    if (BLOCKED_KEYWORDS.some((word) => lower.includes(word))) {
+    const blockedPattern = /\b(delete|remove|drop|update|insert|patch)\b/i
+    if (blockedPattern.test(message)) {
       throw new Error('This action is not allowed.')
     }
   }
@@ -20,5 +12,16 @@ export class ToolPermissionGuard {
     if (!allowedTools.includes(toolName)) {
       throw new Error(`Tool ${toolName} is not permitted.`)
     }
+  }
+
+  static createSecuredToolMap(toolMap: AIToolMap): AIToolMap {
+    const allowedTools = Object.keys(toolMap)
+
+    return new Proxy(toolMap, {
+      get(target, prop: string) {
+        ToolPermissionGuard.validateToolCall(prop, allowedTools)
+        return target[prop]
+      },
+    })
   }
 }

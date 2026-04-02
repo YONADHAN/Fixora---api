@@ -145,6 +145,54 @@ export const decodeToken = async (
   }
 }
 
+export const optionalVerifyAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const token = extractToken(req)
+
+    if (!token || !token.access_token) {
+      return next()
+    }
+
+    if (await isBlacklisted(token.access_token)) {
+      return next()
+    }
+
+    const user = tokenService.verifyAccessToken(
+      token.access_token,
+    ) as CustomJWTPayload
+
+    if (!user || !user.userId) {
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: ERROR_MESSAGES.INVALID_TOKEN,
+        statuscode: HTTP_STATUS.UNAUTHORIZED,
+      })
+      return
+    }
+
+    (req as CustomRequest).user = {
+      ...user,
+      access_token: token.access_token,
+      refresh_token: token.refresh_token,
+    }
+    next()
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error?.name === 'TokenExpiredError' || error?.name === 'JsonWebTokenError') {
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({
+          message: ERROR_MESSAGES.INVALID_TOKEN,
+          statuscode: HTTP_STATUS.UNAUTHORIZED,
+        })
+        return
+      }
+    }
+    next()
+  }
+}
+
 export const authorizeRole = (allowedRoles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = (req as CustomRequest).user

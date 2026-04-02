@@ -6,9 +6,8 @@ import {
 
 import { PromptBuilder } from '../../../../interfaceAdapters/services/ai_chat_bot/prompt_builder'
 import { ToolPermissionGuard } from '../../../security/tool_permission.guard'
-import { detectDomains } from '../../../ai/domain_detector'
-import { RoleDomainPolicy } from '../../../ai/role_domain_policy'
-import { getToolsForDomains } from '../../../ai/tool_registry'
+import { DomainService } from '../../../ai/domain_service'
+import { ToolRegistry } from '../../../ai/tool_registry'
 import { LLMFactory } from '../../../ai/llm_factory'
 import { IAskAIChatbotCustomerStrategy } from './ask_ai_chatbot_customer_strategy.interface'
 
@@ -19,22 +18,22 @@ export class AskAIChatbotCustomerStrategy implements IAskAIChatbotCustomerStrate
   ): Promise<AskAIChatbotResponseDTO> {
     ToolPermissionGuard.validateMessage(input.message)
 
-    const domains = detectDomains(input.message)
-
-    const allowedDomains = RoleDomainPolicy[input.role]
-    const finalDomains = domains.filter((d) => allowedDomains.includes(d))
+    const finalDomains = DomainService.resolveAllowedDomains(input.message, input.role)
 
     if (!finalDomains.length) {
       return { reply: 'You are not allowed to access this information.' }
     }
 
-    const { tools, toolMap } = getToolsForDomains(finalDomains)
+    const primaryDomain = DomainService.getPrimaryDomain(finalDomains)
+    const { tools, toolMap } = ToolRegistry.getToolsForDomains(finalDomains, { role: input.role, userId: input.userId })
 
     const systemPrompt = PromptBuilder.buildSystemPrompt({
       role: input.role,
       userId: input.userId,
-      domain: finalDomains[0],
+      domain: primaryDomain,
     })
+
+    const securedToolMap = ToolPermissionGuard.createSecuredToolMap(toolMap)
 
     const llm = LLMFactory.get()
 
@@ -43,14 +42,7 @@ export class AskAIChatbotCustomerStrategy implements IAskAIChatbotCustomerStrate
       message: input.message,
       history: input.history,
       tools,
-      toolMap: new Proxy(toolMap, {
-        get(target, prop: string) {
-          if (!(prop in target)) {
-            throw new Error(`Tool ${String(prop)} not allowed`)
-          }
-          return target[prop]
-        },
-      }),
+      toolMap: securedToolMap,
     })
 
     return { reply: answer }
