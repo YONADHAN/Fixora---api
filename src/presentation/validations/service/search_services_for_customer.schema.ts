@@ -18,6 +18,10 @@ export const SearchCustomerServicesBasicSchema = z.object({
 
   weeklyDays: z.string().optional(), // "1,3,5"
 
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
+  radius: z.string().optional(),
+
   page: z.string().default('1'),
   limit: z.string().default('10'),
 })
@@ -45,6 +49,10 @@ export const SearchCustomerServicesDTOSchema = z.object({
   recurrenceType: z.enum(['daily', 'weekly', 'monthly']).optional(),
 
   weeklyDays: z.array(z.number().int().min(0).max(6)).optional(),
+
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  radius: z.number().positive().optional(),
 
   page: z.number().int().min(1),
   limit: z.number().int().min(1).max(100),

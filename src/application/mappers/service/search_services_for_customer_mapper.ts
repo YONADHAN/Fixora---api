@@ -38,6 +38,10 @@ interface RawQuery {
   recurrenceType?: recurrenceType
   weeklyDays?: string // "1,2,3"
 
+  latitude?: string
+  longitude?: string
+  radius?: string
+
   page: string
   limit: string
 }
@@ -76,6 +80,10 @@ export class RequestSearchServicesForCustomerRequestMapper {
             .map(Number)
             .filter((n) => Number.isInteger(n) && n >= 0 && n <= 6)
         : undefined,
+
+      latitude:  validated.latitude  ? Number(validated.latitude)  : undefined,
+      longitude: validated.longitude ? Number(validated.longitude) : undefined,
+      radius:    validated.radius    ? Number(validated.radius)    : undefined,
 
       page,
       limit,

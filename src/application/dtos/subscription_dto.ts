@@ -184,7 +184,11 @@ export interface GetMySubscriptionResponseDTO {
       description: string
       price: number
       durationInDays: number
-      features: any
+      features: {
+        maxServices?: number
+        videoCallAccess?: boolean
+        aiChatbotAccess?: boolean
+      }
       benefits: string[]
     }
   }[]

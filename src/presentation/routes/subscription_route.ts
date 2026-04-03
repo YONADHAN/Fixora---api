@@ -61,9 +61,17 @@ export class SubscriptionRoutes extends BaseRoute {
     )
 
     this.router.get(
-      '/my',
+      '/my-subscriptions',
+      verifyAuth,
       authorizeRole([ROLES.VENDOR]),
       (req,res) => subscriptionController.getMySubscriptionPlans(req,res),
+    )
+
+    this.router.post(
+      '/cancel',
+      verifyAuth,
+      authorizeRole([ROLES.VENDOR]),
+      (req, res) => subscriptionController.cancelMySubscriptionPlan(req, res),
     )
   }
 }

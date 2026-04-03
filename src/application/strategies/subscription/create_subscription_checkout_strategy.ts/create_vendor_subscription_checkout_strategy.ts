@@ -46,7 +46,7 @@ export class CreateVendorSubscriptionCheckoutStrategy implements ICreateVendorSu
 
     const existingSubscription = await this.userSubscriptionRepo.findOne({
       userId,
-      planId,
+      subscriptionPlanId:planId,
       status: { $in: ['pending', 'active'] },
     })
 

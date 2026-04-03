@@ -13,6 +13,7 @@ import { ICreateSubscriptionCheckoutUseCase } from '../../../domain/useCaseInter
 import { HTTP_STATUS, TRole } from '../../../shared/constants'
 import { ICheckSubscriptionForAllowUsingBenefitUseCase } from '../../../domain/useCaseInterfaces/subscription/check_subscription_for_allow_using_benefit_usecase.interface'
 import { IGetMySubscriptionPlansUseCase } from '../../../domain/useCaseInterfaces/subscription/get_my_subscription_plans_usecase.interface'
+import { ICreateCancelSubscriptionUseCase } from '../../../domain/useCaseInterfaces/subscription/create_cancel_subscription_usecase.interface'
 
 @injectable()
 export class SubscriptionController implements ISubscriptionController {
@@ -40,6 +41,9 @@ export class SubscriptionController implements ISubscriptionController {
   
     @inject('IGetMySubscriptionPlansUseCase')
     private readonly _getMySubscriptionPlansUsecase: IGetMySubscriptionPlansUseCase,
+
+    @inject('ICreateCancelSubscriptionUseCase')
+    private readonly _createCancelSubscriptionUseCase: ICreateCancelSubscriptionUseCase,
   ) {}
 
   async createSubscriptionPlan(
@@ -204,6 +208,20 @@ export class SubscriptionController implements ISubscriptionController {
       })
     } catch (error) {
       handleErrorResponse(req,res, error)
+    }
+  }
+
+  async cancelMySubscriptionPlan(req:Request, res:Response): Promise<void> {
+    try {
+      const {userId} = (req as CustomRequest).user;
+      const {subscriptionId} = req.body;
+      const response = await this._createCancelSubscriptionUseCase.execute({userId, subscriptionId})
+      res.status(HTTP_STATUS.OK).json({
+        message: "Subscription Cancelled Successfully",
+        data: response,
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
     }
   }
 }
