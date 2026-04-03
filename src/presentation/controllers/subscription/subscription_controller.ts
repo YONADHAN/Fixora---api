@@ -12,6 +12,7 @@ import { IGetActiveSubscriptionPlansUseCase } from '../../../domain/useCaseInter
 import { ICreateSubscriptionCheckoutUseCase } from '../../../domain/useCaseInterfaces/subscription/create_subscription_checkout_usecase.interface'
 import { HTTP_STATUS, TRole } from '../../../shared/constants'
 import { ICheckSubscriptionForAllowUsingBenefitUseCase } from '../../../domain/useCaseInterfaces/subscription/check_subscription_for_allow_using_benefit_usecase.interface'
+import { IGetMySubscriptionPlansUseCase } from '../../../domain/useCaseInterfaces/subscription/get_my_subscription_plans_usecase.interface'
 
 @injectable()
 export class SubscriptionController implements ISubscriptionController {
@@ -36,6 +37,9 @@ export class SubscriptionController implements ISubscriptionController {
 
     @inject('ICheckSubscriptionForAllowUsingBenefitUseCase')
     private readonly _checkSubscriptionForAllowUsingBenefitUseCase: ICheckSubscriptionForAllowUsingBenefitUseCase,
+  
+    @inject('IGetMySubscriptionPlansUseCase')
+    private readonly _getMySubscriptionPlansUsecase: IGetMySubscriptionPlansUseCase,
   ) {}
 
   async createSubscriptionPlan(
@@ -192,8 +196,8 @@ export class SubscriptionController implements ISubscriptionController {
 
   async getMySubscriptionPlans(req:Request, res:Response): Promise<void> {
     try {
-      const {userId, role} = (req as CustomRequest).user;
-      const response = await this._getMySubscriptionPlansUsecase.execute({userId, role});
+      const {userId,role} = (req as CustomRequest).user;
+      const response = await this._getMySubscriptionPlansUsecase.execute({userId, role:role as TRole});
       res.status(HTTP_STATUS.OK).json({
         message:"Subscriptions fetched successfully.",
         data: response

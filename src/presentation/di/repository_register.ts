@@ -51,6 +51,8 @@ import { IAIMainServiceCategoryRepository } from '../../domain/repositoryInterfa
 
 import { IAdminRevenueRepository } from '../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
 import { AdminRevenueRepository } from '../../interfaceAdapters/repositories/feature/payment/admin_revenue_repository'
+import { ICounterRepository } from '../../domain/repositoryInterfaces/feature/counter/counter_repository.interface'
+import { CounterRepository } from '../../interfaceAdapters/repositories/feature/counter/counter_repository'
 
 
 export class RepositoryRegistry {
@@ -174,6 +176,10 @@ export class RepositoryRegistry {
 
     container.register<IAIMainServiceCategoryRepository>('IAIMainServiceCategoryRepository', {
       useClass: AIMainServiceCategoryRepository,
+    })
+
+    container.register<ICounterRepository>('ICounterRepository',{
+      useClass: CounterRepository,
     })
   }
 }

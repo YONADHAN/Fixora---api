@@ -388,6 +388,10 @@ import { IAskAIChatbotPublicStrategy } from '../../application/strategies/ai_cha
 import { AskAIChatbotPublicStrategy } from '../../application/strategies/ai_chatbot/ask_ai_chatbot/ask_ai_chatbot_public_strategy'
 import { ChangeServiceStatusOfBookingUseCase } from '../../application/usecase/booking/change_service_status_of_booking_usecase'
 import { IChangeServiceStatusOfBookingUseCase } from '../../domain/useCaseInterfaces/booking/change_service_status_of_booking_usecase_interface'
+import { IGetMySubscriptionPlansUseCase } from '../../domain/useCaseInterfaces/subscription/get_my_subscription_plans_usecase.interface'
+import { GetMySubscriptionPlansUsecase } from '../../application/usecase/subscription/get_my_subscription_plans_usecase'
+import { ICreateCancelSubscriptionUseCase } from '../../domain/useCaseInterfaces/subscription/create_cancel_subscription_usecase.interface'
+import { CreateCancelSubscriptionUseCase } from '../../application/usecase/subscription/create_cancel_subsciption_usecase'
 
 export class UseCaseRegistry {
   static registerUseCases(): void {
@@ -1367,6 +1371,14 @@ export class UseCaseRegistry {
 
     container.register<ICheckSubscriptionForAllowUsingBenefitForVendorStrategy>('ICheckSubscriptionForAllowUsingBenefitForVendorStrategy', {
       useClass: CheckSubscriptionForAllowUsingBenefitForVendor,
+    })
+
+    container.register<IGetMySubscriptionPlansUseCase>('IGetMySubscriptionPlansUseCase',{
+      useClass: GetMySubscriptionPlansUsecase,
+    })
+
+    container.register<ICreateCancelSubscriptionUseCase>('ICreateCancelSubscriptionUseCase',{
+      useClass: CreateCancelSubscriptionUseCase,
     })
   }
 }
