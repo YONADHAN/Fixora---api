@@ -4,6 +4,8 @@ import { GeminiLLMService } from '../../interfaceAdapters/services/llm/gemini_ll
 import { GroqLLMService } from '../../interfaceAdapters/services/llm/groq_llm.service'
 import { ResilientLLMService } from '../../interfaceAdapters/services/llm/resilient_llm.service'
 import { ILLMService } from '../../domain/serviceInterfaces/llm_service.interface'
+import { ICodeGeneratorService } from '../../domain/serviceInterfaces/counter_service_interface'
+import { CodeGeneratorService } from '../../application/service/code_generator_service'
 
 export class ServicesRegistry {
   static registerServices(): void {
@@ -18,6 +20,9 @@ export class ServicesRegistry {
     })
     container.register<ILLMService>('ILLMService', {
       useClass: ResilientLLMService,
+    })
+    container.register<ICodeGeneratorService>('ICodeGeneratorService',{
+      useClass: CodeGeneratorService,
     })
   }
 }

@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { IAdminRepository } from '../../../domain/repositoryInterfaces/users/admin_repository.interface'
 import { CustomError } from '../../../domain/utils/custom.error'
 import { HTTP_STATUS } from '../../../shared/constants'
+import { ICodeGeneratorService } from '../../../domain/serviceInterfaces/counter_service_interface'
 
 @injectable()
 export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCase {
@@ -58,6 +59,9 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
 
     @inject('IServiceRepository')
     private _serviceRepository: IServiceRepository,
+
+    @inject('ICodeGeneratorService')
+    private readonly _codeGeneratorService: ICodeGeneratorService,
   ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -72,7 +76,7 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
     if (!hold || hold.status !== 'active') return
 
 
-    
+
 
     const createdBookings = []
 
@@ -188,16 +192,20 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
     if (!adminWallet._id) {
       throw new CustomError("Admin Wallet has error receiving amount", HTTP_STATUS.INTERNAL_SERVER_ERROR)
     }
-
+    const transactionCode =
+      await this._codeGeneratorService.generateWalletTransactionCode()
+      //admin// hold 
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
+      transactionCode,
       walletRef: adminWallet._id,
       userRef: admin._id.toString(),
       type: 'credit',
       source: 'service-booking',
       amount: hold.pricing.advanceAmount,
       currency: 'INR',
-      description: `Advance payment for ${hold.holdId}`,
+      
+      description: `Advance payment`,
       bookingHoldRef: hold._id,
       paymentRef: payment._id,
       stripePaymentIntentId: paymentIntent.id,
@@ -209,16 +217,16 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
     )
 
     await this._bookingHoldRepository.markHoldAsCompleted(hold.holdId)
-const customer = await this._customerRepository.findOne({
+    const customer = await this._customerRepository.findOne({
       _id: hold.customerRef,
     })
 
-    if(!customer ){
+    if (!customer) {
       throw new CustomError('User not found', HTTP_STATUS.NOT_FOUND)
     }
 
-    if(!customer.userId){
-      throw new CustomError("User not found",HTTP_STATUS.NOT_FOUND)
+    if (!customer.userId) {
+      throw new CustomError("User not found", HTTP_STATUS.NOT_FOUND)
     }
 
     for (const slot of hold.slots) {
@@ -230,7 +238,7 @@ const customer = await this._customerRepository.findOne({
       )
     }
 
-    
+
     const vendor = await this._vendorRepository.findOne({
       _id: hold.vendorRef,
     })

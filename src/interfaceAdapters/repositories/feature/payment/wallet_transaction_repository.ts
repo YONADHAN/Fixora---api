@@ -83,7 +83,7 @@ console.log("The data first : => ",data)
   ): Partial<IWalletTransactionModel> {
     return {
       transactionId: entity.transactionId,
-
+      transactionCode: entity.transactionCode,
       walletRef: entity.walletRef
         ? new Types.ObjectId(entity.walletRef)
         : undefined,
@@ -121,7 +121,7 @@ console.log("The data first : => ",data)
       _id: model._id.toString(),
 
       transactionId: model.transactionId,
-
+      transactionCode: model.transactionCode,
       walletRef: model.walletRef.toString(),
       userRef: model.userRef.toString(),
 

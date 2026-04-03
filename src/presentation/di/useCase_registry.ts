@@ -1380,5 +1380,7 @@ export class UseCaseRegistry {
     container.register<ICreateCancelSubscriptionUseCase>('ICreateCancelSubscriptionUseCase',{
       useClass: CreateCancelSubscriptionUseCase,
     })
+
+    
   }
 }

@@ -187,6 +187,7 @@ import { IWalletRepository } from '../../../../domain/repositoryInterfaces/featu
 import { IWalletTransactionRepository } from '../../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { ICustomerCancelBookingStrategyInterface } from './customer_cancel_booking_strategy.interface'
 import { IAdminRepository } from '../../../../domain/repositoryInterfaces/users/admin_repository.interface'
+import { ICodeGeneratorService } from '../../../../domain/serviceInterfaces/counter_service_interface'
 
 @injectable()
 export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStrategyInterface {
@@ -208,6 +209,9 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
 
     @inject('IAdminRepository')
     private _adminRepository: IAdminRepository,
+
+    @inject('ICodeGeneratorService')
+    private readonly _codeGeneratorService: ICodeGeneratorService,
   ) { }
 
   async execute(payload: CancelBookingRequestDTO): Promise<void> {
@@ -259,20 +263,20 @@ export class CustomerCancelBookingStrategy implements ICustomerCancelBookingStra
       )
     }
 
-  let wallet = await this._walletRepository.findOne({
-  userRef: initialBooking.customerRef,
-})
+    let wallet = await this._walletRepository.findOne({
+      userRef: initialBooking.customerRef,
+    })
 
-if (!wallet) {
-  wallet = await this._walletRepository.save({
-    walletId: `WAL_${crypto.randomUUID()}`,
-    userRef: initialBooking.customerRef,
-    userType: 'customer',
-    currency: payment.advancePayment?.currency || 'INR',
-    balance: 0,
-    isActive: true,
-  })
-}
+    if (!wallet) {
+      wallet = await this._walletRepository.save({
+        walletId: `WAL_${crypto.randomUUID()}`,
+        userRef: initialBooking.customerRef,
+        userType: 'customer',
+        currency: payment.advancePayment?.currency || 'INR',
+        balance: 0,
+        isActive: true,
+      })
+    }
 
 
 
@@ -283,7 +287,7 @@ if (!wallet) {
       )
     }
 
-     //CONSTRAINT CHECKS
+    //CONSTRAINT CHECKS
 
     let nearestServiceSlotDate: Date | null = null
 
@@ -360,16 +364,19 @@ if (!wallet) {
       if (!adminWallet || !adminWallet._id) {
         throw new CustomError("Admin wallet not found", HTTP_STATUS.NOT_FOUND)
       }
-
+      let transactionCode =
+        await this._codeGeneratorService.generateWalletTransactionCode()
+        //booking group id
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
+        transactionCode,
         walletRef: adminWallet._id,
         userRef: admin._id.toString(),
         type: 'debit',
         source: 'booking-refund',
         amount: refundableAdvanceAmount,
         currency: payment.advancePayment?.currency || 'INR',
-        description: `Refund for booking group ${initialBooking.bookingGroupId}`,
+        description: `Refund for booking `,
         paymentRef: payment._id,
       })
 
@@ -377,19 +384,23 @@ if (!wallet) {
         adminWallet._id,
         refundableAdvanceAmount
       )
+      transactionCode =
+        await this._codeGeneratorService.generateWalletTransactionCode()
+        //booking group
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
+        transactionCode,
         walletRef: wallet._id,
         userRef: initialBooking.customerRef,
         type: 'credit',
         source: 'booking-refund',
         amount: refundableAdvanceAmount,
         currency: payment.advancePayment?.currency || 'INR',
-        description: `Refund for cancelled booking group ${initialBooking.bookingGroupId}`,
+        description: `Refund for cancelled booking group `,
         paymentRef: payment._id,
       })
 
-     
+
       await this._walletRepository.incrementBalance(
         wallet._id,
         refundableAdvanceAmount
@@ -416,43 +427,47 @@ if (!wallet) {
         throw new CustomError("Admin wallet not found", HTTP_STATUS.NOT_FOUND)
       }
 
-   
+
 
       let vendorWallet = await this._walletRepository.findOne({
-  userRef: initialBooking.vendorRef,
-})
+        userRef: initialBooking.vendorRef,
+      })
 
-if (!vendorWallet) {
-  vendorWallet = await this._walletRepository.save({
-    walletId: `WAL_${crypto.randomUUID()}`,
-    userRef: initialBooking.vendorRef,
-    userType: 'vendor',
-    currency: payment.advancePayment?.currency || 'INR',
-    balance: 0,
-    isActive: true,
-  })
-}
+      if (!vendorWallet) {
+        vendorWallet = await this._walletRepository.save({
+          walletId: `WAL_${crypto.randomUUID()}`,
+          userRef: initialBooking.vendorRef,
+          userType: 'vendor',
+          currency: payment.advancePayment?.currency || 'INR',
+          balance: 0,
+          isActive: true,
+        })
+      }
 
-if(!vendorWallet._id){
-  throw new CustomError("Venoder wallet not found", HTTP_STATUS.NOT_FOUND)
-}
-
-      // Admin debit
+      if (!vendorWallet._id) {
+        throw new CustomError("Venoder wallet not found", HTTP_STATUS.NOT_FOUND)
+      }
+      let transactionCode =
+        await this._codeGeneratorService.generateWalletTransactionCode()
+      // Admin debit //booking group 
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
+        transactionCode,
         walletRef: adminWallet._id,
         userRef: admin._id.toString(),
         type: 'debit',
         source: 'service-payout',
         amount: refundableAdvanceAmount,
         currency: payment.advancePayment?.currency || 'INR',
-        description: `Late cancellation payout for ${initialBooking.bookingGroupId}`,
+        description: `Late cancellation payout `,
         paymentRef: payment._id,
       })
-
+      transactionCode =
+        await this._codeGeneratorService.generateWalletTransactionCode()
       // Vendor credit
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
+        transactionCode,
         walletRef: vendorWallet._id,
         userRef: initialBooking.vendorRef,
         type: 'credit',

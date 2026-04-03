@@ -153,6 +153,7 @@ import { HTTP_STATUS } from '../../../shared/constants'
 import { IAdminRepository } from '../../../domain/repositoryInterfaces/users/admin_repository.interface'
 import crypto from 'crypto'
 import { IAdminRevenueRepository } from '../../../domain/repositoryInterfaces/feature/payment/admin_revenue_repository.interface'
+import { ICodeGeneratorService } from '../../../domain/serviceInterfaces/counter_service_interface'
 @injectable()
 export class BalancePaymentSucceededUseCase
   implements IBalancePaymentSucceededUseCase {
@@ -183,6 +184,9 @@ export class BalancePaymentSucceededUseCase
 
     @inject("IAdminRevenueRepository")
     private readonly _adminRevenueRepository: IAdminRevenueRepository,
+
+    @inject('ICodeGeneratorService')
+    private readonly _codeGeneratorService: ICodeGeneratorService,
   ) { }
 
   async execute(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -309,9 +313,11 @@ export class BalancePaymentSucceededUseCase
       },
     )
 
-
+let transactionCode =
+  await this._codeGeneratorService.generateWalletTransactionCode()
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
+      transactionCode,
       userRef: admin._id.toString(),
       walletRef: adminWallet._id,
       type: 'credit',
@@ -335,9 +341,11 @@ export class BalancePaymentSucceededUseCase
     )
     const vendorShare = amount - commissionAmount
 
-
+ transactionCode =
+  await this._codeGeneratorService.generateWalletTransactionCode()
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
+      transactionCode,
       userRef: admin._id.toString(),
       walletRef: adminWallet._id,
       type: 'debit',
@@ -354,17 +362,19 @@ export class BalancePaymentSucceededUseCase
     )
 
 
-  
+
     await this._adminRevenueRepository.save({
       revenueId: `REV_${crypto.randomUUID()}`,
-      source:'service_commission',
-      currency:'INR',
-      referenceId:bookingGroupId,
-      amount:commissionAmount,
+      source: 'service_commission',
+      currency: 'INR',
+      referenceId: bookingGroupId,
+      amount: commissionAmount,
     })
-
+transactionCode =
+  await this._codeGeneratorService.generateWalletTransactionCode()
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
+      transactionCode,
       userRef: vendor._id.toString(),
       walletRef: vendorWallet._id,
       type: 'credit',

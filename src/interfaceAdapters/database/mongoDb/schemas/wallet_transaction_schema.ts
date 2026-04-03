@@ -11,6 +11,10 @@ export const WalletTransactionSchema = new Schema(
       unique: true,
     },
 
+    transactionCode: {
+      type: String,
+    },
+
     walletRef: {
       type: Schema.Types.ObjectId,
       ref: 'Wallet',

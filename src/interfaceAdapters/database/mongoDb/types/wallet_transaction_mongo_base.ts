@@ -8,7 +8,7 @@ export interface WalletTransactionMongoBase {
   _id: Types.ObjectId
 
   transactionId: string
-
+  transactionCode?: string
   walletRef: Types.ObjectId
   userRef: Types.ObjectId
 

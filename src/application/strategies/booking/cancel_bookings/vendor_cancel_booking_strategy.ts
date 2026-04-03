@@ -218,6 +218,7 @@ import { IPaymentRepository } from '../../../../domain/repositoryInterfaces/feat
 import { IWalletRepository } from '../../../../domain/repositoryInterfaces/feature/payment/wallet_repository.interface'
 import { IWalletTransactionRepository } from '../../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { IAdminRepository } from '../../../../domain/repositoryInterfaces/users/admin_repository.interface'
+import { ICodeGeneratorService } from '../../../../domain/serviceInterfaces/counter_service_interface'
 
 @injectable()
 export class VendorCancelBookingStrategy implements IVendorCancelBookingStrategyInterface {
@@ -234,6 +235,8 @@ export class VendorCancelBookingStrategy implements IVendorCancelBookingStrategy
     private _walletRepository: IWalletRepository,
     @inject('IWalletTransactionRepository')
     private _walletTransactionRepository: IWalletTransactionRepository,
+    @inject('ICodeGeneratorService')
+    private readonly _codeGeneratorService: ICodeGeneratorService,
   ) { }
 
   async execute(payload: CancelBookingRequestDTO): Promise<void> {
@@ -287,7 +290,7 @@ export class VendorCancelBookingStrategy implements IVendorCancelBookingStrategy
     const wallet = await this._walletRepository.findOne({
       userRef: initialBooking.customerRef,
     })
-//==========================================================================================================
+    //==========================================================================================================
     if (!wallet || !wallet._id) {
       throw new CustomError(
         ERROR_MESSAGES.FILE_NOT_FOUND,
@@ -414,7 +417,7 @@ export class VendorCancelBookingStrategy implements IVendorCancelBookingStrategy
     }
     if (refundableAdvanceAmount > 0) {
 
-    
+
       const admin = await this._adminRepository.findOne({
         email: process.env.SEED_ADMIN_EMAIL,
       })
@@ -430,30 +433,34 @@ export class VendorCancelBookingStrategy implements IVendorCancelBookingStrategy
       if (!adminWallet || !adminWallet._id) {
         throw new CustomError("Admin wallet not found", HTTP_STATUS.NOT_FOUND)
       }
-
-      //  Admin Debit Transaction
+      let transactionCode =
+        await this._codeGeneratorService.generateWalletTransactionCode()
+      //  Admin Debit Transaction//booking group
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
+        transactionCode,
         walletRef: adminWallet._id,
         userRef: admin._id.toString(),
         type: 'debit',
         source: 'booking-refund',
         amount: refundableAdvanceAmount,
         currency: payment.advancePayment?.currency || 'INR',
-        description: `Vendor cancelled booking group ${initialBooking.bookingGroupId}`,
+        description: `Vendor cancelled booking group`,
         paymentRef: payment._id,
       })
-
-      // Customer Credit Transaction
+      transactionCode =
+        await this._codeGeneratorService.generateWalletTransactionCode()
+      // Customer Credit Transaction//booking group
       await this._walletTransactionRepository.save({
         transactionId: `WTXN_${crypto.randomUUID()}`,
+        transactionCode,
         walletRef: wallet._id,
         userRef: initialBooking.customerRef,
         type: 'credit',
         source: 'booking-refund',
         amount: refundableAdvanceAmount,
         currency: payment.advancePayment?.currency || 'INR',
-        description: `Refund for cancelled booking group ${initialBooking.bookingGroupId}`,
+        description: `Refund for cancelled booking group`,
         paymentRef: payment._id,
       })
 

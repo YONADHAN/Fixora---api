@@ -9,7 +9,7 @@ export interface IWalletTransactionEntity {
   _id?: string
 
   transactionId: string
-
+  transactionCode?: string
   walletRef: string
   userRef: string
 

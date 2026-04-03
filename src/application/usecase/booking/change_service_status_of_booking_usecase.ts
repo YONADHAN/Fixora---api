@@ -13,6 +13,7 @@ import { IPaymentRepository } from '../../../domain/repositoryInterfaces/feature
 import { IWalletRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_repository.interface'
 import { IWalletTransactionRepository } from '../../../domain/repositoryInterfaces/feature/payment/wallet_transaction.interface'
 import { generateUniqueId } from '../../../shared/utils/unique_uuid.helper'
+import { ICodeGeneratorService } from '../../../domain/serviceInterfaces/counter_service_interface'
 
 
 
@@ -43,6 +44,9 @@ export class ChangeServiceStatusOfBookingUseCase
 
     @inject('IWalletTransactionRepository')
     private readonly _walletTransactionRepository: IWalletTransactionRepository,
+
+    @inject('ICodeGeneratorService')
+    private readonly _codeGeneratorService: ICodeGeneratorService
   ) { }
 
   async execute(
@@ -111,7 +115,7 @@ export class ChangeServiceStatusOfBookingUseCase
     if (payment?.advancePayment?.status === 'paid') {
       totalAdvanceAmount = payment.advancePayment.amount
     }
-    //=============================
+
 
     //get admin
     const admin = await this._adminRepository.findOne({
@@ -173,10 +177,12 @@ export class ChangeServiceStatusOfBookingUseCase
           const amount = slot.advanceRefund?.amount || 0
 
           if (amount <= 0) continue
-
+          let transactionCode =
+            await this._codeGeneratorService.generateWalletTransactionCode()
           //admin debt
           await this._walletTransactionRepository.save({
             bookingRef: booking._id,
+            transactionCode,
             currency: 'INR',
             paymentRef: payment?._id,
             source: 'admin-adjustment',
@@ -193,10 +199,12 @@ export class ChangeServiceStatusOfBookingUseCase
             adminWallet._id,
             amount,
           )
-
+          transactionCode =
+            await this._codeGeneratorService.generateWalletTransactionCode()
           //vendor credit
           await this._walletTransactionRepository.save({
             bookingRef: booking._id,
+            transactionCode,
             currency: 'INR',
             paymentRef: payment?._id,
             source: 'admin-adjustment',

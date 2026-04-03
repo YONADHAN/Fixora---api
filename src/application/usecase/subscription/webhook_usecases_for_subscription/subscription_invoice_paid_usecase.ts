@@ -11,6 +11,7 @@ import { IAdminRepository } from '../../../../domain/repositoryInterfaces/users/
 import { CustomError } from '../../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { stripe } from '../../../../interfaceAdapters/stripe/stripe.client'
+import { ICodeGeneratorService } from '../../../../domain/serviceInterfaces/counter_service_interface'
 type StripeInvoiceWithSubscription = Stripe.Invoice & {
   subscription?: string | Stripe.Subscription | null
   parent?: {
@@ -36,6 +37,9 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
 
     @inject('IAdminRepository')
     private readonly _adminRepository: IAdminRepository,
+
+    @inject('ICodeGeneratorService')
+    private readonly _codeGeneratorService: ICodeGeneratorService
   ) { }
 
 
@@ -161,7 +165,7 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
         referenceId: userSubscription.subscriptionId,
         source: 'subscription',
         currency: 'INR',
-        
+
       })
     }
 
@@ -182,10 +186,12 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
     }
 
 
-
+    const transactionCode =
+  await this._codeGeneratorService.generateWalletTransactionCode()
 
     await this._walletTransactionRepository.save({
       transactionId: `TXN_${crypto.randomUUID()}`,
+      transactionCode,
       userRef: admin._id.toString(),
       walletRef: adminWallet._id,
       amount,
