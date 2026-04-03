@@ -10,7 +10,7 @@ import { IWalletRepository } from '../../../../domain/repositoryInterfaces/featu
 import { IAdminRepository } from '../../../../domain/repositoryInterfaces/users/admin_repository.interface'
 import { CustomError } from '../../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
-
+import { stripe } from '../../../../interfaceAdapters/stripe/stripe.client'
 type StripeInvoiceWithSubscription = Stripe.Invoice & {
   subscription?: string | Stripe.Subscription | null
   parent?: {
@@ -38,50 +38,7 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
     private readonly _adminRepository: IAdminRepository,
   ) { }
 
-  // async execute(invoice: Stripe.Invoice): Promise<void> {
 
-  //   const invoiceWithSubscription = invoice as StripeInvoiceWithSubscription
-  //   const stripeSubscriptionId = invoiceWithSubscription.subscription as string
-  //   if (!stripeSubscriptionId) return
-
-  //   const userSubscription = await this.userSubscriptionRepository.findOne({
-  //     stripeSubscriptionId,
-  //   })
-
-  //   if (!userSubscription) return
-
-  //   const lineItem = invoice.lines.data[0]
-  //   if (!lineItem?.period?.start || !lineItem?.period?.end) {
-  //     throw new CustomError(
-  //       'Invalid invoice period data',
-  //       HTTP_STATUS.BAD_REQUEST,
-  //     )
-  //   }
-
-  //   const startDate = new Date(lineItem.period.start * 1000)
-  //   const endDate = new Date(lineItem.period.end * 1000)
-
-  //   await this.userSubscriptionRepository.update(
-  //     { subscriptionId: userSubscription.subscriptionId },
-  //     {
-  //       startDate,
-  //       endDate,
-  //       status: 'active',
-  //       paymentStatus: 'success',
-  //     },
-  //   )
-  //   const amount = invoice.amount_paid/100;
-
-  //   await this._adminRevenueRepository.save(
-  //     {
-  //       revenueId: `REV_${crypto.randomUUID()}`,
-  //       amount,
-  //       referenceId: userSubscription.subscriptionId,
-  //       source:'subscription',
-  //       currency:'INR',
-  //     }
-  //   )
-  // }
 
   async execute(invoice: Stripe.Invoice): Promise<void> {
 
@@ -113,6 +70,7 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
 
     const userSubscription = await this.userSubscriptionRepository.findOne({
       stripeSubscriptionId,
+
     })
 
     console.log("User subscription from DB:", userSubscription)
@@ -122,11 +80,60 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
       return
     }
 
-    const lineItem = invoice.lines.data[0]
+    if (userSubscription.status === 'active') {
+      console.log('Already processed webhook, skipping')
+      return
+    }
 
+    // Get old active subs
+    const oldSubscriptions = await this.userSubscriptionRepository.findAllDocsWithoutPagination({
+      userId: userSubscription.userId,
+      status: 'active',
+    })
+
+    // Expire in DB first
+    await this.userSubscriptionRepository.updateMany(
+      {
+        userId: userSubscription.userId,
+        status: 'active',
+        subscriptionId: { $ne: userSubscription.subscriptionId },
+      },
+      {
+        status: 'expired',
+      }
+    )
+
+    // Cancel in Stripe safely
+    for (const sub of oldSubscriptions) {
+      if (
+        sub.subscriptionId !== userSubscription.subscriptionId &&
+        sub.stripeSubscriptionId
+      ) {
+        try {
+          await stripe.subscriptions.cancel(sub.stripeSubscriptionId)
+        } catch (err: unknown) {
+          if (err instanceof Stripe.errors.StripeError) {
+            if (err.code === 'resource_missing') {
+              console.log('Already canceled:', sub.stripeSubscriptionId)
+            } else {
+              console.error('Stripe cancel error:', err.message)
+            }
+          } else {
+            console.error('Unexpected error:', err)
+          }
+        }
+      }
+    }
+
+
+    const lineItem = invoice.lines.data[0]
+    if (!lineItem) {
+      console.log('No invoice line items found')
+      return
+    }
     const startDate = new Date(lineItem.period.start * 1000)
     const endDate = new Date(lineItem.period.end * 1000)
-
+    //Create new Subscription in DB
     await this.userSubscriptionRepository.update(
       { subscriptionId: userSubscription.subscriptionId },
       {
@@ -134,6 +141,7 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
         endDate,
         status: 'active',
         paymentStatus: 'success',
+        autoRenew: true,
       },
     )
 
@@ -153,7 +161,7 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
         referenceId: userSubscription.subscriptionId,
         source: 'subscription',
         currency: 'INR',
-
+        
       })
     }
 
@@ -173,24 +181,24 @@ export class SubscriptionInvoicePaidUseCase implements ISubscriptionInvoicePaidU
       throw new CustomError(ERROR_MESSAGES.WALLET_NOT_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
-    
-    
 
-      await this._walletTransactionRepository.save({
-        transactionId: `TXN_${crypto.randomUUID()}`,
-        userRef: admin._id.toString(),
-        walletRef: adminWallet._id,
-        amount,
-        type: "credit",
-        source: "subscription",
-        description: "Subscription fee",
-        
-      })
 
-      await this._walletRepository.incrementBalance(
-        adminWallet.walletId,
-        amount
-      )
-    
+
+    await this._walletTransactionRepository.save({
+      transactionId: `TXN_${crypto.randomUUID()}`,
+      userRef: admin._id.toString(),
+      walletRef: adminWallet._id,
+      amount,
+      type: "credit",
+      source: "subscription",
+      description: "Subscription fee",
+
+    })
+
+    await this._walletRepository.incrementBalance(
+      adminWallet.walletId,
+      amount
+    )
+
   }
 }

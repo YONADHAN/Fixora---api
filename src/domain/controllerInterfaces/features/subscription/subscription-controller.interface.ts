@@ -8,4 +8,5 @@ export interface ISubscriptionController {
   getActiveSubscriptionPlans(req: Request, res: Response): Promise<void>
   createSubscriptionCheckout(req: Request, res: Response): Promise<void>
   checkSubscriptionForAllowUsingBenefits(req:Request, res:Response): Promise<void> 
+  getMySubscriptionPlans(req:Request, res:Response): Promise<void>
 }

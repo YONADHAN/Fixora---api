@@ -8,6 +8,7 @@ import {
 import { IUserSubscriptionEntity } from '../../../../domain/models/user_subscription_entity'
 import { UserSubscriptionMongoBase } from '../../../database/mongoDb/types/user_subscription_mongo_base'
 import { IUserSubscriptionRepository } from '../../../../domain/repositoryInterfaces/feature/subscription/user_subscription.interface'
+import {  IUserSubscriptionWithPlan } from '../../../../application/dtos/subscription_dto'
 
 @injectable()
 export class UserSubscriptionRepository
@@ -71,4 +72,53 @@ export class UserSubscriptionRepository
       paymentStatus: entity.paymentStatus ?? 'initiated',
     }
   }
+
+ async getMySubscriptionPlans(userId: string): Promise<IUserSubscriptionWithPlan[]> {
+  const result = await this.model.aggregate([
+    {
+      $match: {
+        userId: userId,
+        status: 'active',
+      },
+    },
+    {
+      $lookup: {
+        from: 'subscriptionplans',
+        localField: 'subscriptionPlanId',
+        foreignField: 'planId',
+        as: 'planDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$planDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        subscriptionId: 1,
+        userId: 1,
+        userRole: 1,
+        status: 1,
+        startDate: 1,
+        endDate: 1,
+        autoRenew: 1,
+        paymentStatus: 1,
+
+        plan: {
+          planId: '$planDetails.planId',
+          name: '$planDetails.name',
+          description: '$planDetails.description',
+          price: '$planDetails.price',
+          durationInDays: '$planDetails.durationInDays',
+          features: '$planDetails.features',
+          benefits: '$planDetails.benefits',
+        },
+      },
+    },
+  ])
+
+  return result as IUserSubscriptionWithPlan[]
+}
 }

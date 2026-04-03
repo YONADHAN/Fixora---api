@@ -97,7 +97,7 @@ export interface UpdateSubscriptionPlanDTO {
   benefits?: string[]
 }
 
-export interface UpdateSubscriptionPlanResponseDTO extends SubscriptionPlan {}
+export interface UpdateSubscriptionPlanResponseDTO extends SubscriptionPlan { }
 
 export interface GetActiveSubscriptionPlansRequestDTO {
   page: number
@@ -130,9 +130,73 @@ export interface CreateSubscriptionCheckoutStrategyDTO {
 
 
 export interface CheckSubscriptionForAllowUsingBenefitRequestDTO {
-  role:string, userId:string, benefit:string
+  role: string, userId: string, benefit: string
 }
 
 export interface CheckSubscriptionForAllowUsingBenefitResponseDTO {
   data: boolean
+}
+export interface IUserSubscriptionWithPlan {
+  subscriptionId: string
+  userId: string
+  userRole: 'vendor' | 'customer'
+
+  status: 'pending' | 'active' | 'expired' | 'cancelled'
+  startDate?: Date
+  endDate?: Date
+  autoRenew: boolean
+  paymentStatus: 'initiated' | 'success' | 'failed'
+
+  plan: {
+    planId: string
+    name: string
+    description: string
+    price: number
+    durationInDays: number
+    features: {
+      maxServices?: number
+      videoCallAccess?: boolean
+      aiChatbotAccess?: boolean
+    }
+    benefits: string[]
+  }
+}
+export interface GetMySubscriptionRequestDTO {
+  userId: string
+  role: TRole
+}
+
+export interface GetMySubscriptionResponseDTO {
+  subscriptions: {
+    subscriptionId: string
+    userId: string
+    userRole: string
+
+    status: string
+    startDate?: Date
+    endDate?: Date
+    autoRenew: boolean
+    paymentStatus: string
+
+    plan: {
+      planId: string
+      name: string
+      description: string
+      price: number
+      durationInDays: number
+      features: any
+      benefits: string[]
+    }
+  }[]
+}
+
+export interface CreateCancelSubscriptionRequestDTO {
+  userId: string,
+  subscriptionId: string,
+}
+
+
+export interface CreateCancelSubscriptionResponseDTO {
+  subscriptionId: string,
+  status: string,
 }

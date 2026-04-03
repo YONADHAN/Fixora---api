@@ -189,4 +189,17 @@ export class SubscriptionController implements ISubscriptionController {
       handleErrorResponse(req, res, error)
     }
   }
+
+  async getMySubscriptionPlans(req:Request, res:Response): Promise<void> {
+    try {
+      const {userId, role} = (req as CustomRequest).user;
+      const response = await this._getMySubscriptionPlansUsecase.execute({userId, role});
+      res.status(HTTP_STATUS.OK).json({
+        message:"Subscriptions fetched successfully.",
+        data: response
+      })
+    } catch (error) {
+      handleErrorResponse(req,res, error)
+    }
+  }
 }

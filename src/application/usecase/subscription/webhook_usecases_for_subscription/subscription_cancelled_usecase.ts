@@ -15,8 +15,7 @@ export class SubscriptionCancelledUseCase implements ISubscriptionCancelledUseCa
     const stripeSubscriptionId = subscription.id
 
     const userSubscription = await this.userSubscriptionRepository.findOne({
-      paymentProvider: 'stripe',
-      paymentId: stripeSubscriptionId,
+      stripeSubscriptionId: stripeSubscriptionId,
     })
 
     if (!userSubscription) {
@@ -34,7 +33,7 @@ export class SubscriptionCancelledUseCase implements ISubscriptionCancelledUseCa
         status: 'cancelled',
         endDate,
         autoRenew: false,
-        paymentStatus: 'failed',
+        paymentStatus: 'success',
       },
     )
   }

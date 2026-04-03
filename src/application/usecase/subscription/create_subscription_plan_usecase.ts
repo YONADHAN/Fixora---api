@@ -75,7 +75,7 @@ export class CreateSubscriptionPlanUseCase implements ICreateSubscriptionPlanUse
 
     const durationInDays = interval === 'month' ? 30 : 365
 
-    //save the stripe price id and product id in the db for later
+
     const subscriptionPlanEntity: ISubscriptionPlanEntity = {
       planId: generateUniqueId(),
       name,
