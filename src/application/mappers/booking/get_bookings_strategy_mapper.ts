@@ -9,6 +9,8 @@ export class GetBookingResponseMapper {
     const filteredData = payload.data.map((booking) => ({
       bookingId: booking.bookingId,
       bookingGroupId: booking.bookingGroupId,
+      bookingGroupCode: booking.bookingGroupCode || "",
+      bookingCode: booking.bookingCode || "",
       paymentStatus: booking.paymentStatus,
       serviceStatus: booking.serviceStatus,
       date: booking.date,

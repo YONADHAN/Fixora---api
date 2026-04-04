@@ -33,6 +33,8 @@ export type GetBookingResponseDTO = {
   data: {
     bookingId: string
     bookingGroupId: string
+    bookingCode: string
+    bookingGroupCode: string
     paymentStatus: string
     serviceStatus: string
     serviceName?: string
