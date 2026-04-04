@@ -10,6 +10,8 @@ import {
 } from '../../../dtos/booking_dto'
 import { IGetBookingForVendorStrategyInterface } from './get_booking_for_vendor_strategy.interface'
 
+type SortQuery = Record<string, 1 | -1>
+
 @injectable()
 export class GetBookingForVendorStrategy
   implements IGetBookingForVendorStrategyInterface
@@ -21,7 +23,7 @@ export class GetBookingForVendorStrategy
     private readonly _vendorRepository: IVendorRepository
   ) {}
   async strategy(dto: GetBookingRequestDTO): Promise<GetBookingResponseDTO> {
-    const { page, limit, search = '', userId } = dto
+    const { page, limit, search = '', userId, sortOption, filterOption } = dto
     const vendor = await this._vendorRepository.findOne({ userId })
     if (!vendor) {
       throw new CustomError(
@@ -29,11 +31,73 @@ export class GetBookingForVendorStrategy
         HTTP_STATUS.NOT_FOUND
       )
     }
+
+    let sortIn: SortQuery = {}
+    let filterIn = {}
+    let sortAfterLookup = false
+
+    switch (sortOption) {
+      case 'latest':
+        sortIn = { createdAt: -1 }
+        break
+
+      case 'oldest':
+        sortIn = { createdAt: 1 }
+        break
+
+      case 'service_name_asc':
+        sortIn = { serviceName: 1 }
+        sortAfterLookup = true
+        break
+
+      case 'service_name_desc':
+        sortIn = { serviceName: -1 }
+        sortAfterLookup = true
+        break
+
+      default:
+        sortIn = { createdAt: -1 }
+    }
+
+    switch (filterOption) {
+      case 'active':
+        filterIn = {
+          serviceStatus: { $in: ['scheduled', 'in-progress'] },
+        }
+        break
+
+      case 'cancelled':
+        filterIn = { serviceStatus: 'cancelled' }
+        break
+
+      case 'fully_paid':
+        filterIn = { paymentStatus: 'fully-paid' }
+        break
+
+      case 'adv_paid':
+        filterIn = { paymentStatus: 'advance-paid' }
+        break
+
+      case 'refunded':
+        filterIn = { paymentStatus: 'refunded' }
+        break
+
+      default:
+        filterIn = {}
+    }
+
+    const finalFilter = {
+      vendorRef: vendor._id,
+      ...filterIn,
+    }
+
     const booking = await this._bookingRepository.findBookingsForUser(
       page,
       limit,
       search,
-      { vendorRef: vendor._id }
+      finalFilter,
+      sortIn,
+      sortAfterLookup
     )
     return GetBookingResponseMapper.toDTO(booking)
   }

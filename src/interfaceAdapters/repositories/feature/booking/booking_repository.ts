@@ -24,6 +24,7 @@ type BookingAggregateResult = BookingMongoBase & {
   mainImage?: string
   slots?: BookingMongoBase[]
 }
+type SortQuery = Record<string, 1 | -1>
 @injectable()
 export class BookingRepository
   extends BaseRepository<IBookingModel, IBookingEntity>
@@ -170,11 +171,15 @@ export class BookingRepository
   }
 
 
+
+
   async findBookingsForUser(
     page: number,
     limit: number,
     search: string = '',
     filters: FilterQuery<IBookingModel> = {},
+    sort: SortQuery = { createdAt: -1 },
+    sortAfterLookup: boolean = false
   ): Promise<{
     data: IBookingEntity[]
     currentPage: number
@@ -184,21 +189,14 @@ export class BookingRepository
 
     const matchStage: FilterQuery<IBookingModel> = {
       ...filters,
-      ...(search
-        ? {
-          $or: [
-            { bookingId: { $regex: search, $options: 'i' } },
-            { bookingGroupId: { $regex: search, $options: 'i' } },
-            { paymentStatus: { $regex: search, $options: 'i' } },
-            { serviceStatus: { $regex: search, $options: 'i' } },
-          ],
-        }
-        : {}),
     }
 
     const pipeline: PipelineStage[] = [
       { $match: matchStage },
-      { $sort: { createdAt: -1 } },
+
+
+      ...(sortAfterLookup ? [] : [{ $sort: sort }]),
+
       {
         $group: {
           _id: '$bookingGroupId',
@@ -206,6 +204,7 @@ export class BookingRepository
           slots: { $push: '$$ROOT' },
         },
       },
+
       {
         $replaceRoot: {
           newRoot: {
@@ -213,31 +212,51 @@ export class BookingRepository
           },
         },
       },
-      { $sort: { createdAt: -1 } },
+
+
+      ...(sortAfterLookup ? [] : [{ $sort: sort }]),
+
+      {
+        $lookup: {
+          from: ServiceModel.collection.name,
+          localField: 'serviceRef',
+          foreignField: '_id',
+          as: 'service',
+        },
+      },
+      {
+        $unwind: {
+          path: '$service',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          serviceName: '$service.name',
+        },
+      },
+
+      ...(search
+        ? [
+          {
+            $match: {
+              $or: [
+                { bookingGroupCode: { $regex: search, $options: 'i' } },
+                { bookingCode: { $regex: search, $options: 'i' } },
+                { serviceName: { $regex: search, $options: 'i' } },
+              ],
+            },
+          } as PipelineStage,
+        ]
+        : []),
+
+      ...(sortAfterLookup ? [{ $sort: sort }] : []),
+
       {
         $facet: {
           data: [
             { $skip: skip },
             { $limit: limit },
-            {
-              $lookup: {
-                from: ServiceModel.collection.name,
-                localField: 'serviceRef',
-                foreignField: '_id',
-                as: 'service',
-              },
-            },
-            {
-              $unwind: {
-                path: '$service',
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-            {
-              $addFields: {
-                serviceName: '$service.name',
-              },
-            },
             {
               $project: {
                 service: 0,
@@ -251,16 +270,20 @@ export class BookingRepository
 
     const [result] = await this.model.aggregate(pipeline)
 
-    const data: BookingAggregateResult[] = result.data || []
-    const totalCount = result.metadata[0]?.total || 0
+    const data: BookingAggregateResult[] = result?.data || []
+    const totalCount = result?.metadata?.[0]?.total || 0
 
     return {
       data: data.map((doc) => {
         const entity = this.toEntity(doc)
         entity.serviceName = doc.serviceName
+
         if (doc.slots && Array.isArray(doc.slots)) {
-          entity.slots = doc.slots.map((slot: BookingMongoBase) => this.toEntity(slot))
+          entity.slots = doc.slots.map((slot: BookingMongoBase) =>
+            this.toEntity(slot)
+          )
         }
+
         return entity
       }),
       currentPage: page,
@@ -501,7 +524,7 @@ export class BookingRepository
 
     const [result] = await this.model.aggregate(pipeline)
 
-   const data: BookingAggregateResult[] = result.data || []
+    const data: BookingAggregateResult[] = result.data || []
     const totalCount = result.metadata[0]?.total || 0
 
     return {

@@ -7,7 +7,8 @@ import {
 
 } from '../../../../application/dtos/dashboard_dto'
 import { timeGranularityType } from '../../../../shared/constants'
-
+import { IBookingModel } from '../../../../interfaceAdapters/database/mongoDb/models/booking_model'
+type SortQuery = Record<string, 1 | -1>
 export interface IBookingRepository extends IBaseRepository<IBookingEntity> {
   findConfirmedBookedSlotsForService(
     serviceRef: string,
@@ -15,17 +16,28 @@ export interface IBookingRepository extends IBaseRepository<IBookingEntity> {
     year: number,
   ): Promise<IBookingEntity[]>
 
+  // findBookingsForUser(
+  //   page: number,
+  //   limit: number,
+  //   search: string,
+  //   filters: FilterQuery<IBookingEntity>,
+  // ): Promise<{
+  //   data: IBookingEntity[]
+  //   currentPage: number
+  //   totalPages: number
+  // }>
   findBookingsForUser(
     page: number,
     limit: number,
     search: string,
-    filters: FilterQuery<IBookingEntity>,
+    filters: FilterQuery<IBookingModel>,
+    sort?: SortQuery,
+    sortAfterLookup?: boolean
   ): Promise<{
     data: IBookingEntity[]
     currentPage: number
     totalPages: number
   }>
-
   findCompletedBookingsForReview(
     customerRef: string,
     serviceRef: string,

@@ -26,6 +26,8 @@ export type GetBookingRequestDTO = {
   limit: number
   search: string
   userId: string
+  sortOption: string
+  filterOption: string
   role: string
 }
 
