@@ -46,6 +46,7 @@ export class GetBookingByPaymentIdUseCase
     return {
       bookingId: booking.bookingId,
       bookingGroupId: booking.bookingGroupId,
+      bookingGroupCode: booking.bookingGroupCode 
     }
   }
 }

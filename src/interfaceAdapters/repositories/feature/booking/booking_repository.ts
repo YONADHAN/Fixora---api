@@ -48,7 +48,8 @@ export class BookingRepository
     return {
       bookingId: entity.bookingId,
       bookingGroupId: entity.bookingGroupId,
-
+      bookingCode: entity.bookingCode,
+      bookingGroupCode: entity.bookingGroupCode,
       serviceRef: entity.serviceRef
         ? new Types.ObjectId(entity.serviceRef)
         : undefined,
@@ -92,7 +93,8 @@ export class BookingRepository
 
       bookingId: model.bookingId,
       bookingGroupId: model.bookingGroupId,
-
+      bookingCode: model.bookingCode,
+      bookingGroupCode: model.bookingGroupCode,
       serviceRef: model.serviceRef.toString(),
       vendorRef: model.vendorRef.toString(),
       customerRef: model.customerRef.toString(),

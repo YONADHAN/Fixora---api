@@ -13,9 +13,14 @@ export class CodeGeneratorService implements ICodeGeneratorService {
     return `${prefix}-${new Date().getFullYear()}-${String(count).padStart(6, '0')}`
   }
 
-  async generateBookingCode(): Promise<string> {
-    const count = await this.counterRepo.increment('booking')
-    return this.format('BOOK', count)
+  // async generateBookingCode(): Promise<string> {
+  //   const count = await this.counterRepo.increment('booking')
+  //   return this.format('BOOK', count)
+  // }
+
+  async generateBookingGroupCode(): Promise<string> {
+    const count = await this.counterRepo.increment('booking-group')
+    return this.format('BOOKG',count)
   }
 
   async generateWalletTransactionCode(): Promise<string> {

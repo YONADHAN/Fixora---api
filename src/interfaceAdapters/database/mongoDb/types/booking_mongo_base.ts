@@ -5,6 +5,9 @@ export interface BookingMongoBase {
   bookingId: string
   bookingGroupId: string
 
+  bookingCode?: string
+  bookingGroupCode?: string
+
   serviceRef: Types.ObjectId
   vendorRef: Types.ObjectId
   customerRef: Types.ObjectId

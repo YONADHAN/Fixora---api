@@ -4,6 +4,9 @@ export interface IBookingEntity {
   bookingId: string
   bookingGroupId: string
 
+  bookingCode?: string
+  bookingGroupCode?: string
+  
   serviceRef: string
   serviceName?: string
   serviceId?: string

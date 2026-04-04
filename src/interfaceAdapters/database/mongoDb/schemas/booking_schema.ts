@@ -5,6 +5,9 @@ export const BookingSchema = new Schema<IBookingModel>(
     bookingId: { type: String, required: true },
     bookingGroupId: { type: String, required: true },
 
+    bookingCode: {type: String},
+    bookingGroupCode: {type: String},
+
     serviceRef: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
     vendorRef: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     customerRef: { type: Schema.Types.ObjectId, ref: 'User', required: true },

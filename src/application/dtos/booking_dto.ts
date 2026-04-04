@@ -173,6 +173,7 @@ export interface GetBookingDetailsForCustomerStrategyResponseDTO {
 export interface GetBookingByPaymentIdResponseDTO {
   bookingId: string
   bookingGroupId: string
+  bookingGroupCode?: string
 }
 
 export interface ChangeServiceStatusOfBookingRequestDTO {
