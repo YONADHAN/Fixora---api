@@ -63,6 +63,8 @@ export interface GetBookingDetailsForVendorStrategyResponseDTO {
   booking: {
     bookingId: string
     bookingGroupId: string
+    bookingGroupCode?: string
+    bookingCode?: string
     date: string
     slotStart?: Date
     slotEnd?: Date
@@ -128,6 +130,8 @@ export interface GetBookingDetailsForCustomerStrategyResponseDTO {
   booking: {
     bookingId: string
     bookingGroupId: string
+    bookingGroupCode?: string
+    bookingCode?: string
     date: string
     slotStart?: Date
     slotEnd?: Date

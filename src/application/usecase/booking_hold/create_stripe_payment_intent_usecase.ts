@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { IBookingHoldRepository } from '../../../domain/repositoryInterfaces/feature/booking/booking_hold_repository.interface'
+import { IServiceRepository } from '../../../domain/repositoryInterfaces/feature/service/service_repository.interface'
 import { CustomError } from '../../../domain/utils/custom.error'
 import Stripe from 'stripe'
 import { config } from '../../../shared/config'
@@ -15,7 +16,9 @@ export class CreateStripePaymentIntentUseCase
 {
   constructor(
     @inject('IBookingHoldRepository')
-    private bookingHoldRepository: IBookingHoldRepository
+    private bookingHoldRepository: IBookingHoldRepository,
+    @inject('IServiceRepository')
+    private _serviceRepository: IServiceRepository
   ) {}
 
   async execute(validatedDTO: string): Promise<CreatePaymentIntentResponseDTO> {
@@ -28,34 +31,50 @@ export class CreateStripePaymentIntentUseCase
       throw new CustomError('Booking hold expired', HTTP_STATUS.GONE)
     }
 
+    // Fetch service name for the summary panel
+    const service = await this._serviceRepository.findOne({ _id: hold.serviceRef })
+    const serviceName = service ? (service as any).name ?? 'Service' : 'Service'
+
+    let clientSecret: string
+
     if (hold.stripePaymentIntentId) {
       const existingIntent = await stripe.paymentIntents.retrieve(
         hold.stripePaymentIntentId
       )
+      clientSecret = existingIntent.client_secret!
+    } else {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: hold.pricing.advanceAmount * 100,
+        currency: 'inr',
+        automatic_payment_methods: { enabled: true },
+        metadata: {
+          holdId: hold.holdId,
+          serviceRef: hold.serviceRef,
+          customerRef: hold.customerRef,
+        },
+      })
 
-      return {
-        clientSecret: existingIntent.client_secret!,
-      }
+      console.log('current payment intent id for holding', paymentIntent.id)
+
+      await this.bookingHoldRepository.update(
+        { holdId },
+        { stripePaymentIntentId: paymentIntent.id }
+      )
+
+      clientSecret = paymentIntent.client_secret!
     }
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: hold.pricing.advanceAmount * 100,
-      currency: 'inr',
-      automatic_payment_methods: { enabled: true },
-      metadata: {
-        holdId: hold.holdId,
-        serviceRef: hold.serviceRef,
-        customerRef: hold.customerRef,
-      },
-    })
 
-    console.log('current payment internt id for holding', paymentIntent.id)
-
-    await this.bookingHoldRepository.update(
-      { holdId },
-      { stripePaymentIntentId: paymentIntent.id }
-    )
     return {
-      clientSecret: paymentIntent.client_secret!,
+      clientSecret,
+      serviceName,
+      slots: hold.slots.map((s) => ({
+        date: s.date,
+        start: s.start,
+        end: s.end,
+        advancePerSlot: s.advancePerSlot,
+        variant: s.variant,
+      })),
+      pricing: hold.pricing,
     }
   }
 }

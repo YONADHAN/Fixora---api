@@ -19,6 +19,8 @@ export class GetBookingDetailsForVendorResponseMapper {
       booking: {
         bookingId: booking.bookingId,
         bookingGroupId: booking.bookingGroupId,
+        bookingGroupCode: booking.bookingGroupCode||'',
+        bookingCode: booking.bookingCode||"",
         date: booking.date,
         slotStart: booking.slotStart,
         slotEnd: booking.slotEnd,
@@ -79,6 +81,8 @@ export class GetBookingDetailsForCustomerResponseMapper {
       booking: {
         bookingId: booking.bookingId,
         bookingGroupId: booking.bookingGroupId,
+        bookingGroupCode: booking.bookingGroupCode||"",
+        bookingCode: booking.bookingCode||"",
         date: booking.date,
         slotStart: booking.slotStart,
         slotEnd: booking.slotEnd,
