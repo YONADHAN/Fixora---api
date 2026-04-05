@@ -132,6 +132,7 @@ export const SOCKET_EVENTS = {
   USER_ONLINE: 'presence:online',
   USER_OFFLINE: 'presence:offline',
   PRESENCE_PING: 'presence:ping',
+  PRESENCE_GET_ONLINE: 'presence:get-online',
 
   DASHBOARD_JOIN_ADMIN: 'dashboard:join:admin',
   DASHBOARD_JOIN_VENDOR: 'dashboard:join:vendor',

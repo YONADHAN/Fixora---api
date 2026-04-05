@@ -11,6 +11,8 @@ let io: Server
 
 const onlineUsers = new Map<string, number>()
 
+export const getOnlineUsers = () => onlineUsers
+
 export const initSocketServer = (httpServer: http.Server) => {
   io = new Server(httpServer, {
     cors: {

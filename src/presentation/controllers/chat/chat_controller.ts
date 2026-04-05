@@ -9,6 +9,8 @@ import { CustomRequest } from '../../middleware/auth_middleware'
 import { IChatController } from '../../../domain/controllerInterfaces/features/chat/chat-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { HTTP_STATUS } from '../../../shared/constants'
+import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
+import { config } from '../../../shared/config'
 
 @injectable()
 export class ChatController implements IChatController {
@@ -19,6 +21,8 @@ export class ChatController implements IChatController {
     private readonly initiateChatUseCase: IInitiateChatUseCase,
     @inject('IGetUserChatsUseCase')
     private readonly getUserChatsUseCase: IGetUserChatsUseCase,
+    @inject('IStorageService')
+    private readonly storageService: IStorageService,
   ) { }
 
   async getChatMessages(req: Request, res: Response): Promise<void> {
@@ -82,6 +86,40 @@ export class ChatController implements IChatController {
       })
     } catch (error: unknown) {
       handleErrorResponse(req,res,error)
+    }
+  }
+
+  async uploadChatFile(req: Request, res: Response): Promise<void> {
+   
+    try {
+      const file = req.file as Express.Multer.File
+
+      if (!file) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          message: 'No file uploaded',
+        })
+        return
+      }
+
+      const bucketName = config.storageConfig.bucket!
+      const folder = 'chat-files'
+
+      const uploadedFileUrl = await this.storageService.uploadFile(
+        bucketName,
+        file,
+        folder
+      )
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'File uploaded successfully',
+        data: {
+          fileUrl: uploadedFileUrl,
+        },
+      })
+    } catch (error) {
+      handleErrorResponse(req, res, error)
     }
   }
 }

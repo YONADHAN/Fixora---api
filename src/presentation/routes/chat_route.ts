@@ -6,6 +6,8 @@ import { BaseRoute } from './base_route'
 
 import { Request, Response } from 'express'
 import { blockMyUserMiddleware, chatController } from '../di/resolver'
+import { handleMulterError } from '../middleware/multer_error_middleware'
+import { upload } from '../../interfaceAdapters/config/multer.config'
 
 export class ChatRoutes extends BaseRoute {
   constructor() {
@@ -40,6 +42,21 @@ export class ChatRoutes extends BaseRoute {
       blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
       (req: Request, res: Response) => {
         chatController.getUserChats(req, res)
+      }
+    )
+
+    this.router.post(
+      '/upload',
+       
+      verifyAuth,
+      authorizeRole(['customer', 'vendor']),
+     
+      blockMyUserMiddleware.checkMyUserBlockStatus as CustomRequestHandler,
+    
+      handleMulterError(upload.single('file')),
+
+      (req: Request, res: Response) => {
+        chatController.uploadChatFile(req, res)
       }
     )
   }
