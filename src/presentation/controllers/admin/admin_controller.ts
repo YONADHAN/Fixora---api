@@ -19,7 +19,9 @@ import { IChangeMyUserBlockStatusUseCase } from '../../../domain/useCaseInterfac
 import { IGetAllVendorRequestsUseCase } from '../../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
 import { IChangeVendorVerificationStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
 import { IGetAdminDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/dashboard/admin/get_admin_dashboard_stats_usecase.interface'
-
+type SortOrder = 1 | -1
+type SortField = 'name' | 'email' | 'createdAt';
+type status= 'all' | 'pending' | 'active' | 'blocked'
 @injectable()
 export class AdminController implements IAdminController {
   constructor(
@@ -64,13 +66,16 @@ export class AdminController implements IAdminController {
 
   async getAllCustomers(req: Request, res: Response): Promise<void> {
     try {
-      const { page = 1, limit = 10, search = '', role = 'customer' } = req.body
-
+      const { page = 1, limit = 10, search = '', role = 'customer', sortField = 'createdAt',sortOrder = "desc", status="all" } = req.body
+      
       const response = await this._getAllUsersUsecase.execute({
         role,
         page,
         limit,
         search,
+        sortField,
+        sortOrder,
+        status,
       })
 
       res.status(HTTP_STATUS.OK).json({
@@ -85,13 +90,16 @@ export class AdminController implements IAdminController {
 
   async getAllVendors(req: Request, res: Response): Promise<void> {
     try {
-      const { page = 1, limit = 10, search = '', role = 'vendor' } = req.body
+      const { page = 1, limit = 10, search = '', role = 'vendor', sortField = 'createdAt',sortOrder = "desc", status="all"  } = req.body
 
       const response = await this._getAllUsersUsecase.execute({
-        role,
+       role,
         page,
         limit,
         search,
+        sortField,
+        sortOrder,
+        status,
       })
 
       res.status(HTTP_STATUS.OK).json({

@@ -3,7 +3,8 @@ import { IFetchingCustomersStrategy } from '../../../strategies/commonFeatures/u
 import { IFetchingVendorsStrategy } from '../../../strategies/commonFeatures/users/fetching_vendors_strategy.interface'
 import { IGetAllUsersFactory } from './get_all_users_factory.interface'
 import { GetAllUsersDTO } from '../../../dtos/user_dto'
-
+type SortField = 'name' | 'email' | 'createdAt';
+type Status= 'all' | 'pending' | 'active' | 'blocked'
 @injectable()
 export class GetAllUsersFactory implements IGetAllUsersFactory {
   constructor(
@@ -18,13 +19,16 @@ export class GetAllUsersFactory implements IGetAllUsersFactory {
     role: string,
     page: number,
     limit: number,
-    search: string
+    search: string,
+    sortField: SortField,
+    sortOrder: 'asc'| 'desc',
+    status: Status
   ): Promise<GetAllUsersDTO> {
     switch (role.toLowerCase()) {
       case 'customer':
-        return await this._customerStrategy.execute(page, limit, search)
+        return await this._customerStrategy.execute(page, limit, search, sortField, sortOrder, status)
       case 'vendor':
-        return await this._vendorStrategy.execute(page, limit, search)
+        return await this._vendorStrategy.execute(page, limit, search, sortField, sortOrder, status)
       default:
         throw new Error(`No users found for role: ${role}`)
     }

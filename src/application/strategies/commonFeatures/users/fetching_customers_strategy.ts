@@ -6,6 +6,8 @@ import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { UserMapper } from '../../../../application/mappers/admin/users.mapper'
 import { GetAllUsersDTO } from '../../../../application/dtos/user_dto'
 
+type SortField = 'name' | 'email' | 'createdAt';
+type Status= 'all' | 'pending' | 'active' | 'blocked'
 @injectable()
 export class FetchingCustomersStrategy implements IFetchingCustomersStrategy {
   constructor(
@@ -16,12 +18,18 @@ export class FetchingCustomersStrategy implements IFetchingCustomersStrategy {
   async execute(
     page: number,
     limit: number,
-    search: string
+    search: string,
+    sortField: SortField,
+    sortOrder: 'asc'|'desc',
+    status: Status
   ): Promise<GetAllUsersDTO> {
-    const response = await this._customerRepository.findAllDocuments(
-      page,
+    const response = await this._customerRepository.findCustomersWithFilters(
+    {  page,
       limit,
-      search
+      search,
+      sortField,
+      sortOrder,
+      status}
     )
 
     if (!response || response.data.length === 0) {

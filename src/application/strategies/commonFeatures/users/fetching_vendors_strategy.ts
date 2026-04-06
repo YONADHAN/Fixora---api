@@ -5,7 +5,8 @@ import { CustomError } from '../../../../domain/utils/custom.error'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../../../../shared/constants'
 import { UserMapper } from '../../../../application/mappers/admin/users.mapper'
 import { GetAllUsersDTO } from '../../../../application/dtos/user_dto'
-
+type SortField = 'name' | 'email' | 'createdAt';
+type Status= 'all' | 'pending' | 'active' | 'blocked'
 @injectable()
 export class FetchingVendorsStrategy implements IFetchingVendorsStrategy {
   constructor(
@@ -16,12 +17,18 @@ export class FetchingVendorsStrategy implements IFetchingVendorsStrategy {
   async execute(
     page: number,
     limit: number,
-    search: string
+    search: string,
+    sortField: SortField,
+    sortOrder: 'asc'|'desc',
+    status: Status,
   ): Promise<GetAllUsersDTO> {
-    const response = await this._vendorRepository.findAllDocuments(
-      page,
+    const response = await this._vendorRepository.findVendorsWithFilters(
+     { page,
       limit,
-      search
+      search,
+      sortField,
+      sortOrder,
+      status}
     )
 
     if (!response || response.data.length === 0) {

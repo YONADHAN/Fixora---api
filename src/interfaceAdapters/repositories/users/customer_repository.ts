@@ -9,9 +9,11 @@ import { ICustomerEntity } from '../../../domain/models/customer_entity'
 
 import { timeGranularityType } from '../../../shared/constants'
 import { CustomerDashboardResponseDTO } from '../../../application/dtos/dashboard_dto'
-import { Types } from 'mongoose'
+import { Types, FilterQuery } from 'mongoose'
 type CustomerStatus = 'active' | 'blocked'
-
+type SortOrder = 1 | -1
+type SortField = 'name' | 'email' | 'createdAt';
+type Status= 'all' | 'pending' | 'active' | 'blocked'
 interface CustomerStatusAggregation {
   _id: CustomerStatus
   count: number
@@ -123,6 +125,58 @@ export class CustomerRepository
         : undefined,
     }
   }
+
+
+
+
+
+
+async findCustomersWithFilters(params: {
+  page: number
+  limit: number
+  search: string
+  sortField: SortField
+  sortOrder: 'asc' | 'desc'
+  status: Status
+}): Promise<{data: ICustomerEntity[],currentPage: number, totalPages: number}> {
+  const { page, limit, search, sortField, sortOrder, status } = params
+
+  const query: FilterQuery<ICustomerModel> = {}
+
+  if (search) {
+    query.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { email: { $regex: search, $options: 'i' } },
+    ]
+  }
+
+  if (status !== 'all') {
+    query.status = status
+  }
+
+  const sort: Record<string, SortOrder> = {
+    [sortField]: sortOrder === 'asc' ? 1 : -1,
+  }
+
+  const skip = (page - 1) * limit
+
+  const [data, total] = await Promise.all([
+    this.model.find(query).sort(sort).skip(skip).limit(limit),
+    this.model.countDocuments(query),
+  ])
+
+  return {
+    data: data.map((doc) => this.toEntity(doc)),
+    currentPage: page,
+    totalPages: Math.ceil(total / limit),
+  }
+}
+
+
+
+
+
+
   async getCustomerDashboardAnalytics(params: {
     from: Date
     to: Date

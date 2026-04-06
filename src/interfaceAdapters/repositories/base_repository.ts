@@ -141,13 +141,7 @@ export abstract class BaseRepository<
   ): Promise<TEntity | null> {
     let query = this.model.findOne(filter)
 
-    // if (Array.isArray(populateFields)) {
-    //   for (const field of populateFields) {
-    //     query = query.populate(field)
-    //   }
-    // } else {
-    //   query = query.populate(populateFields)
-    // }
+
 
     if (Array.isArray(populateFields)) {
       for (const field of populateFields) {
@@ -201,15 +195,6 @@ export abstract class BaseRepository<
       .limit(limit)
       .sort({ createdAt: -1 })
 
-    // if (populateFields) {
-    //   if (Array.isArray(populateFields)) {
-    //     populateFields.forEach((field) => {
-    //       query = query.populate(field)
-    //     })
-    //   } else {
-    //     query = query.populate(populateFields)
-    //   }
-    // }
     if (populateFields) {
       if (Array.isArray(populateFields)) {
         for (const field of populateFields) {

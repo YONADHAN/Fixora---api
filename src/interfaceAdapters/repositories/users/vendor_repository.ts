@@ -9,13 +9,16 @@ import { IVendorEntity } from '../../../domain/models/vendor_entity'
 
 import { timeGranularityType } from '../../../shared/constants'
 import { VendorDashboardResponseDTO } from '../../../application/dtos/dashboard_dto'
-
+  import { FilterQuery } from 'mongoose'
 const DATE_FORMAT_MAP: Record<timeGranularityType, string> = {
   daily: '%Y-%m-%d',
   weekly: '%Y-%U',
   monthly: '%Y-%m',
   yearly: '%Y',
 }
+type SortOrder = 1 | -1
+type SortField = 'name' | 'email' | 'createdAt';
+type Status= 'all' | 'pending' | 'active' | 'blocked'
 
 @injectable()
 export class VendorRepository
@@ -131,6 +134,52 @@ export class VendorRepository
         : undefined,
     }
   }
+
+
+
+async findVendorsWithFilters(params: {
+  page: number
+  limit: number
+  search: string
+  sortField: SortField
+  sortOrder: 'asc' | 'desc'
+  status: Status
+}): Promise<{data: IVendorEntity[],currentPage: number, totalPages: number}> {
+  const { page, limit, search, sortField, sortOrder, status } = params
+
+  const query: FilterQuery<IVendorModel> = {}
+
+  if (search) {
+    query.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { email: { $regex: search, $options: 'i' } },
+    ]
+  }
+
+  if (status !== 'all') {
+    query.status = status
+  }
+
+  const sort: Record<string, SortOrder> = {
+    [sortField]: sortOrder === 'asc' ? 1 : -1,
+  }
+
+  const skip = (page - 1) * limit
+
+  const [data, total] = await Promise.all([
+    this.model.find(query).sort(sort).skip(skip).limit(limit),
+    this.model.countDocuments(query),
+  ])
+
+  return {
+    data: data.map((doc) => this.toEntity(doc)),
+    currentPage: page,
+    totalPages: Math.ceil(total / limit),
+  }
+}
+
+
+
   async findNearestVendors(
     lat: number,
     lng: number,
