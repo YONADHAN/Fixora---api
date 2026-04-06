@@ -135,7 +135,7 @@ export class ServiceController implements IServiceController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Service updated successfully',
+        message: SUCCESS_MESSAGES.SERVICE_UPDATED_SUCCESSFULLY,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)
@@ -173,7 +173,7 @@ export class ServiceController implements IServiceController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Service found successfully',
+        message: SUCCESS_MESSAGES.SERVICE_FOUND_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {

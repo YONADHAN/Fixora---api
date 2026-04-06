@@ -7,6 +7,7 @@ import {
   SUCCESS_MESSAGES,
   timeGranularityType,
 
+  ERROR_MESSAGES,
 } from '../../../shared/constants'
 import { ICustomerController } from '../../../domain/controllerInterfaces/users/customer-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
@@ -57,7 +58,7 @@ export class CustomerController implements ICustomerController {
       clearAuthCookies(res, accessTokenName, refreshTokenName)
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Logged out successfully',
+        message: SUCCESS_MESSAGES.LOGGED_OUT_SUCCESSFULLY,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)
@@ -100,7 +101,7 @@ export class CustomerController implements ICustomerController {
       const file = req.file as Express.Multer.File
 
       if (!file) {
-        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No file uploaded' })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: ERROR_MESSAGES.NO_FILE_UPLOADED })
         return
       }
 
@@ -121,7 +122,7 @@ export class CustomerController implements ICustomerController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Profile image updated successfully',
+        message: SUCCESS_MESSAGES.PROFILE_IMAGE_UPDATED_SUCCESSFULLY,
         imageUrl: uploadedProfileImageUrl,
       })
     } catch (error) {
@@ -168,7 +169,7 @@ export class CustomerController implements ICustomerController {
       const stats = await this._getCustomerDashboardStatsUseCase.execute(input)
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Dashboard stats retrived successfully',
+        message: SUCCESS_MESSAGES.DASHBOARD_STATS_RETRIVED_SUCCESSFULLY,
         data: stats,
       })
     } catch (error) {

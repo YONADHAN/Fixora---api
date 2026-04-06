@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { IServiceCategoryController } from '../../../domain/controllerInterfaces/features/service/service-category-controller.interface'
-import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
+import { HTTP_STATUS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../../../shared/constants'
 import { IGetAllServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/service_category_usecase.interface'
 
 import { ICreateServiceCategoryUseCase } from '../../../domain/useCaseInterfaces/service_category/create_service_category_usecase.interface'
@@ -113,7 +113,7 @@ export class ServiceCategoryController implements IServiceCategoryController {
       if (!category) {
         res
           .status(HTTP_STATUS.NOT_FOUND)
-          .json({ success: false, message: 'Category not found' })
+          .json({ success: false, message: ERROR_MESSAGES.CATEGORY_NOT_FOUND })
         return
       }
 

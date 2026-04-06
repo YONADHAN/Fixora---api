@@ -8,7 +8,7 @@ import { IGetUserChatsUseCase } from '../../../domain/useCaseInterfaces/chat/get
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { IChatController } from '../../../domain/controllerInterfaces/features/chat/chat-controller.interface'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
-import { HTTP_STATUS } from '../../../shared/constants'
+import { HTTP_STATUS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '../../../shared/constants'
 import { IStorageService } from '../../../domain/serviceInterfaces/s3_storage_service_interface'
 import { config } from '../../../shared/config'
 
@@ -62,7 +62,7 @@ export class ChatController implements IChatController {
 
       res.status(HTTP_STATUS.CREATED).json({
         success: true,
-        message: 'Chat initiated successfully',
+        message: SUCCESS_MESSAGES.CHAT_INITIATED_SUCCESSFULLY,
         data: { chatId },
       })
     } catch (error) {
@@ -97,7 +97,7 @@ export class ChatController implements IChatController {
       if (!file) {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
-          message: 'No file uploaded',
+          message: ERROR_MESSAGES.NO_FILE_UPLOADED,
         })
         return
       }
@@ -113,7 +113,7 @@ export class ChatController implements IChatController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'File uploaded successfully',
+        message: SUCCESS_MESSAGES.FILE_UPLOADED_SUCCESSFULLY,
         data: {
           fileUrl: uploadedFileUrl,
         },

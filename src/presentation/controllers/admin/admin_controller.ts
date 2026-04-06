@@ -57,7 +57,7 @@ export class AdminController implements IAdminController {
       clearAuthCookies(res, accessTokenName, refreshTokenName)
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Logged out successfully',
+        message: SUCCESS_MESSAGES.LOGGED_OUT_SUCCESSFULLY,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)
@@ -126,7 +126,7 @@ export class AdminController implements IAdminController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Vendor requests retrieved successfully',
+        message: SUCCESS_MESSAGES.VENDOR_REQUESTS_RETRIEVED_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {
@@ -140,7 +140,7 @@ export class AdminController implements IAdminController {
       if (!role || !userId || !status) {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
-          message: 'role, userId, and status are required',
+          message: ERROR_MESSAGES.ROLE_USERID_AND_STATUS_ARE_REQUIRED,
         })
         return;
       }
@@ -225,7 +225,7 @@ export class AdminController implements IAdminController {
       const stats = await this._getAdminDashboardStatsUseCase.execute(input)
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Dashboard stats retrieved successfully',
+        message: SUCCESS_MESSAGES.DASHBOARD_STATS_RETRIEVED_SUCCESSFULLY,
         data: stats,
       })
     } catch (error) {

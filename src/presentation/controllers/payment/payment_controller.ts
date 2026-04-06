@@ -1,7 +1,7 @@
 import { Request, Response} from 'express'
 import { inject, injectable } from 'tsyringe'
 import { GetPaymentsUseCase } from '../../../application/usecase/payment/get_payments_usecase'
-import { HTTP_STATUS} from '../../../shared/constants'
+import { HTTP_STATUS, SUCCESS_MESSAGES } from '../../../shared/constants'
 import { GetPaymentHistoryRequestDTO } from '../../../application/dtos/payment_dto'
 import { IPaymentController } from '../../../domain/controllerInterfaces/features/payment/payment_controller.interface'
 import { CustomRequest } from '../../middleware/auth_middleware'
@@ -31,7 +31,7 @@ export class PaymentController implements IPaymentController {
 
             res.status(HTTP_STATUS.OK).json({
                 success: true,
-                message: 'Payments fetched successfully',
+                message: SUCCESS_MESSAGES.PAYMENTS_FETCHED_SUCCESSFULLY,
                 data: result,
             })
         } catch (error) {

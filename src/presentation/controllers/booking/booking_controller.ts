@@ -109,7 +109,7 @@ export class BookingController implements IBookingController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Payment intent created',
+        message: SUCCESS_MESSAGES.PAYMENT_INTENT_CREATED,
         data: response,
       })
     } catch (error) {
@@ -125,7 +125,7 @@ export class BookingController implements IBookingController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Balance payment session created',
+        message: SUCCESS_MESSAGES.BALANCE_PAYMENT_SESSION_CREATED,
         checkoutUrl,
       })
     } catch (error) {
@@ -252,7 +252,7 @@ export class BookingController implements IBookingController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Service status updated successfully',
+        message: SUCCESS_MESSAGES.SERVICE_STATUS_UPDATED_SUCCESSFULLY,
         data: result,
       })
     } catch (error) {

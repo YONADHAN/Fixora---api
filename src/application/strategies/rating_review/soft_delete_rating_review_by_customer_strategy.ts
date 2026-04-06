@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { IRatingsReviewRepository } from '../../../domain/repositoryInterfaces/feature/ratings_review/ratings_review_repository.interface'
 import { CustomError } from '../../../domain/utils/custom.error'
-import { HTTP_STATUS } from '../../../shared/constants'
+import { HTTP_STATUS, ERROR_MESSAGES } from '../../../shared/constants'
 import { ISoftDeleteRatingsAndReviewsByCustomerStrategy } from './soft_delete_rating_review_by_customer_strategy.interface'
 import {
   SoftDeleteRatingsAndReviewsRequestDTO,
@@ -24,7 +24,7 @@ export class SoftDeleteRatingsAndReviewsByCustomerStrategy implements ISoftDelet
     })
     if (!isRatingReviewExists) {
       throw new CustomError(
-        'Rating and review is not existing.',
+        ERROR_MESSAGES.RATING_AND_REVIEW_IS_NOT_EXISTING,
         HTTP_STATUS.BAD_REQUEST,
       )
     }

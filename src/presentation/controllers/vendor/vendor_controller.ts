@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 import { Request, Response } from 'express'
 
-import { HTTP_STATUS, SUCCESS_MESSAGES, timeGranularityType } from '../../../shared/constants'
+import { HTTP_STATUS, SUCCESS_MESSAGES, ERROR_MESSAGES, timeGranularityType } from '../../../shared/constants'
 import { DashboardStatsInputDTO } from '../../../application/dtos/dashboard_dto'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 import { CustomRequest } from '../../middleware/auth_middleware'
@@ -47,7 +47,7 @@ export class VendorController implements IVendorController {
       const files = req.files as Express.Multer.File[]
 
       if (!files || files.length === 0) {
-        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No files uploaded' })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: ERROR_MESSAGES.NO_FILES_UPLOADED })
         return
       }
 
@@ -64,7 +64,7 @@ export class VendorController implements IVendorController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Documents uploaded and saved successfully',
+        message: SUCCESS_MESSAGES.DOCUMENTS_UPLOADED_AND_SAVED_SUCCESSFULLY,
         urls,
       })
     } catch (error: unknown) {
@@ -73,7 +73,7 @@ export class VendorController implements IVendorController {
 
         res
           .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-          .json({ message: error.message || 'Failed to upload files' })
+          .json({ message: error.message || ERROR_MESSAGES.FAILED_TO_UPLOAD_FILES })
       }
 
     }
@@ -93,7 +93,7 @@ export class VendorController implements IVendorController {
       clearAuthCookies(res, accessTokenName, refreshTokenName)
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Logged out successfully',
+        message: SUCCESS_MESSAGES.LOGGED_OUT_SUCCESSFULLY,
       })
     } catch (error) {
       handleErrorResponse(req, res, error)
@@ -136,7 +136,7 @@ export class VendorController implements IVendorController {
       const file = req.file as Express.Multer.File
 
       if (!file) {
-        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: 'No file uploaded' })
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ message: ERROR_MESSAGES.NO_FILE_UPLOADED })
         return
       }
 
@@ -159,7 +159,7 @@ export class VendorController implements IVendorController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Profile image updated successfully',
+        message: SUCCESS_MESSAGES.PROFILE_IMAGE_UPDATED_SUCCESSFULLY,
         imageUrl: uploadedProfileImageUrl,
       })
     } catch (error) {
@@ -208,7 +208,7 @@ export class VendorController implements IVendorController {
 
       res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Dashboard stats retrieved successfully',
+        message: SUCCESS_MESSAGES.DASHBOARD_STATS_RETRIVED_SUCCESSFULLY,
         data: stats,
       })
     } catch (error) {

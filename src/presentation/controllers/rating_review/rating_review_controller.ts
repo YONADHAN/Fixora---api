@@ -3,7 +3,7 @@ import { IRatingReviewController } from '../../../domain/controllerInterfaces/fe
 import { Request, Response } from 'express'
 import { handleErrorResponse } from '../../../shared/utils/error_handler'
 
-import { HTTP_STATUS, TRole } from '../../../shared/constants'
+import { HTTP_STATUS, SUCCESS_MESSAGES, TRole } from '../../../shared/constants'
 import { CustomRequest } from '../../middleware/auth_middleware'
 import { IGetRatingAndReviewForServiceUseCase } from '../../../domain/useCaseInterfaces/rating_review/get_rating_and_review_for_service_usecase.interface'
 import { ICreateRatingsAndReviewsUseCase } from '../../../domain/useCaseInterfaces/rating_review/create_ratings_and_reviews_usecase.interface'
@@ -37,7 +37,7 @@ export class RatingReviewController implements IRatingReviewController {
       })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Ratings and Reviews are fetched succesfully.',
+        message: SUCCESS_MESSAGES.RATINGS_AND_REVIEWS_ARE_FETCHED_SUCCESFULLY,
         data: response,
       })
     } catch (error) {
@@ -56,7 +56,7 @@ export class RatingReviewController implements IRatingReviewController {
       })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Successfully created ratings and reviews.',
+        message: SUCCESS_MESSAGES.SUCCESSFULLY_CREATED_RATINGS_AND_REVIEWS,
         data: response,
       })
     } catch (error) {
@@ -74,7 +74,7 @@ export class RatingReviewController implements IRatingReviewController {
         customerId,
       })
       res.status(HTTP_STATUS.OK).json({
-        message: 'Successfully edited the ratings and reviews.',
+        message: SUCCESS_MESSAGES.SUCCESSFULLY_EDITED_THE_RATINGS_AND_REVIEWS,
         data: response,
       })
     } catch (error) {
@@ -95,7 +95,7 @@ export class RatingReviewController implements IRatingReviewController {
         role: role as TRole,
       })
       res.status(HTTP_STATUS.OK).json({
-        message: 'Deleted the ratings and reviews successfully.',
+        message: SUCCESS_MESSAGES.DELETED_THE_RATINGS_AND_REVIEWS_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {
@@ -121,7 +121,7 @@ export class RatingReviewController implements IRatingReviewController {
           sortOrder: sortOrder as 'asc' | 'desc',
         })
       res.status(HTTP_STATUS.OK).json({
-        message: 'Get ratings and reviews for booked services.',
+        message: SUCCESS_MESSAGES.GET_RATINGS_AND_REVIEWS_FOR_BOOKED_SERVICES,
         data: response,
       })
     } catch (error) {

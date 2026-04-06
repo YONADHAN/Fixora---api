@@ -4,7 +4,7 @@ import { config } from '../../../shared/config'
 import { GoogleRegisterUserUseCase } from './google_register_user_usecase'
 import { GoogleUserDTO } from '../../dtos/user_dto'
 import { CustomError } from '../../../domain/utils/custom.error'
-import { HTTP_STATUS } from '../../../shared/constants'
+import { HTTP_STATUS, ERROR_MESSAGES } from '../../../shared/constants'
 import { IGoogleUseCase } from '../../../domain/useCaseInterfaces/auth/google_usecase.interface'
 
 @injectable()
@@ -21,7 +21,7 @@ export class GoogleLoginUseCase implements IGoogleUseCase {
   async execute(credential: string, client_id: string, role: string) {
     if (!['customer', 'vendor'].includes(role)) {
       throw new CustomError(
-        'Google login not supported for this role',
+        ERROR_MESSAGES.GOOGLE_LOGIN_NOT_SUPPORTED_FOR_THIS_ROLE,
         HTTP_STATUS.BAD_REQUEST
       )
     }
@@ -33,7 +33,7 @@ export class GoogleLoginUseCase implements IGoogleUseCase {
 
     const payload = ticket.getPayload()
     if (!payload)
-      throw new CustomError('Invalid Google token', HTTP_STATUS.UNAUTHORIZED)
+      throw new CustomError(ERROR_MESSAGES.INVALID_GOOGLE_TOKEN, HTTP_STATUS.UNAUTHORIZED)
 
     const user: GoogleUserDTO = {
       name: payload.name || '',

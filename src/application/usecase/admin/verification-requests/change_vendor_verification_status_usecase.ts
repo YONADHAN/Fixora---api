@@ -69,7 +69,7 @@ export class ChangeVendorVerificationStatusUseCase
 
     if (vendor.isVerified?.status === verificationStatus) {
       throw new CustomError(
-        'Vendor already has this verification status',
+        ERROR_MESSAGES.VENDOR_ALREADY_HAS_THIS_VERIFICATION_STATUS,
         HTTP_STATUS.CONFLICT
       )
     }

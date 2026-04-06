@@ -1,7 +1,7 @@
 import { injectable, inject } from 'tsyringe'
 import { IVendorRepository } from '../../../../domain/repositoryInterfaces/users/vendor_repository.interface'
 import { CustomError } from '../../../../domain/utils/custom.error'
-import { HTTP_STATUS } from '../../../../shared/constants'
+import { HTTP_STATUS, ERROR_MESSAGES } from '../../../../shared/constants'
 import { IGetAllVendorRequestsUseCase } from '../../../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
 import { VendorRequestMapper } from '../../../mappers/vendor/vendor_request_mapper'
 import { VendorRequestDTO } from '../../../dtos/vendor_dto'
@@ -27,7 +27,7 @@ export class GetAllVendorRequestsUseCase
     const vendors = await this._vendorRepository.findAll(page, limit, search)
 
     if (!vendors || vendors.length === 0) {
-      throw new CustomError('No vendor requests found', HTTP_STATUS.NOT_FOUND)
+      throw new CustomError(ERROR_MESSAGES.NO_VENDOR_REQUESTS_FOUND, HTTP_STATUS.NOT_FOUND)
     }
 
     const dtoList = VendorRequestMapper.toDTOList(vendors)

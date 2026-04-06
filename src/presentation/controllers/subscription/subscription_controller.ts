@@ -10,7 +10,7 @@ import { CustomRequest } from '../../middleware/auth_middleware'
 import { ISubscriptionController } from '../../../domain/controllerInterfaces/features/subscription/subscription-controller.interface'
 import { IGetActiveSubscriptionPlansUseCase } from '../../../domain/useCaseInterfaces/subscription/get_active_subscription_plans_usecase.interface'
 import { ICreateSubscriptionCheckoutUseCase } from '../../../domain/useCaseInterfaces/subscription/create_subscription_checkout_usecase.interface'
-import { HTTP_STATUS, TRole } from '../../../shared/constants'
+import { HTTP_STATUS, TRole, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../../../shared/constants'
 import { ICheckSubscriptionForAllowUsingBenefitUseCase } from '../../../domain/useCaseInterfaces/subscription/check_subscription_for_allow_using_benefit_usecase.interface'
 import { IGetMySubscriptionPlansUseCase } from '../../../domain/useCaseInterfaces/subscription/get_my_subscription_plans_usecase.interface'
 import { ICreateCancelSubscriptionUseCase } from '../../../domain/useCaseInterfaces/subscription/create_cancel_subscription_usecase.interface'
@@ -53,7 +53,7 @@ export class SubscriptionController implements ISubscriptionController {
     try {
       const adminId = (req as CustomRequest).user.userId
       if (!adminId) {
-        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: 'Unauthorized' })
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.UNAUTHORIZED_USER })
         return
       }
 
@@ -63,7 +63,7 @@ export class SubscriptionController implements ISubscriptionController {
       })
 
       res.status(HTTP_STATUS.CREATED).json({
-        message: 'Subscription plan created successfully',
+        message: SUCCESS_MESSAGES.SUBSCRIPTION_PLAN_CREATED_SUCCESSFULLY,
         data: result,
       })
     } catch (error) {
@@ -85,7 +85,7 @@ export class SubscriptionController implements ISubscriptionController {
       })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Subscription plans fetched successfully',
+        message: SUCCESS_MESSAGES.SUBSCRIPTION_PLANS_FETCHED_SUCCESSFULLY,
         data: plans,
       })
     } catch (error) {
@@ -106,7 +106,7 @@ export class SubscriptionController implements ISubscriptionController {
       })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Subscription plan updated successfully',
+        message: SUCCESS_MESSAGES.SUBSCRIPTION_PLAN_UPDATED_SUCCESSFULLY,
         data: updatedPlan,
       })
     } catch (error) {
@@ -125,7 +125,7 @@ export class SubscriptionController implements ISubscriptionController {
         await this.toggleSubscriptionPlanStatusUseCase.execute({ planId })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Subscription plan status updated successfully',
+        message: SUCCESS_MESSAGES.SUBSCRIPTION_PLAN_STATUS_UPDATED_SUCCESSFULLY,
         data: updatedPlan,
       })
     } catch (error) {
@@ -147,7 +147,7 @@ export class SubscriptionController implements ISubscriptionController {
       })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Active subscription plans fetched successfully',
+        message: SUCCESS_MESSAGES.ACTIVE_SUBSCRIPTION_PLANS_FETCHED_SUCCESSFULLY,
         data: plans,
       })
     } catch (error) {
@@ -161,7 +161,7 @@ export class SubscriptionController implements ISubscriptionController {
       const role = (req as CustomRequest).user?.role as TRole
 
       if (!userId || !role) {
-        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: 'Unauthorized' })
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.UNAUTHORIZED_USER })
         return
       }
 
@@ -174,7 +174,7 @@ export class SubscriptionController implements ISubscriptionController {
       })
 
       res.status(HTTP_STATUS.OK).json({
-        message: 'Subscription checkout created successfully',
+        message: SUCCESS_MESSAGES.SUBSCRIPTION_CHECKOUT_CREATED_SUCCESSFULLY,
         data: checkout,
       })
     } catch (error) {
@@ -190,7 +190,7 @@ export class SubscriptionController implements ISubscriptionController {
       const benefit = req.params.benefit;
       const response = await this._checkSubscriptionForAllowUsingBenefitUseCase.execute({role, userId, benefit});
       res.status(HTTP_STATUS.OK).json({
-        message: 'Subscripion eligibility checked successfully',
+        message: SUCCESS_MESSAGES.SUBSCRIPION_ELIGIBILITY_CHECKED_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {
@@ -203,7 +203,7 @@ export class SubscriptionController implements ISubscriptionController {
       const {userId,role} = (req as CustomRequest).user;
       const response = await this._getMySubscriptionPlansUsecase.execute({userId, role:role as TRole});
       res.status(HTTP_STATUS.OK).json({
-        message:"Subscriptions fetched successfully.",
+        message: SUCCESS_MESSAGES.SUBSCRIPTIONS_FETCHED_SUCCESSFULLY,
         data: response
       })
     } catch (error) {
@@ -217,7 +217,7 @@ export class SubscriptionController implements ISubscriptionController {
       const {subscriptionId} = req.body;
       const response = await this._createCancelSubscriptionUseCase.execute({userId, subscriptionId})
       res.status(HTTP_STATUS.OK).json({
-        message: "Subscription Cancelled Successfully",
+        message: SUCCESS_MESSAGES.SUBSCRIPTION_CANCELLED_SUCCESSFULLY,
         data: response,
       })
     } catch (error) {
