@@ -5,6 +5,7 @@ import { IPaymentAnalyticsStrategy } from './IPaymentAnalyticsStrategy'
 @injectable()
 export class PaymentAnalyticsStrategyForVendor implements IPaymentAnalyticsStrategy {
     constructor() { }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async execute(_input: DashboardStatsInputDTO): Promise<PaymentAnalyticsDTO> {
          return {
             totalRevenue: 0,

@@ -33,7 +33,7 @@ export class CreateStripePaymentIntentUseCase
 
     // Fetch service name for the summary panel
     const service = await this._serviceRepository.findOne({ _id: hold.serviceRef })
-    const serviceName = service ? (service as any).name ?? 'Service' : 'Service'
+    const serviceName = service ? (service as unknown as {name?: string}).name ?? 'Service' : 'Service'
 
     let clientSecret: string
 

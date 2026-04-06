@@ -347,6 +347,7 @@ export class BookingServices implements IBookingServices {
 
   removeHeldSlots = async (
     timeline: Timeline,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     service: IServiceEntity
   ): Promise<Timeline> => {
     // Redis

@@ -1,4 +1,4 @@
-import { ObjectId, Types } from 'mongoose'
+import { Types } from 'mongoose'
 import { statusTypes, verificationTypes } from '../../shared/constants'
 
 export interface IServiceCategoryPopulated {

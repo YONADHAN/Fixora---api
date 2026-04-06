@@ -19,9 +19,7 @@ import { IChangeMyUserBlockStatusUseCase } from '../../../domain/useCaseInterfac
 import { IGetAllVendorRequestsUseCase } from '../../../domain/useCaseInterfaces/admin/get_all_vendor_requests_usecase_interface'
 import { IChangeVendorVerificationStatusUseCase } from '../../../domain/useCaseInterfaces/admin/change_vendor_verification_status_usecase_interface'
 import { IGetAdminDashboardStatsUseCase } from '../../../domain/useCaseInterfaces/dashboard/admin/get_admin_dashboard_stats_usecase.interface'
-type SortOrder = 1 | -1
-type SortField = 'name' | 'email' | 'createdAt';
-type status= 'all' | 'pending' | 'active' | 'blocked'
+
 @injectable()
 export class AdminController implements IAdminController {
   constructor(

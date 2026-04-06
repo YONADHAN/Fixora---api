@@ -154,6 +154,7 @@ export class AuthController implements IAuthController {
         accessTokenName,
         refreshTokenName
       )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = user
     
       res.status(HTTP_STATUS.OK).json({

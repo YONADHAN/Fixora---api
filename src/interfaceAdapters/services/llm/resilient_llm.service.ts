@@ -11,14 +11,15 @@ export class ResilientLLMService implements ILLMService {
   async chat(params: LLMChatParams): Promise<string> {
     try {
       return await this.primary.chat(params)
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as Error & { status?: number };
       console.warn('Primary LLM (Gemini) failed. Inspecting for Rate Limit (429)...', error?.status || error?.message)
       if (error?.status === 429 || (error?.message && error.message.includes('429'))) {
         console.warn('429 Rate Limit confirmed. Shifting entirely to Groq (Fallback) for this request!')
         try {
           return await this.fallback.chat(params)
-        } catch (fallbackError: any) {
-          console.error('Fallback (Groq) also failed:', fallbackError)
+        } catch (fallbackErr: unknown) {
+          console.error('Fallback (Groq) also failed:', fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr))
           return "I'm sorry, both my primary and backup systems are currently overloaded. Please wait a minute and try again."
         }
       }

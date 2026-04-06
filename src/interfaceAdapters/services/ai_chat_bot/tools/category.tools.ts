@@ -2,6 +2,7 @@ import { container } from 'tsyringe'
 import { IAIMainServiceCategoryRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_service_category_repository.interface'
 import { AIToolBundle, AIToolContext } from '../../../../shared/types/ai/ai.types'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getCategoryTools(context: AIToolContext): AIToolBundle {
   const repo = container.resolve<IAIMainServiceCategoryRepository>('IAIMainServiceCategoryRepository')
 

@@ -29,6 +29,7 @@ export class SummaryAnalyticsStrategyForAdmin implements ISummaryAnalyticsStrate
   ) { }
 
   async execute(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     input: DashboardStatsInputDTO,
   ): Promise<SummaryAnalyticsResponseDTO> {
     // const { from, to } = input.dateRange

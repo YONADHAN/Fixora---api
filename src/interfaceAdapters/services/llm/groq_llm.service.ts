@@ -9,19 +9,21 @@ export class GroqLLMService implements ILLMService {
   async chat(params: LLMChatParams): Promise<string> {
     const { systemPrompt, message, history = [], tools = [], toolMap = {} } = params
 
-    const groqHistory = history.map((h: any) => {
-      let content = h.content;
-      if (!content && h.parts && h.parts.length > 0) {
-        content = typeof h.parts === 'function' ? h.parts()[0]?.text : h.parts[0]?.text;
+    const groqHistory = history.map((h: unknown) => {
+      const hist = h as { role?: string; content?: string; parts?: Array<{ text?: string }> | (() => Array<{ text?: string }>) };
+      let content = hist.content;
+      if (!content && hist.parts) {
+        const parts = typeof hist.parts === 'function' ? hist.parts() : hist.parts;
+        content = parts[0]?.text;
       }
       return {
-        role: h.role === 'model' ? 'assistant' : 'user',
+        role: (hist.role === 'model' ? 'assistant' : 'user') as 'assistant' | 'user',
         content: content || ''
       }
     })
 
-    const groqTools: any[] = []
-    for (const bundle of tools as any[]) {
+    const groqTools: Groq.Chat.ChatCompletionTool[] = []
+    for (const bundle of tools as Array<{ functionDeclarations?: Array<{ name: string; description?: string; parameters?: unknown }> }>) {
       if (bundle.functionDeclarations) {
         for (const decl of bundle.functionDeclarations) {
           groqTools.push({
@@ -29,17 +31,17 @@ export class GroqLLMService implements ILLMService {
             function: {
               name: decl.name,
               description: decl.description,
-              parameters: decl.parameters || { type: 'object', properties: {} }
+              parameters: (decl.parameters || { type: 'object', properties: {} }) as Record<string, unknown>
             }
           })
         }
       }
     }
 
-    const messages: any[] = [
-      { role: 'system', content: systemPrompt },
+    const messages: Groq.Chat.ChatCompletionMessageParam[] = [
+      { role: 'system' as const, content: systemPrompt },
       ...groqHistory,
-      { role: 'user', content: message }
+      { role: 'user' as const, content: message }
     ]
 
     let response = await this.groq.chat.completions.create({
@@ -66,14 +68,14 @@ export class GroqLLMService implements ILLMService {
             throw new Error(`Tool ${functionName} is not permitted.`)
           }
           toolResult = await tool(functionArgs)
-        } catch (err: any) {
-          toolResult = { error: `Execution failed: ${err.message}` }
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : String(err)
+          toolResult = { error: `Execution failed: ${errorMessage}` }
         }
 
         messages.push({
           tool_call_id: toolCall.id,
           role: 'tool',
-          name: functionName,
           content: JSON.stringify(toolResult)
         })
       }

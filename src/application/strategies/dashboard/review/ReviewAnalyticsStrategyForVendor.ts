@@ -5,8 +5,10 @@ import { IReviewAnalyticsStrategy } from './IReviewAnalyticsStrategy'
 @injectable()
 export class ReviewAnalyticsStrategyForVendor implements IReviewAnalyticsStrategy {
     constructor() { }
+   
     async execute(
         _input: DashboardStatsInputDTO): Promise<ReviewAnalyticsDTO> {
+            console.log("Input",_input)
         return {
             totalComments:0
         }
