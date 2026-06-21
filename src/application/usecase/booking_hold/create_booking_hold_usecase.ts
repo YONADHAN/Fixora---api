@@ -13,6 +13,7 @@ import { CustomError } from '../../../domain/utils/custom.error'
 import { CreateBookingHoldResponseMapper } from '../../mappers/booking_hold/create_booking_hold_mapper'
 import { ICustomerRepository } from '../../../domain/repositoryInterfaces/users/customer_repository.interface'
 import { HTTP_STATUS } from '../../../shared/constants'
+import { IBookingRepository } from '../../../domain/repositoryInterfaces/feature/booking/booking_repository.interface'
 
 @injectable()
 export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
@@ -28,6 +29,9 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
 
     @inject('ICustomerRepository')
     private _customerRepository: ICustomerRepository,
+
+    @inject('IBookingRepository')
+    private _bookingRepository: IBookingRepository,
   ) { }
 
   async execute(
@@ -80,6 +84,16 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
 
       //   lockedSlots.push({ date: slot.date, start: slot.start })
       // }
+
+
+
+     
+
+
+
+
+
+
       for (const slot of slots) {
         const locked = await this._redisSlotLockRepository.lockSlot(
           serviceId,
