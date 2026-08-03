@@ -1,9 +1,11 @@
+import { AIRole } from '../../shared/types/ai/ai.types'
+
 export interface LLMChatParams {
-  systemPrompt: string
   message: string
   history?: unknown[]
-  tools?: unknown[]
-  toolMap?: Record<string, (args?: unknown) => Promise<unknown>>
+  role: AIRole
+  userId?: string | null
+  domain: string
 }
 
 export interface ILLMService {

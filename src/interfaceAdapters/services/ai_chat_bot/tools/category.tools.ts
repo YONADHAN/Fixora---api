@@ -1,51 +1,53 @@
 import { container } from 'tsyringe'
-import { IAIMainServiceCategoryRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_service_category_repository.interface'
-import { AIToolBundle, AIToolContext } from '../../../../shared/types/ai/ai.types'
+import { tool, StructuredToolInterface } from '@langchain/core/tools'
+import { z } from 'zod'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getCategoryTools(context: AIToolContext): AIToolBundle {
-  const repo = container.resolve<IAIMainServiceCategoryRepository>('IAIMainServiceCategoryRepository')
+import { AIToolContext } from '../../../../shared/types/ai/ai.types'
+import { IAIMainServiceCategoryRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_service_category_repository.interface'
+
+export function getCategoryTools(
+  _context: AIToolContext,
+): { tools: StructuredToolInterface[] } {
+  const repo =
+    container.resolve<IAIMainServiceCategoryRepository>(
+      'IAIMainServiceCategoryRepository',
+    )
+
+  const getMainServiceCategoriesTool = tool(
+    async () => {
+      try {
+        const categories = await repo.findServiceCategories()
+
+        if (!categories?.length) {
+          return {
+            info: 'No main service categories could be found at this time.',
+          }
+        }
+
+        return categories.map((c) => ({
+          id: c._id,
+          serviceCategoryId: c.serviceCategoryId,
+          name: c.name,
+          description: c.description,
+        }))
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to fetch categories',
+        }
+      }
+    },
+    {
+      name: 'getMainServiceCategories',
+      description:
+        'Fetch all main service categories available on Fixora.',
+      schema: z.object({}),
+    },
+  )
 
   return {
-    tools: [
-      {
-        functionDeclarations: [
-          {
-            name: 'getMainServiceCategories',
-            description: 'Fetch the main service categories available in the platform (e.g. Electrician, Plumbing, etc).',
-            parameters: {
-              type: 'object',
-              properties: {},
-            },
-          },
-        ],
-      },
-    ],
-
-    toolMap: {
-      getMainServiceCategories: async () => {
-        try {
-          const categories = await repo.findServiceCategories()
-          
-          if (!categories || categories.length === 0) {
-            return {
-              info: 'No main service categories could be found at this time.'
-            }
-          }
-
-          return categories.map(c => ({
-             id: c._id,
-             serviceCategoryId: c.serviceCategoryId,
-             name: c.name,
-             description: c.description
-          }))
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            return { error: `Failed to fetch main service categories: ${error.message}` }
-          }
-          return { error: 'Failed to fetch main service categories: Unknown error.' }
-        }
-      },
-    },
+    tools: [getMainServiceCategoriesTool],
   }
 }

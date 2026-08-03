@@ -1,41 +1,64 @@
 import { container } from 'tsyringe'
-import { IAiServiceRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_service_repository.interface'
-import { AIToolBundle, AIToolContext } from '../../../../shared/types/ai/ai.types'
+import { tool, StructuredToolInterface } from '@langchain/core/tools'
+import { z } from 'zod'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getServiceTools(context: AIToolContext): AIToolBundle {
-  const repo = container.resolve<IAiServiceRepository>('IAiServiceRepository')
+import { AIToolContext } from '../../../../shared/types/ai/ai.types'
+import { IAiServiceRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_service_repository.interface'
+
+export function getServiceTools(
+  _context: AIToolContext,
+): { tools: StructuredToolInterface[] } {
+  const repo =
+    container.resolve<IAiServiceRepository>(
+      'IAiServiceRepository',
+    )
+
+  const getTopServicesTool = tool(
+    async () => {
+      try {
+        return await repo.getTopServices()
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to fetch top services',
+        }
+      }
+    },
+    {
+      name: 'getTopServices',
+      description: 'Get the top services available on Fixora.',
+      schema: z.object({}),
+    },
+  )
+
+  const searchServicesTool = tool(
+    async ({ query }) => {
+      try {
+        return await repo.searchServices(query)
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to search services',
+        }
+      }
+    },
+    {
+      name: 'searchServices',
+      description:
+        'Search Fixora services using keywords.',
+      schema: z.object({
+        query: z
+          .string()
+          .describe('Search term for finding services'),
+      }),
+    },
+  )
 
   return {
-    tools: [
-      {
-        functionDeclarations: [
-          {
-            name: 'getTopServices',
-            description: 'Get top Fixora services',
-          },
-          {
-            name: 'searchServices',
-            description: 'Search Fixora services',
-            parameters: {
-              type: 'object',
-              properties: {
-                query: { type: 'string' },
-              },
-            },
-          },
-        ],
-      },
-    ],
-
-    toolMap: {
-      getTopServices: async () => {
-        return repo.getTopServices()
-      },
-
-      searchServices: async ({ query }: { query: string }) => {
-        return repo.searchServices(query)
-      },
-    },
+    tools: [getTopServicesTool, searchServicesTool],
   }
 }
