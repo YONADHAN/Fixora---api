@@ -5,7 +5,6 @@ import {
     AskAIChatbotResponseDTO,
 } from '../../../dtos/ai_dto'
 
-import { PromptBuilder } from '../../../../interfaceAdapters/services/ai_chat_bot/prompt_builder'
 import { ToolPermissionGuard } from '../../../security/tool_permission.guard'
 import { IAskAIChatbotPublicStrategy } from './ask_ai_chatbot_public_strategy.interface'
 import { ILLMService } from '../../../../domain/serviceInterfaces/llm_service.interface'
@@ -15,7 +14,7 @@ import { AIToolContext } from '../../../../shared/types/ai/ai.types'
 export class AskAIChatbotPublicStrategy implements IAskAIChatbotPublicStrategy {
     constructor(
         @inject('ILLMService') private readonly _llmService: ILLMService
-    ) {}
+    ) { }
 
     async execute(
         input: AskAIChatbotRequestDTO,
