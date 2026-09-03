@@ -1,115 +1,136 @@
 import { container } from 'tsyringe'
+import { tool, StructuredToolInterface } from '@langchain/core/tools'
+import { z } from 'zod'
+
+import { AIToolContext } from '../../../../shared/types/ai/ai.types'
 import { IAiBookingRepository } from '../../../../domain/repositoryInterfaces/feature/ai/ai_booking_repository.interface'
-import { AIToolBundle, AIToolContext } from '../../../../shared/types/ai/ai.types'
 import { IGetBookingDetailsUseCase } from '../../../../domain/useCaseInterfaces/booking/get_booking_details_usecase_interface'
 
-export function getBookingTools(context: AIToolContext): AIToolBundle {
-  const repo = container.resolve<IAiBookingRepository>('IAiBookingRepository')
+export function getBookingTools(
+  context: AIToolContext,
+): { tools: StructuredToolInterface[] } {
+  const repo = container.resolve<IAiBookingRepository>(
+    'IAiBookingRepository',
+  )
 
-  return {
-    tools: [
-      {
-        functionDeclarations: [
-          {
-            name: 'getUpcomingBookings',
-            description: 'Get upcoming scheduled Fixora bookings for the user',
-            parameters: {
-              type: 'object',
-              properties: {
-                limit: { type: 'number' },
-              },
-            },
-          },
-          {
-            name: 'getUserBookingsHistory',
-            description: 'Fetch the user\'s personal booking history or specific bookings. You MUST use this tool to retrieve their upcoming, completed, or cancelled bookings. You have full access to their private bookings through this function.',
-            parameters: {
-              type: 'object',
-              properties: {
-                status: { type: 'string', description: 'e.g. scheduled, in-progress, completed, cancelled' },
-                paymentStatus: { type: 'string' },
-                limit: { type: 'number' },
-              },
-            },
-          },
-          {
-            name: 'getBookingDetails',
-            description: 'Get deep details of a specific booking including slot pricing, advance amounts, professional details, and exact service attributes.',
-            parameters: {
-              type: 'object',
-              properties: {
-                bookingId: { type: 'string', description: 'The bookingId or Appointment ID to lookup (e.g. BOOK_e4c6ca9d)' },
-              },
-              required: ['bookingId']
-            },
-          },
-        ],
-      },
-    ],
+  const getUpcomingBookingsTool = tool(
+    async ({ limit }) => {
+      try {
+        if (!context.userId) {
+          return { error: 'User not authenticated' }
+        }
 
-    toolMap: {
-      getUpcomingBookings: async ({ limit }: { limit?: number }) => {
-        if (!context.userId) return []
-        return repo.getBookingsForAI({
+        return await repo.getBookingsForAI({
           role: context.role,
           userId: context.userId,
           status: 'scheduled',
-          limit: limit || 10,
+          limit: limit ?? 10,
         })
-      },
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to fetch upcoming bookings',
+        }
+      }
+    },
+    {
+      name: 'getUpcomingBookings',
+      description: 'Get upcoming scheduled Fixora bookings for the user.',
+      schema: z.object({
+        limit: z
+          .number()
+          .optional()
+          .describe('Maximum number of bookings to return'),
+      }),
+    },
+  )
 
-      getUserBookingsHistory: async ({
-        status,
-        paymentStatus,
-        limit,
-      }: {
-        status?: 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
-        paymentStatus?:
-        | 'pending'
-        | 'advance-paid'
-        | 'paid'
-        | 'fully-paid'
-        | 'pending-refund'
-        | 'refunded'
-        | 'failed'
-        limit?: number
-      }) => {
-        if (!context.userId) return { error: "User not authenticated" }
+  const getBookingDetailsTool = tool(
+    async ({ bookingId }) => {
+      try {
+        if (!context.userId) {
+          return { error: 'User not authenticated' }
+        }
+
+        if (
+          context.role !== 'customer' &&
+          context.role !== 'vendor' &&
+          context.role !== 'admin'
+        ) {
+          return { error: 'Invalid role' }
+        }
+
+        const useCase =
+          container.resolve<IGetBookingDetailsUseCase>(
+            'IGetBookingDetailsUseCase',
+          )
+
+        return await useCase.execute({
+          bookingId,
+          userId: context.userId,
+          role: context.role,
+        })
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to fetch booking details',
+        }
+      }
+    },
+    {
+      name: 'getBookingDetails',
+      description:
+        'Get complete details of a booking including pricing, slot information, service details, and professional details.',
+      schema: z.object({
+        bookingId: z
+          .string()
+          .describe('Booking ID such as BOOK_123'),
+      }),
+    },
+  )
+
+  const getUserBookingsHistoryTool = tool(
+    async ({ status, paymentStatus, limit }) => {
+      try {
+        if (!context.userId) {
+          return { error: 'User not authenticated' }
+        }
+
         const bookings = await repo.getBookingsForAI({
           role: context.role,
           userId: context.userId,
-          limit: limit || 15,
+          status: status as 'scheduled' | 'in-progress' | 'completed' | 'cancelled' | undefined,
+          limit: limit ?? 15,
         })
 
         if (!bookings || bookings.length === 0) {
           return {
-            info: `Zero bookings were found in the database. Tell the user firmly that they have no bookings matching these specific filters: status=${status}, paymentStatus=${paymentStatus}. Maybe they should check a different status?`
+            info: `Zero bookings were found matching filters: status=${status}, paymentStatus=${paymentStatus}.`
           }
         }
-
         return bookings
-      },
-
-      getBookingDetails: async ({ bookingId }: { bookingId: string }) => {
-        if (!context.userId || !context.role || context.role === 'public') {
-          return { error: 'User context is missing or you are totally public.' }
+      } catch (error) {
+        return {
+          error: error instanceof Error ? error.message : 'Failed to fetch booking history',
         }
-        try {
-          const detailUseCase = container.resolve<IGetBookingDetailsUseCase>('IGetBookingDetailsUseCase')
-          if (!detailUseCase) return { error: 'Detail service unavailable.' }
-          const details = await detailUseCase.execute({
-            bookingId,
-            userId: context.userId,
-            role: context.role as 'customer' | 'vendor' | 'admin'
-          })
-          return details
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            return { error: `Failed to fetch booking details for ${bookingId}: ${error.message}` }
-          }
-          return { error: `Failed to fetch booking details for ${bookingId}: Unknown error` }
-        }
-      },
+      }
     },
+    {
+      name: 'getUserBookingsHistory',
+      description: 'Fetch the user\'s booking history. Use this to find cancelled, completed, or specific bookings.',
+      schema: z.object({
+        status: z.string().optional().describe('e.g. scheduled, in-progress, completed, cancelled'),
+        paymentStatus: z.string().optional(),
+        limit: z.number().optional(),
+      }),
+    }
+  )
+
+  return {
+    tools: [getUpcomingBookingsTool, getBookingDetailsTool, getUserBookingsHistoryTool],
   }
 }
