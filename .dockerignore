@@ -4,4 +4,3 @@ node_modules
 Dockerfile
 .dockerignore
 logs
-dist

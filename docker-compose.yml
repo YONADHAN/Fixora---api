@@ -1,0 +1,24 @@
+services:
+  fixora-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fixora-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - fixora-redis
+
+  fixora-redis:
+    image: redis:7-alpine
+    container_name: fixora-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASS}
+    volumes:
+      - fixora-redis-data:/data
+
+volumes:
+  fixora-redis-data:
