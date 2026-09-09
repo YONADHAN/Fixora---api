@@ -39,14 +39,14 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -t ghcr.io/yonadhan/fixora-api:latest \
-            -t ghcr.io/yonadhan/fixora-api:${{ github.sha }} \
+            -t ghcr.io/${{ github.repository_owner }}/fixora-api:latest \
+            -t ghcr.io/${{ github.repository_owner }}/fixora-api:${{ github.sha }} \
             .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/yonadhan/fixora-api:latest
-          docker push ghcr.io/yonadhan/fixora-api:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/fixora-api:latest
+          docker push ghcr.io/${{ github.repository_owner }}/fixora-api:${{ github.sha }}
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
