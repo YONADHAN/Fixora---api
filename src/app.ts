@@ -13,7 +13,7 @@ async function startApp() {
 
   try {
     console.log(
-      chalk.greenBright('--------------------------------------------\n')
+      chalk.greenBright('-------------------------------------------\n')
     )
     await mongoConnect.connectDB()
     await seedAdmin()
