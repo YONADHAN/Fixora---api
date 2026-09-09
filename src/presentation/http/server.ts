@@ -21,6 +21,7 @@ export class ExpressServer {
 
   constructor() {
     this._app = express()
+    this._app.set('trust proxy', 1)
     this.configureMiddlewares()
     this.configureRoutes()
   }
