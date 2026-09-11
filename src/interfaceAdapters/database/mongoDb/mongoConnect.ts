@@ -10,7 +10,10 @@ export class MongoConnect {
 
   async connectDB() {
     try {
-      await mongoose.connect(this._dbUrl)
+      await mongoose.connect(this._dbUrl, { 
+        serverSelectionTimeoutMS: 10000, 
+        autoIndex: false 
+      })
 
       console.log(
         chalk.yellowBright.bold(
