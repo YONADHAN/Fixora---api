@@ -28,7 +28,7 @@ async function startApp() {
         )
       )
       console.log(
-        chalk.greenBright('\n-------------------------------------------\n')
+        chalk.greenBright('\n------------------------------------------\n')
       )
       startBookingHoldExpiryScheduler()
     })
