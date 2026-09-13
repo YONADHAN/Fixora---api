@@ -299,22 +299,24 @@ export class BalancePaymentSucceededUseCase
     }
 
 
-    const amount = paymentIntent.amount_received / 100
-
+    const balanceAmount = paymentIntent.amount_received / 100
+    const advanceAmount = payment.advancePayment?.amount ?? 0
+    const totalServiceAmount = advanceAmount + balanceAmount
 
     await this._paymentRepository.updateRemainingPaymentByBookingGroupId(
       bookingGroupId,
       {
         stripePaymentIntentId: paymentIntent.id,
-        amount,
+        amount: balanceAmount,
         status: 'paid',
         paidAt: new Date(),
         failures: [],
       },
     )
 
-let transactionCode =
-  await this._codeGeneratorService.generateWalletTransactionCode()
+    let transactionCode =
+      await this._codeGeneratorService.generateWalletTransactionCode()
+    
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
       transactionCode,
@@ -322,7 +324,7 @@ let transactionCode =
       walletRef: adminWallet._id,
       type: 'credit',
       source: 'stripe-balance-payment',
-      amount,
+      amount: balanceAmount,
       currency: 'INR',
       paymentRef: payment._id,
       stripePaymentIntentId: paymentIntent.id,
@@ -331,15 +333,14 @@ let transactionCode =
 
     await this._walletRepository.incrementBalance(
       adminWallet._id,
-      amount,
+      balanceAmount,
     )
-
 
     const commissionPercentage = 5
     const commissionAmount = Math.floor(
-      (amount * commissionPercentage) / 100,
+      (totalServiceAmount * commissionPercentage) / 100,
     )
-    const vendorShare = amount - commissionAmount
+    const vendorShare = totalServiceAmount - commissionAmount
 
  transactionCode =
   await this._codeGeneratorService.generateWalletTransactionCode()
