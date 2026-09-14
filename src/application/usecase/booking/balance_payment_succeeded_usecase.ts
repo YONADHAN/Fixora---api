@@ -404,14 +404,27 @@ transactionCode =
       _id: payment.customerRef,
     })
 
+    const bookingGroupCode = bookings[0]?.bookingGroupCode;
+    const customerMessage = bookingGroupCode 
+      ? `Balance payment successful for Order #${bookingGroupCode}`
+      : `Balance payment successful for booking group ${bookingGroupId}`;
+    const vendorMessage = bookingGroupCode 
+      ? `Balance payment successful for Order #${bookingGroupCode}`
+      : `Balance payment received for booking group ${bookingGroupId}`;
+      
+    const metadata: any = { bookingId: bookingGroupId };
+    if (bookingGroupCode) {
+      metadata.bookingGroupCode = bookingGroupCode;
+    }
+
     if (customer?.userId) {
       await this._createNotificationUseCase.execute({
         recipientId: customer.userId,
         recipientRole: 'customer',
         type: 'PAYMENT_SUCCESS',
         title: 'Payment Completed',
-        message: `Balance payment successful for booking group ${bookingGroupId}`,
-        metadata: { bookingId: bookingGroupId },
+        message: customerMessage,
+        metadata,
       })
     }
 
@@ -421,8 +434,8 @@ transactionCode =
         recipientRole: 'vendor',
         type: 'PAYMENT_SUCCESS',
         title: 'Payment Received',
-        message: `Balance payment received for booking group ${bookingGroupId}`,
-        metadata: { bookingId: bookingGroupId },
+        message: vendorMessage,
+        metadata,
       })
     }
   }

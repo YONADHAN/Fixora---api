@@ -240,8 +240,8 @@ const bookingGroupCode =
         recipientRole: 'customer',
         type: 'PAYMENT_SUCCESS',
         title: 'Payment Successful',
-        message: `Advance payment successful for booking group ${hold.holdId}`,
-        metadata: { bookingId: hold.holdId },
+        message: `Advance payment received for Order #${bookingGroupCode}`,
+        metadata: { bookingId: hold.holdId, bookingGroupCode },
       })
     }
 
@@ -251,8 +251,8 @@ const bookingGroupCode =
         recipientRole: 'vendor',
         type: 'PAYMENT_SUCCESS',
         title: 'New Payment Received',
-        message: `New advance payment received for booking group ${hold.holdId}`,
-        metadata: { bookingId: hold.holdId },
+        message: `Advance payment received for Order #${bookingGroupCode}`,
+        metadata: { bookingId: hold.holdId, bookingGroupCode },
       })
     }
 

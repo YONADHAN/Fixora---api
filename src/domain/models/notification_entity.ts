@@ -21,6 +21,7 @@ export interface INotificationEntity {
 
   metadata?: {
     bookingId?: string
+    bookingGroupCode?: string
     serviceId?: string
     paymentId?: string
     redirectUrl?: string

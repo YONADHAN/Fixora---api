@@ -19,6 +19,7 @@ export interface CreateNotificationInput {
 
   metadata?: {
     bookingId?: string
+    bookingGroupCode?: string
     serviceId?: string
     paymentId?: string
     redirectUrl?: string
