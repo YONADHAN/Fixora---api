@@ -88,7 +88,7 @@ async function runTests() {
 
     await useCase.execute(paymentIntent as any);
 
-    // Verify
+    
     if (adminTransactions.length > 0) {
       assert.strictEqual(adminBalanceIncrement, balance, `Admin increment expected ${balance}, got ${adminBalanceIncrement}`);
       assert.strictEqual(adminBalanceDecrement, expectedVendor, `Admin decrement expected ${expectedVendor}, got ${adminBalanceDecrement}`);
@@ -96,19 +96,13 @@ async function runTests() {
       
       const adminRetained = adminBalanceIncrement - adminBalanceDecrement;
       
-      // We assume advance is already in admin wallet prior to this use case.
-      // So net change to admin wallet from this use case alone is balance - vendorShare.
-      // This should equal the commission minus advance, since advance was already in the wallet!
-      // Wait: Admin before this event = Advance.
-      // Admin after this event = Advance + Balance - VendorShare = Advance + Balance - (Advance + Balance - Commission) = Commission.
-      // Thus, net change in this use case = Balance - VendorShare.
-      // Let's verify this.
+     
       const expectedNetChange = balance - expectedVendor;
       assert.strictEqual(adminRetained, expectedNetChange, `Admin net change expected ${expectedNetChange}, got ${adminRetained}`);
       
-      console.log(`✅ Success. Admin net change: ${adminRetained}. Vendor received: ${vendorBalanceIncrement}`);
+      console.log(`Success. Admin net change: ${adminRetained}. Vendor received: ${vendorBalanceIncrement}`);
     } else {
-      console.log(`✅ Success. Skipped due to idempotency.`);
+      console.log(`Success. Skipped due to idempotency.`);
     }
   };
 
