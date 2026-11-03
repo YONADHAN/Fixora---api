@@ -6,7 +6,7 @@ export const ROLES = {
   VENDOR: 'vendor',
 } as const
 export type recurrenceType = 'daily' | 'weekly' | 'monthly'
-//for dashboard inputs
+
 export type timeGranularityType = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 export type bookingStatus = 'available' | 'booked' | 'cancelled'
@@ -14,6 +14,8 @@ export type statusTypes = 'active' | 'blocked'
 export type verificationTypes = 'accepted' | 'rejected' | 'pending'
 
 export type TRole = 'customer' | 'admin' | 'vendor'
+
+export type PaymentMethod = 'stripe' | 'wallet';
 
 export const WALLET_TRANSACTION_TYPES = ['credit', 'debit'] as const
 export type WalletTransactionType = (typeof WALLET_TRANSACTION_TYPES)[number]
