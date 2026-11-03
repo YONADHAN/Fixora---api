@@ -66,33 +66,7 @@ export class CreateBookingHoldUseCase implements ICreateBookingHoldUseCase {
 
     const lockedSlots: { date: string; start: string }[] = []
 
-    try {
-      // for (const slot of slots) {
-      //   const locked = await this._redisSlotLockRepository.lockSlot(
-      //     serviceId,
-      //     slot.date,
-      //     slot.start,
-      //     customerId,
-      //   )
-
-      //   if (!locked) {
-      //     throw new CustomError(
-      //       `Slot ${slot.date} ${slot.start} is on hold`,
-      //       HTTP_STATUS.CONFLICT,
-      //     )
-      //   }
-
-      //   lockedSlots.push({ date: slot.date, start: slot.start })
-      // }
-
-
-
-     
-
-
-
-
-
+    try {  
 
       for (const slot of slots) {
         const locked = await this._redisSlotLockRepository.lockSlot(

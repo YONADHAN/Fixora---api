@@ -79,9 +79,9 @@ export class StripePaymentSucceededUseCase implements IStripePaymentSucceedUseCa
 
 
     const createdBookings = []
-const bookingGroupCode =
-  await this._codeGeneratorService.generateBookingGroupCode()
-  let index =  0;
+    const bookingGroupCode =
+      await this._codeGeneratorService.generateBookingGroupCode()
+    let index = 0;
     for (const slot of hold.slots) {
       const bookingCode = `${bookingGroupCode}-${index++}`
       const booking = await this._bookingRepository.save({
@@ -156,7 +156,7 @@ const bookingGroupCode =
 
 
 
-    
+
     const admin = await this._adminRepostory.findOne({
       email: process.env.SEED_ADMIN_EMAIL,
     })
@@ -185,7 +185,7 @@ const bookingGroupCode =
     }
     const transactionCode =
       await this._codeGeneratorService.generateWalletTransactionCode()
-      //admin// hold 
+    //admin// hold 
     await this._walletTransactionRepository.save({
       transactionId: `WTXN_${crypto.randomUUID()}`,
       transactionCode,
@@ -195,7 +195,7 @@ const bookingGroupCode =
       source: 'service-booking',
       amount: hold.pricing.advanceAmount,
       currency: 'INR',
-      
+
       description: `Advance payment`,
       bookingHoldRef: hold._id,
       paymentRef: payment._id,
